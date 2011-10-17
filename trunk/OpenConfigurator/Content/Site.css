@@ -1,324 +1,131 @@
-﻿/*----------------------------------------------------------
-The base color for this template is #5c87b2. If you'd like
-to use a different color start by replacing all instances of
-#5c87b2 with your new color.
-----------------------------------------------------------*/
-body {
-    background-color: #5c87b2;
-    font-size: .85em;
+﻿/*Reusable elements*****************************************************************************/
+/*RoundedBox--------------------------------------------------------------------*/
+.RoundedBox
+{
+    min-width:200px;
+
+}
+.RoundedBox .BoxHeader
+{
+    background:url(themes/base/images/roundedbox-header-right.png) no-repeat right top;
+    width:100%;
+    height:33px;
+    padding-right:20px;
+    
+}
+.RoundedBox .BoxHeader .BoxInnerHeader
+{
+    background:url(themes/base/images/roundedbox-header-left.png) no-repeat left top;
+    width:100%;
+    height:23px;
+    padding:5px 5px 5px 10px;
+    
+}
+.RoundedBox .BoxHeader .BoxInnerHeader span
+{
+    color:White;
+    text-transform:uppercase;
+}
+.RoundedBox .BoxContent
+{
+    width:100%;
+    height:100%;
+    background:white;
+    padding:10px;
+}
+.RoundedBox .BoxFooter
+{
+     background:url(themes/base/images/roundedbox-footer-right.png) no-repeat right top;
+    width:100%;
+    height:6px;
+    padding-right:20px;
+}
+.RoundedBox .BoxInnerFooter
+{
+    background:url(themes/base/images/roundedbox-footer-left.png) no-repeat left top;
+    width:100%;
+    height:6px;
+}
+/*------------------------------------------------------------------------------*/
+/***********************************************************************************************/
+/*HTML and fonts********************************************************************************/
+.Textbox
+{
+    border: 1px solid #E6E6E6;
+    padding: 5px;
+    width: 210px;
+    background: url(themes/base/images/textbox-bg.png) repeat-x left bottom;
+}
+
+.Label
+{
+    font-family:Arial;
+    letter-spacing:0.8px;
+    font-size:12px;
+    color:#3a4043;
+}
+
+.HeaderLabel
+{
+}
+/***********************************************************************************************/
+/*Templates and layout**************************************************************************/
+body 
+{
+    background: #e8e8dd;
     font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
     margin: 0;
     padding: 0;
-    color: #696969;
 }
 
-a:link {
-    color: #034af3;
-    text-decoration: underline;
+/*OuterLayout-------------------------------------------------------------------*/
+.OuterHeaderArea
+{
+    width:100%;
+    background: url(themes/base/images/header-bar.png) repeat-x left top;
+    height:77px;
+}
+.OuterMenuArea
+{
+    width:100%;
+    background: url(themes/base/images/menu-bar.png) repeat-x left top;
+    height:40px;
+}
+.OuterContentArea
+{
+    width:100%;
+    background: #e8e8dd url(themes/base/images/content-bg.png) repeat-x left top;
+    min-height:700px;
 }
 
-a:visited {
-    color: #505abc;
+.OuterHeaderArea .InnerHeaderArea
+{
+    width:80%;
+    height:77px;
+    margin: 0 auto;
+    color:White;
 }
-
-a:hover {
-    color: #1d60ff;
-    text-decoration: none;
+.OuterMenuArea .InnerMenuArea
+{
+    width:80%;
+    height:40px;
+    margin: 0 auto;
 }
-
-a:active {
-    color: #12eb87;
+.OuterContentArea .InnerContentArea
+{
+    width:80%;
+    min-height:700px;
+    margin: 0 auto;
 }
-
-p, ul {
-    margin-bottom: 20px;
-    line-height: 1.6em;
+/*------------------------------------------------------------------------------*/
+/*Login-------------------------------------------------------------------------*/
+#LoginBox
+{
+    margin-top:150px;
+    width: 230px;
+    height:130px;
+    margin-left:auto;
+    margin-right:auto;
 }
-
-header,
-footer,
-nav,
-section {
-    display: block;
-}
-
-/* HEADINGS   
-----------------------------------------------------------*/
-h1, h2, h3, h4, h5, h6 {
-    font-size: 1.5em;
-    color: #000;
-}
-
-h1 {
-    font-size: 2em;
-    padding-bottom: 0;
-    margin-bottom: 0;
-}
-
-h2 {
-    padding: 0 0 10px 0;
-}
-
-h3 {
-    font-size: 1.2em;
-}
-
-h4 {
-    font-size: 1.1em;
-}
-
-h5, h6 {
-    font-size: 1em;
-}
-
-/* PRIMARY LAYOUT ELEMENTS   
-----------------------------------------------------------*/
-
-/* you can specify a greater or lesser percentage for the 
-page width. Or, you can specify an exact pixel width. */
-.page {
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-header, #header {
-    position: relative;
-    margin-bottom: 0px;
-    color: #000;
-    padding: 0;
-}
-
-header h1, #header h1 {
-    font-weight: bold;
-    padding: 5px 0;
-    margin: 0;
-    color: #fff;
-    border: none;
-    line-height: 2em;
-    font-size: 32px !important;
-    text-shadow: 1px 1px 2px #111;
-}
-
-#main {
-    padding: 30px 30px 15px 30px;
-    background-color: #fff;
-    border-radius: 4px 0 0 0;
-    -webkit-border-radius: 4px 0 0 0;
-    -moz-border-radius: 4px 0 0 0;
-}
-
-footer, 
-#footer {
-    background-color: #fff;
-    color: #999;
-    padding: 10px 0;
-    text-align: center;
-    line-height: normal;
-    margin: 0 0 30px 0;
-    font-size: .9em;
-    border-radius: 0 0 4px 4px;
-    -webkit-border-radius: 0 0 4px 4px;
-    -moz-border-radius: 0 0 4px 4px;
-}
-
-/* TAB MENU   
-----------------------------------------------------------*/
-ul#menu {
-    border-bottom: 1px #5C87B2 solid;
-    padding: 0 0 2px;
-    position: relative;
-    margin: 0;
-    text-align: right;
-}
-
-ul#menu li {
-    display: inline;
-    list-style: none;
-}
-
-ul#menu li#greeting {
-    padding: 10px 20px;
-    font-weight: bold;
-    text-decoration: none;
-    line-height: 2.8em;
-    color: #fff;
-}
-
-ul#menu li a {
-    padding: 10px 20px;
-    font-weight: bold;
-    text-decoration: none;
-    line-height: 2.8em;
-    background-color: #e8eef4;
-    color: #034af3;
-    border-radius: 4px 4px 0 0;
-    -webkit-border-radius: 4px 4px 0 0;
-    -moz-border-radius: 4px 4px 0 0;
-}
-
-ul#menu li a:hover {
-    background-color: #fff;
-    text-decoration: none;
-}
-
-ul#menu li a:active {
-    background-color: #a6e2a6;
-    text-decoration: none;
-}
-
-ul#menu li.selected a {
-    background-color: #fff;
-    color: #000;
-}
-
-/* FORM LAYOUT ELEMENTS   
-----------------------------------------------------------*/
-
-fieldset {
-    border: 1px solid #ddd;
-    padding: 0 1.4em 1.4em 1.4em;
-    margin: 0 0 1.5em 0;
-}
-
-legend {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-textarea {
-    min-height: 75px;
-}
-
-input[type="text"], 
-input[type="password"] {
-    border: 1px solid #ccc;
-    padding: 2px;
-    font-size: 1.2em;
-    color: #444;
-    width: 200px;
-}
-
-select {
-    border: 1px solid #ccc;
-    padding: 2px;
-    font-size: 1.2em;
-    color: #444;
-}
-
-input[type="submit"] {
-    font-size: 1.2em;
-    padding: 5px;
-}
-
-/* TABLE
-----------------------------------------------------------*/
-
-table {
-    border: solid 1px #e8eef4;
-    border-collapse: collapse;
-}
-
-table td {
-    padding: 5px;
-    border: solid 1px #e8eef4;
-}
-
-table th {
-    padding: 6px 5px;
-    text-align: left;
-    background-color: #e8eef4;
-    border: solid 1px #e8eef4;
-}
-
-/* MISC  
-----------------------------------------------------------*/
-.clear {
-    clear: both;
-}
-
-.error {
-    color: Red;
-}
-
-nav, 
-#menucontainer {
-    margin-top: 40px;
-}
-
-div#title {
-    display: block;
-    float: left;
-    text-align: left;
-}
-
-#logindisplay {
-    font-size: 1.1em;
-    display: block;
-    text-align: right;
-    margin: 10px;
-    color: White;
-}
-
-#logindisplay a:link {
-    color: white;
-    text-decoration: underline;
-}
-
-#logindisplay a:visited {
-    color: white;
-    text-decoration: underline;
-}
-
-#logindisplay a:hover {
-    color: white;
-    text-decoration: none;
-}
-
-/* Styles for validation helpers
------------------------------------------------------------*/
-.field-validation-error {
-    color: #ff0000;
-}
-
-.field-validation-valid {
-    display: none;
-}
-
-.input-validation-error {
-    border: 1px solid #ff0000;
-    background-color: #ffeeee;
-}
-
-.validation-summary-errors {
-    font-weight: bold;
-    color: #ff0000;
-}
-
-.validation-summary-valid {
-    display: none;
-}
-
-/* Styles for editor and display helpers
-----------------------------------------------------------*/
-.display-label, 
-.editor-label {
-    margin: 1em 0 0 0;
-}
-
-.display-field, 
-.editor-field {
-    margin: 0.5em 0 0 0;
-}
-
-.text-box {
-    width: 30em;
-}
-
-.text-box.multi-line {
-    height: 6.5em;
-}
-
-.tri-state {
-    width: 6em;
-}
+/*------------------------------------------------------------------------------*/
+/***********************************************************************************************/

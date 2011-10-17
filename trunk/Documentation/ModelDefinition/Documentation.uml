@@ -1,40 +1,90 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
   <ownedCommentsInternal>
     <comment
       Id="baed6ed8-d10c-4522-84b5-809aa069e397">
-      <body>Optional
-Mandatory
-Alternative</body>
+      <body>Optional [0...1]
+Mandatory [1...1]
+Cloneable [0...*]</body>
       <annotatedElements>
         <useCaseMoniker
-          Id="28b7ad4b-4706-4651-a4f3-1de68c789a45"
-          LastKnownName="Create feature"
-          LastKnownLocation="Documentation.uml" />
-      </annotatedElements>
-    </comment>
-    <comment
-      Id="1b7c6ac2-10b6-4e91-a14b-232fa2c81a8b">
-      <body>Static
-Dynamic</body>
-      <annotatedElements>
-        <useCaseMoniker
-          Id="dd98d3dc-a892-4244-a356-84e8aebc0b67"
-          LastKnownName="Define attributes"
+          Id="c169cfab-f014-4474-9bcb-115ac310c409"
+          LastKnownName="Define parent-child relation"
           LastKnownLocation="Documentation.uml" />
       </annotatedElements>
     </comment>
     <comment
       Id="76c46720-94ad-4a97-9402-9829e67dea3a">
-      <body>Mutual dependency
-Mutual exclusion</body>
+      <body>Dependency, Exclusion
+Mutual, Unidirectional</body>
       <annotatedElements>
         <useCaseMoniker
           Id="e24e3468-e1e3-4785-b259-8096122a8dba"
           LastKnownName="Define composition rules"
+          LastKnownLocation="Documentation.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="2bfb1452-28e8-4768-ae9a-a6ad07835bda">
+      <body>Calculation rules
+Explicit consequence rules
+</body>
+      <annotatedElements>
+        <useCaseMoniker
+          Id="20f39045-f285-4a69-a5e9-176f089ba765"
+          LastKnownName="Define custom rules"
+          LastKnownLocation="Documentation.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="8bb50c43-3c68-4c11-adf2-7296cb92ce38">
+      <body>Int , String, Bool</body>
+      <annotatedElements>
+        <useCaseMoniker
+          Id="dd98d3dc-a892-4244-a356-84e8aebc0b67"
+          LastKnownName="Define feature attributes"
+          LastKnownLocation="Documentation.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="688dc4b6-c5eb-4cd7-bc04-abb1749e8796">
+      <body>Instance of Model</body>
+      <annotatedElements>
+        <useCaseMoniker
+          Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c"
+          LastKnownName="Configure product "
+          LastKnownLocation="Documentation.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="2db5f2e9-a6f4-46cb-9962-aee6f9887363">
+      <body>Dependency
+Exclusion
+(Mutual, Single, etc)</body>
+      <annotatedElements>
+        <classMoniker
+          Id="7112fae8-2aa0-4f74-b329-cd8b3784d172"
+          LastKnownName="CompositionRule_Types"
+          LastKnownLocation="Documentation.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="fb1ccb35-5ff5-4cae-b32a-ecda54e8fabe">
+      <body>Calculation rules
+</body>
+    </comment>
+    <comment
+      Id="45d66e16-dec3-4fdf-a93c-6e61f5743781">
+      <body>OR [0...*]
+XOR [1...1]
+Cardinal OR [*...*</body>
+      <annotatedElements>
+        <useCaseMoniker
+          Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
+          LastKnownName="Define group relation to parent feature"
           LastKnownLocation="Documentation.uml" />
       </annotatedElements>
     </comment>
@@ -57,7 +107,7 @@ Mutual exclusion</body>
     <packageHasNamedElement>
       <class
         Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
-        name="Entity"
+        name="Feature"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -68,7 +118,7 @@ Mutual exclusion</body>
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
-            name="Described by"
+            name="Further described by"
             isAbstract="false">
             <classMoniker
               Id="d672e971-e6d7-44ad-bc5d-7fd0f4181270"
@@ -150,11 +200,122 @@ Mutual exclusion</body>
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="7f1b856d-02d8-44c5-a8dd-c7df2580f562"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            name="Contains (subfeatures)"
+            isAbstract="false">
+            <classMoniker
+              Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
+              LastKnownName="Feature"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4d3f7ea7-39e2-4c59-8417-a324fa030345"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="579caa9c-2d89-4b37-bfda-edc4592689a0"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="df536b0c-07d4-4734-a921-ef12d9e2221b"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="577c4aff-1da2-4df9-9506-71d277034627"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="dc845c22-80e0-4a8b-b0a0-ddbb623c3484"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName="FeatureType"
+            isLeaf="false"
+            isAbstract="false">
+            <enumerationMoniker
+              Id="e6464712-41fb-4a00-ba55-f999ee903f3f"
+              LastKnownName="Feature types"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="b57657ed-91b9-4ad9-b073-2bd1024e5bb6"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="16952a7a-8d47-4092-9972-1bb4566d4382"
+                  name="FeatureType"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
         <ownedAttributesInternal>
           <property
             Id="25aa28b2-3470-4e9f-a5a5-e7879f9a41ae"
             name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="c30e5103-ad7b-46f3-8cdd-d556bd197773"
+            name="Description"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="08ce6c8e-ac1b-4c6a-8b54-9a0a32e26422"
+            name="FeatureType"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -216,7 +377,7 @@ Mutual exclusion</body>
             Id="d0dd06b0-477b-4cfa-9799-7256d47c8056"
             isDerived="false"
             sourceEndRoleName=""
-            targetEndRoleName="+DataType"
+            targetEndRoleName="DataType"
             isLeaf="false"
             isAbstract="false">
             <enumerationMoniker
@@ -239,7 +400,7 @@ Mutual exclusion</body>
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="dce29fe5-9395-4b31-a6b2-8302d7b8a821"
-                  name="+DataType"
+                  name="DataType"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -251,6 +412,30 @@ Mutual exclusion</body>
             </relationshipOwnedElementsInternal>
           </association>
         </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="9997aaeb-3e79-4195-afe6-cbaf0002ab29"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="e2c0a716-ae54-4be1-9c25-256619cb88e3"
+            name="DataType"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -275,9 +460,6 @@ Mutual exclusion</body>
             Id="ad5b6005-be28-4089-b29f-d259f0f738b1"
             name="String" />
           <enumerationLiteral
-            Id="167346da-3e29-483b-a9cc-7db0a6377cb6"
-            name="Double" />
-          <enumerationLiteral
             Id="28cb3aff-a3ec-47ca-abc4-b7776325d7f1"
             name="Boolean" />
         </ownedLiterals>
@@ -286,26 +468,26 @@ Mutual exclusion</body>
     <packageHasNamedElement>
       <class
         Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
-        name="Rule"
+        name="Custom rule"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
         <targetEnds>
           <association
-            Id="1ace924a-634b-4063-b99e-76da30af2c9e"
+            Id="49b521ce-164e-40bf-a52b-48d226ef276d"
             isDerived="false"
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
             isAbstract="false">
             <classMoniker
-              Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
-              LastKnownName="Entity"
+              Id="d672e971-e6d7-44ad-bc5d-7fd0f4181270"
+              LastKnownName="Attribute"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="b4cf8009-21d9-4c66-95cf-d3efab79af41"
+                  Id="4334af49-1fe9-4b14-96ca-1fe9adb8162c"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -317,46 +499,94 @@ Mutual exclusion</body>
               </associationHasOwnedEnds>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="2add3865-8f8e-4d07-b8d7-30d04587d351"
+                  Id="5f980179-1145-4f55-b823-b3355d25d72b"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
                   isDerived="false"
                   isDerivedUnion="false"
                   aggregation="None"
-                  isComposite="false">
-                  <lowerValueInternal>
-                    <literalString
-                      Id="d6a4f3a8-f7ee-4847-bab7-61806e907abd"
-                      name="Lower"
-                      value="2" />
-                  </lowerValueInternal>
-                  <upperValueInternal>
-                    <literalString
-                      Id="5013fcf9-89d2-4eee-94c1-28dec50fa1cb"
-                      name="Upper"
-                      value=".*" />
-                  </upperValueInternal>
-                </memberEnd>
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="69e14a0c-35af-469a-bf92-8eaf5cea52f4"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
+              LastKnownName="Feature"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="1dd2e129-ebdf-4f7d-84e9-45a796ae553f"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="f7f913cb-089a-4bf9-93be-b956a659837d"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
         </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="8ab1fb3f-63b8-4b68-b90b-6d12f42450ee"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="36b026f1-dc49-47de-a783-b5a7eb8ff531"
+            name="Expression"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <enumeration
         Id="a775bf22-fe3e-4f7b-9801-1d98a258bd20"
-        name="Relation Types"
+        name="Composition types"
         isAbstract="false"
         isLeaf="false">
         <ownedLiterals>
           <enumerationLiteral
             Id="f237d559-298c-4ce1-8426-749da088dc6a"
-            name="Composition" />
+            name="Exclusion (Mutual/Single)" />
           <enumerationLiteral
             Id="62e40de4-7a03-403c-adda-721ec2bd34b7"
-            name="Inheritance" />
+            name="Dependency (Mutual/Single)" />
         </ownedLiterals>
       </enumeration>
     </packageHasNamedElement>
@@ -385,7 +615,7 @@ Mutual exclusion</body>
             isAbstract="false">
             <classMoniker
               Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
-              LastKnownName="Entity"
+              LastKnownName="Feature"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -482,62 +712,11 @@ Mutual exclusion</body>
     <packageHasNamedElement>
       <class
         Id="4003d946-de03-43b6-a41b-5e6ed5d30cab"
-        name="Structural Relation"
+        name="Extra composition rule"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
         <targetEnds>
-          <association
-            Id="4b7261a5-afe5-428e-afc3-160a2d3410d2"
-            isDerived="false"
-            sourceEndRoleName=""
-            targetEndRoleName=""
-            isLeaf="false"
-            name="Related to other Entities through"
-            isAbstract="false">
-            <classMoniker
-              Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
-              LastKnownName="Entity"
-              LastKnownLocation="Documentation.uml" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="fb0e7fa4-202c-445e-af4a-9daffa59082c"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false"
-                  isNavigableOwned="false" />
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="8e96bb37-eec7-441d-9be8-feed39a75482"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false">
-                  <lowerValueInternal>
-                    <literalString
-                      Id="4618bab3-8242-4fc7-86a8-518061051f5b"
-                      name="Lower"
-                      value="2" />
-                  </lowerValueInternal>
-                  <upperValueInternal>
-                    <literalString
-                      Id="7e28b810-ed14-46eb-a178-428a7b46b6ff"
-                      name="Upper"
-                      value=".*" />
-                  </upperValueInternal>
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-          </association>
           <association
             Id="95442ea7-c410-4d8f-9680-69e1bf4ce66b"
             isDerived="false"
@@ -547,7 +726,7 @@ Mutual exclusion</body>
             isAbstract="false">
             <enumerationMoniker
               Id="a775bf22-fe3e-4f7b-9801-1d98a258bd20"
-              LastKnownName="Relation Types"
+              LastKnownName="Composition types"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -575,7 +754,93 @@ Mutual exclusion</body>
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="7dc3ab47-d27a-451e-bd8a-31adcc0b8f16"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            name="Enforces constraints between"
+            isAbstract="false">
+            <classMoniker
+              Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
+              LastKnownName="Feature"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="1c653486-b6bb-4d57-b3e2-29d7286f17e0"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="54d9530f-bc01-4c35-bc7a-3ec04129d299"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="df98b272-c235-4547-9861-f5742f5908d6"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="01e0f8c2-07fa-43b7-b27b-741b49c2291b"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="0f8db5bb-6a8c-4d83-8f37-fcb25f4d1453"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="bce4abb8-6a2b-42b4-a275-e8aeccf4f4de"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="7e279217-5d45-4aa0-abea-11c2bc672e4e"
+            name="Description"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -596,7 +861,7 @@ Mutual exclusion</body>
             isAbstract="false">
             <classMoniker
               Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
-              LastKnownName="Entity"
+              LastKnownName="Feature"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -638,6 +903,19 @@ Mutual exclusion</body>
             </relationshipOwnedElementsInternal>
           </association>
         </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="8a6f6de3-cd0f-4bd7-ab2b-40b7f8df4ea3"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -662,7 +940,85 @@ Mutual exclusion</body>
         name="Tech user"
         isAbstract="false"
         isLeaf="false"
-        isActiveClass="false" />
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="d76a5401-b2bc-44dc-96e2-3d50585b87c2"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            name="Designs"
+            isAbstract="false">
+            <classMoniker
+              Id="6a433e17-2eab-40d9-a334-4c9b9c3fb27c"
+              LastKnownName="Model"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ddb75a56-d24f-4602-9d9a-2168b215ac5c"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="32e4348a-0d6f-4a3e-84cd-d2c92cf4a383"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="4838be0d-0f3c-4695-984e-9b4eaa30cdee"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="d6a52720-cd9f-445e-a534-d639b0445e2e"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="88c42367-5754-4c72-9bbd-401570cc9ea2"
+            name="Username"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="126a5e4e-3cfe-404a-b1ee-b5cf6a8b250c"
+            name="Password"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
@@ -696,7 +1052,7 @@ Mutual exclusion</body>
             isAbstract="false">
             <useCaseMoniker
               Id="d199c0c0-3af3-438e-afe3-b5f8da5d8f43"
-              LastKnownName="Define feature diagram"
+              LastKnownName="Define feature model"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -771,7 +1127,7 @@ Mutual exclusion</body>
     <packageHasNamedElement>
       <useCase
         Id="d199c0c0-3af3-438e-afe3-b5f8da5d8f43"
-        name="Define feature diagram"
+        name="Define feature model"
         isAbstract="false"
         isLeaf="false">
         <additions>
@@ -779,21 +1135,7 @@ Mutual exclusion</body>
             Id="f4b9b889-8602-45c2-893f-3f8d5e441ace">
             <useCaseMoniker
               Id="28b7ad4b-4706-4651-a4f3-1de68c789a45"
-              LastKnownName="Create feature"
-              LastKnownLocation="Documentation.uml" />
-          </include>
-          <include
-            Id="9d8aebb8-ce13-4aa3-8b5b-4c98f3366b0c">
-            <useCaseMoniker
-              Id="6263cbbe-16ab-4899-85db-df641f67d63a"
-              LastKnownName="Create feature group"
-              LastKnownLocation="Documentation.uml" />
-          </include>
-          <include
-            Id="43b4af3e-90eb-431f-81aa-b2c0d21a6395">
-            <useCaseMoniker
-              Id="e24e3468-e1e3-4785-b259-8096122a8dba"
-              LastKnownName="Define composition rules"
+              LastKnownName="Define feature tree structure"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -815,9 +1157,18 @@ Mutual exclusion</body>
     <packageHasNamedElement>
       <useCase
         Id="28b7ad4b-4706-4651-a4f3-1de68c789a45"
-        name="Create feature"
+        name="Define feature tree structure"
         isAbstract="false"
         isLeaf="false">
+        <additions>
+          <include
+            Id="f825bf65-25a6-4cf4-9701-f754decf0899">
+            <useCaseMoniker
+              Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
+              LastKnownName="Add feature/subfeature"
+              LastKnownLocation="Documentation.uml" />
+          </include>
+        </additions>
         <subjects>
           <subsystemMoniker
             Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
@@ -829,15 +1180,15 @@ Mutual exclusion</body>
     <packageHasNamedElement>
       <useCase
         Id="dd98d3dc-a892-4244-a356-84e8aebc0b67"
-        name="Define attributes"
+        name="Define feature attributes"
         isAbstract="false"
         isLeaf="false">
         <extendedCases>
           <extend
-            Id="8b5771b7-3d18-4f2f-b42f-ab23a43100e6">
+            Id="7b9b2da5-a301-4345-b99d-e8e60c56b337">
             <useCaseMoniker
-              Id="28b7ad4b-4706-4651-a4f3-1de68c789a45"
-              LastKnownName="Create feature"
+              Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
+              LastKnownName="Add feature/subfeature"
               LastKnownLocation="Documentation.uml" />
           </extend>
         </extendedCases>
@@ -852,9 +1203,27 @@ Mutual exclusion</body>
     <packageHasNamedElement>
       <useCase
         Id="6263cbbe-16ab-4899-85db-df641f67d63a"
-        name="Create feature group"
+        name="Group features into a Feature Group"
         isAbstract="false"
         isLeaf="false">
+        <extendedCases>
+          <extend
+            Id="f99bed64-fbb3-4209-81f4-56f725cd4784">
+            <useCaseMoniker
+              Id="28b7ad4b-4706-4651-a4f3-1de68c789a45"
+              LastKnownName="Define feature tree structure"
+              LastKnownLocation="Documentation.uml" />
+          </extend>
+        </extendedCases>
+        <additions>
+          <include
+            Id="ba408c0c-6e87-46fb-802c-0f4e7ebc27dc">
+            <useCaseMoniker
+              Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
+              LastKnownName="Define group relation to parent feature"
+              LastKnownLocation="Documentation.uml" />
+          </include>
+        </additions>
         <subjects>
           <subsystemMoniker
             Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
@@ -869,6 +1238,15 @@ Mutual exclusion</body>
         name="Define composition rules"
         isAbstract="false"
         isLeaf="false">
+        <extendedCases>
+          <extend
+            Id="2997c8f8-64b8-4d28-9cc5-e42ad074c460">
+            <useCaseMoniker
+              Id="d199c0c0-3af3-438e-afe3-b5f8da5d8f43"
+              LastKnownName="Define feature model"
+              LastKnownLocation="Documentation.uml" />
+          </extend>
+        </extendedCases>
         <subjects>
           <subsystemMoniker
             Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
@@ -888,10 +1266,1328 @@ Mutual exclusion</body>
             Id="50f52a7f-654e-4a0c-ac11-d5eaf17edd5e">
             <useCaseMoniker
               Id="d199c0c0-3af3-438e-afe3-b5f8da5d8f43"
-              LastKnownName="Define feature diagram"
+              LastKnownName="Define feature model"
               LastKnownLocation="Documentation.uml" />
           </extend>
         </extendedCases>
+        <subjects>
+          <subsystemMoniker
+            Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
+            LastKnownName="Product modeler"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <subsystem
+        Id="5079c949-412d-4716-8274-b6f587b4d3eb"
+        name="Configurator"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <actor
+        Id="d629e551-722c-4c4f-9a96-6bb8a1853053"
+        name="Customer"
+        isAbstract="false"
+        isLeaf="false">
+        <targetEnds>
+          <association
+            Id="7b4b7acf-2318-4433-9f65-079320d0de14"
+            isDerived="false"
+            sourceEndRoleName="Customer"
+            targetEndRoleName="Configure product "
+            isLeaf="false"
+            isAbstract="false">
+            <useCaseMoniker
+              Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c"
+              LastKnownName="Configure product "
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="df637bdf-723c-426c-82fb-689a99c6ce86"
+                  name="Customer"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="75957ed7-3512-4321-8159-debb82ab3d57"
+                  name="Configure product "
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </actor>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="55285007-fd6b-4046-80a8-a353733e80df"
+        name="Users"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="e2b55446-fcd7-4ab7-8461-afd732f269a8"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="781dad84-0450-4b27-919b-37e345a40526"
+              LastKnownName="Models"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="e1457054-6d52-4abe-890d-6ed84d7a17f7"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9ca26b8d-eb72-4385-aeff-876eae82f29c"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="2a7cde1e-f65f-43d6-be6c-68e0cf1d74b6"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="7db8921e-bf44-43da-9246-b8ae5d970872"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="16c2d5e9-b88b-4a30-a613-fddd1ef1f668"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="cd43aa0b-c4e5-4025-a90a-9ff33bbdf117"
+            name="Username"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="8e96e854-81a8-42ef-9b8a-0fcfc98d69da"
+            name="Password"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="781dad84-0450-4b27-919b-37e345a40526"
+        name="Models"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="4bded998-a282-4473-994d-180f6c1f3bae"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="ccba7042-b8b1-4be8-8668-1de3d7b3b05c"
+              LastKnownName="Features"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8fbb50a1-fc4d-4809-bfc7-30e81cce5ea2"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="814d622a-1891-4dfe-b561-5f51d431cadb"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="1df3c192-7827-433a-a9fb-94bab5fe45c4"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="a48bc54a-0723-45d2-9f74-6b2a35753e67"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="1eca0e91-dec2-4df6-ac76-b18dcd22cdac"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="77cad96d-e4b0-41d3-9d9b-bd99daefca9d"
+              LastKnownName="Feature_Groups"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6351df0b-994e-473e-90ef-7c7a120acdf7"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="7f77c8dc-820e-4fed-97f2-891226ff15b6"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="c950df6e-c050-498a-81d9-0ded81e9b82b"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="868b17e4-907d-4f32-8106-2a570e497f1b"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="30f8be10-be26-4e77-95a5-9a69916390cd"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="7f1ce8fb-8f71-4a93-a1ac-c74512d40611"
+              LastKnownName="CustomRules"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4b0d84d9-ea58-42e7-abf9-b2a94382428d"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9e174e34-0af1-437b-aa2c-beed438457f7"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="7f0df04b-32f1-4445-b9af-6a3bca2fb240"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="ab07a674-b1bb-4ef2-a5da-70546793edc1"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="bb8a8761-186e-4b6a-938a-301826f5812d"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="7d94c08c-5780-4052-96f8-c389112be2c5"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="d4d55e94-b7d0-46ae-bd6a-a02047ababd8"
+            name="UserID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="ccba7042-b8b1-4be8-8668-1de3d7b3b05c"
+        name="Features"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="8800ee93-9a15-4780-9d89-37a3bba0f9d6"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="5b4c3720-9975-4032-93b8-ae027675d6d5"
+              LastKnownName="Attributes"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="e1d620b6-58d7-405d-a997-e68bc1bce443"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8a3e168d-31a7-4c56-85e9-6f356d5a3613"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="dc06f9ec-dfdd-44fe-a122-06bc02a960b1"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="905b6051-95ed-4b8f-a1be-540c376e6eb4"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="1dff1c42-1fe8-45f7-8d7f-54090a412e31"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="d1b3fb85-fa0f-4b2e-a158-3e1abc6e90f1"
+              LastKnownName="CompositionRules_To_Features"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="d2094a27-44d3-4d96-b9e3-6679974e0b1d"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8f44494a-ec59-4f48-8025-b8edeb94f939"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="92d32a20-2913-4a47-aa3d-c53261b627b7"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="69703ef4-27b9-45b2-a1d7-2097f777a9bf"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="4535d103-d0bd-40f7-8a02-bd6ee8d71442"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="9bbcca1c-a35d-4302-90dd-bfe030817961"
+            name="Type"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="b2dd4b11-31f3-444f-b340-d5edd12d84d7"
+            name="Description"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="8b27c6a7-bd89-4563-95f4-b92f781ec3d6"
+            name="ModelID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="877d7f26-8b51-421b-9691-88e8cf144f1d"
+            name="ParentGroupID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="5b4c3720-9975-4032-93b8-ae027675d6d5"
+        name="Attributes"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="26272f68-94eb-48b1-be17-215b7a35ae7b"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="81b3eb6e-fbf4-4549-99ce-f519093a2e7d"
+            name="DataTypeID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="9cecedd4-a9c2-454a-8a82-83e8f64d3965"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="05c58ed7-a468-4305-ae4f-bc49dd885718"
+        name="Feature Types"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="5f738419-57de-4a6e-a807-812cdb9ac719"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="9e68c83f-3125-4ba2-bd50-e144551cbe1d"
+            name="Type"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="1fdf2a6e-dbd6-4695-8ead-a63d0f8f6c45"
+            name="Description"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="d2ff513c-23f3-4a89-a95c-362b22be6bb4"
+            name="ModelID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="4a48087a-c7f0-4b74-b220-a904f172f44b"
+            name="ParentGroupID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="77cad96d-e4b0-41d3-9d9b-bd99daefca9d"
+        name="Feature_Groups"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="a73309e0-9ad3-4a3a-98b0-6f64397415be"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="ccba7042-b8b1-4be8-8668-1de3d7b3b05c"
+              LastKnownName="Features"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="f86d8893-a990-459f-8f97-4e8fd0035c34"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6641b3c5-133b-4551-98ac-ca850c764c6f"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="632bccdf-8166-4ac4-b377-8a7d0387e1ef"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="475798ae-8f73-4e91-bc4d-54b4c1464c1b"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="69a8ab90-97d6-4d8c-82c0-0d72672f20a6"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="1003e038-3d0e-44b9-9891-8da738a508a8"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="a02eaeee-68ab-4db5-b059-5a88077e819f"
+            name="ModelID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="96c7971f-77a6-4743-928c-8087741e77db"
+        name="CompositionRules"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="2a4490c1-2b51-4702-b435-29e9b4b36988"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="d1b3fb85-fa0f-4b2e-a158-3e1abc6e90f1"
+              LastKnownName="CompositionRules_To_Features"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="5da8658c-56df-4a19-9ee7-fd6603ba2267"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="247f34f2-e4a4-4d4e-be98-459605416fa6"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="14e75f67-1957-485d-b6d2-a544b8e347f9"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="5c3a8139-94be-440f-85f1-aa6d7a6916a7"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="8a0499a5-762a-424e-bb1e-80ba9d7c339e"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="dab8fc2d-90ab-42fc-abcc-5e7f8ab022b7"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="979998fb-4ab3-4d02-a5e2-dd5c4af5b02d"
+            name="CompositionRuleTypeID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="d1b3fb85-fa0f-4b2e-a158-3e1abc6e90f1"
+        name="CompositionRules_To_Features"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="a2a54537-3986-48c0-86d4-888601fd71e6"
+            name="CompositionRuleID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="2772424e-578b-4178-91a6-42993742a7d0"
+            name="FeatureID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="ce623e1e-1553-4cd3-817f-fa85e2cdd9d1"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="610ab82d-2895-4a68-836c-914b5e373f60"
+            name="Sequence"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c"
+        name="Configure product "
+        isAbstract="false"
+        isLeaf="false">
+        <additions>
+          <include
+            Id="6546547b-c5b6-464e-aef1-3b3c479723cb">
+            <useCaseMoniker
+              Id="b3818ff1-d175-4194-97b4-7c10cd427d62"
+              LastKnownName="Choose features"
+              LastKnownLocation="Documentation.uml" />
+          </include>
+        </additions>
+        <subjects>
+          <subsystemMoniker
+            Id="5079c949-412d-4716-8274-b6f587b4d3eb"
+            LastKnownName="Configurator"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7f1ce8fb-8f71-4a93-a1ac-c74512d40611"
+        name="CustomRules"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="cb2d5648-9577-4baa-b2a9-fcb44b8cc58b"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="fffd2c3c-0fd0-4cf4-a3f0-cd285a9d38ac"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="71439b62-b0af-4edd-b745-1461fea229c2"
+            name="Description"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="73973c58-3971-4f90-9e07-9d1c4d61ab9f"
+            name="Expression"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7112fae8-2aa0-4f74-b329-cd8b3784d172"
+        name="CompositionRule_Types"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="e13796f7-5bca-456d-b01f-80032554e412"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="96c7971f-77a6-4743-928c-8087741e77db"
+              LastKnownName="CompositionRules"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="7a6f4e76-4ce1-4141-a742-db8d28288edb"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="b0b5cd64-8b16-42af-9ac3-f0074c1ef51f"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="9782aa3a-5622-46ff-9f4f-1600747e5f5b"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="5cd609cf-f69b-4f40-9e09-21cca20268f5"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="990f0d07-8b05-4cdd-8f85-fccc58597d54"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="9e51291f-ed9c-473d-830c-4268bff48803"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="873e5a97-73e5-4788-8b77-443dd2b26e14"
+        name="Feature Group"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="00833b74-ed44-40f1-8436-05986060e9bb"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            name="Groups together"
+            isAbstract="false">
+            <classMoniker
+              Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
+              LastKnownName="Feature"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="69c61e27-4867-468c-8d6e-4bd4d89bf109"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="86de9339-1682-4066-b866-659f0ac0c4f9"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="3e21f4a8-d5da-4959-8acb-31d5fef66f32"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="479587ec-67fb-450f-af44-271885925604"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="2dd31ad2-46dd-48eb-92fd-24fe1d5d713c"
+            isDerived="false"
+            sourceEndRoleName="FeatureGroupType"
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <enumerationMoniker
+              Id="fc641a3f-08c6-4cad-8493-3fcd1fbcda5f"
+              LastKnownName="FeatureGroup types"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ee8e9ad6-b22c-441e-95e9-68272844d1b6"
+                  name="FeatureGroupType"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="c9d79d59-977b-45dc-b32b-cc5e27d0563b"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="51782dbb-b392-4d67-b63d-cf5bacf7efda"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="9df356c2-042d-4a8e-82f9-23533e8b8bf2"
+            name="Description"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="ddeae01f-9316-4e35-a71f-601f801c9679"
+            name="FeatureGroupType"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="d6c982f9-1021-40f9-8aa6-9cb29b5ea3cc"
+        name="CustomRules_To_Features"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="b3818ff1-d175-4194-97b4-7c10cd427d62"
+        name="Choose features"
+        isAbstract="false"
+        isLeaf="false">
+        <subjects>
+          <subsystemMoniker
+            Id="5079c949-412d-4716-8274-b6f587b4d3eb"
+            LastKnownName="Configurator"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
+        name="Add feature/subfeature"
+        isAbstract="false"
+        isLeaf="false">
+        <additions>
+          <include
+            Id="de2b7153-d069-4c79-9a24-effe0788fa4a">
+            <useCaseMoniker
+              Id="c169cfab-f014-4474-9bcb-115ac310c409"
+              LastKnownName="Define parent-child relation"
+              LastKnownLocation="Documentation.uml" />
+          </include>
+        </additions>
+        <subjects>
+          <subsystemMoniker
+            Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
+            LastKnownName="Product modeler"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="c169cfab-f014-4474-9bcb-115ac310c409"
+        name="Define parent-child relation"
+        isAbstract="false"
+        isLeaf="false">
+        <subjects>
+          <subsystemMoniker
+            Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
+            LastKnownName="Product modeler"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="5f7a44ab-9976-41a4-b170-0fe5d54efa14"
+        name="Structural Relation"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="38d250c8-0ac3-456d-9773-08706e9b3de7"
+        name="Structural relation types"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedLiterals>
+          <enumerationLiteral
+            Id="3df573be-7f51-4bde-9672-97823c2271fa"
+            name="Optional" />
+          <enumerationLiteral
+            Id="b111d44c-d138-4e11-9c4a-9de94d69793d"
+            name="String" />
+          <enumerationLiteral
+            Id="d8e50497-1e80-43c8-a50b-0c1587d92c1d"
+            name="Mandatory" />
+        </ownedLiterals>
+      </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="e6464712-41fb-4a00-ba55-f999ee903f3f"
+        name="Feature types"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedLiterals>
+          <enumerationLiteral
+            Id="a37ebe87-6a40-4571-8349-b1fb502edca6"
+            name="Optional [0...1" />
+          <enumerationLiteral
+            Id="842ddf7a-f8bd-49ff-96c8-f6419255c2ed"
+            name="Mandatory [1...1]" />
+          <enumerationLiteral
+            Id="20542ffa-a752-496b-b610-6590a4b59c54"
+            name="Clonable(cardinality)" />
+        </ownedLiterals>
+      </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="fc641a3f-08c6-4cad-8493-3fcd1fbcda5f"
+        name="FeatureGroup types"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedLiterals>
+          <enumerationLiteral
+            Id="75f02a74-fc4a-4e9f-b5df-4db30e65b369"
+            name="OR [1...*]" />
+          <enumerationLiteral
+            Id="18c8c236-72c3-4fe8-9c86-de88be1b8014"
+            name="XOR[1...1]" />
+          <enumerationLiteral
+            Id="b5937090-b6b7-4c31-9197-7966fc67c4cd"
+            name="Cardinal OR [*...*]" />
+        </ownedLiterals>
+      </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7c3e705d-462b-43d7-be42-d7f4f7b13f0c"
+        name="Explicit consequence rules"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
+        name="Define group relation to parent feature"
+        isAbstract="false"
+        isLeaf="false">
         <subjects>
           <subsystemMoniker
             Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
