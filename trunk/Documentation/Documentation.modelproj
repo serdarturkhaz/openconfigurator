@@ -17,6 +17,16 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\ArchitectureTools\Microsoft.VisualStudio.TeamArchitect.ModelingProject.targets" />
   <ItemGroup>
+    <Content Include="Database\DBDiagram.classdiagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Database\DBDiagram.classdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Database\DBDiagram.classdiagram</DependentUpon>
+    </Content>
+    <Content Include="UI\Login.bmml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Use Cases\Overview.usecasediagram">
       <SubType>Content</SubType>
     </Content>
@@ -36,6 +46,9 @@
       <SubType>Content</SubType>
     </Content>
     <Folder Include="DomainModel" />
+    <Folder Include="Database" />
+    <Folder Include="UI" />
     <Folder Include="Use Cases" />
+    <Folder Include="Use Cases\Document" />
   </ItemGroup>
 </Project>

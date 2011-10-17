@@ -6,12 +6,14 @@ using System.Web.Mvc;
 
 namespace OpenConfigurator.Controllers
 {
-    public class HomeController : Controller
+    public class LoginController : Controller
     {
-        public ActionResult GetPage()
+        public ActionResult Login()
         {
-            ViewBag.Message = "Welcome to ASP.NET MVC!";
+            
+            
             return View();
         }
+
     }
 }

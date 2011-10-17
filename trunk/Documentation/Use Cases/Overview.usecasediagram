@@ -1,32 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
   <packagedElements>
     <useCaseModelRootHasTypes>
       <subsystem Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" name="Product modeler" isAbstract="false" isLeaf="false" isActiveClass="false">
         <ownedCommentsInternal>
           <comment Id="37faf9fe-5fd1-42ef-a850-9a079db2646a">
             <elementDefinition Id="baed6ed8-d10c-4522-84b5-809aa069e397" />
-            <body>Optional
-Mandatory
-Alternative</body>
+            <body>Optional [0...1]
+Mandatory [1...1]
+Cloneable [0...*]</body>
             <annotatedElements>
-              <useCaseMoniker Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" LastKnownName="Create feature" />
-            </annotatedElements>
-          </comment>
-          <comment Id="fc5f9e61-02a0-4aae-84f2-e9f447e0b8b2">
-            <elementDefinition Id="1b7c6ac2-10b6-4e91-a14b-232fa2c81a8b" />
-            <body>Static
-Dynamic</body>
-            <annotatedElements>
-              <useCaseMoniker Id="31f7881c-5794-4723-a12b-4fa84b3a6a66" LastKnownName="Define attributes" />
+              <useCaseMoniker Id="bcc9c14a-4886-459d-a2bf-381e0a273e38" LastKnownName="Define parent-child relation" />
             </annotatedElements>
           </comment>
           <comment Id="b6202542-364e-408e-9896-1892b90d734a">
             <elementDefinition Id="76c46720-94ad-4a97-9402-9829e67dea3a" />
-            <body>Mutual dependency
-Mutual exclusion</body>
+            <body>Dependency, Exclusion
+Mutual, Unidirectional</body>
             <annotatedElements>
               <useCaseMoniker Id="259c5946-6644-4e90-b75f-3ef25a9f80ba" LastKnownName="Define composition rules" />
+            </annotatedElements>
+          </comment>
+          <comment Id="5bc813bd-30c5-4de7-9b35-d156dacb536d">
+            <elementDefinition Id="2bfb1452-28e8-4768-ae9a-a6ad07835bda" />
+            <body>Calculation rules
+Explicit consequence rules
+</body>
+            <annotatedElements>
+              <useCaseMoniker Id="bfa4d382-9b68-4dd9-ba8a-80308bba4e3a" LastKnownName="Define custom rules" />
+            </annotatedElements>
+          </comment>
+          <comment Id="68980a81-2820-4cb8-89c6-91b3a784fa33">
+            <elementDefinition Id="8bb50c43-3c68-4c11-adf2-7296cb92ce38" />
+            <body>Int , String, Bool</body>
+            <annotatedElements>
+              <useCaseMoniker Id="31f7881c-5794-4723-a12b-4fa84b3a6a66" LastKnownName="Define feature attributes" />
+            </annotatedElements>
+          </comment>
+          <comment Id="45d2a5c3-b4b3-42dd-b47e-6f37f16ca10f">
+            <elementDefinition Id="45d66e16-dec3-4fdf-a93c-6e61f5743781" />
+            <body>OR [0...*]
+XOR [1...1]
+Cardinal OR [*...*</body>
+            <annotatedElements>
+              <useCaseMoniker Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" LastKnownName="Define group relation to parent feature" />
             </annotatedElements>
           </comment>
         </ownedCommentsInternal>
@@ -38,7 +55,7 @@ Mutual exclusion</body>
         <elementDefinition Id="25dc7f3d-b3e1-4cd2-a848-b921b4ad6018" />
         <targetEnds>
           <association Id="b4d6b995-26ea-4335-a030-81eb3acc10fc" isDerived="false" sourceEndRoleName="Tech user" targetEndRoleName="Define model" isLeaf="false" isAbstract="false">
-            <useCaseMoniker Id="d230f5fe-ee90-4e0b-97f0-87bae04abaaf" LastKnownName="Define feature diagram" />
+            <useCaseMoniker Id="d230f5fe-ee90-4e0b-97f0-87bae04abaaf" LastKnownName="Define feature model" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="e0f8391b-873f-4d7f-85eb-90b49863fdf0" name="Tech user" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
@@ -57,20 +74,12 @@ Mutual exclusion</body>
       </actor>
     </useCaseModelRootHasTypes>
     <packageHasNamedElement>
-      <useCase Id="d230f5fe-ee90-4e0b-97f0-87bae04abaaf" name="Define feature diagram" isAbstract="false" isLeaf="false">
+      <useCase Id="d230f5fe-ee90-4e0b-97f0-87bae04abaaf" name="Define feature model" isAbstract="false" isLeaf="false">
         <elementDefinition Id="d199c0c0-3af3-438e-afe3-b5f8da5d8f43" />
         <additions>
           <include Id="6210fe13-4cf7-4596-8dc9-891def97b137">
-            <useCaseMoniker Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" LastKnownName="Create feature" />
+            <useCaseMoniker Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" LastKnownName="Define feature tree structure" />
             <elementDefinition Id="f4b9b889-8602-45c2-893f-3f8d5e441ace" />
-          </include>
-          <include Id="4351296d-2147-4976-8519-ade767ccccc5">
-            <useCaseMoniker Id="8f33f022-997e-4a9c-b16f-8214f6467e5a" LastKnownName="Create feature group" />
-            <elementDefinition Id="9d8aebb8-ce13-4aa3-8b5b-4c98f3366b0c" />
-          </include>
-          <include Id="bc2edcd2-2cb8-4b9b-9e9f-ae0a098c05f7">
-            <useCaseMoniker Id="259c5946-6644-4e90-b75f-3ef25a9f80ba" LastKnownName="Define composition rules" />
-            <elementDefinition Id="43b4af3e-90eb-431f-81aa-b2c0d21a6395" />
           </include>
         </additions>
         <subjects>
@@ -79,20 +88,26 @@ Mutual exclusion</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" name="Create feature" isAbstract="false" isLeaf="false">
+      <useCase Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" name="Define feature tree structure" isAbstract="false" isLeaf="false">
         <elementDefinition Id="28b7ad4b-4706-4651-a4f3-1de68c789a45" />
+        <additions>
+          <include Id="0b095ab2-3f4a-4bc1-9c35-1251feeea512">
+            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Add feature/subfeature" />
+            <elementDefinition Id="f825bf65-25a6-4cf4-9701-f754decf0899" />
+          </include>
+        </additions>
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
         </subjects>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="31f7881c-5794-4723-a12b-4fa84b3a6a66" name="Define attributes" isAbstract="false" isLeaf="false">
+      <useCase Id="31f7881c-5794-4723-a12b-4fa84b3a6a66" name="Define feature attributes" isAbstract="false" isLeaf="false">
         <elementDefinition Id="dd98d3dc-a892-4244-a356-84e8aebc0b67" />
         <extendedCases>
-          <extend Id="8fcc69d1-6321-45d7-a9a9-6783df0cf593">
-            <useCaseMoniker Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" LastKnownName="Create feature" />
-            <elementDefinition Id="8b5771b7-3d18-4f2f-b42f-ab23a43100e6" />
+          <extend Id="ebafe7af-4a8c-44fc-81a2-d8abacfd98e7">
+            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Add feature/subfeature" />
+            <elementDefinition Id="7b9b2da5-a301-4345-b99d-e8e60c56b337" />
           </extend>
         </extendedCases>
         <subjects>
@@ -101,8 +116,20 @@ Mutual exclusion</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="8f33f022-997e-4a9c-b16f-8214f6467e5a" name="Create feature group" isAbstract="false" isLeaf="false">
+      <useCase Id="8f33f022-997e-4a9c-b16f-8214f6467e5a" name="Group features into a Feature Group" isAbstract="false" isLeaf="false">
         <elementDefinition Id="6263cbbe-16ab-4899-85db-df641f67d63a" />
+        <extendedCases>
+          <extend Id="d02bd60d-5b3b-4cdf-9000-68eb670cb80e">
+            <useCaseMoniker Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" LastKnownName="Define feature tree structure" />
+            <elementDefinition Id="f99bed64-fbb3-4209-81f4-56f725cd4784" />
+          </extend>
+        </extendedCases>
+        <additions>
+          <include Id="f9b74bf4-37a8-40e5-954e-983e90240716">
+            <useCaseMoniker Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" LastKnownName="Define group relation to parent feature" />
+            <elementDefinition Id="ba408c0c-6e87-46fb-802c-0f4e7ebc27dc" />
+          </include>
+        </additions>
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
         </subjects>
@@ -111,6 +138,12 @@ Mutual exclusion</body>
     <packageHasNamedElement>
       <useCase Id="259c5946-6644-4e90-b75f-3ef25a9f80ba" name="Define composition rules" isAbstract="false" isLeaf="false">
         <elementDefinition Id="e24e3468-e1e3-4785-b259-8096122a8dba" />
+        <extendedCases>
+          <extend Id="6efde2f3-100f-4f10-bd71-6536b3fcc133">
+            <useCaseMoniker Id="d230f5fe-ee90-4e0b-97f0-87bae04abaaf" LastKnownName="Define feature model" />
+            <elementDefinition Id="2997c8f8-64b8-4d28-9cc5-e42ad074c460" />
+          </extend>
+        </extendedCases>
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
         </subjects>
@@ -121,10 +154,99 @@ Mutual exclusion</body>
         <elementDefinition Id="20f39045-f285-4a69-a5e9-176f089ba765" />
         <extendedCases>
           <extend Id="5a4a3817-98ee-4e78-9ca0-9fd6e17226e6">
-            <useCaseMoniker Id="d230f5fe-ee90-4e0b-97f0-87bae04abaaf" LastKnownName="Define feature diagram" />
+            <useCaseMoniker Id="d230f5fe-ee90-4e0b-97f0-87bae04abaaf" LastKnownName="Define feature model" />
             <elementDefinition Id="50f52a7f-654e-4a0c-ac11-d5eaf17edd5e" />
           </extend>
         </extendedCases>
+        <subjects>
+          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <useCaseModelRootHasTypes>
+      <subsystem Id="e744f6d4-54be-4540-a875-f4dd89917137" name="Configurator" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <ownedCommentsInternal>
+          <comment Id="4f25f6a5-c789-40d6-84e1-d976eed9b078">
+            <elementDefinition Id="688dc4b6-c5eb-4cd7-bc04-abb1749e8796" />
+            <body>Instance of Model</body>
+            <annotatedElements>
+              <useCaseMoniker Id="0855ce31-6aed-45cc-aa62-ba2180ef5b6a" LastKnownName="Configure product " />
+            </annotatedElements>
+          </comment>
+        </ownedCommentsInternal>
+        <elementDefinition Id="5079c949-412d-4716-8274-b6f587b4d3eb" />
+      </subsystem>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="bcf65c90-12a5-4216-9b93-9bf0cf38885f" name="Customer" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="d629e551-722c-4c4f-9a96-6bb8a1853053" />
+        <targetEnds>
+          <association Id="3fe585d6-99a8-483b-80d5-1ba3d6d9fc53" isDerived="false" sourceEndRoleName="Customer" targetEndRoleName="Configure product " isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="0855ce31-6aed-45cc-aa62-ba2180ef5b6a" LastKnownName="Configure product " />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f2010d8d-2e54-49f4-91f6-ef3f9058aa37" name="Customer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="df637bdf-723c-426c-82fb-689a99c6ce86" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="a00a879a-1c36-4084-af84-69e9da967f09" name="Configure product " isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="75957ed7-3512-4321-8159-debb82ab3d57" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="7b4b7acf-2318-4433-9f65-079320d0de14" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <packageHasNamedElement>
+      <useCase Id="0855ce31-6aed-45cc-aa62-ba2180ef5b6a" name="Configure product " isAbstract="false" isLeaf="false">
+        <elementDefinition Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c" />
+        <additions>
+          <include Id="950af437-ca59-4073-87b7-179b9abf9e57">
+            <useCaseMoniker Id="157e08e7-3960-48c7-b9d6-0e714e41d97f" LastKnownName="Choose features" />
+            <elementDefinition Id="6546547b-c5b6-464e-aef1-3b3c479723cb" />
+          </include>
+        </additions>
+        <subjects>
+          <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="157e08e7-3960-48c7-b9d6-0e714e41d97f" name="Choose features" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="b3818ff1-d175-4194-97b4-7c10cd427d62" />
+        <subjects>
+          <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="3f831426-dce1-485d-837c-e938f091a4fc" name="Add feature/subfeature" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802" />
+        <additions>
+          <include Id="8e3efa9b-88d4-46e3-9517-9c3dc8823a7f">
+            <useCaseMoniker Id="bcc9c14a-4886-459d-a2bf-381e0a273e38" LastKnownName="Define parent-child relation" />
+            <elementDefinition Id="de2b7153-d069-4c79-9a24-effe0788fa4a" />
+          </include>
+        </additions>
+        <subjects>
+          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="bcc9c14a-4886-459d-a2bf-381e0a273e38" name="Define parent-child relation" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="c169cfab-f014-4474-9bcb-115ac310c409" />
+        <subjects>
+          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" name="Define group relation to parent feature" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="75616a27-7a38-4020-99f3-96a8f2da8c47" />
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
         </subjects>

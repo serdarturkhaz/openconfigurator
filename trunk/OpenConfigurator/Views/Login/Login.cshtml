@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Master/_OuterLayout.cshtml";
+}
+@section scripts{
+    $(document).ready(function () { //alert('jquery works!'); });
+}
+
+
+<div id="LoginBox" class="RoundedBox">
+    <div class="BoxHeader">
+        <div class="BoxInnerHeader">
+            <span>Login</span>
+        </div>
+    </div>
+    <div class="BoxContent">
+        <table>
+            <tr>
+                <td>
+                    <span class="Label">Username</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input class="Textbox" type="text" id="UserNameTextbox" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="Label">Password</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input class="Textbox" type="password" id="PasswordNameTextbox" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="BoxFooter">
+        <div class="BoxInnerFooter"></div>
+    </div>
+</div>
