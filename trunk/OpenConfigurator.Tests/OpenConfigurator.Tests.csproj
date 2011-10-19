@@ -9,7 +9,7 @@
     <ProjectGuid>{3DC7914F-152E-4B8D-9BAD-B31C05F92397}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenConfigurator.Tests</RootNamespace>
+    <RootNamespace>PresentationLayer.Tests</RootNamespace>
     <AssemblyName>OpenConfigurator.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -56,9 +56,9 @@
     <Content Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenConfigurator\OpenConfigurator.csproj">
+    <ProjectReference Include="..\OpenConfigurator\PresentationLayer.csproj">
       <Project>{6BDEE121-EE13-41CC-BA19-BEBD84E8D503}</Project>
-      <Name>OpenConfigurator</Name>
+      <Name>PresentationLayer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

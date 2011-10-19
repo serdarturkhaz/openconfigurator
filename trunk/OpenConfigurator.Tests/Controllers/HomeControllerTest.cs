@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenConfigurator;
-using OpenConfigurator.Controllers;
+using PresentationLayer;
+using PresentationLayer.Controllers;
 
-namespace OpenConfigurator.Tests.Controllers
+namespace PresentationLayer.Tests.Controllers
 {
     [TestClass]
     public class HomeControllerTest

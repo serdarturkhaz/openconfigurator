@@ -1,8 +1,13 @@
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\OpenConfigurator.Tests.dll.config
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\OpenConfigurator.Tests.dll
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\OpenConfigurator.Tests.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\OpenConfigurator.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\OpenConfigurator.pdb
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\obj\Debug\OpenConfigurator.Tests.dll
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\obj\Debug\OpenConfigurator.Tests.pdb
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\PresentationLayer.dll
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\DAL.dll
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\PresentationLayer.pdb
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\DAL.pdb
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\BLL.dll
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator.Tests\bin\Debug\BLL.pdb
