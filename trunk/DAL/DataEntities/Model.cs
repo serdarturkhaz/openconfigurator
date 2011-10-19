@@ -47,6 +47,18 @@ namespace DAL.DataEntities
             get;
             set;
         }
+    
+        public virtual Nullable<System.DateTime> CreatedDate
+        {
+            get;
+            set;
+        }
+    
+        public virtual Nullable<System.DateTime> LastModifiedDate
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Navigation Properties

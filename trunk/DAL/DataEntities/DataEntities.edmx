@@ -145,6 +145,8 @@
           <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="UserID" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="LastModifiedDate" Type="datetime" />
         </EntityType>
         <EntityType Name="Rule_Types">
           <Key>
@@ -496,6 +498,8 @@
           <NavigationProperty Name="Features" Relationship="OpenConfigurator_Model.FK_Features_Models" FromRole="Models" ToRole="Features" />
           <NavigationProperty Name="User" Relationship="OpenConfigurator_Model.FK_Models_Users" FromRole="Models" ToRole="Users" />
           <NavigationProperty Name="Rules" Relationship="OpenConfigurator_Model.FK_Rules_Models" FromRole="Model" ToRole="Rule" />
+          <Property Type="DateTime" Name="CreatedDate" />
+          <Property Type="DateTime" Name="LastModifiedDate" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -749,7 +753,9 @@
             <ScalarProperty Name="UpperBound" ColumnName="UpperBound" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Models"><EntityTypeMapping TypeName="OpenConfigurator_Model.Model"><MappingFragment StoreEntitySet="Models">
-            <ScalarProperty Name="ID" ColumnName="ID" />
+            <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
             <ScalarProperty Name="UserID" ColumnName="UserID" />
             <ScalarProperty Name="Name" ColumnName="Name" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>

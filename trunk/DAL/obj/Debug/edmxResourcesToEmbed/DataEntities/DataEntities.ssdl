@@ -140,6 +140,8 @@
     <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
     <Property Name="UserID" Type="int" Nullable="false" />
     <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedDate" Type="datetime" />
   </EntityType>
   <EntityType Name="Rule_Types">
     <Key>

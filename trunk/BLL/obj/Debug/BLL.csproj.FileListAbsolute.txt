@@ -5,3 +5,4 @@ C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\bin\Debug\DAL.d
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\bin\Debug\DAL.pdb
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\obj\Debug\BLL.dll
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\obj\Debug\BLL.pdb
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\bin\Debug\Newtonsoft.Json.dll

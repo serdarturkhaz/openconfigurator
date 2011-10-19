@@ -3,25 +3,51 @@
     Layout = "~/Views/Master/_OuterLayout.cshtml";
 }
 @section scripts{
-
     $(document).ready(function () { 
-       
         
+        function calcWidth()
+        {
+            //Set width for ModelsBox
+            var containerWidth = $(".OuterContentArea .InnerContentArea").width();
+            var marginWidth = 30;
+            var actionsBoxWidth = $("#ActionsBox").width();
+            var modelsBoxWidth = containerWidth - marginWidth - actionsBoxWidth;
+            $('#ModelsBox').css("width", modelsBoxWidth + "px");
+        }
+        calcWidth();
+        
+        $(window).resize(function() {
+            calcWidth();
+        });
+
+
+        //Load Models
+         $.ajax({
+                type: "POST",
+                url: "/Models/GetModels",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {},
+                success: function(response)
+                {
+                        //debugger;
+                },                
+                error : function(req, status, error)
+                {
+                        alert('error');
+                }
+                });
     
     });
-
 }
 @section SettingsArea{
 
-    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout")
-
+    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout","General")
 }
 @section MenuArea{
-
     <div class="MenuItem">
         Feature Models
     </div>
-
 }
 
 
@@ -34,8 +60,22 @@
     </div>
     <div class="BoxContent">
         <ul class="ActionList">
-            <li>New Model</li>
-            <li>Import Model</li>
+            <li class="Button-Normal">
+                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                <span>New Model</span>
+            </li>
+            <li class="Button-Normal">
+                <img src="../../Content/themes/base/images/Icons/Ball.png" />
+                <span>Import Model</span>
+            </li>
+            <li class="Button-Normal">
+                <img src="../../Content/themes/base/images/Icons/XML.png" />
+                <span>Export as XML</span>
+            </li>
+            <li class="Button-Normal">
+                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                <span>Compile</span>
+            </li>
         </ul>
     </div>
 

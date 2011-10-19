@@ -67,6 +67,7 @@
     <Compile Include="Common\Common.cs" />
     <Compile Include="Common\SessionData.cs" />
     <Compile Include="Common\WebSecurity.cs" />
+    <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Controllers\ModelsController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Global.asax.cs">

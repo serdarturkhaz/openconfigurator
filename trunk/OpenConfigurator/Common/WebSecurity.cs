@@ -27,5 +27,11 @@ namespace PresentationLayer.Common
                 return false;
             }
         }
+
+        public static void Logout()
+        {
+            SessionData.LoggedInUser = null;
+            FormsAuthentication.SignOut();
+        }
     }
 }
