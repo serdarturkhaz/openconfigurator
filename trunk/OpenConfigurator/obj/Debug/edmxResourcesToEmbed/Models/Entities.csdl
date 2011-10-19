@@ -1,0 +1,272 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="OpenConfiguratorModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+  <EntityContainer Name="EntitiesContainer" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Attribute_DataTypes" EntityType="OpenConfiguratorModel.Attribute_DataTypes" />
+    <EntitySet Name="Attributes" EntityType="OpenConfiguratorModel.Attribute" />
+    <EntitySet Name="Feature_Types" EntityType="OpenConfiguratorModel.Feature_Types" />
+    <EntitySet Name="FeatureGroup_Types" EntityType="OpenConfiguratorModel.FeatureGroup_Types" />
+    <EntitySet Name="FeatureGroups" EntityType="OpenConfiguratorModel.FeatureGroup" />
+    <EntitySet Name="Features" EntityType="OpenConfiguratorModel.Feature" />
+    <EntitySet Name="Models" EntityType="OpenConfiguratorModel.Model" />
+    <AssociationSet Name="FK_Attributes_Attribute_DataTypes" Association="OpenConfiguratorModel.FK_Attributes_Attribute_DataTypes">
+      <End Role="Attribute_DataTypes" EntitySet="Attribute_DataTypes" />
+      <End Role="Attribute" EntitySet="Attributes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Attributes_Features" Association="OpenConfiguratorModel.FK_Attributes_Features">
+      <End Role="Feature" EntitySet="Features" />
+      <End Role="Attribute" EntitySet="Attributes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Features_Feature_Types" Association="OpenConfiguratorModel.FK_Features_Feature_Types">
+      <End Role="Feature_Types" EntitySet="Feature_Types" />
+      <End Role="Feature" EntitySet="Features" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FeatureGroups_FeatureGroup_Types" Association="OpenConfiguratorModel.FK_FeatureGroups_FeatureGroup_Types">
+      <End Role="FeatureGroup_Types" EntitySet="FeatureGroup_Types" />
+      <End Role="FeatureGroup" EntitySet="FeatureGroups" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FeatureGroups_Features" Association="OpenConfiguratorModel.FK_FeatureGroups_Features">
+      <End Role="Feature" EntitySet="Features" />
+      <End Role="FeatureGroup" EntitySet="FeatureGroups" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FeatureGroups_Models" Association="OpenConfiguratorModel.FK_FeatureGroups_Models">
+      <End Role="Model" EntitySet="Models" />
+      <End Role="FeatureGroup" EntitySet="FeatureGroups" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Features_FeatureGroups" Association="OpenConfiguratorModel.FK_Features_FeatureGroups">
+      <End Role="FeatureGroup" EntitySet="FeatureGroups" />
+      <End Role="Feature" EntitySet="Features" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Features_Features" Association="OpenConfiguratorModel.FK_Features_Features">
+      <End Role="Feature" EntitySet="Features" />
+      <End Role="Feature1" EntitySet="Features" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Features_Models" Association="OpenConfiguratorModel.FK_Features_Models">
+      <End Role="Model" EntitySet="Models" />
+      <End Role="Feature" EntitySet="Features" />
+    </AssociationSet>
+    <EntitySet Name="Users" EntityType="OpenConfiguratorModel.User" />
+    <AssociationSet Name="FK_Models_Users" Association="OpenConfiguratorModel.FK_Models_Users">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Model" EntitySet="Models" />
+    </AssociationSet>
+  </EntityContainer>
+  <ComplexType Name="ComplexType1">
+    <Property Type="String" Name="Password" MaxLength="50" FixedLength="false" Unicode="true" />
+  </ComplexType>
+  <EntityType Name="Attribute_DataTypes">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Attributes" Relationship="OpenConfiguratorModel.FK_Attributes_Attribute_DataTypes" FromRole="Attribute_DataTypes" ToRole="Attribute" />
+  </EntityType>
+  <EntityType Name="Attribute">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="Int32" Name="FeatureID" Nullable="false" />
+    <Property Type="Int32" Name="DataTypeID" Nullable="false" />
+    <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Type="String" Name="Description" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="DataType" Relationship="OpenConfiguratorModel.FK_Attributes_Attribute_DataTypes" FromRole="Attribute" ToRole="Attribute_DataTypes" />
+    <NavigationProperty Name="ParentFeature" Relationship="OpenConfiguratorModel.FK_Attributes_Features" FromRole="Attribute" ToRole="Feature" />
+  </EntityType>
+  <EntityType Name="Feature_Types">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Type="Int32" Name="FixedLowerBound" />
+    <Property Type="Int32" Name="FixedUpperBound" />
+  </EntityType>
+  <EntityType Name="FeatureGroup_Types">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Type="Int32" Name="FixedLowerBound" />
+    <Property Type="Int32" Name="FixedUpperBound" />
+  </EntityType>
+  <EntityType Name="FeatureGroup">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="Int32" Name="ModelID" Nullable="false" />
+    <Property Type="Int32" Name="ParentFeatureID" Nullable="false" />
+    <Property Type="Int32" Name="FeatureGroupTypeID" Nullable="false" />
+    <Property Type="Int32" Name="LowerBound" />
+    <Property Type="Int32" Name="UpperBound" />
+    <NavigationProperty Name="FeatureGroupType" Relationship="OpenConfiguratorModel.FK_FeatureGroups_FeatureGroup_Types" FromRole="FeatureGroup" ToRole="FeatureGroup_Types" />
+    <NavigationProperty Name="ParentFeature" Relationship="OpenConfiguratorModel.FK_FeatureGroups_Features" FromRole="FeatureGroup" ToRole="Feature" />
+    <NavigationProperty Name="Model" Relationship="OpenConfiguratorModel.FK_FeatureGroups_Models" FromRole="FeatureGroup" ToRole="Model" />
+    <NavigationProperty Name="ChildFeatures" Relationship="OpenConfiguratorModel.FK_Features_FeatureGroups" FromRole="FeatureGroup" ToRole="Feature" />
+  </EntityType>
+  <EntityType Name="Feature">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="Int32" Name="ModelID" Nullable="false" />
+    <Property Type="Int32" Name="ParentFeatureID" />
+    <Property Type="Int32" Name="FeatureTypeID" Nullable="false" />
+    <Property Type="Int32" Name="FeatureGroupID" />
+    <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Type="String" Name="Description" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Type="Int32" Name="LowerBound" />
+    <Property Type="Int32" Name="UpperBound" />
+    <NavigationProperty Name="Attributes" Relationship="OpenConfiguratorModel.FK_Attributes_Features" FromRole="Feature" ToRole="Attribute" />
+    <NavigationProperty Name="FeatureType" Relationship="OpenConfiguratorModel.FK_Features_Feature_Types" FromRole="Feature" ToRole="Feature_Types" />
+    <NavigationProperty Name="FeatureGroups" Relationship="OpenConfiguratorModel.FK_FeatureGroups_Features" FromRole="Feature" ToRole="FeatureGroup" />
+    <NavigationProperty Name="ParentFeatureGroup" Relationship="OpenConfiguratorModel.FK_Features_FeatureGroups" FromRole="Feature" ToRole="FeatureGroup" />
+    <NavigationProperty Name="ChildFeatures" Relationship="OpenConfiguratorModel.FK_Features_Features" FromRole="Feature" ToRole="Feature1" />
+    <NavigationProperty Name="ParentFeature" Relationship="OpenConfiguratorModel.FK_Features_Features" FromRole="Feature1" ToRole="Feature" />
+  </EntityType>
+  <EntityType Name="Model">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="Int32" Name="UserID" Nullable="false" />
+    <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="FeatureGroups" Relationship="OpenConfiguratorModel.FK_FeatureGroups_Models" FromRole="Model" ToRole="FeatureGroup" />
+    <NavigationProperty Name="Features" Relationship="OpenConfiguratorModel.FK_Features_Models" FromRole="Model" ToRole="Feature" />
+    <NavigationProperty Name="User" Relationship="OpenConfiguratorModel.FK_Models_Users" FromRole="Model" ToRole="User" />
+  </EntityType>
+  <Association Name="FK_Attributes_Attribute_DataTypes">
+    <End Type="OpenConfiguratorModel.Attribute_DataTypes" Role="Attribute_DataTypes" Multiplicity="1" />
+    <End Type="OpenConfiguratorModel.Attribute" Role="Attribute" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Attribute_DataTypes">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Attribute">
+        <PropertyRef Name="DataTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Attributes_Features">
+    <End Type="OpenConfiguratorModel.Feature" Role="Feature" Multiplicity="1" />
+    <End Type="OpenConfiguratorModel.Attribute" Role="Attribute" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Feature">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Attribute">
+        <PropertyRef Name="FeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Features_Feature_Types">
+    <End Type="OpenConfiguratorModel.Feature_Types" Role="Feature_Types" Multiplicity="1" />
+    <End Type="OpenConfiguratorModel.Feature" Role="Feature" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Feature_Types">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Feature">
+        <PropertyRef Name="FeatureTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FeatureGroups_FeatureGroup_Types">
+    <End Type="OpenConfiguratorModel.FeatureGroup_Types" Role="FeatureGroup_Types" Multiplicity="1" />
+    <End Type="OpenConfiguratorModel.FeatureGroup" Role="FeatureGroup" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="FeatureGroup_Types">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="FeatureGroup">
+        <PropertyRef Name="FeatureGroupTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FeatureGroups_Features">
+    <End Type="OpenConfiguratorModel.Feature" Role="Feature" Multiplicity="1" />
+    <End Type="OpenConfiguratorModel.FeatureGroup" Role="FeatureGroup" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Feature">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="FeatureGroup">
+        <PropertyRef Name="ParentFeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FeatureGroups_Models">
+    <End Type="OpenConfiguratorModel.Model" Role="Model" Multiplicity="1" />
+    <End Type="OpenConfiguratorModel.FeatureGroup" Role="FeatureGroup" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Model">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="FeatureGroup">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Features_FeatureGroups">
+    <End Type="OpenConfiguratorModel.FeatureGroup" Role="FeatureGroup" Multiplicity="0..1" />
+    <End Type="OpenConfiguratorModel.Feature" Role="Feature" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="FeatureGroup">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Feature">
+        <PropertyRef Name="FeatureGroupID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Features_Features">
+    <End Type="OpenConfiguratorModel.Feature" Role="Feature" Multiplicity="0..1" />
+    <End Type="OpenConfiguratorModel.Feature" Role="Feature1" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Feature">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Feature1">
+        <PropertyRef Name="ParentFeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Features_Models">
+    <End Type="OpenConfiguratorModel.Model" Role="Model" Multiplicity="1" />
+    <End Type="OpenConfiguratorModel.Feature" Role="Feature" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Model">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Feature">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="User">
+    <Documentation>
+      <Summary>Entity representing a User in the system</Summary>
+    </Documentation>
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Type="String" Name="Email" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Type="String" Name="Password" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Models" Relationship="OpenConfiguratorModel.FK_Models_Users" FromRole="User" ToRole="Model" />
+  </EntityType>
+  <Association Name="FK_Models_Users">
+    <End Type="OpenConfiguratorModel.User" Role="User" Multiplicity="1" />
+    <End Type="OpenConfiguratorModel.Model" Role="Model" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Model">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

@@ -3,7 +3,34 @@
     Layout = "~/Views/Master/_OuterLayout.cshtml";
 }
 @section scripts{
-    $(document).ready(function () { //alert('jquery works!'); });
+    $(document).ready(function () { 
+        //
+        $("#EmailTextbox").focus();
+
+        $("#LoginButton").bind("click", function(e) {
+            var email = $("#EmailTextbox").val();
+            var password = $("#PasswordTextbox").val();
+            $.ajax({
+                    type: "POST",
+                    url: "/Login/Submit",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify({ Email: email, Password: password }),
+                    success: function(response)
+                     {
+                         //var obj = JSON.parse(result.d);
+                         alert(response);
+                     },                
+                    error : function(req, status, error)
+                    {
+                         alert("Sorry! We could not receive your feedback at this time.");   
+                    }
+                 });
+
+        });
+        
+    
+    });
 }
 
 
@@ -17,12 +44,12 @@
         <table>
             <tr>
                 <td>
-                    <span class="Label">Username</span>
+                    <span class="Label">Email</span>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <input class="Textbox" type="text" id="UserNameTextbox" />
+                    <input class="Textbox" type="text" id="EmailTextbox" />
                 </td>
             </tr>
             <tr>
@@ -32,10 +59,16 @@
             </tr>
             <tr>
                 <td>
-                    <input class="Textbox" type="password" id="PasswordNameTextbox" />
+                    <input class="Textbox" type="password" id="PasswordTextbox" />
                 </td>
             </tr>
         </table>
+    </div>
+    <div class="BoxBottomActions">
+        <div class="Button-Small" id="LoginButton">
+            <img src="../../Content/themes/base/images/Icons/Key.png" />
+            <span>Log in</span>
+        </div>
     </div>
     <div class="BoxFooter">
         <div class="BoxInnerFooter"></div>

@@ -1,7 +1,8 @@
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\OpenConfigurator.dll
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\OpenConfigurator.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\EntityFramework.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\EntityFramework.xml
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\obj\Debug\OpenConfigurator.dll
 C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\obj\Debug\OpenConfigurator.pdb
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\Newtonsoft.Json.xml
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\BLL.dll
+C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\BLL.pdb
