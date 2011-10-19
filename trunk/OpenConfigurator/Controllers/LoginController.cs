@@ -35,26 +35,5 @@ namespace PresentationLayer.Controllers
             return result;
         }
 
-        //public JsonNetResult CallLogin(string email, string password)
-        //{
-        //    bool validUser = WebSecurity.AuthenticateUser(email, password);
-
-        //    //EntitiesContainer container = new EntitiesContainer();
-        //    //User sampleUser1 = new User
-        //    //{
-        //    //    Email = "Radu",
-        //    //    Password = "hej123!"
-        //    //};
-
-        //    //container.Users.AddObject(sampleUser1);
-        //    //container.SaveChanges();
-
-        //    JsonNetResult result = new JsonNetResult();
-        //    result.Data = validUser;
-
-        //    //
-        //    return result;
-        //}
-
     }
 }

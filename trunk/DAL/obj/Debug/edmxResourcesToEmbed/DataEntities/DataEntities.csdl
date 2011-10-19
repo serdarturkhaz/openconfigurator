@@ -154,6 +154,8 @@
     <NavigationProperty Name="Features" Relationship="OpenConfigurator_Model.FK_Features_Models" FromRole="Models" ToRole="Features" />
     <NavigationProperty Name="User" Relationship="OpenConfigurator_Model.FK_Models_Users" FromRole="Models" ToRole="Users" />
     <NavigationProperty Name="Rules" Relationship="OpenConfigurator_Model.FK_Rules_Models" FromRole="Model" ToRole="Rule" />
+    <Property Type="DateTime" Name="CreatedDate" />
+    <Property Type="DateTime" Name="LastModifiedDate" />
   </EntityType>
   <EntityType Name="User">
     <Key>

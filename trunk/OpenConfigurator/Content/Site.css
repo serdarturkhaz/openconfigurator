@@ -18,18 +18,25 @@ body
 {
     display:block;
     float:left;
-    margin-top:10px;
+    margin-top:20px;
 }
 .OuterHeaderArea .InnerHeaderArea #SettingsArea
 {
     display: block;
     float: right;
     margin-top: 10px;
+    
+    font-family:Arial;
+    letter-spacing:0.8px;
+    font-size:13px;
     color: #E6E6E6;
 }
 .OuterHeaderArea .InnerHeaderArea #SettingsArea a
 {
-    color:#E6E6E6;
+    color: #FFCC00;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
 }
 
 .OuterMenuArea
@@ -47,9 +54,10 @@ body
     padding:10px 10px 10px 10px;
     float:left;
     
-    color:White;
+    color: #FFCC00;
     font-size:17px;
     font-family:Arial;
+    letter-spacing:0.8px;
 }
 
 .OuterContentArea
@@ -106,11 +114,12 @@ body
 }
 .RoundedBox .BoxContent
 {
+    box-sizing: border-box;
     width:100%;
     height:100%;
     background:white;
     padding:10px;
-    box-sizing: border-box;
+    
 }
 
 .RoundedBox .BoxBottomActions
@@ -154,11 +163,11 @@ body
 }
 .HeaderLabel
 {
-    color:White;
-    text-transform:uppercase;
-    font-size:15px;
-    font-family:Arial;
-    letter-spacing:-0.8px;
+    color: #F0F0F0;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
 }
 .LogoText
 {
@@ -186,62 +195,47 @@ a:hover
 }
 .ActionList li
 {
-    margin-bottom:3px;
-    width:124px;
-    background: url(themes/base/images/controls/button-standard.png) no-repeat left top;
-    padding:6px;
-    cursor:pointer;
+    margin-bottom: 1px;
+    width: 150px;
+    
 }
 .ActionList li:hover
 {
-    background: url(themes/base/images/controls/button-standard-hover.png) no-repeat left top;
+    background: #FFCC00;
+    border: 1px solid #E1B500;
 }
 /*Buttons*/
-.Button-Standard
+.Button-Normal
 {
-    width:124px;
-    background: url(themes/base/images/controls/button-standard.png) no-repeat left top;
-}
-.Button-Small
-{
-    width:90px;
-    background: url(themes/base/images/controls/button-small.png) no-repeat left top;
-}
-
-.Button-Standard , .Button-Small
-{
-    height:22px;
+    background: #e9e9e9;
+    border: 1px solid #D2D2D2;
+    padding: 6px;
     cursor:pointer;
-    padding-top:8px;
+    height:20px;
+    min-width:80px;
 }
-.Button-Standard:hover 
+.Button-Normal:hover
 {
-    background: url(themes/base/images/controls/button-standard-hover.png) no-repeat left top;
-
+    background: #FFCC00;
+    border: 1px solid #E1B500;
 }
-.Button-Small:hover
-{
-    background: url(themes/base/images/controls/button-small-hover.png) no-repeat left top;
-}
-.Button-Standard span , .Button-Small span
+.Button-Normal span
 {
     display:block;
-    
+    margin-top:3px;
     font-family:Arial;
     letter-spacing:0.8px;
     font-size:13px;
     font-weight:bold;
     color:#3a4043;
-    margin-left:12px;
 }
-.Button-Standard img , .Button-Small img
+.Button-Normal img
 {
     float:right;
-    margin-top:-7px;
-    margin-right:3px;
+    
+    margin-top:-2px;
 }
 /***********************************************************************************************/
-
 /*Pages*****************************************************************************************/
 /*Login-------------------------------------------------------------------------*/
 #LoginBox
@@ -262,8 +256,6 @@ a:hover
 {
     float:left;
     margin-top:30px;
-    width:200px;
-    height:300px;
 }
 #ModelsBox
 {
