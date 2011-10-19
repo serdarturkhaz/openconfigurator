@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "Models";
+    Layout = "~/Views/Master/_OuterLayout.cshtml";
+}
+@section scripts{
+
+    $(document).ready(function () { 
+       
+        
+    
+    });
+
+}
+@section SettingsArea{
+
+    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout")
+
+}
+@section MenuArea{
+
+    <div class="MenuItem">
+        Feature Models
+    </div>
+
+}
+
+
+
+<div id="ActionsBox" class="RoundedBox">
+    <div class="BoxHeader">
+        <div class="BoxInnerHeader">
+            <span class="HeaderLabel">Actions</span>
+        </div>
+    </div>
+    <div class="BoxContent">
+        <ul class="ActionList">
+            <li>New Model</li>
+            <li>Import Model</li>
+        </ul>
+    </div>
+
+    <div class="BoxFooter">
+        <div class="BoxInnerFooter">
+        </div>
+    </div>
+</div>
+
+<div id="ModelsBox" class="RoundedBox">
+    <div class="BoxHeader">
+        <div class="BoxInnerHeader">
+            <span class="HeaderLabel">List of Models</span>
+        </div>
+    </div>
+    <div class="BoxContent">
+        
+    </div>
+
+    <div class="BoxFooter">
+        <div class="BoxInnerFooter">
+        </div>
+    </div>
+</div>

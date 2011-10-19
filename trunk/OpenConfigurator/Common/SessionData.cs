@@ -8,11 +8,11 @@ namespace PresentationLayer.Common
 {
     public static class SessionData
     {
-        public static BUser CurrentUser
+        public static BLL.BusinessObjects.User LoggedInUser
         {
             get
             {
-                return (BUser) HttpContext.Current.Session["CurrentUser"];
+                return (BLL.BusinessObjects.User) HttpContext.Current.Session["CurrentUser"];
 
             }
             set

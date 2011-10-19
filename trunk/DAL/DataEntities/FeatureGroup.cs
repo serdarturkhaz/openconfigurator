@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace DAL.DataEntities
 {
-    public partial class FeatureGroup
+    public partial class FeatureGroup : IDataEntity
     {
         #region Primitive Properties
     

@@ -23,8 +23,8 @@ namespace PresentationLayer
 
             routes.MapRoute(
                 "Default", // Route name
-                "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "Login", action = "Login", id = UrlParameter.Optional } // Parameter defaults
+                "{controller}/{action}", // URL with parameters
+                new { controller = "Login", action = "Login" } // Parameter defaults
             );
 
         }
