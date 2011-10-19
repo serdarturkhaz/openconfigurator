@@ -7,53 +7,59 @@ using DAL.Repositories;
 
 namespace BLL.Services
 {
-    public class UserService: IService<BUser>
+    public class UserService : IService<BLL.BusinessObjects.User>
     {
         //Fields
-        private IRepository<BUser> _UserRepository;
+        private IRepository<DAL.DataEntities.User> _UserRepository;
 
         //Constructors
         public UserService()
-            : this(new GenericRepository<BUser>())
+            : this(new GenericRepository<DAL.DataEntities.User>())
         {
         }
-        public UserService(GenericRepository<BUser> userRepository)
+        public UserService(GenericRepository<DAL.DataEntities.User> userRepository)
         {
-            _UserRepository = userRepository ?? new GenericRepository<BUser>();
+            _UserRepository = userRepository ?? new GenericRepository<DAL.DataEntities.User>();
         }
 
 
         //Methods
-        public DAL.DataEntities.User GetByEmailAndPassword(string Email, string Password)
+        public BLL.BusinessObjects.User GetByEmailAndPassword(string email, string password)
         {
-            return _UserRepository.First(user =>
-                (String.Compare(user.Email, Email, true) == 1) && user.Password == Password);
+            DAL.DataEntities.User user = _UserRepository.SingleOrDefault(u =>
+                u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && u.Password.Equals(password, StringComparison.InvariantCultureIgnoreCase));
+
+            //
+            return (BLL.BusinessObjects.User)BusinessObjectFactory.CreateBusinessObject(typeof(BLL.BusinessObjects.User), user);
         }
 
         //IService members
-        #region IService<User> Members
+        #region IService<BLL.BusinessObjects.User> Members
 
-        public BUser GetByID(int ID)
+        public BLL.BusinessObjects.User GetByID(int id)
         {
-            return _UserRepository.First(user => user.ID == ID);
+            DAL.DataEntities.User user = _UserRepository.SingleOrDefault(u => u.ID == id);
+
+            //
+            return new BLL.BusinessObjects.User(user);
         }
 
-        public IList<BUser> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(BUser entity)
+        public IList<BLL.BusinessObjects.User> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(BUser entity)
+        public void Update(BLL.BusinessObjects.User entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Add(BUser entity)
+        public void Delete(BLL.BusinessObjects.User entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Add(BLL.BusinessObjects.User entity)
         {
             throw new NotImplementedException();
         }

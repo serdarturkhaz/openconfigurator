@@ -16,29 +16,45 @@ namespace PresentationLayer.Controllers
             return View();
         }
 
-
-        public JsonNetResult Submit(string Email, string Password)
+        public JsonNetResult CallLogin(string email, string password)
         {
-            //
-            UserService _userService = new UserService();
-            DAL.DataEntities.User loginUser = _userService.GetByEmailAndPassword(Email, Password);
-            
-            //EntitiesContainer container = new EntitiesContainer();
-            //User sampleUser1 = new User
-            //{
-            //    Email = "Radu",
-            //    Password = "hej123!"
-            //};
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
 
-            //container.Users.AddObject(sampleUser1);
-            //container.SaveChanges();
+            //Verify the user credentials
+            bool validUser = WebSecurity.AuthenticateUser(email, password);
+            if (validUser)
+            {
+                result.Data = new JObject() { 
+                    new JProperty("Redirect", Url.Action("Models", "Models"))
+                };
 
-            JsonNetResult result = new JsonNetResult();
-            result.Data = (loginUser!=null);
+            }
 
             //
             return result;
         }
+
+        //public JsonNetResult CallLogin(string email, string password)
+        //{
+        //    bool validUser = WebSecurity.AuthenticateUser(email, password);
+
+        //    //EntitiesContainer container = new EntitiesContainer();
+        //    //User sampleUser1 = new User
+        //    //{
+        //    //    Email = "Radu",
+        //    //    Password = "hej123!"
+        //    //};
+
+        //    //container.Users.AddObject(sampleUser1);
+        //    //container.SaveChanges();
+
+        //    JsonNetResult result = new JsonNetResult();
+        //    result.Data = validUser;
+
+        //    //
+        //    return result;
+        //}
 
     }
 }

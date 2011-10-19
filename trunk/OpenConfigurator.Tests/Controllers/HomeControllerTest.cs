@@ -16,7 +16,7 @@ namespace PresentationLayer.Tests.Controllers
         public void Index()
         {
             // Arrange
-            HomeController controller = new HomeController();
+            ModelsController controller = new ModelsController();
 
             // Assert
             //Assert.AreEqual("Welcome to ASP.NET MVC!", result.ViewBag.Message);

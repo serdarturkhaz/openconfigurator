@@ -50,8 +50,36 @@
     </Content>
     <Folder Include="DomainModel" />
     <Folder Include="Database" />
+    <Folder Include="Architecture" />
     <Folder Include="UI" />
     <Folder Include="Use Cases" />
     <Folder Include="Use Cases\Document" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BLL\BLL.csproj">
+      <Name>BLL</Name>
+      <Project>{8247ab7d-8206-417f-bda5-38fef013e027}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL\DAL.csproj">
+      <Name>DAL</Name>
+      <Project>{6ba20984-874b-40fb-8430-0795342df195}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenConfigurator\PresentationLayer.csproj">
+      <Name>PresentationLayer</Name>
+      <Project>{6bdee121-ee13-41cc-ba19-bebd84e8d503}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Validate Include="Architecture\Layers.layerdiagram">
+      <SubType>Content</SubType>
+    </Validate>
+    <Validate Include="Architecture\Layers.layerdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Architecture\Layers.layerdiagram</DependentUpon>
+    </Validate>
+    <Validate Include="Architecture\Layers.layerdiagram.suppressions">
+      <SubType>Content</SubType>
+      <DependentUpon>Architecture\Layers.layerdiagram</DependentUpon>
+    </Validate>
   </ItemGroup>
 </Project>

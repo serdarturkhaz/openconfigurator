@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
@@ -44,52 +45,53 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataEntities\Attribute.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\Attribute_DataType.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\Attribute_Type.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\DataEntities.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DataEntities.edmx</DependentUpon>
     </Compile>
-    <Compile Include="DataEntities\DataObjects.Context.cs">
+    <Compile Include="DataEntities\DataEntities.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>DataObjects.Context.tt</DependentUpon>
+      <DependentUpon>DataEntities.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataEntities\DataObjects.cs">
+    <Compile Include="DataEntities\DataEntities.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\Feature.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\FeatureGroup.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\FeatureGroup_Type.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\Feature_Type.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataEntities\IDataEntity.cs" />
     <Compile Include="DataEntities\Model.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\Rule.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\Rule_Type.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\User.cs">
-      <DependentUpon>DataObjects.tt</DependentUpon>
+      <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
@@ -106,13 +108,13 @@
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
-    <None Include="DataEntities\DataObjects.Context.tt">
+    <None Include="DataEntities\DataEntities.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DataObjects.Context.cs</LastGenOutput>
+      <LastGenOutput>DataEntities.Context.cs</LastGenOutput>
     </None>
-    <None Include="DataEntities\DataObjects.tt">
+    <None Include="DataEntities\DataEntities.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DataObjects.cs</LastGenOutput>
+      <LastGenOutput>DataEntities.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup />

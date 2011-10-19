@@ -3,24 +3,41 @@
     Layout = "~/Views/Master/_OuterLayout.cshtml";
 }
 @section scripts{
+
     $(document).ready(function () { 
         //
         $("#EmailTextbox").focus();
 
+        //Functionality for pressing Enter
+            $("#LoginBox").keydown(function (e) {
+                if (e.keyCode == 13) {
+                    $("#PasswordTextbox").blur();
+                    $("#LoginButton").click();
+                    return false;
+                }
+            });
+
+        //Login button
         $("#LoginButton").bind("click", function(e) {
             var email = $("#EmailTextbox").val();
             var password = $("#PasswordTextbox").val();
             $.ajax({
                     type: "POST",
-                    url: "/Login/Submit",
+                    url: "/Login/CallLogin",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    data: JSON.stringify({ Email: email, Password: password }),
+                    data: JSON.stringify({ email: email, password: password }),
                     success: function(response)
-                     {
-                         //var obj = JSON.parse(result.d);
-                         alert(response);
-                     },                
+                    {
+                         if(response!= null)
+                         {
+                            window.location.href = response.Redirect;
+                         }
+                         else if(response==null)
+                         {
+                            alert("Incorrect credentials");
+                         }
+                    },                
                     error : function(req, status, error)
                     {
                          alert("Sorry! We could not receive your feedback at this time.");   
@@ -31,13 +48,12 @@
         
     
     });
+
 }
-
-
 <div id="LoginBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
-            <span>Login</span>
+            <span class="HeaderLabel">Login</span>
         </div>
     </div>
     <div class="BoxContent">
@@ -71,6 +87,7 @@
         </div>
     </div>
     <div class="BoxFooter">
-        <div class="BoxInnerFooter"></div>
+        <div class="BoxInnerFooter">
+        </div>
     </div>
 </div>

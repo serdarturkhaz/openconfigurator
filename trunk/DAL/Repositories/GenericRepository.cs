@@ -41,13 +41,13 @@ namespace DAL.Repositories
         {
             return _objectSet.Where<TEntity>(predicate);
         }
-        public TEntity Single(Expression<Func<TEntity, bool>> predicate)
+        public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate)
         {
-            return _objectSet.Single<TEntity>(predicate);
+            return _objectSet.SingleOrDefault<TEntity>(predicate);
         }
-        public TEntity First(Expression<Func<TEntity, bool>> predicate)
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
         {
-            return _objectSet.First<TEntity>(predicate);
+            return _objectSet.FirstOrDefault<TEntity>(predicate);
         }
         public void Delete(TEntity entity)
         {

@@ -5,88 +5,106 @@ using System.Text;
 
 namespace BLL.BusinessObjects
 {
-    public class BAttribute : DAL.DataEntities.Attribute
+    public class Attribute 
     {
         
     }
 
-    public class BAttributeDataType : DAL.DataEntities.Attribute_DataType
+    public class AttributeDataType
     {
 
     }
 
-    public class BAttributeType : DAL.DataEntities.Attribute_Type
+    public class AttributeType 
     {
 
     }
 
-    public class BFeature : DAL.DataEntities.Feature
+    public class Feature 
     {
 
     }
 
-    public class BFeatureType : DAL.DataEntities.Feature_Type
+    public class FeatureType 
     {
 
     }
 
-    public class BFeatureGroup : DAL.DataEntities.FeatureGroup
+    public class FeatureGroup
     {
 
     }
 
-    public class BFeatureGroupType : DAL.DataEntities.FeatureGroup_Type
+    public class FeatureGroupType 
     {
 
     }
 
-    public class BModel : DAL.DataEntities.Model
+    public class Model
     {
     
     }
 
-    public class BRule : DAL.DataEntities.Rule
+    public class Rule 
     {
 
     }
 
-    public class BRuleType : DAL.DataEntities.Rule_Type
+    public class RuleType 
     {
 
     }
 
-    public class User
+    public class User: IBusinessObject
     {
         //Fields
-        DAL.DataEntities.User InnerEntity;
+        private DAL.DataEntities.User _innerEntity;
 
-        //
-        public User(DAL.DataEntities.User innerEntity)
+        //Constructor
+        internal User()
         {
-            this.InnerEntity = innerEntity;
+        }
+        internal User(DAL.DataEntities.User innerEntity)
+        {
+            this._innerEntity = innerEntity;
         }
 
         //Properties
         public string Email
         {
             get{
-                return InnerEntity.Email;
+                return _innerEntity.Email;
             }
             set {
-                InnerEntity.Email = value;
+                _innerEntity.Email = value;
             }
         }
-
         public string Password
         {
             get
             {
-                return InnerEntity.Password;
+                return _innerEntity.Password;
             }
             set
             {
-                InnerEntity.Password = value;
+                _innerEntity.Password = value;
             }
         }
+
+        //Interface members
+        #region IBusinessObject Members
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.User)value;
+            }
+        }
+
+        #endregion
     }
 }

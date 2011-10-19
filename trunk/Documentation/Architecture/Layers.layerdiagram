@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="dbd331d8-eac0-4204-8895-816b72107d50" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <layers>
+    <layer Id="e50babae-8b0f-44b0-8346-3a8b533da8c9" name="BLL">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="930e20f0-597a-419f-b483-3b3557ccdb9e" direction="Forward">
+          <layerMoniker Id="ab8e87d9-eda6-47fd-abf8-3ea8c85432d8" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <childLayers>
+        <layer Id="2a702fdf-e348-4fef-ad27-686ba23dff07" name="BusinessObjects">
+          <references>
+            <reference Id="9b491326-cdd9-4957-b2bb-1fc1c6eb7cf1" name="BusinessObjects">
+              <ArtifactNode Label="BusinessObjects" Category="CodeSchema_ProjectItem" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/BLL/BusinessObjects/&quot;)">
+                <Category Ref="ProjectFolder" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=BusinessObjectFactory)" Label="BusinessObjectFactory" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=AttributeType)" Label="AttributeType" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=Model)" Label="Model" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=AttributeDataType)" Label="AttributeDataType" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=Rule)" Label="Rule" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=Feature)" Label="Feature" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=FeatureGroup)" Label="FeatureGroup" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=Attribute)" Label="Attribute" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=User)" Label="User" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=FeatureGroupType)" Label="FeatureGroupType" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=RuleType)" Label="RuleType" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=FeatureType)" Label="FeatureType" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.BusinessObjects Type=IBusinessObject)" Label="IBusinessObject" Category="CodeSchema_Interface">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+        <layer Id="f2934f15-a09e-4fe4-b4d9-324cae450cc1" name="Services">
+          <dependencyToLayers>
+            <dependencyFromLayerToLayer Id="8b32e94d-b761-4408-b0eb-663510e8294a" direction="Forward">
+              <layerMoniker Id="2a702fdf-e348-4fef-ad27-686ba23dff07" />
+            </dependencyFromLayerToLayer>
+          </dependencyToLayers>
+          <references>
+            <reference Id="d2aebe6f-5a05-49c1-ab14-370e8a3d648b" name="Services">
+              <ArtifactNode Label="Services" Category="CodeSchema_ProjectItem" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/BLL/Services/&quot;)">
+                <Category Ref="ProjectFolder" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.Services Type=(Name=IService GenericParameterCount=1))" Label="IService&lt;T&gt;" Category="CodeSchema_Interface">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=BLL Namespace=BLL.Services Type=UserService)" Label="UserService" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+      </childLayers>
+      <references>
+        <reference Id="0eeb98ed-9fdf-495b-a584-521d566396c1" name="BLL">
+          <ArtifactNode Label="BLL" Category="CodeSchema_Project" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/BLL/BLL.csproj&quot;)">
+            <Category Ref="CodeSchema_SourceFile" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=BLL)" Label="BLL.dll" Category="FileSystem.Category.FileOfType.dll">
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="ab8e87d9-eda6-47fd-abf8-3ea8c85432d8" name="DAL">
+      <childLayers>
+        <layer Id="cc234d04-c2f0-43d7-bc02-61c2724e8689" name="Repositories">
+          <dependencyToLayers>
+            <dependencyFromLayerToLayer Id="253c2b7f-615c-47ad-81df-6de96289bf7d" direction="Forward">
+              <layerMoniker Id="66c97539-1a89-41d2-8b5a-8da4212e9e13" />
+            </dependencyFromLayerToLayer>
+          </dependencyToLayers>
+          <references>
+            <reference Id="df21a7a5-f271-4d56-93bd-317637d0339b" name="Repositories">
+              <ArtifactNode Label="Repositories" Category="CodeSchema_ProjectItem" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/DAL/Repositories/&quot;)">
+                <Category Ref="ProjectFolder" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.Repositories Type=(Name=GenericRepository GenericParameterCount=1))" Label="GenericRepository&lt;TEntity&gt;" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.Repositories Type=(Name=IRepository GenericParameterCount=1))" Label="IRepository&lt;TEntity&gt;" Category="CodeSchema_Interface">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.Repositories Type=IRepositoryContext)" Label="IRepositoryContext" Category="CodeSchema_Interface">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+        <layer Id="66c97539-1a89-41d2-8b5a-8da4212e9e13" name="DataEntities">
+          <references>
+            <reference Id="4c7a3400-f56a-47df-87e7-042592885e97" name="DataEntities">
+              <ArtifactNode Label="DataEntities" Category="CodeSchema_ProjectItem" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/DAL/DataEntities/&quot;)">
+                <Category Ref="ProjectFolder" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=DataEntities)" Label="DataEntities" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=Attribute)" Label="Attribute" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=Attribute_DataType)" Label="Attribute_DataType" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=Attribute_Type)" Label="Attribute_Type" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=(Name=FixupCollection GenericParameterCount=1))" Label="FixupCollection&lt;T&gt;" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=Feature)" Label="Feature" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=Feature_Type)" Label="Feature_Type" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=FeatureGroup)" Label="FeatureGroup" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=FeatureGroup_Type)" Label="FeatureGroup_Type" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=Model)" Label="Model" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=Rule)" Label="Rule" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=Rule_Type)" Label="Rule_Type" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=User)" Label="User" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=DAL Namespace=DAL.DataEntities Type=IDataEntity)" Label="IDataEntity" Category="CodeSchema_Interface">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+      </childLayers>
+      <references>
+        <reference Id="1904f59c-3c5f-41a5-9fd3-8dc38c7a3663" name="DAL">
+          <ArtifactNode Label="DAL" Category="CodeSchema_Project" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/DAL/DAL.csproj&quot;)">
+            <Category Ref="CodeSchema_SourceFile" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=DAL)" Label="DAL.dll" Category="FileSystem.Category.FileOfType.dll">
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="cda3a43c-bf89-498b-b429-6c8de29aec81" name="PresentationLayer">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="be687d61-31f5-4faa-8bbe-13b59f9eb17b" direction="Forward">
+          <layerMoniker Id="e50babae-8b0f-44b0-8346-3a8b533da8c9" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <childLayers>
+        <layer Id="0b788f77-4e07-4f43-8fbc-1bc4e71ee5eb" name="Controllers">
+          <dependencyToLayers>
+            <dependencyFromLayerToLayer Id="31184668-4d6f-4287-8722-03dabd23b07e" direction="Forward">
+              <layerMoniker Id="7e677d08-a1f6-478d-be74-6d195f54fa93" />
+            </dependencyFromLayerToLayer>
+            <dependencyFromLayerToLayer Id="6e096de8-e057-4967-b45c-5bb3d24f29e6" direction="Forward">
+              <layerMoniker Id="336e495d-ac0a-4fdd-96c1-1c26dd779c77" />
+            </dependencyFromLayerToLayer>
+          </dependencyToLayers>
+          <references>
+            <reference Id="171f54b3-2462-459c-8d45-f5d2ee6af2e2" name="Controllers">
+              <ArtifactNode Label="Controllers" Category="CodeSchema_ProjectItem" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/OpenConfigurator/Controllers/&quot;)">
+                <Category Ref="ProjectFolder" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=PresentationLayer Namespace=PresentationLayer.Controllers Type=HomeController)" Label="HomeController" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=PresentationLayer Namespace=PresentationLayer.Controllers Type=LoginController)" Label="LoginController" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+        <layer Id="336e495d-ac0a-4fdd-96c1-1c26dd779c77" name="Views">
+          <references>
+            <reference Id="5d7e954d-50dd-4d2c-a19f-0b900ee4ea0c" name="Views">
+              <ArtifactNode Label="Views" Category="CodeSchema_ProjectItem" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/OpenConfigurator/Views/&quot;)">
+                <Category Ref="ProjectFolder" />
+              </ArtifactNode>
+            </reference>
+          </references>
+        </layer>
+        <layer Id="7e677d08-a1f6-478d-be74-6d195f54fa93" name="Common">
+          <references>
+            <reference Id="d59a63b1-7523-4206-89b6-2b6843003e97" name="Common">
+              <ArtifactNode Label="Common" Category="CodeSchema_ProjectItem" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/OpenConfigurator/Common/&quot;)">
+                <Category Ref="ProjectFolder" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=PresentationLayer Namespace=PresentationLayer.Common Type=JsonNetResult)" Label="JsonNetResult" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=PresentationLayer Namespace=PresentationLayer.Common Type=JSSerializer)" Label="JSSerializer" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+              <ExpandedNode Id="(Assembly=PresentationLayer Namespace=PresentationLayer.Common Type=SessionData)" Label="SessionData" Category="CodeSchema_Class">
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+      </childLayers>
+      <references>
+        <reference Id="34918ce7-41ba-4330-9a18-7e2add835477" name="PresentationLayer">
+          <ArtifactNode Label="PresentationLayer" Category="CodeSchema_Project" Id="(Assembly=&quot;$(PersonalUri)/ITU/Masters project/OpenConfigurator/OpenConfigurator/PresentationLayer.csproj&quot;)">
+            <Category Ref="CodeSchema_SourceFile" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=PresentationLayer)" Label="PresentationLayer.dll" Category="FileSystem.Category.FileOfType.dll">
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+  </layers>
+</layerModel>

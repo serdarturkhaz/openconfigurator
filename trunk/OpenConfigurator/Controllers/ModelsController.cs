@@ -6,11 +6,11 @@ using System.Web.Mvc;
 
 namespace PresentationLayer.Controllers
 {
-    public class HomeController : Controller
+    public class ModelsController : Controller
     {
-        public ActionResult GetPage()
+        [Authorize]
+        public ActionResult Models()
         {
-            ViewBag.Message = "Welcome to ASP.NET MVC!";
             return View();
         }
     }
