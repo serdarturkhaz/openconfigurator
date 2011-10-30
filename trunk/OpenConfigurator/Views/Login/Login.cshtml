@@ -3,12 +3,12 @@
     Layout = "~/Views/Master/_OuterLayout.cshtml";
 }
 @section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
 
-    $(document).ready(function () { 
-        //
-        $("#EmailTextbox").focus();
+            $("#EmailTextbox").focus();
 
-        //Functionality for pressing Enter
+            //Functionality for pressing Enter
             $("#LoginBox").keydown(function (e) {
                 if (e.keyCode == 13) {
                     $("#PasswordTextbox").blur();
@@ -17,38 +17,43 @@
                 }
             });
 
-        //Login button
-        $("#LoginButton").bind("click", function(e) {
-            var email = $("#EmailTextbox").val();
-            var password = $("#PasswordTextbox").val();
-            $.ajax({
-                    type: "POST",
-                    url: "/Login/CallLogin",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    data: JSON.stringify({ email: email, password: password }),
-                    success: function(response)
-                    {
-                         if(response!= null)
-                         {
-                            window.location.href = response.Redirect;
-                         }
-                         else if(response==null)
-                         {
-                            alert("Incorrect credentials");
-                         }
-                    },                
-                    error : function(req, status, error)
-                    {
-                         alert("Sorry! We could not receive your feedback at this time.");   
-                    }
-                 });
+            //Login button
+            $("#LoginButton").bind("click", function (e) {
+                $("#LoginBox").block({ message: "Authenticating...", fadeIn: 500 });
+
+                //
+                $.timer(500, function () {
+                    var email = $("#EmailTextbox").val();
+                    var password = $("#PasswordTextbox").val();
+                    $.ajax({
+                        type: "POST",
+                        url: "/Login/CallLogin",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: JSON.stringify({ email: email, password: password }),
+                        async: false,
+                        success: function (response) {
+                            if (response != null) {
+                                window.location.href = response.Redirect;
+                            }
+                            else if (response == null) {
+                                alert("Incorrect credentials");
+                                $("#LoginBox").unblock();
+                            }
+
+                            
+                        },
+                        error: function (req, status, error) {
+                            alert("Sorry! We could not receive your feedback at this time.");
+                            $("#LoginBox").unblock();
+                        }
+                    });
+                });
+            });
+
 
         });
-        
-    
-    });
-
+    </script>
 }
 <div id="LoginBox" class="RoundedBox">
     <div class="BoxHeader">

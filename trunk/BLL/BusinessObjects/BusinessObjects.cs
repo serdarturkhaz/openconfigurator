@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace BLL.BusinessObjects
 {
@@ -76,6 +77,7 @@ namespace BLL.BusinessObjects
                 _innerEntity.Name = value;
             }
         }
+        [JsonIgnore] 
         public Nullable<System.DateTime> CreatedDate
         {
             get
@@ -87,10 +89,11 @@ namespace BLL.BusinessObjects
                 _innerEntity.CreatedDate = value;
             }
         }
+        [JsonIgnore] 
         public Nullable<System.DateTime> LastModifiedDate
         {
             get
-            {
+            {               
                 return _innerEntity.LastModifiedDate;
             }
             set
@@ -98,7 +101,22 @@ namespace BLL.BusinessObjects
                 _innerEntity.LastModifiedDate = value;
             }
         }
-        
+        public string CreatedDateFormatted
+        {
+            get
+            {
+                return CreatedDate.Value.ToShortDateString();
+            }
+        }
+        public string LastModifiedDateFormatted
+        {
+            get
+            {
+                return LastModifiedDate.Value.ToShortDateString();
+            }
+        }
+
+
         //Interface members
         #region IBusinessObject Members
         [JsonIgnore]

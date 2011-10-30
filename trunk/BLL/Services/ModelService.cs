@@ -11,15 +11,15 @@ namespace BLL.Services
     {
         //Fields
         private IRepository<DAL.DataEntities.Model> _ModelRepository;
+        private int _LoggedInUserID;
+        private BusinessObjectFactory _BusinessObjectFactory;
 
         //Constructors
-        public ModelService()
-            : this(new GenericRepository<DAL.DataEntities.Model>())
+        public ModelService(int loggedInUserID)           
         {
-        }
-        public ModelService(GenericRepository<DAL.DataEntities.Model> modelRepository)
-        {
-            _ModelRepository = modelRepository ?? new GenericRepository<DAL.DataEntities.Model>();
+            _LoggedInUserID = loggedInUserID;
+            _ModelRepository = new GenericRepository<DAL.DataEntities.Model>();
+            _BusinessObjectFactory = new ModelFactory();
         }
 
         //Methods
@@ -32,11 +32,15 @@ namespace BLL.Services
             List<BLL.BusinessObjects.Model> BModels = new List<BusinessObjects.Model>();
             foreach(DAL.DataEntities.Model model in models)
             {
-                BModels.Add((BLL.BusinessObjects.Model)BusinessObjectFactory.CreateBusinessObject(typeof(BLL.BusinessObjects.Model), model));
+                BModels.Add((BLL.BusinessObjects.Model)_BusinessObjectFactory.CreateBusinessObject(typeof(BLL.BusinessObjects.Model), model));
             }
             return BModels; 
         }
-
+        public IBusinessObject CreateDefault()
+        {
+            BLL.BusinessObjects.Model defaultModel = (BLL.BusinessObjects.Model)_BusinessObjectFactory.CreateDefault(_LoggedInUserID);
+            return defaultModel;
+        }
 
         //Interface members
         #region IService<Model> Members
@@ -60,11 +64,18 @@ namespace BLL.Services
         {
             throw new NotImplementedException();
         }
-
+        public void Delete(int id)
+        {
+            DAL.DataEntities.Model model = _ModelRepository.SingleOrDefault(m => m.ID == id);
+            _ModelRepository.Delete(model);
+            _ModelRepository.SaveChanges();
+        }
         public void Add(BusinessObjects.Model entity)
         {
-            throw new NotImplementedException();
+            _ModelRepository.Add((DAL.DataEntities.Model) entity.InnerEntity);
+            _ModelRepository.SaveChanges();
         }
+
 
         #endregion
     }

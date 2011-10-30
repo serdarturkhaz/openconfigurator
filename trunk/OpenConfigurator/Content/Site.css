@@ -1,8 +1,8 @@
 ﻿/*Templates and layout**************************************************************************/
-body 
+body
 {
     background: #e8e8dd;
-    font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
+    font-family: "Trebuchet MS" , Verdana, Helvetica, Sans-Serif;
     margin: 0;
     padding: 0;
 }
@@ -10,25 +10,24 @@ body
 /*OuterLayout-------------------------------------------------------------------*/
 .OuterHeaderArea
 {
-    width:100%;
+    width: 100%;
     background: url(themes/base/images/layout/header-bar.png) repeat-x left top;
-    height:77px;
+    height: 77px;
 }
 .OuterHeaderArea .InnerHeaderArea #LogoElement
 {
-    display:block;
-    float:left;
-    margin-top:20px;
+    display: block;
+    float: left;
+    margin-top: 20px;
 }
 .OuterHeaderArea .InnerHeaderArea #SettingsArea
 {
     display: block;
     float: right;
     margin-top: 10px;
-    
-    font-family:Arial;
-    letter-spacing:0.8px;
-    font-size:13px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
     color: #E6E6E6;
 }
 .OuterHeaderArea .InnerHeaderArea #SettingsArea a
@@ -41,49 +40,48 @@ body
 
 .OuterMenuArea
 {
-    width:100%;
+    width: 100%;
     background: url(themes/base/images/layout/menu-bar.png) repeat-x left top;
-    height:40px;
+    height: 40px;
 }
 .OuterMenuArea .InnerMenuArea
 {
 }
 .OuterMenuArea .InnerMenuArea .MenuItem
 {
-    background-color:#6c7275;
-    padding:10px 10px 10px 10px;
-    float:left;
-    
+    background-color: #6c7275;
+    padding: 10px 10px 10px 10px;
+    float: left;
     color: #FFCC00;
-    font-size:17px;
-    font-family:Arial;
-    letter-spacing:0.8px;
+    font-size: 17px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
 }
 
 .OuterContentArea
 {
-    width:100%;
+    width: 100%;
     background: #e8e8dd url(themes/base/images/layout/content-bg.png) repeat-x left top;
-    min-height:700px;
+    min-height: 700px;
 }
 
 .OuterHeaderArea .InnerHeaderArea
 {
-    width:80%;
-    height:77px;
+    width: 80%;
+    height: 77px;
     margin: 0 auto;
-    color:White;
+    color: White;
 }
 .OuterMenuArea .InnerMenuArea
 {
-    width:80%;
-    height:40px;
+    width: 80%;
+    height: 40px;
     margin: 0 auto;
 }
 .OuterContentArea .InnerContentArea
 {
-    width:80%;
-    min-height:700px;
+    width: 80%;
+    min-height: 700px;
     margin: 0 auto;
 }
 /*------------------------------------------------------------------------------*/
@@ -92,57 +90,151 @@ body
 /*RoundedBox--------------------------------------------------------------------*/
 .RoundedBox
 {
-    
 }
 .RoundedBox .BoxHeader
 {
-    background:url(themes/base/images/layout/roundedbox-header-right.png) no-repeat right top;
-    width:100%;
-    height:33px;
-    padding-right:20px;
+    background: url(themes/base/images/layout/roundedbox-header-right.png) no-repeat right top;
+    width: 100%;
+    height: 33px;
+    padding-right: 20px;
     box-sizing: border-box;
-    
 }
 .RoundedBox .BoxHeader .BoxInnerHeader
 {
-    background:url(themes/base/images/layout/roundedbox-header-left.png) no-repeat left top;
-    width:100%;
-    height:23px;
-    padding:5px 5px 5px 10px;
-    
-    
+    background: url(themes/base/images/layout/roundedbox-header-left.png) no-repeat left top;
+    width: 100%;
+    height: 23px;
+    padding: 5px 5px 5px 10px;
 }
 .RoundedBox .BoxContent
 {
     box-sizing: border-box;
-    width:100%;
-    height:100%;
-    background:white;
-    padding:10px;
-    
+    width: 100%;
+    height: 100%;
+    background: white;
+    padding: 10px;
 }
 
 .RoundedBox .BoxBottomActions
 {
     box-sizing: border-box;
-    width:100%;
-    height:50px;
-    background:white;
-    padding:10px;
+    width: 100%;
+    height: 50px;
+    background: white;
+    padding: 10px;
 }
 .RoundedBox .BoxFooter
 {
-     background:url(themes/base/images/layout/roundedbox-footer-right.png) no-repeat right top;
-    width:100%;
-    height:6px;
-    padding-right:20px;
+    background: url(themes/base/images/layout/roundedbox-footer-right.png) no-repeat right top;
+    width: 100%;
+    height: 6px;
+    padding-right: 20px;
     box-sizing: border-box;
 }
 .RoundedBox .BoxInnerFooter
 {
-    background:url(themes/base/images/layout/roundedbox-footer-left.png) no-repeat left top;
-    width:100%;
-    height:6px;
+    background: url(themes/base/images/layout/roundedbox-footer-left.png) no-repeat left top;
+    width: 100%;
+    height: 6px;
+}
+/*------------------------------------------------------------------------------*/
+/*Grid--------------------------------------------------------------------------*/
+.grid
+{
+    width: 100%;
+}
+.grid thead th
+{
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #FFE784;
+    text-align: left;
+    padding: 10px 5px 10px 5px;
+    letter-spacing: 0.9px;
+    white-space: nowrap;
+}
+.grid tbody td
+{
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    
+    padding: 0px 5px 5px 5px;
+    background-color: #FFF7D7;
+    border-bottom: solid 1px #FFEFB0;
+}
+
+.grid tbody tr:hover td
+{
+    background-color: #FFF3C4;
+}
+
+.grid tbody td.FirstColumn
+{
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #3a4043;
+}
+
+.grid tbody td span
+{
+    color: #3a4043;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.grid tbody td.FirstColumn a
+{
+    text-decoration: none;
+}
+.grid tbody td.FirstColumn img
+{
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.grid tbody tr:hover td
+{
+}
+.grid tbody td.ActionsTD .Wrapper
+{
+    height: 40px;
+    width: 100px;
+}
+.grid tbody td.ActionsTD .Wrapper .IconButton-Normal
+{
+    margin-left: 5px;
+}
+/*------------------------------------------------------------------------------*/
+/*BlockUI-----------------------------------------------------------------------*/
+div.blockMsg
+{
+    background-color: #ffe784;
+    padding: 5px !important;
+    display: table-cell;
+    width: 150px !important;
+    height: 70px;
+    border: 1px solid #F0C000;
+}
+
+div.blockMsg div.wrapperdiv
+{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.blockMsg span
+{
+    display: block;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    color: #3a4043;
+}
+div.blockMsg img
+{
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/
@@ -156,48 +248,46 @@ body
 }
 .Label
 {
-    font-family:Arial;
-    letter-spacing:0.8px;
-    font-size:13px;
-    color:#3a4043;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    color: #3a4043;
 }
 .HeaderLabel
 {
     color: #F0F0F0;
     text-transform: uppercase;
-    font-size: 14px;
+    font-size: 13px;
     font-family: Arial;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.9px;
 }
 .LogoText
 {
-    font-family:Tahoma;
-    font-size:25px;
-    color:#E6E6E6;
-    letter-spacing:0.3px;
+    font-family: Tahoma;
+    font-size: 25px;
+    color: #E6E6E6;
+    letter-spacing: 0.3px;
 }
 a
 {
-    text-decoration:none;
+    text-decoration: none;
 }
 a:hover
 {
-    text-decoration:underline;
+    text-decoration: underline;
 }
 
 /*ActionList*/
 .ActionList
 {
-    list-style-type:none;
-    padding-left:0;
-    margin-top:0;
-    
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 0;
 }
 .ActionList li
 {
-    margin-bottom: 1px;
     width: 150px;
-    
+    margin-bottom: 2px;
 }
 .ActionList li:hover
 {
@@ -207,12 +297,12 @@ a:hover
 /*Buttons*/
 .Button-Normal
 {
-    background: #e9e9e9;
-    border: 1px solid #D2D2D2;
+    border: solid 1px #D7D7D7;
+    background: #E0E0E0;
     padding: 6px;
-    cursor:pointer;
-    height:20px;
-    min-width:80px;
+    cursor: pointer;
+    height: 20px;
+    min-width: 80px;
 }
 .Button-Normal:hover
 {
@@ -221,48 +311,77 @@ a:hover
 }
 .Button-Normal span
 {
-    display:block;
-    margin-top:3px;
-    font-family:Arial;
-    letter-spacing:0.8px;
-    font-size:13px;
-    font-weight:bold;
-    color:#3a4043;
+    display: block;
+    margin-top: 3px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #3a4043;
 }
 .Button-Normal img
 {
-    float:right;
-    
-    margin-top:-2px;
+    float: right;
+    margin-top: -2px;
+}
+
+.IconButton-Normal
+{
+    border: 1px solid transparent;
+    padding: 1px 4px 1px 4px;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+}
+.IconButton-Normal:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+.IconButton-Normal img
+{
+    float: left;
+    clear: both;
+}
+.IconButton-Normal span
+{
+    float: left;
+    font-size: 8px;
+    clear: both;
 }
 /***********************************************************************************************/
 /*Pages*****************************************************************************************/
 /*Login-------------------------------------------------------------------------*/
 #LoginBox
 {
-    margin-top:150px;
+    margin-top: 150px;
     width: 250px;
-    height:130px;
-    margin-left:auto;
-    margin-right:auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 #LoginBox #LoginButton
 {
-    float:right;
+    float: right;
 }
 /*------------------------------------------------------------------------------*/
 /*Models------------------------------------------------------------------------*/
 #ActionsBox
 {
-    float:left;
-    margin-top:30px;
+    float: left;
+    margin-top: 30px;
 }
 #ModelsBox
 {
-    float:right;
-    margin-top:30px;
-    width:80%;
-    height:500px;
+    float: right;
+    margin-top: 30px;
+    width: 80%;
+}
+
+#ModelsBox
+{
+    float: right;
+    margin-top: 30px;
+    width: 80%;
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/

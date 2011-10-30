@@ -7,9 +7,12 @@ using System.Globalization;
 
 namespace BLL.BusinessObjects
 {
-    public static class BusinessObjectFactory
+    public class BusinessObjectFactory
     {
-        public static IBusinessObject CreateBusinessObject(Type businessObjectType , DAL.DataEntities.IDataEntity innerEntity)
+        //Fields
+
+        //Methods
+        public virtual IBusinessObject CreateBusinessObject(Type businessObjectType , DAL.DataEntities.IDataEntity innerEntity)
         {
             //Default return variable
             IBusinessObject newBusinessObject = null;
@@ -25,6 +28,11 @@ namespace BLL.BusinessObjects
 
             //
             return newBusinessObject;
+        }
+
+        public virtual IBusinessObject CreateDefault(int userID)
+        {
+            return null;   
         }
     }
 }

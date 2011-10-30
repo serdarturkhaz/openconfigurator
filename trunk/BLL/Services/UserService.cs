@@ -11,15 +11,13 @@ namespace BLL.Services
     {
         //Fields
         private IRepository<DAL.DataEntities.User> _UserRepository;
+        public BusinessObjectFactory _BusinessObjectFactory;
 
         //Constructors
         public UserService()
-            : this(new GenericRepository<DAL.DataEntities.User>())
         {
-        }
-        public UserService(GenericRepository<DAL.DataEntities.User> userRepository)
-        {
-            _UserRepository = userRepository ?? new GenericRepository<DAL.DataEntities.User>();
+            _UserRepository = new GenericRepository<DAL.DataEntities.User>();
+            _BusinessObjectFactory = new BusinessObjectFactory();
         }
 
 
@@ -30,7 +28,7 @@ namespace BLL.Services
                 u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && u.Password.Equals(password, StringComparison.InvariantCultureIgnoreCase));
 
             //
-            return (BLL.BusinessObjects.User)BusinessObjectFactory.CreateBusinessObject(typeof(BLL.BusinessObjects.User), user);
+            return (BLL.BusinessObjects.User)_BusinessObjectFactory.CreateBusinessObject(typeof(BLL.BusinessObjects.User), user);
         }
 
         //IService members
