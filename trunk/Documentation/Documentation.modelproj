@@ -27,6 +27,9 @@
     <Content Include="UI\Login.bmml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="UI\ModelEditor.bmml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="UI\Models.bmml">
       <SubType>Content</SubType>
     </Content>

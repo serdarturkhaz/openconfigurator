@@ -1,9 +1,0 @@
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\PresentationLayer.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\PresentationLayer.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\DAL.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\DAL.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\obj\Debug\PresentationLayer.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\obj\Debug\PresentationLayer.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\BLL.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\OpenConfigurator\bin\BLL.pdb

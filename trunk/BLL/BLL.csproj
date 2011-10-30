@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="BusinessObjects\BusinessObjectFactory.cs" />
     <Compile Include="BusinessObjects\BusinessObjects.cs" />
+    <Compile Include="BusinessObjects\ModelFactory.cs" />
     <Compile Include="BusinessObjects\IBusinessObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IService.cs" />

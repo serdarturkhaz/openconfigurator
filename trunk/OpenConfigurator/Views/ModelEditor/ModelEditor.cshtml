@@ -1,16 +1,52 @@
 ﻿@{
-    Layout = null;
+    ViewBag.Title = "ModelEditor";
+    Layout = "~/Views/Master/_OuterLayout.cshtml";
 }
 
-<!DOCTYPE html>
+@section SettingsArea{
+    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout", "General")
+}
+@section MenuArea{
+    <div class="MenuItem">
+        Feature Models
+    </div>
+}
+<div id="ActionsBox" class="RoundedBox">
+    <div class="BoxHeader">
+        <div class="BoxInnerHeader">
+            <span class="HeaderLabel">Actions</span>
+        </div>
+    </div>
+    <div class="BoxContent">
+        <ul class="ActionList">
+            <li class="Button-Normal" id="NewModelButton">
+                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                <span>New Feature</span> 
+            </li>
+            <li class="Button-Normal" id="NewModelButton">
+                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                <span>New Feature Group</span> 
+            </li>
 
-<html>
-<head>
-    <title>ViewPage1</title>
-</head>
-<body>
-    <div>
+        </ul>
+    </div>
+    <div class="BoxFooter">
+        <div class="BoxInnerFooter">
+        </div>
+    </div>
+</div>
+
+<div id="ModelDiagramBox" class="RoundedBox">
+    <div class="BoxHeader">
+        <div class="BoxInnerHeader">
+            <span class="HeaderLabel">Model Diagram</span>
+        </div>
+    </div>
+    <div class="BoxContent">
         
     </div>
-</body>
-</html>
+    <div class="BoxFooter">
+        <div class="BoxInnerFooter">
+        </div>
+    </div>
+</div>

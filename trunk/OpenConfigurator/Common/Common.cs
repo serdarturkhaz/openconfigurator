@@ -23,6 +23,7 @@ namespace PresentationLayer.Common
         public JsonNetResult()
         {
             SerializerSettings = new JsonSerializerSettings();
+            
         }
 
         public override void ExecuteResult(ControllerContext context)
@@ -30,12 +31,17 @@ namespace PresentationLayer.Common
             if (context == null)
                 throw new ArgumentNullException("context");
             HttpResponseBase response = context.HttpContext.Response;
+
             response.ContentType = !string.IsNullOrEmpty(ContentType) ? ContentType : "application/json";
-            if (ContentEncoding != null) response.ContentEncoding = ContentEncoding;
+            if (ContentEncoding != null) 
+                response.ContentEncoding = ContentEncoding;
+
             if (Data != null)
             {
                 JsonTextWriter writer = new JsonTextWriter(response.Output) { Formatting = Formatting };
-                JsonSerializer serializer = JsonSerializer.Create(SerializerSettings); serializer.Serialize(writer, Data); writer.Flush();
+                JsonSerializer serializer = JsonSerializer.Create(SerializerSettings); 
+                serializer.Serialize(writer, Data); 
+                writer.Flush();
             }
         }
     }

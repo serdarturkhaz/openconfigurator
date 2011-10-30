@@ -3,10 +3,55 @@
     Layout = "~/Views/Master/_OuterLayout.cshtml";
 }
 @section scripts{
-    $(document).ready(function () { 
-        
-        function calcWidth()
-        {
+    <script type="text/javascript">
+
+        //Grid functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        function createRow(headerColumns, tbody, dataObj) {
+            var tr = $("<tr></tr>").attr("objectid", dataObj.ID);
+
+            //Create TD's for each HeaderColumn
+            for (var j = 0; j < headerColumns.length - 1; j++) {
+                var field = $(headerColumns[j]).children("span[columnname]").attr("columnname");
+                var td = $("<td></td>").attr("style", $(headerColumns[j]).attr("style"));                
+                var innerElem = $("<span>" + dataObj[field] + "</span>");
+
+                //Special if first Column
+                if (j == 0) {
+                    $(td).addClass("FirstColumn");
+                    $(td).prepend("<img src='../../Content/themes/base/images/Icons/Model.png' />");
+                    innerElem = $("<a href='#'>" + dataObj[field] + "</a>");
+                }
+
+                $(td).append(innerElem);
+                $(tr).append(td);
+            }
+
+            //Add Actions TD
+            var actionstd = $("<td class='ActionsTD'></td>");
+            var wrapper = $("<div class='Wrapper'></div>").appendTo(actionstd);
+            var deleteButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").append("<span>Delete</span>").appendTo(wrapper);
+            deleteButton.bind("click", function () {
+                deleteModel(dataObj.ID, tbody);
+            });
+            var openButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/OpenModel.png' />").append("<span>Open</span>").appendTo(wrapper);
+            actionstd.attr("style", $(headerColumns[headerColumns.length - 1]).attr("style"));
+
+            $(tr).append(actionstd);
+
+            //
+            $(tbody).append(tr);
+            return tr;
+
+        }
+        function deleteRow(objectid, tbody) {
+            $(tbody).children("tr[objectid=" + objectid + "]").children("td").effect("highlight", { color: "red", mode: "hide" }, 1000);
+            $.timer(700, function () {
+                $(tbody).children("tr[objectid=" + objectid + "]").remove();
+            });
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        function calcWidth() {
             //Set width for ModelsBox
             var containerWidth = $(".OuterContentArea .InnerContentArea").width();
             var marginWidth = 30;
@@ -14,44 +59,107 @@
             var modelsBoxWidth = containerWidth - marginWidth - actionsBoxWidth;
             $('#ModelsBox').css("width", modelsBoxWidth + "px");
         }
-        calcWidth();
-        
-        $(window).resize(function() {
+        function addNewModel() {
+            //Create new Model in DB
+            $.ajax({
+                type: "POST",
+                url: "/Models/AddNewModel",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {},
+                success: function (modelObj) {
+                    //
+                    var modelsTable = $("#ModelsTable");
+                    var headerColumns = $(modelsTable).find("th");
+                    var tbody = $(modelsTable).children("tbody");
+
+                    var tr = createRow(headerColumns, tbody, modelObj);
+                    $(tr).children("td").effect("highlight", { color: "yellow" }, 1000);
+                },
+                error: function (req, status, error) {
+                    alert('error');
+                }
+            });
+        }
+        function deleteModel(modelID) {
+            var tbody = $("#ModelsTable").children("tbody");
+            //Delete Model from DB
+            $.ajax({
+                type: "POST",
+                url: "/Models/DeleteModel",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({ ID: modelID }),
+                success: function (reponse) {
+                    //
+                    deleteRow(modelID, tbody);
+                },
+                error: function (req, status, error) {
+                    alert('error');
+                }
+            });
+           
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        $(document).ready(function () {
+
+            //Event handlers-------------------------------------------------------------------
+            $("#NewModelButton").bind("click", function () {
+                addNewModel();
+            });
+            //---------------------------------------------------------------------------------
+
             calcWidth();
-        });
 
+            $(window).resize(function () {
+                calcWidth();
+            });
 
-        //Load Models
-         $.ajax({
+            //Load Models
+            $.ajax({
                 type: "POST",
                 url: "/Models/GetModels",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: {},
-                success: function(response)
-                {
-                        //debugger;
-                },                
-                error : function(req, status, error)
-                {
-                        alert('error');
+                beforeSend: function () {
+                    $("#ModelsBox").block({ message: "Loading data...", fadeIn: 500 });
+                },
+                success: function (models) {
+                    $.timer(500, function () {
+                        //Create Grid
+                        var modelsTable = $("#ModelsTable");
+                        var headerColumns = $(modelsTable).find("th");
+                        var tbody = $(modelsTable).children("tbody");
+
+                        //Create a TR for each row 
+                        for (var i = 0; i < models.length; i++) {
+                            createRow(headerColumns, tbody, models[i]);
+                        }
+
+                        $("#ModelsBox").unblock();
+                    });
+                    //
+
+                },
+                error: function (req, status, error) {
+                    alert('error');
                 }
-                });
-    
-    });
+            });
+
+        });
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    </script>
 }
 @section SettingsArea{
-
-    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout","General")
+    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout", "General")
 }
 @section MenuArea{
     <div class="MenuItem">
         Feature Models
     </div>
 }
-
-
-
 <div id="ActionsBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
@@ -60,41 +168,47 @@
     </div>
     <div class="BoxContent">
         <ul class="ActionList">
-            <li class="Button-Normal">
+            <li class="Button-Normal" id="NewModelButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New Model</span>
-            </li>
+                <span>New Model</span> </li>
             <li class="Button-Normal">
                 <img src="../../Content/themes/base/images/Icons/Ball.png" />
-                <span>Import Model</span>
-            </li>
-            <li class="Button-Normal">
-                <img src="../../Content/themes/base/images/Icons/XML.png" />
-                <span>Export as XML</span>
-            </li>
-            <li class="Button-Normal">
-                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>Compile</span>
-            </li>
+                <span>Import Model</span> </li>
         </ul>
     </div>
-
     <div class="BoxFooter">
         <div class="BoxInnerFooter">
         </div>
     </div>
 </div>
-
 <div id="ModelsBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
-            <span class="HeaderLabel">List of Models</span>
+            <span class="HeaderLabel">Models</span>
         </div>
     </div>
     <div class="BoxContent">
-        
+        <table cellpadding="0" cellspacing="0" id="ModelsTable" class="grid">
+            <thead>
+                <tr>
+                    <th style="width: 60%; padding-left: 15px;">
+                        <span columnname="Name">Name</span>
+                    </th>
+                    <th style="width: 20%">
+                        <span columnname="LastModifiedDateFormatted">Modified Date</span>
+                    </th>
+                    <th style="width: 20%">
+                        <span columnname="CreatedDateFormatted">Created Date</span>
+                    </th>
+                    <th style="text-align: center;">
+                        <span>Actions</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
-
     <div class="BoxFooter">
         <div class="BoxInnerFooter">
         </div>

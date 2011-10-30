@@ -1,6 +1,0 @@
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\DAL\bin\Debug\DAL.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\DAL\bin\Debug\DAL.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\DAL\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\DAL\obj\Debug\DAL.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\DAL\obj\Debug\DAL.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\DAL\bin\Debug\DAL.dll.config

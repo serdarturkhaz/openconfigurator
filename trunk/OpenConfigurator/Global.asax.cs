@@ -27,6 +27,12 @@ namespace PresentationLayer
                 new { controller = "Login", action = "Login" } // Parameter defaults
             );
 
+            routes.MapRoute(
+                "ModelEditor", // Route name
+                "{controller}/{action}/{id}", // URL with parameters
+                new { controller = "Login", action = "Login", id = "" } // Parameter defaults
+            );
+
         }
 
         protected void Application_Start()

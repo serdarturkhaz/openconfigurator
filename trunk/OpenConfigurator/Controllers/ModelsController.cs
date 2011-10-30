@@ -24,12 +24,37 @@ namespace PresentationLayer.Controllers
             JsonNetResult result = new JsonNetResult() { Data = null };
 
             //Retreive Models belonging to the current User
-            ModelService _modelService = new ModelService();
+            ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
             IList<BLL.BusinessObjects.Model> models = _modelService.GetByUserID(SessionData.LoggedInUser.ID);
             result.Data = models;
 
             //
             return result;
+        }
+
+        [Authorize]
+        public JsonNetResult AddNewModel()
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Add a new Model
+            ModelService modelService = new ModelService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Model newModel = (BLL.BusinessObjects.Model) modelService.CreateDefault();
+            modelService.Add(newModel);
+            
+
+            //
+            result.Data = newModel;
+            return result;
+        }
+
+        [Authorize]
+        public void DeleteModel(int ID)
+        {
+            //Delete the Model
+            ModelService modelService = new ModelService(SessionData.LoggedInUser.ID);
+            modelService.Delete(ID);
         }
     }
 }

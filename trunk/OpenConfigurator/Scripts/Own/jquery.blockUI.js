@@ -79,7 +79,7 @@
     $.blockUI.defaults = {
         // message displayed when blocking (use null for no message)
         message: '<h1>Please wait...</h1>',
-        imagesrc: 'App_Themes/Default/Images/loader.gif',
+        imagesrc: '/Content/themes/base/Images/Controls/progress.gif',
 
         title: null,   // title string; only used when theme == true
         draggable: true,  // only used when theme == true (requires jquery-ui.js to be loaded)
@@ -96,9 +96,8 @@
             top: '40%',
             left: '35%',
             textAlign: 'center',
-            color: '#000',
-            border: '3px solid #aaa',
-            backgroundColor: '#fff',
+            //color: '#e8e8dd',
+            //backgroundColor: '#e8e8dd',
             cursor: 'wait'
         },
 
@@ -111,7 +110,7 @@
 
         // styles for the overlay
         overlayCSS: {
-            backgroundColor: '#000',
+            backgroundColor: '#e8e8dd',
             opacity: 0.8,
             cursor: 'wait'
         },

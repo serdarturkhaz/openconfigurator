@@ -1,8 +1,0 @@
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\bin\Debug\BLL.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\bin\Debug\BLL.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\bin\Debug\DAL.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\bin\Debug\DAL.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\obj\Debug\BLL.dll
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\obj\Debug\BLL.pdb
-C:\Users\Radu\Documents\ITU\Masters project\OpenConfigurator\BLL\bin\Debug\Newtonsoft.Json.dll

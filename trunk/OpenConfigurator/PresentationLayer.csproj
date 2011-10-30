@@ -34,9 +34,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\ReferedDLLs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
@@ -68,6 +67,7 @@
     <Compile Include="Common\SessionData.cs" />
     <Compile Include="Common\WebSecurity.cs" />
     <Compile Include="Controllers\GeneralController.cs" />
+    <Compile Include="Controllers\ModelEditorController.cs" />
     <Compile Include="Controllers\ModelsController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Global.asax.cs">
@@ -76,8 +76,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\themes\base\images\Controls\Button-Standard-Hover.png" />
-    <Content Include="Content\themes\base\images\Controls\Button-Standard.png" />
+    <Content Include="Content\themes\base\images\Controls\progress.gif" />
     <Content Include="Content\themes\base\images\Controls\textbox-bg.png" />
     <Content Include="Content\themes\base\images\Icons\Login.png" />
     <Content Include="Content\themes\base\images\Layout\content-bg.png" />
@@ -120,11 +119,12 @@
     <Content Include="Scripts\jquery-1.5.1.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.11.js" />
     <Content Include="Scripts\jquery-ui-1.8.11.min.js" />
-    <Content Include="Scripts\jquery.blockUI.js" />
+    <Content Include="Scripts\Own\jquery.blockUI.js" />
+    <Content Include="Scripts\Own\jquery.timer.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\json2.js" />
+    <Content Include="Scripts\Own\json2.js" />
     <Content Include="Scripts\modernizr-1.7.js" />
     <Content Include="Scripts\modernizr-1.7.min.js" />
     <Content Include="Web.config" />
@@ -151,9 +151,6 @@
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Scripts\Application\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Login\Login.cshtml" />
