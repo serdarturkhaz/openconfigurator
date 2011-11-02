@@ -33,5 +33,21 @@ namespace PresentationLayer.Controllers
             SessionData.SessionModels[modelId].Name = name;
             _modelService.Update(SessionData.SessionModels[modelId]);
         }
+
+
+        [Authorize]
+        public JsonNetResult NewDefaultFeature()
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Get a new default Feature
+            FeatureService _featureService = new FeatureService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Feature newFeature = (BLL.BusinessObjects.Feature)_featureService.CreateDefault();
+            result.Data = newFeature;
+
+            //
+            return result;
+        }
     }
 }

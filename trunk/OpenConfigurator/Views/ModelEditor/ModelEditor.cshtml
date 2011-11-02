@@ -6,12 +6,14 @@
     <script type="text/javascript">
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var modelId = '@(ViewBag.ModelId)';
+        //
         function calcWidth() {
             //Set width for ModelsBox
             var containerWidth = $(".OuterContentArea .InnerContentArea").width();
-            var marginWidth = 30;
-            var actionsBoxWidth = $("#ToolBox").width();
-            var modelsBoxWidth = containerWidth - marginWidth - actionsBoxWidth;
+            var marginWidth = 31;
+            var toolboxBoxWidth = $("#ToolBox").width();
+            var propertiesBoxWidth = $("#PropertiesBox").width();
+            var modelsBoxWidth = containerWidth - marginWidth * 2 - toolboxBoxWidth - propertiesBoxWidth;
             $('#ModelDiagramBox').css("width", modelsBoxWidth + "px");
         }
         function saveData() {
@@ -24,12 +26,13 @@
                 dataType: "json",
                 data: JSON.stringify({ modelId: modelId, name: name }),
                 success: function (reponse) {
-                    //
+
                     $.pnotify({
                         pnotify_title: "Data saved",
-                        pnotify_text: "Model '" + name  +"' saved successfully !",
+                        pnotify_text: "Model '" + name + "' saved successfully !",
                         pnotify_type: "notice"
                     });
+
                 },
                 error: function (req, status, error) {
                     $.pnotify({
@@ -41,41 +44,181 @@
             });
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //Raphael vars and methods~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        var canvas = null;
+        var selectedElements = new Array();
+        var selectedFeatureStyle = {
+            fill: "#ffe784",
+            stroke: "black",
+            "stroke-width": 1.2,
+            opacity: 1
+        };
+        var hoverGlowStyle = {
+            width: 10,
+            opacity: 0.5, 
+            color:"blue"
+        };
+        var defaultFeatureStyle = {
+            fill: "#ffe784",
+            stroke: "#CECECE",
+            "stroke-width": 1,
+            opacity: 1
+        }
+        var featureTextStyle = {
+            cursor: "default"
+        }
+
+        //Selection functions
+        function toggleSelect(elem) {
+            var isSelected = elem.data("selected");
+            if (!isSelected) {
+                select(elem);
+            }
+            else if (isSelected) {
+                deselect(elem);
+            }
+        }
+        function deselect(elem) {
+            elem.attr(defaultFeatureStyle);
+            elem.data("selected", false);
+
+            //Remove from selectedElements collection
+            var index = $(selectedElements).index(elem);
+            selectedElements.splice(index, 1);
+        }
+        function select(elem) {
+            elem.attr(selectedFeatureStyle);
+            elem.data("selected", true)
+
+            //Deselect everything else and save element into selectedElements collection
+            for (var i = 0; i < selectedElements.length; i++) {
+                var selElem = selectedElements[i];
+                deselect(selElem);
+            }
+            selectedElements.push(elem);
+
+            //Load properties
+            loadProperties(elem);
+        }
+
+        //Adds a new Feature
+        function addFeature() {
+
+            //Get a default Feature businessobject
+            $.ajax({
+                type: "POST",
+                url: "/ModelEditor/NewDefaultFeature",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {},
+                success: function (featureObj) {
+                    //Define box and text elements
+                    var box = canvas.rect(40.5, 40.5, 100, 30, 0).attr(defaultFeatureStyle)
+                        .data("dataObj", featureObj)
+                        .data("selected", false)
+                        .data("children", new Array())
+                        .data("parent", null);
+                    var text = canvas.text(90, 55, featureObj.Name).attr(featureTextStyle)
+                        .data("parent", box);
+                    box.data("children").push(text);
+                    var feature = canvas.set();
+                    feature.push(box);
+
+                    //Selectable with hover effect
+                    var glow = null;
+                    box.click(function () {
+                        toggleSelect(box);
+                    }).mouseover(function (e) {
+                        if (glow != null)
+                            glow.remove();
+                        glow = box.glow(hoverGlowStyle);
+                    }).mouseout(function (e) {
+                        glow.remove();
+                    });
+                    text.click(function () {
+                        toggleSelect(box);
+                    }).mouseover(function (e) {
+                        if (glow != null)
+                            glow.remove();
+                        glow = box.glow(hoverGlowStyle);
+                    }).mouseout(function (e) {
+                        glow.remove();
+                    });
+
+                    //Drag and droppable
+                    var start = function () {
+                        var rootContainer = feature.items[0];
+                        rootContainer.originalx = rootContainer.attr("x");
+                        rootContainer.originaly = rootContainer.attr("y");
+
+                        for (var i = 0; i < rootContainer.data("children").length; i++) {
+                            var childElem = rootContainer.data("children")[i];
+                            childElem.originalx = childElem.attr("x");
+                            childElem.originaly = childElem.attr("y");
+                        }
+
+                    };
+                    move = function (dx, dy) {
+                        var rootContainer = feature.items[0];
+                        rootContainer.attr({ x: rootContainer.originalx + dx, y: rootContainer.originaly + dy });
+
+                        for (var i = 0; i < rootContainer.data("children").length; i++) {
+                            var childElem = rootContainer.data("children")[i];
+                            childElem.attr({ x: childElem.originalx + dx, y: childElem.originaly + dy });
+                        }
+                    };
+                    up = function () {
+                        glow.remove();
+                        glow = box.glow({ width: 10, opacity: 0.3 });
+                    };
+                    box.drag(move, start, up);
+                    text.drag(move, start, up);
+                },
+                error: function (req, status, error) {
+                    alert('error');
+                }
+            });
+
+
+        }
+
+        function loadProperties(elem, type) {
+            var typeTextbox = $("#PropertiesBox").find("#ElementTypeTextbox");
+            var nameTextbox = $("#PropertiesBox").find("#ElementNameTextbox");
+            var featureTypeDropdown = $("#PropertiesBox").find("#FeatureTypeDropdown");
+            var descriptionTextbox = $("#PropertiesBox").find("#DescriptionTextbox");
+
+
+            //Load values
+            var dataObj = elem.data("dataObj");
+            typeTextbox.val("Feature");
+            nameTextbox.val(dataObj.Name);
+            featureTypeDropdown.val(dataObj.FeatureType);
+            descriptionTextbox.val(dataObj.Description);
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
             //Event handlers-------------------------------------------------------------------
             $("#SaveButton").bind("click", function () {
                 saveData();
             });
+            $("#NewFeatureButton").bind("click", function () {
+                addFeature();
+            });
             //---------------------------------------------------------------------------------
 
+            //Initialize 
+            calcWidth();
             calcWidth();
             $(window).resize(function () {
                 calcWidth();
             });
+
+            //Load data
             $("#ModelDiagramBox").block({ message: "Loading diagram...", fadeIn: 300 });
             $.timer(300, function () {
-                var R = Raphael($("#SVGCanvas")[0], "100%", "100%");
-                var r = R.circle(100, 100, 50).attr({ fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5 });
-                var g = R.circle(210, 100, 50).attr({ fill: "hsb(.3, 1, 1)", stroke: "none", opacity: .5 });
-                var b = R.circle(320, 100, 50).attr({ fill: "hsb(.6, 1, 1)", stroke: "none", opacity: .5 });
-                var p = R.circle(430, 100, 50).attr({ fill: "hsb(.8, 1, 1)", stroke: "none", opacity: .5 });
-
-                //
-                var start = function () {
-                    this.ox = this.attr("cx");
-                    this.oy = this.attr("cy");
-                    this.animate({ r: 70, opacity: .25 }, 500, ">");
-                },
-                move = function (dx, dy) {
-                    this.attr({ cx: this.ox + dx, cy: this.oy + dy });
-                },
-                up = function () {
-                    this.animate({ r: 50, opacity: .5 }, 500, ">");
-                };
-                R.set(r, g, b, p).drag(move, start, up);
-
-                //
+                canvas = Raphael($("#SVGCanvas")[0], "100%", "100%");
                 $("#ModelDiagramBox").unblock();
             });
         });
@@ -101,6 +244,7 @@
         </div>
     </div>
 }
+@*Toolbox*@
 <div id="ToolBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
@@ -109,7 +253,7 @@
     </div>
     <div class="BoxContent">
         <ul class="ActionList">
-            <li class="Button-Normal" id="NewModelButton">
+            <li class="Button-Normal" id="NewFeatureButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
                 <span>New Feature</span> </li>
             <li class="Button-Normal" id="NewGroupButton">
@@ -125,6 +269,59 @@
         </div>
     </div>
 </div>
+@*Properties*@
+<div id="PropertiesBox" class="RoundedBox">
+    <div class="BoxHeader">
+        <div class="BoxInnerHeader">
+            <span class="HeaderLabel">Properties</span>
+        </div>
+    </div>
+    <div class="BoxContent">
+        <table>
+            <tr>
+                <td>
+                    <span class="Label-Small">Element Type</span>
+                </td>
+                <td>
+                    <input readonly="readonly" class="Textbox" type="text" id="ElementTypeTextbox" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="Label-Small">Name</span>
+                </td>
+                <td>
+                    <input class="Textbox" type="text" id="ElementNameTextbox" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="Label-Small">Feature type</span>
+                </td>
+                <td>
+                    <select class="Dropdown" id="FeatureTypeDropdown">
+                        <option value="0" selected="selected">Mandatory</option>
+                        <option value="1">Optional</option>
+                        <option value="2">Cloneable</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="Label-Small">Description</span>
+                </td>
+                <td>
+                    <textarea class="Textarea" id="DescriptionTextbox"></textarea>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="BoxFooter">
+        <div class="BoxInnerFooter">
+        </div>
+    </div>
+</div>
+@*ModelDiagram*@
 <div id="ModelDiagramBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
