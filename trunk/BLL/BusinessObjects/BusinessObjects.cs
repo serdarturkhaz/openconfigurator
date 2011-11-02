@@ -8,6 +8,15 @@ using Newtonsoft.Json.Converters;
 
 namespace BLL.BusinessObjects
 {
+    //Enums
+    public enum FeatureTypes{
+        Mandatory = 1,
+        Optional = 2,
+        Cloneable = 3
+    }
+
+
+    //BusinessObjects
     public class Attribute 
     {
         
@@ -23,9 +32,101 @@ namespace BLL.BusinessObjects
 
     }
 
-    public class Feature 
+    public class Feature : IBusinessObject
     {
+        //Fields
+        private DAL.DataEntities.Feature _innerEntity;
 
+        //Constructor
+        internal Feature()
+        {
+        }
+        internal Feature(DAL.DataEntities.Feature innerEntity)
+        {
+            this._innerEntity = innerEntity;
+        }
+
+        //Properties
+        [ReadOnly(true)]
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return _innerEntity.Name;
+            }
+            set
+            {
+                _innerEntity.Name = value;
+            }
+        }
+        public string Description
+        {
+            get
+            {
+                return _innerEntity.Description;
+            }
+            set
+            {
+                _innerEntity.Description = value;
+            }
+        }
+        public Nullable<int> LowerBound
+        {
+            get
+            {
+                return _innerEntity.LowerBound;
+            }
+            set
+            {
+                _innerEntity.LowerBound = value;
+            }
+        }
+        public Nullable<int> UpperBound
+        {
+            get
+            {
+                return _innerEntity.UpperBound;
+            }
+            set
+            {
+                _innerEntity.UpperBound = value;
+            }
+        }
+        public FeatureTypes FeatureType
+        {
+            get
+            {
+                return (FeatureTypes) Enum.ToObject(typeof(FeatureTypes), _innerEntity.FeatureTypeID);
+            }
+            set
+            {
+                _innerEntity.FeatureTypeID = (int) value;
+            }
+        }
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.Feature) value;
+            }
+        }
+
+        #endregion
     }
 
     public class FeatureType 

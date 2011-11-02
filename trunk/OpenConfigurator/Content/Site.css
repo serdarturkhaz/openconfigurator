@@ -234,7 +234,7 @@ div.blockMsg
     display: table-cell;
     width: 150px !important;
     height: 70px;
-    border: 1px solid #F0C000;
+    border: 1px solid #FFDC51;
     background-color: #ffe784;
 }
 
@@ -349,7 +349,6 @@ html > body .ui-pnotify {
 	margin: 0 auto;
 }
 
-
 .ui-pnotify .picon {
 	background-color: transparent;
 	background-repeat: no-repeat;
@@ -366,12 +365,32 @@ html > body .ui-pnotify {
     padding: 5px;
     width: 215px;
 }
+.Dropdown
+{
+    border: 1px solid #E6E6E6;
+    padding: 5px;
+    width: 215px;
+}
 .Label
 {
     font-family: Arial;
     letter-spacing: 0.8px;
     font-size: 13px;
-    color: #3a4043;
+    color: #4F575B;
+}
+.Textarea
+{
+    border: 1px solid #E6E6E6;
+    padding: 5px;
+    width: 215px;
+    height:100px;
+}
+.Label-Small
+{
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    color: #4F575B;
 }
 .HeaderLabel
 {
@@ -487,8 +506,6 @@ a:hover
     clear: both;
     text-align:center;
 }
-
-
 /***********************************************************************************************/
 /*Pages*****************************************************************************************/
 /*Login-------------------------------------------------------------------------*/
@@ -522,13 +539,43 @@ a:hover
 {
     float: left;
     margin-top: 30px;
+    width:185px;
 }
+
+
 #ModelDiagramBox
 {
     float: right;
     margin-top: 30px;
+    margin-left: 25px;
+    margin-right: 29px;
     width: 80%;
-    
+}
+
+#PropertiesBox
+{
+    float: right;
+    margin-top: 30px;
+    width:300px;
+}
+#PropertiesBox table
+{
+    width:100%;
+}
+#PropertiesBox table td
+{
+    vertical-align:top;
+}
+#PropertiesBox table td .Label-Small
+{
+    display:block;
+    margin-top:8px;
+    float:left;
+}
+#PropertiesBox .Textbox, #PropertiesBox .Dropdown, #PropertiesBox .Textarea
+{
+    width:100%;
+    box-sizing: border-box;
 }
 #ModelDiagramBox #SVGCanvas
 {
@@ -538,6 +585,7 @@ a:hover
 }
 
 
+/*Overriden stuff*/
 .OuterMenuArea .InnerMenuArea .MenuItemSeparator
 {
     float: left;
@@ -548,7 +596,7 @@ a:hover
     height:30px;
     padding-top:10px;
     text-align:center;
-    width:25px;
+    width:29px;
     padding-right:1px;
     
 }
@@ -575,7 +623,6 @@ a:hover
     height: 31px;
     vertical-align: middle;
 }
-
 .Button-Toolbar:hover
 {
     background: #4B5254;
