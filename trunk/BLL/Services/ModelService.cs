@@ -15,26 +15,31 @@ namespace BLL.Services
         private BusinessObjectFactory _BusinessObjectFactory;
 
         //Constructors
-        public ModelService(int loggedInUserID)           
+        public ModelService(int loggedInUserID)
         {
             _LoggedInUserID = loggedInUserID;
-            _ModelRepository = new GenericRepository<DAL.DataEntities.Model>();
             _BusinessObjectFactory = new ModelFactory();
+
         }
 
         //Methods
         public IList<BLL.BusinessObjects.Model> GetByUserID(int userid)
         {
-            IEnumerable<DAL.DataEntities.Model> models = _ModelRepository.Find(m =>
-                m.UserID == userid);
-
-            //Create Business objects for each DAL object
-            List<BLL.BusinessObjects.Model> BModels = new List<BusinessObjects.Model>();
-            foreach(DAL.DataEntities.Model model in models)
+            //
+            List<BLL.BusinessObjects.Model> BModels;
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
             {
-                BModels.Add((BLL.BusinessObjects.Model)_BusinessObjectFactory.CreateBusinessObject(typeof(BLL.BusinessObjects.Model), model));
+                IEnumerable<DAL.DataEntities.Model> models = _ModelRepository.Find(m =>
+                    m.UserID == userid);
+
+                //Create Business objects for each DAL object
+                BModels = new List<BusinessObjects.Model>();
+                foreach (DAL.DataEntities.Model model in models)
+                {
+                    BModels.Add((BLL.BusinessObjects.Model)_BusinessObjectFactory.CreateBusinessObject(typeof(BLL.BusinessObjects.Model), model));
+                }
             }
-            return BModels; 
+            return BModels;
         }
         public IBusinessObject CreateDefault()
         {
@@ -42,12 +47,19 @@ namespace BLL.Services
             return defaultModel;
         }
 
+
         //Interface members
         #region IService<Model> Members
 
-        public BusinessObjects.Model GetByID(int ID)
+        public BusinessObjects.Model GetByID(int id)
         {
-            throw new NotImplementedException();
+            DAL.DataEntities.Model model;
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
+            {
+                model = _ModelRepository.SingleOrDefault(m => m.ID == id);
+            }
+            //
+            return new BLL.BusinessObjects.Model(model);
         }
 
         public IList<BusinessObjects.Model> GetAll()
@@ -57,7 +69,11 @@ namespace BLL.Services
 
         public void Update(BusinessObjects.Model entity)
         {
-            throw new NotImplementedException();
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
+            {
+                _ModelRepository.Attach((DAL.DataEntities.Model)entity.InnerEntity);
+                _ModelRepository.SaveChanges();
+            }
         }
 
         public void Delete(BusinessObjects.Model entity)
@@ -66,17 +82,26 @@ namespace BLL.Services
         }
         public void Delete(int id)
         {
-            DAL.DataEntities.Model model = _ModelRepository.SingleOrDefault(m => m.ID == id);
-            _ModelRepository.Delete(model);
-            _ModelRepository.SaveChanges();
+            DAL.DataEntities.Model model;
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
+            {
+                model = _ModelRepository.SingleOrDefault(m => m.ID == id);
+                _ModelRepository.Delete(model);
+                _ModelRepository.SaveChanges();
+            }
         }
         public void Add(BusinessObjects.Model entity)
         {
-            _ModelRepository.Add((DAL.DataEntities.Model) entity.InnerEntity);
-            _ModelRepository.SaveChanges();
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
+            {
+                _ModelRepository.Add((DAL.DataEntities.Model)entity.InnerEntity);
+                _ModelRepository.SaveChanges();
+            }
         }
 
 
         #endregion
+
+
     }
 }

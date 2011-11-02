@@ -1,17 +1,107 @@
 ﻿@{
     ViewBag.Title = "ModelEditor";
-    Layout = "~/Views/Master/_OuterLayout.cshtml";
+    Layout = "~/Views/Master/_LoggedInLayout.cshtml";
 }
+@section headerscripts{
+    <script type="text/javascript">
+        //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        var modelId = '@(ViewBag.ModelId)';
+        function calcWidth() {
+            //Set width for ModelsBox
+            var containerWidth = $(".OuterContentArea .InnerContentArea").width();
+            var marginWidth = 30;
+            var actionsBoxWidth = $("#ToolBox").width();
+            var modelsBoxWidth = containerWidth - marginWidth - actionsBoxWidth;
+            $('#ModelDiagramBox').css("width", modelsBoxWidth + "px");
+        }
+        function saveData() {
+            //Save ModelName
+            var name = $("#ModelNameTextbox").val();
+            $.ajax({
+                type: "POST",
+                url: "/ModelEditor/SaveModel",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({ modelId: modelId, name: name }),
+                success: function (reponse) {
+                    //
+                    $.pnotify({
+                        pnotify_title: "Data saved",
+                        pnotify_text: "Model '" + name  +"' saved successfully !",
+                        pnotify_type: "notice"
+                    });
+                },
+                error: function (req, status, error) {
+                    $.pnotify({
+                        pnotify_title: "Error!",
+                        pnotify_text: "Data could not be saved",
+                        pnotify_type: "error"
+                    });
+                }
+            });
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        $(document).ready(function () {
+            //Event handlers-------------------------------------------------------------------
+            $("#SaveButton").bind("click", function () {
+                saveData();
+            });
+            //---------------------------------------------------------------------------------
 
-@section SettingsArea{
-    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout", "General")
+            calcWidth();
+            $(window).resize(function () {
+                calcWidth();
+            });
+            $("#ModelDiagramBox").block({ message: "Loading diagram...", fadeIn: 300 });
+            $.timer(300, function () {
+                var R = Raphael($("#SVGCanvas")[0], "100%", "100%");
+                var r = R.circle(100, 100, 50).attr({ fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5 });
+                var g = R.circle(210, 100, 50).attr({ fill: "hsb(.3, 1, 1)", stroke: "none", opacity: .5 });
+                var b = R.circle(320, 100, 50).attr({ fill: "hsb(.6, 1, 1)", stroke: "none", opacity: .5 });
+                var p = R.circle(430, 100, 50).attr({ fill: "hsb(.8, 1, 1)", stroke: "none", opacity: .5 });
+
+                //
+                var start = function () {
+                    this.ox = this.attr("cx");
+                    this.oy = this.attr("cy");
+                    this.animate({ r: 70, opacity: .25 }, 500, ">");
+                },
+                move = function (dx, dy) {
+                    this.attr({ cx: this.ox + dx, cy: this.oy + dy });
+                },
+                up = function () {
+                    this.animate({ r: 50, opacity: .5 }, 500, ">");
+                };
+                R.set(r, g, b, p).drag(move, start, up);
+
+                //
+                $("#ModelDiagramBox").unblock();
+            });
+        });
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    </script>
 }
-@section MenuArea{
-    <div class="MenuItem">
-        Feature Models
+@section SubPageItem{
+    <div class="MenuItemSeparator">
+        ></div>
+    <div id="ModelMenuBar">
+        <input id="ModelNameTextbox" class="Textbox" type="text" value="@ViewBag.ModelName" />
+        <div class="Button-Toolbar" id="SaveButton">
+            <img src="../../Content/themes/base/images/Icons/save-toolbar.png" />
+            <span>Save</span>
+        </div>
+        <div class="Button-Toolbar" id="UndoButton">
+            <img src="../../Content/themes/base/images/Icons/undo-toolbar.png" />
+            <span>Undo</span>
+        </div>
+        <div class="Button-Toolbar" id="RedoButton">
+            <img src="../../Content/themes/base/images/Icons/redo-toolbar.png" />
+            <span>Redo</span>
+        </div>
     </div>
 }
-<div id="ActionsBox" class="RoundedBox">
+<div id="ToolBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
             <span class="HeaderLabel">Actions</span>
@@ -21,13 +111,13 @@
         <ul class="ActionList">
             <li class="Button-Normal" id="NewModelButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New Feature</span> 
-            </li>
-            <li class="Button-Normal" id="NewModelButton">
+                <span>New Feature</span> </li>
+            <li class="Button-Normal" id="NewGroupButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New Feature Group</span> 
-            </li>
-
+                <span>New Group</span> </li>
+            <li class="Button-Normal" id="NewRuleButton">
+                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                <span>New Rule</span> </li>
         </ul>
     </div>
     <div class="BoxFooter">
@@ -35,7 +125,6 @@
         </div>
     </div>
 </div>
-
 <div id="ModelDiagramBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
@@ -43,7 +132,8 @@
         </div>
     </div>
     <div class="BoxContent">
-        
+        <div id="SVGCanvas">
+        </div>
     </div>
     <div class="BoxFooter">
         <div class="BoxInnerFooter">

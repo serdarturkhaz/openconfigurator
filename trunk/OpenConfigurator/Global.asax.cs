@@ -29,8 +29,8 @@ namespace PresentationLayer
 
             routes.MapRoute(
                 "ModelEditor", // Route name
-                "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "Login", action = "Login", id = "" } // Parameter defaults
+                "{controller}/{action}/{modelId}", // URL with parameters
+                new { controller = "ModelEditor", action = "ModelEditor", modelId = "" } // Parameter defaults
             );
 
         }

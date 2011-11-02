@@ -11,7 +11,7 @@ namespace DAL.Repositories
     /// A generic repository for working with data in the database
     /// </summary>
     /// <typeparam name="T">A POCO that represents an Entity Framework entity</typeparam>
-    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class 
     {
         //Fields
         private ObjectContext _context;
@@ -70,6 +70,7 @@ namespace DAL.Repositories
         public void Attach(TEntity entity)
         {
             _objectSet.Attach(entity);
+            _context.ObjectStateManager.ChangeObjectState((object)entity, System.Data.EntityState.Modified);
         }
         public void SaveChanges()
         {
@@ -78,22 +79,25 @@ namespace DAL.Repositories
         public void SaveChanges(SaveOptions options)
         {
             _context.SaveChanges(options);
+            
         }
+
         public void Dispose()
         {
+            _context.Dispose();
             Dispose(true);
             GC.SuppressFinalize(this);
         }
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                if (_context != null)
-                {
-                    _context.Dispose();
-                    _context = null;
-                }
-            }
+            //if (disposing)
+            //{
+            //    if (_context != null)
+            //    {
+            //        _context.Dispose();
+            //        _context = null;
+            //    }
+            //}
         }
     }
 

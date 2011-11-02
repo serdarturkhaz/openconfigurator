@@ -14,7 +14,7 @@ namespace PresentationLayer.Common
             //Attempt to retreive the User with the given credentials
             UserService _userService = new UserService();
             BLL.BusinessObjects.User loginUser = _userService.GetByEmailAndPassword(email, password);
-
+            
             //
             if (loginUser != null)
             {

@@ -1,8 +1,8 @@
 ﻿@{
     ViewBag.Title = "Models";
-    Layout = "~/Views/Master/_OuterLayout.cshtml";
+    Layout = "~/Views/Master/_LoggedInLayout.cshtml";
 }
-@section scripts{
+@section headerscripts{
     <script type="text/javascript">
 
         //Grid functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +19,7 @@
                 if (j == 0) {
                     $(td).addClass("FirstColumn");
                     $(td).prepend("<img src='../../Content/themes/base/images/Icons/Model.png' />");
-                    innerElem = $("<a href='#'>" + dataObj[field] + "</a>");
+                    innerElem = $("<a href='/ModelEditor/ModelEditor/" + dataObj.ID + "'>" + dataObj[field] + "</a>");
                 }
 
                 $(td).append(innerElem);
@@ -33,7 +33,7 @@
             deleteButton.bind("click", function () {
                 deleteModel(dataObj.ID, tbody);
             });
-            var openButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/OpenModel.png' />").append("<span>Open</span>").appendTo(wrapper);
+            //var openButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/OpenModel.png' />").append("<span>Open</span>").appendTo(wrapper);
             actionstd.attr("style", $(headerColumns[headerColumns.length - 1]).attr("style"));
 
             $(tr).append(actionstd);
@@ -124,10 +124,10 @@
                 dataType: "json",
                 data: {},
                 beforeSend: function () {
-                    $("#ModelsBox").block({ message: "Loading data...", fadeIn: 500 });
+                    $("#ModelsBox").block({ message: "Loading data...", fadeIn: 300 });
                 },
                 success: function (models) {
-                    $.timer(500, function () {
+                    $.timer(300, function () {
                         //Create Grid
                         var modelsTable = $("#ModelsTable");
                         var headerColumns = $(modelsTable).find("th");
@@ -152,14 +152,8 @@
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     </script>
 }
-@section SettingsArea{
-    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout", "General")
-}
-@section MenuArea{
-    <div class="MenuItem">
-        Feature Models
-    </div>
-}
+
+
 <div id="ActionsBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
@@ -171,7 +165,7 @@
             <li class="Button-Normal" id="NewModelButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
                 <span>New Model</span> </li>
-            <li class="Button-Normal">
+            <li class="Button-Normal" disabled="disabled">
                 <img src="../../Content/themes/base/images/Icons/Ball.png" />
                 <span>Import Model</span> </li>
         </ul>
@@ -194,13 +188,13 @@
                     <th style="width: 60%; padding-left: 15px;">
                         <span columnname="Name">Name</span>
                     </th>
-                    <th style="width: 20%">
+                    <th style="width: 20%;text-align: center">
                         <span columnname="LastModifiedDateFormatted">Modified Date</span>
                     </th>
-                    <th style="width: 20%">
+                    <th style="width: 20%;text-align: center">
                         <span columnname="CreatedDateFormatted">Created Date</span>
                     </th>
-                    <th style="text-align: center;">
+                    <th style="text-align: center;padding-right: 15px;">
                         <span>Actions</span>
                     </th>
                 </tr>
