@@ -16,7 +16,6 @@ namespace BLL.Services
         //Constructors
         public UserService()
         {
-            _UserRepository = new GenericRepository<DAL.DataEntities.User>();
             _BusinessObjectFactory = new BusinessObjectFactory();
         }
 
@@ -24,9 +23,12 @@ namespace BLL.Services
         //Methods
         public BLL.BusinessObjects.User GetByEmailAndPassword(string email, string password)
         {
-            DAL.DataEntities.User user = _UserRepository.SingleOrDefault(u =>
-                u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && u.Password.Equals(password, StringComparison.InvariantCultureIgnoreCase));
-
+            DAL.DataEntities.User user;
+            using (_UserRepository = new GenericRepository<DAL.DataEntities.User>())
+            {
+                user = _UserRepository.SingleOrDefault(u =>
+                    u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && u.Password.Equals(password, StringComparison.InvariantCultureIgnoreCase));
+            }
             //
             return (BLL.BusinessObjects.User)_BusinessObjectFactory.CreateBusinessObject(typeof(BLL.BusinessObjects.User), user);
         }
@@ -36,8 +38,11 @@ namespace BLL.Services
 
         public BLL.BusinessObjects.User GetByID(int id)
         {
-            DAL.DataEntities.User user = _UserRepository.SingleOrDefault(u => u.ID == id);
-
+            DAL.DataEntities.User user;
+            using (_UserRepository = new GenericRepository<DAL.DataEntities.User>())
+            {
+                user = _UserRepository.SingleOrDefault(u => u.ID == id);
+            }
             //
             return new BLL.BusinessObjects.User(user);
         }

@@ -20,5 +20,6 @@ namespace BLL.Services
 
         //Create
         void Add(T entity);
+
     }
 }
