@@ -3,9 +3,12 @@
     Layout = "~/Views/Master/_LoggedInLayout.cshtml";
 }
 @section headerscripts{
+    <script type="text/javascript" src="../../Scripts/Pages/ModelEditor.js"></script>
     <script type="text/javascript">
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var modelId = '@(ViewBag.ModelId)';
+        var diagramContext = null;
+        var propertiesComponent = null;
         //
         function calcWidth() {
             //Set width for ModelsBox
@@ -44,159 +47,6 @@
             });
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //Raphael vars and methods~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        var canvas = null;
-        var selectedElements = new Array();
-        var selectedFeatureStyle = {
-            fill: "#ffe784",
-            stroke: "black",
-            "stroke-width": 1.2,
-            opacity: 1
-        };
-        var hoverGlowStyle = {
-            width: 10,
-            opacity: 0.5, 
-            color:"blue"
-        };
-        var defaultFeatureStyle = {
-            fill: "#ffe784",
-            stroke: "#CECECE",
-            "stroke-width": 1,
-            opacity: 1
-        }
-        var featureTextStyle = {
-            cursor: "default"
-        }
-
-        //Selection functions
-        function toggleSelect(elem) {
-            var isSelected = elem.data("selected");
-            if (!isSelected) {
-                select(elem);
-            }
-            else if (isSelected) {
-                deselect(elem);
-            }
-        }
-        function deselect(elem) {
-            elem.attr(defaultFeatureStyle);
-            elem.data("selected", false);
-
-            //Remove from selectedElements collection
-            var index = $(selectedElements).index(elem);
-            selectedElements.splice(index, 1);
-        }
-        function select(elem) {
-            elem.attr(selectedFeatureStyle);
-            elem.data("selected", true)
-
-            //Deselect everything else and save element into selectedElements collection
-            for (var i = 0; i < selectedElements.length; i++) {
-                var selElem = selectedElements[i];
-                deselect(selElem);
-            }
-            selectedElements.push(elem);
-
-            //Load properties
-            loadProperties(elem);
-        }
-
-        //Adds a new Feature
-        function addFeature() {
-
-            //Get a default Feature businessobject
-            $.ajax({
-                type: "POST",
-                url: "/ModelEditor/NewDefaultFeature",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: {},
-                success: function (featureObj) {
-                    //Define box and text elements
-                    var box = canvas.rect(40.5, 40.5, 100, 30, 0).attr(defaultFeatureStyle)
-                        .data("dataObj", featureObj)
-                        .data("selected", false)
-                        .data("children", new Array())
-                        .data("parent", null);
-                    var text = canvas.text(90, 55, featureObj.Name).attr(featureTextStyle)
-                        .data("parent", box);
-                    box.data("children").push(text);
-                    var feature = canvas.set();
-                    feature.push(box);
-
-                    //Selectable with hover effect
-                    var glow = null;
-                    box.click(function () {
-                        toggleSelect(box);
-                    }).mouseover(function (e) {
-                        if (glow != null)
-                            glow.remove();
-                        glow = box.glow(hoverGlowStyle);
-                    }).mouseout(function (e) {
-                        glow.remove();
-                    });
-                    text.click(function () {
-                        toggleSelect(box);
-                    }).mouseover(function (e) {
-                        if (glow != null)
-                            glow.remove();
-                        glow = box.glow(hoverGlowStyle);
-                    }).mouseout(function (e) {
-                        glow.remove();
-                    });
-
-                    //Drag and droppable
-                    var start = function () {
-                        var rootContainer = feature.items[0];
-                        rootContainer.originalx = rootContainer.attr("x");
-                        rootContainer.originaly = rootContainer.attr("y");
-
-                        for (var i = 0; i < rootContainer.data("children").length; i++) {
-                            var childElem = rootContainer.data("children")[i];
-                            childElem.originalx = childElem.attr("x");
-                            childElem.originaly = childElem.attr("y");
-                        }
-
-                    };
-                    move = function (dx, dy) {
-                        var rootContainer = feature.items[0];
-                        rootContainer.attr({ x: rootContainer.originalx + dx, y: rootContainer.originaly + dy });
-
-                        for (var i = 0; i < rootContainer.data("children").length; i++) {
-                            var childElem = rootContainer.data("children")[i];
-                            childElem.attr({ x: childElem.originalx + dx, y: childElem.originaly + dy });
-                        }
-                    };
-                    up = function () {
-                        glow.remove();
-                        glow = box.glow({ width: 10, opacity: 0.3 });
-                    };
-                    box.drag(move, start, up);
-                    text.drag(move, start, up);
-                },
-                error: function (req, status, error) {
-                    alert('error');
-                }
-            });
-
-
-        }
-
-        function loadProperties(elem, type) {
-            var typeTextbox = $("#PropertiesBox").find("#ElementTypeTextbox");
-            var nameTextbox = $("#PropertiesBox").find("#ElementNameTextbox");
-            var featureTypeDropdown = $("#PropertiesBox").find("#FeatureTypeDropdown");
-            var descriptionTextbox = $("#PropertiesBox").find("#DescriptionTextbox");
-
-
-            //Load values
-            var dataObj = elem.data("dataObj");
-            typeTextbox.val("Feature");
-            nameTextbox.val(dataObj.Name);
-            featureTypeDropdown.val(dataObj.FeatureType);
-            descriptionTextbox.val(dataObj.Description);
-        }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
             //Event handlers-------------------------------------------------------------------
@@ -204,7 +54,10 @@
                 saveData();
             });
             $("#NewFeatureButton").bind("click", function () {
-                addFeature();
+                diagramContext.AddFeature();
+            });
+            $("#NewRelationButton").bind("click", function () {
+                diagramContext.CreateRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements[1]);
             });
             //---------------------------------------------------------------------------------
 
@@ -213,12 +66,27 @@
             calcWidth();
             $(window).resize(function () {
                 calcWidth();
+                calcWidth();
             });
 
             //Load data
             $("#ModelDiagramBox").block({ message: "Loading diagram...", fadeIn: 300 });
             $.timer(300, function () {
-                canvas = Raphael($("#SVGCanvas")[0], "100%", "100%");
+                //PropertiesComponent
+                propertiesComponent = new PropertiesComponent($("#PropertiesBox"));
+                propertiesComponent.Initialize();
+
+                //DiagramContext
+                diagramContext = new DiagramContext($("#SVGCanvas")[0]);
+                diagramContext.Initialize();
+
+                //Event handlers
+                diagramContext.OnElementSelected.AddHandler(new EventHandler(function (elem) {
+                    propertiesComponent.LoadProperties(elem, "Feature");
+                }));
+                diagramContext.OnAllElementsDeselected.AddHandler(new EventHandler(function () {
+                    propertiesComponent.Clear();
+                }));
                 $("#ModelDiagramBox").unblock();
             });
         });
@@ -259,9 +127,9 @@
             <li class="Button-Normal" id="NewGroupButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
                 <span>New Group</span> </li>
-            <li class="Button-Normal" id="NewRuleButton">
+            <li class="Button-Normal" id="NewRelationButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New Rule</span> </li>
+                <span>New Relation</span> </li>
         </ul>
     </div>
     <div class="BoxFooter">
@@ -273,25 +141,18 @@
 <div id="PropertiesBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
-            <span class="HeaderLabel">Properties</span>
+            <span class="HeaderLabel">Properties - <span id="SetTypeLabel"></span></span>
+            
         </div>
     </div>
     <div class="BoxContent">
         <table>
             <tr>
                 <td>
-                    <span class="Label-Small">Element Type</span>
-                </td>
-                <td>
-                    <input readonly="readonly" class="Textbox" type="text" id="ElementTypeTextbox" />
-                </td>
-            </tr>
-            <tr>
-                <td>
                     <span class="Label-Small">Name</span>
                 </td>
                 <td>
-                    <input class="Textbox" type="text" id="ElementNameTextbox" />
+                    <input disabled="disabled" class="Textbox" type="text" id="ElementNameTextbox" />
                 </td>
             </tr>
             <tr>
@@ -299,8 +160,8 @@
                     <span class="Label-Small">Feature type</span>
                 </td>
                 <td>
-                    <select class="Dropdown" id="FeatureTypeDropdown">
-                        <option value="0" selected="selected">Mandatory</option>
+                    <select disabled="disabled" class="Dropdown" id="FeatureTypeDropdown">
+                        <option value="0">Mandatory</option>
                         <option value="1">Optional</option>
                         <option value="2">Cloneable</option>
                     </select>
@@ -311,7 +172,7 @@
                     <span class="Label-Small">Description</span>
                 </td>
                 <td>
-                    <textarea class="Textarea" id="DescriptionTextbox"></textarea>
+                    <textarea disabled="disabled" class="Textarea" id="DescriptionTextbox"></textarea>
                 </td>
             </tr>
         </table>
