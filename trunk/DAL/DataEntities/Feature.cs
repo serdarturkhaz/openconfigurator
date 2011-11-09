@@ -30,100 +30,23 @@ namespace DAL.DataEntities
             get { return _modelID; }
             set
             {
-                try
+                if (_modelID != value)
                 {
-                    _settingFK = true;
-                    if (_modelID != value)
+                    if (Model != null && Model.ID != value)
                     {
-                        if (Model != null && Model.ID != value)
-                        {
-                            Model = null;
-                        }
-                        _modelID = value;
+                        Model = null;
                     }
-                }
-                finally
-                {
-                    _settingFK = false;
+                    _modelID = value;
                 }
             }
         }
         private int _modelID;
     
-        public virtual Nullable<int> ParentFeatureID
-        {
-            get { return _parentFeatureID; }
-            set
-            {
-                try
-                {
-                    _settingFK = true;
-                    if (_parentFeatureID != value)
-                    {
-                        if (ParentFeature != null && ParentFeature.ID != value)
-                        {
-                            ParentFeature = null;
-                        }
-                        _parentFeatureID = value;
-                    }
-                }
-                finally
-                {
-                    _settingFK = false;
-                }
-            }
-        }
-        private Nullable<int> _parentFeatureID;
-    
-        public virtual int FeatureTypeID
-        {
-            get { return _featureTypeID; }
-            set
-            {
-                try
-                {
-                    _settingFK = true;
-                    if (_featureTypeID != value)
-                    {
-                        if (Feature_Type != null && Feature_Type.ID != value)
-                        {
-                            Feature_Type = null;
-                        }
-                        _featureTypeID = value;
-                    }
-                }
-                finally
-                {
-                    _settingFK = false;
-                }
-            }
-        }
-        private int _featureTypeID;
-    
         public virtual Nullable<int> FeatureGroupID
         {
-            get { return _featureGroupID; }
-            set
-            {
-                try
-                {
-                    _settingFK = true;
-                    if (_featureGroupID != value)
-                    {
-                        if (ParentFeatureGroup != null && ParentFeatureGroup.ID != value)
-                        {
-                            ParentFeatureGroup = null;
-                        }
-                        _featureGroupID = value;
-                    }
-                }
-                finally
-                {
-                    _settingFK = false;
-                }
-            }
+            get;
+            set;
         }
-        private Nullable<int> _featureGroupID;
     
         public virtual string Name
         {
@@ -137,13 +60,7 @@ namespace DAL.DataEntities
             set;
         }
     
-        public virtual Nullable<int> LowerBound
-        {
-            get;
-            set;
-        }
-    
-        public virtual Nullable<int> UpperBound
+        public virtual Nullable<bool> IsRoot
         {
             get;
             set;
@@ -184,115 +101,6 @@ namespace DAL.DataEntities
         }
         private ICollection<Attribute> _attributes;
     
-        public virtual Feature_Type Feature_Type
-        {
-            get { return _feature_Type; }
-            set
-            {
-                if (!ReferenceEquals(_feature_Type, value))
-                {
-                    var previousValue = _feature_Type;
-                    _feature_Type = value;
-                    FixupFeature_Type(previousValue);
-                }
-            }
-        }
-        private Feature_Type _feature_Type;
-    
-        public virtual ICollection<FeatureGroup> FeatureGroups
-        {
-            get
-            {
-                if (_featureGroups == null)
-                {
-                    var newCollection = new FixupCollection<FeatureGroup>();
-                    newCollection.CollectionChanged += FixupFeatureGroups;
-                    _featureGroups = newCollection;
-                }
-                return _featureGroups;
-            }
-            set
-            {
-                if (!ReferenceEquals(_featureGroups, value))
-                {
-                    var previousValue = _featureGroups as FixupCollection<FeatureGroup>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupFeatureGroups;
-                    }
-                    _featureGroups = value;
-                    var newValue = value as FixupCollection<FeatureGroup>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupFeatureGroups;
-                    }
-                }
-            }
-        }
-        private ICollection<FeatureGroup> _featureGroups;
-    
-        public virtual FeatureGroup ParentFeatureGroup
-        {
-            get { return _parentFeatureGroup; }
-            set
-            {
-                if (!ReferenceEquals(_parentFeatureGroup, value))
-                {
-                    var previousValue = _parentFeatureGroup;
-                    _parentFeatureGroup = value;
-                    FixupParentFeatureGroup(previousValue);
-                }
-            }
-        }
-        private FeatureGroup _parentFeatureGroup;
-    
-        public virtual ICollection<Feature> ChildFeatures
-        {
-            get
-            {
-                if (_childFeatures == null)
-                {
-                    var newCollection = new FixupCollection<Feature>();
-                    newCollection.CollectionChanged += FixupChildFeatures;
-                    _childFeatures = newCollection;
-                }
-                return _childFeatures;
-            }
-            set
-            {
-                if (!ReferenceEquals(_childFeatures, value))
-                {
-                    var previousValue = _childFeatures as FixupCollection<Feature>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupChildFeatures;
-                    }
-                    _childFeatures = value;
-                    var newValue = value as FixupCollection<Feature>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupChildFeatures;
-                    }
-                }
-            }
-        }
-        private ICollection<Feature> _childFeatures;
-    
-        public virtual Feature ParentFeature
-        {
-            get { return _parentFeature; }
-            set
-            {
-                if (!ReferenceEquals(_parentFeature, value))
-                {
-                    var previousValue = _parentFeature;
-                    _parentFeature = value;
-                    FixupParentFeature(previousValue);
-                }
-            }
-        }
-        private Feature _parentFeature;
-    
         public virtual Model Model
         {
             get { return _model; }
@@ -307,79 +115,73 @@ namespace DAL.DataEntities
             }
         }
         private Model _model;
+    
+        public virtual ICollection<Relation> ChildRelations
+        {
+            get
+            {
+                if (_childRelations == null)
+                {
+                    var newCollection = new FixupCollection<Relation>();
+                    newCollection.CollectionChanged += FixupChildRelations;
+                    _childRelations = newCollection;
+                }
+                return _childRelations;
+            }
+            set
+            {
+                if (!ReferenceEquals(_childRelations, value))
+                {
+                    var previousValue = _childRelations as FixupCollection<Relation>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupChildRelations;
+                    }
+                    _childRelations = value;
+                    var newValue = value as FixupCollection<Relation>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupChildRelations;
+                    }
+                }
+            }
+        }
+        private ICollection<Relation> _childRelations;
+    
+        public virtual ICollection<Relation> ParentRelations
+        {
+            get
+            {
+                if (_parentRelations == null)
+                {
+                    var newCollection = new FixupCollection<Relation>();
+                    newCollection.CollectionChanged += FixupParentRelations;
+                    _parentRelations = newCollection;
+                }
+                return _parentRelations;
+            }
+            set
+            {
+                if (!ReferenceEquals(_parentRelations, value))
+                {
+                    var previousValue = _parentRelations as FixupCollection<Relation>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupParentRelations;
+                    }
+                    _parentRelations = value;
+                    var newValue = value as FixupCollection<Relation>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupParentRelations;
+                    }
+                }
+            }
+        }
+        private ICollection<Relation> _parentRelations;
 
         #endregion
         #region Association Fixup
-    
-        private bool _settingFK = false;
-    
-        private void FixupFeature_Type(Feature_Type previousValue)
-        {
-            if (previousValue != null && previousValue.Features.Contains(this))
-            {
-                previousValue.Features.Remove(this);
-            }
-    
-            if (Feature_Type != null)
-            {
-                if (!Feature_Type.Features.Contains(this))
-                {
-                    Feature_Type.Features.Add(this);
-                }
-                if (FeatureTypeID != Feature_Type.ID)
-                {
-                    FeatureTypeID = Feature_Type.ID;
-                }
-            }
-        }
-    
-        private void FixupParentFeatureGroup(FeatureGroup previousValue)
-        {
-            if (previousValue != null && previousValue.ChildFeatures.Contains(this))
-            {
-                previousValue.ChildFeatures.Remove(this);
-            }
-    
-            if (ParentFeatureGroup != null)
-            {
-                if (!ParentFeatureGroup.ChildFeatures.Contains(this))
-                {
-                    ParentFeatureGroup.ChildFeatures.Add(this);
-                }
-                if (FeatureGroupID != ParentFeatureGroup.ID)
-                {
-                    FeatureGroupID = ParentFeatureGroup.ID;
-                }
-            }
-            else if (!_settingFK)
-            {
-                FeatureGroupID = null;
-            }
-        }
-    
-        private void FixupParentFeature(Feature previousValue)
-        {
-            if (previousValue != null && previousValue.ChildFeatures.Contains(this))
-            {
-                previousValue.ChildFeatures.Remove(this);
-            }
-    
-            if (ParentFeature != null)
-            {
-                if (!ParentFeature.ChildFeatures.Contains(this))
-                {
-                    ParentFeature.ChildFeatures.Add(this);
-                }
-                if (ParentFeatureID != ParentFeature.ID)
-                {
-                    ParentFeatureID = ParentFeature.ID;
-                }
-            }
-            else if (!_settingFK)
-            {
-                ParentFeatureID = null;
-            }
-        }
     
         private void FixupModel(Model previousValue)
         {
@@ -423,11 +225,11 @@ namespace DAL.DataEntities
             }
         }
     
-        private void FixupFeatureGroups(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupChildRelations(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (FeatureGroup item in e.NewItems)
+                foreach (Relation item in e.NewItems)
                 {
                     item.ParentFeature = this;
                 }
@@ -435,7 +237,7 @@ namespace DAL.DataEntities
     
             if (e.OldItems != null)
             {
-                foreach (FeatureGroup item in e.OldItems)
+                foreach (Relation item in e.OldItems)
                 {
                     if (ReferenceEquals(item.ParentFeature, this))
                     {
@@ -445,23 +247,23 @@ namespace DAL.DataEntities
             }
         }
     
-        private void FixupChildFeatures(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupParentRelations(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (Feature item in e.NewItems)
+                foreach (Relation item in e.NewItems)
                 {
-                    item.ParentFeature = this;
+                    item.ChildFeature = this;
                 }
             }
     
             if (e.OldItems != null)
             {
-                foreach (Feature item in e.OldItems)
+                foreach (Relation item in e.OldItems)
                 {
-                    if (ReferenceEquals(item.ParentFeature, this))
+                    if (ReferenceEquals(item.ChildFeature, this))
                     {
-                        item.ParentFeature = null;
+                        item.ChildFeature = null;
                     }
                 }
             }

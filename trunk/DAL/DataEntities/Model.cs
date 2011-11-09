@@ -63,38 +63,6 @@ namespace DAL.DataEntities
         #endregion
         #region Navigation Properties
     
-        public virtual ICollection<FeatureGroup> FeatureGroups
-        {
-            get
-            {
-                if (_featureGroups == null)
-                {
-                    var newCollection = new FixupCollection<FeatureGroup>();
-                    newCollection.CollectionChanged += FixupFeatureGroups;
-                    _featureGroups = newCollection;
-                }
-                return _featureGroups;
-            }
-            set
-            {
-                if (!ReferenceEquals(_featureGroups, value))
-                {
-                    var previousValue = _featureGroups as FixupCollection<FeatureGroup>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupFeatureGroups;
-                    }
-                    _featureGroups = value;
-                    var newValue = value as FixupCollection<FeatureGroup>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupFeatureGroups;
-                    }
-                }
-            }
-        }
-        private ICollection<FeatureGroup> _featureGroups;
-    
         public virtual ICollection<Feature> Features
         {
             get
@@ -173,6 +141,38 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<Rule> _rules;
+    
+        public virtual ICollection<Relation> Relations
+        {
+            get
+            {
+                if (_relations == null)
+                {
+                    var newCollection = new FixupCollection<Relation>();
+                    newCollection.CollectionChanged += FixupRelations;
+                    _relations = newCollection;
+                }
+                return _relations;
+            }
+            set
+            {
+                if (!ReferenceEquals(_relations, value))
+                {
+                    var previousValue = _relations as FixupCollection<Relation>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupRelations;
+                    }
+                    _relations = value;
+                    var newValue = value as FixupCollection<Relation>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupRelations;
+                    }
+                }
+            }
+        }
+        private ICollection<Relation> _relations;
 
         #endregion
         #region Association Fixup
@@ -193,28 +193,6 @@ namespace DAL.DataEntities
                 if (UserID != User.ID)
                 {
                     UserID = User.ID;
-                }
-            }
-        }
-    
-        private void FixupFeatureGroups(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (FeatureGroup item in e.NewItems)
-                {
-                    item.Model = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (FeatureGroup item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Model, this))
-                    {
-                        item.Model = null;
-                    }
                 }
             }
         }
@@ -254,6 +232,28 @@ namespace DAL.DataEntities
             if (e.OldItems != null)
             {
                 foreach (Rule item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Model, this))
+                    {
+                        item.Model = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupRelations(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Relation item in e.NewItems)
+                {
+                    item.Model = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Relation item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Model, this))
                     {

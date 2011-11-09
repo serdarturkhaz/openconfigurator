@@ -54,24 +54,6 @@ namespace DAL.DataEntities
         }
         private ObjectSet<Attribute> _attributes;
     
-        public ObjectSet<Feature_Type> Feature_Types
-        {
-            get { return _feature_Types  ?? (_feature_Types = CreateObjectSet<Feature_Type>("Feature_Types")); }
-        }
-        private ObjectSet<Feature_Type> _feature_Types;
-    
-        public ObjectSet<FeatureGroup_Type> FeatureGroup_Types
-        {
-            get { return _featureGroup_Types  ?? (_featureGroup_Types = CreateObjectSet<FeatureGroup_Type>("FeatureGroup_Types")); }
-        }
-        private ObjectSet<FeatureGroup_Type> _featureGroup_Types;
-    
-        public ObjectSet<FeatureGroup> FeatureGroups
-        {
-            get { return _featureGroups  ?? (_featureGroups = CreateObjectSet<FeatureGroup>("FeatureGroups")); }
-        }
-        private ObjectSet<FeatureGroup> _featureGroups;
-    
         public ObjectSet<Feature> Features
         {
             get { return _features  ?? (_features = CreateObjectSet<Feature>("Features")); }
@@ -107,6 +89,18 @@ namespace DAL.DataEntities
             get { return _attribute_Types  ?? (_attribute_Types = CreateObjectSet<Attribute_Type>("Attribute_Types")); }
         }
         private ObjectSet<Attribute_Type> _attribute_Types;
+    
+        public ObjectSet<Relation_Type> Relation_Types
+        {
+            get { return _relation_Types  ?? (_relation_Types = CreateObjectSet<Relation_Type>("Relation_Types")); }
+        }
+        private ObjectSet<Relation_Type> _relation_Types;
+    
+        public ObjectSet<Relation> Relations
+        {
+            get { return _relations  ?? (_relations = CreateObjectSet<Relation>("Relations")); }
+        }
+        private ObjectSet<Relation> _relations;
 
         #endregion
     }
