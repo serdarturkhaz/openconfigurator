@@ -57,7 +57,7 @@
                 diagramContext.AddFeature();
             });
             $("#NewRelationButton").bind("click", function () {
-                diagramContext.CreateRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements[1]);
+                diagramContext.AddRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements[1]);
             });
             //---------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@
 
                 //Event handlers
                 diagramContext.OnElementSelected.AddHandler(new EventHandler(function (elem) {
-                    propertiesComponent.LoadProperties(elem, "Feature");
+                    propertiesComponent.LoadProperties(elem);
                 }));
                 diagramContext.OnAllElementsDeselected.AddHandler(new EventHandler(function () {
                     propertiesComponent.Clear();
@@ -110,6 +110,7 @@
             <img src="../../Content/themes/base/images/Icons/redo-toolbar.png" />
             <span>Redo</span>
         </div>
+
     </div>
 }
 @*Toolbox*@
@@ -124,9 +125,6 @@
             <li class="Button-Normal" id="NewFeatureButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
                 <span>New Feature</span> </li>
-            <li class="Button-Normal" id="NewGroupButton">
-                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New Group</span> </li>
             <li class="Button-Normal" id="NewRelationButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
                 <span>New Relation</span> </li>
@@ -147,7 +145,8 @@
     </div>
     <div class="BoxContent">
         <table>
-            <tr>
+            <tbody></tbody>
+            @*<tr>
                 <td>
                     <span class="Label-Small">Name</span>
                 </td>
@@ -174,7 +173,7 @@
                 <td>
                     <textarea disabled="disabled" class="Textarea" id="DescriptionTextbox"></textarea>
                 </td>
-            </tr>
+            </tr>*@
         </table>
     </div>
     <div class="BoxFooter">

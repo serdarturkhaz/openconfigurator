@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace DAL.DataEntities
 {
-    public partial class FeatureGroup_Type : IDataEntity
+    public partial class Relation_Type : IDataEntity
     {
         #region Primitive Properties
     
@@ -46,58 +46,58 @@ namespace DAL.DataEntities
         #endregion
         #region Navigation Properties
     
-        public virtual ICollection<FeatureGroup> FeatureGroups
+        public virtual ICollection<Relation> Relations
         {
             get
             {
-                if (_featureGroups == null)
+                if (_relations == null)
                 {
-                    var newCollection = new FixupCollection<FeatureGroup>();
-                    newCollection.CollectionChanged += FixupFeatureGroups;
-                    _featureGroups = newCollection;
+                    var newCollection = new FixupCollection<Relation>();
+                    newCollection.CollectionChanged += FixupRelations;
+                    _relations = newCollection;
                 }
-                return _featureGroups;
+                return _relations;
             }
             set
             {
-                if (!ReferenceEquals(_featureGroups, value))
+                if (!ReferenceEquals(_relations, value))
                 {
-                    var previousValue = _featureGroups as FixupCollection<FeatureGroup>;
+                    var previousValue = _relations as FixupCollection<Relation>;
                     if (previousValue != null)
                     {
-                        previousValue.CollectionChanged -= FixupFeatureGroups;
+                        previousValue.CollectionChanged -= FixupRelations;
                     }
-                    _featureGroups = value;
-                    var newValue = value as FixupCollection<FeatureGroup>;
+                    _relations = value;
+                    var newValue = value as FixupCollection<Relation>;
                     if (newValue != null)
                     {
-                        newValue.CollectionChanged += FixupFeatureGroups;
+                        newValue.CollectionChanged += FixupRelations;
                     }
                 }
             }
         }
-        private ICollection<FeatureGroup> _featureGroups;
+        private ICollection<Relation> _relations;
 
         #endregion
         #region Association Fixup
     
-        private void FixupFeatureGroups(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupRelations(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (FeatureGroup item in e.NewItems)
+                foreach (Relation item in e.NewItems)
                 {
-                    item.FeatureGroup_Type = this;
+                    item.Relation_Type = this;
                 }
             }
     
             if (e.OldItems != null)
             {
-                foreach (FeatureGroup item in e.OldItems)
+                foreach (Relation item in e.OldItems)
                 {
-                    if (ReferenceEquals(item.FeatureGroup_Type, this))
+                    if (ReferenceEquals(item.Relation_Type, this))
                     {
-                        item.FeatureGroup_Type = null;
+                        item.Relation_Type = null;
                     }
                 }
             }

@@ -71,17 +71,14 @@
     <Compile Include="DataEntities\Feature.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataEntities\FeatureGroup.cs">
-      <DependentUpon>DataEntities.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataEntities\FeatureGroup_Type.cs">
-      <DependentUpon>DataEntities.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataEntities\Feature_Type.cs">
-      <DependentUpon>DataEntities.tt</DependentUpon>
-    </Compile>
     <Compile Include="DataEntities\IDataEntity.cs" />
     <Compile Include="DataEntities\Model.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities\Relation.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities\Relation_Type.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\Rule.cs">

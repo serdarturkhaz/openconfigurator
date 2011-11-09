@@ -77,39 +77,8 @@ namespace BLL.BusinessObjects
                 _innerEntity.Description = value;
             }
         }
-        public Nullable<int> LowerBound
-        {
-            get
-            {
-                return _innerEntity.LowerBound;
-            }
-            set
-            {
-                _innerEntity.LowerBound = value;
-            }
-        }
-        public Nullable<int> UpperBound
-        {
-            get
-            {
-                return _innerEntity.UpperBound;
-            }
-            set
-            {
-                _innerEntity.UpperBound = value;
-            }
-        }
-        public FeatureTypes FeatureType
-        {
-            get
-            {
-                return (FeatureTypes) Enum.ToObject(typeof(FeatureTypes), _innerEntity.FeatureTypeID);
-            }
-            set
-            {
-                _innerEntity.FeatureTypeID = (int) value;
-            }
-        }
+
+        
 
         //Interface members
         #region IBusinessObject Members

@@ -17,8 +17,7 @@ namespace BLL.BusinessObjects
 
             //Set default fields
             feature.Name = "Default Feature";
-            feature.FeatureType = FeatureTypes.Mandatory;
-            feature.Description = "Default feature";
+            feature.Description = "Default description";
 
             //Return the object instance
             return (IBusinessObject)feature;
