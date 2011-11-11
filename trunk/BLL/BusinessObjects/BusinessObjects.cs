@@ -9,7 +9,8 @@ using Newtonsoft.Json.Converters;
 namespace BLL.BusinessObjects
 {
     //Enums
-    public enum FeatureTypes{
+    public enum RelationTypes
+    {
         Mandatory = 1,
         Optional = 2,
         Cloneable = 3
@@ -17,9 +18,9 @@ namespace BLL.BusinessObjects
 
 
     //BusinessObjects
-    public class Attribute 
+    public class Attribute
     {
-        
+
     }
 
     public class AttributeDataType
@@ -27,7 +28,7 @@ namespace BLL.BusinessObjects
 
     }
 
-    public class AttributeType 
+    public class AttributeType
     {
 
     }
@@ -77,8 +78,17 @@ namespace BLL.BusinessObjects
                 _innerEntity.Description = value;
             }
         }
+        public bool? IsRoot
+        {
+            get
+            {
+                if (_innerEntity.IsRoot != null)
+                    return _innerEntity.IsRoot;
+                else
+                    return false;
+            }
+        }
 
-        
 
         //Interface members
         #region IBusinessObject Members
@@ -91,29 +101,71 @@ namespace BLL.BusinessObjects
             }
             set
             {
-                this._innerEntity = (DAL.DataEntities.Feature) value;
+                this._innerEntity = (DAL.DataEntities.Feature)value;
             }
         }
 
         #endregion
     }
 
-    public class FeatureType 
+    public class Relation : IBusinessObject
     {
+        //Fields
+        private DAL.DataEntities.Relation _innerEntity;
 
+        //Constructor
+        internal Relation()
+        {
+        }
+        internal Relation(DAL.DataEntities.Relation innerEntity)
+        {
+            this._innerEntity = innerEntity;
+        }
+
+        //Properties
+        [ReadOnly(true)]
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+        }
+        public RelationTypes RelationType
+        {
+            get
+            {
+                return (RelationTypes)Enum.Parse(typeof(RelationTypes), _innerEntity.RelationTypeID.ToString());
+            }
+            set
+            {
+                _innerEntity.RelationTypeID = (int)value;
+            }
+        }
+
+
+
+
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.Relation)value;
+            }
+        }
+
+        #endregion
     }
 
-    public class FeatureGroup
-    {
-
-    }
-
-    public class FeatureGroupType 
-    {
-
-    }
-
-    public class Model :IBusinessObject
+    public class Model : IBusinessObject
     {
         //Fields
         private DAL.DataEntities.Model _innerEntity;
@@ -147,7 +199,7 @@ namespace BLL.BusinessObjects
                 _innerEntity.Name = value;
             }
         }
-        [JsonIgnore] 
+        [JsonIgnore]
         public Nullable<System.DateTime> CreatedDate
         {
             get
@@ -159,11 +211,11 @@ namespace BLL.BusinessObjects
                 _innerEntity.CreatedDate = value;
             }
         }
-        [JsonIgnore] 
+        [JsonIgnore]
         public Nullable<System.DateTime> LastModifiedDate
         {
             get
-            {               
+            {
                 return _innerEntity.LastModifiedDate;
             }
             set
@@ -198,24 +250,24 @@ namespace BLL.BusinessObjects
             }
             set
             {
-                this._innerEntity = (DAL.DataEntities.Model) value;
+                this._innerEntity = (DAL.DataEntities.Model)value;
             }
         }
 
         #endregion
     }
 
-    public class Rule 
+    public class Rule
     {
 
     }
 
-    public class RuleType 
+    public class RuleType
     {
 
     }
 
-    public class User: IBusinessObject
+    public class User : IBusinessObject
     {
         //Fields
         private DAL.DataEntities.User _innerEntity;
@@ -240,10 +292,12 @@ namespace BLL.BusinessObjects
         }
         public string Email
         {
-            get{
+            get
+            {
                 return _innerEntity.Email;
             }
-            set {
+            set
+            {
                 _innerEntity.Email = value;
             }
         }

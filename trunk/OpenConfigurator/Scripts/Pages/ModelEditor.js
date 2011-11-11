@@ -40,8 +40,7 @@ var styles = {
                     "stroke-width": 1
                 },
                 circle: {
-                    stroke: "black",
-                    fill: "black"
+                    stroke: "black"
                 }
             },
             selected: {
@@ -51,8 +50,7 @@ var styles = {
                     "stroke-width": 2
                 },
                 circle: {
-                    stroke: "black",
-                    fill: "black"
+                    stroke: "black"
                 }
             }
         }
@@ -82,14 +80,21 @@ var settings = {
                 mandatory: {
                     subTypeName: "mandatory",
                     circleAttr: {
+                        fill: "black"
+                    }
+
+                },
+                optional: {
+                    subTypeName: "optional",
+                    circleAttr: {
+                        fill: "#fff7d7"
+                    }
 
                 }
-
             }
-        }
 
+        }
     }
-}
 }
 
 //Components
@@ -102,126 +107,134 @@ var ActionsComponent = function (newFeatureElem, newGroupElem) {
 }
 var PropertiesComponent = function (container) {
 
-    //Fields
+    //Fields and variables
     var _container = container;
     var _innerTBody = $(container).find("tbody");
+    var _headerLabel = $(container).find("#SetTypeLabel");
     var _currentSet = null;
     var _controls = {};
-
 
     //Private fields and methods
     var modes = {
         feature: {
-            fields: {
-                Name: {
-                    controlType: "text",
-                    validation: "",
-                    label: "Name"
-                }
-            },
-            createUI: function () {
+            createUIControls: function () {
+
                 //Create controls
-                var nameTextboxRow = createControlWithRow("Name", "textInput").appendTo(_innerTBody);
-                var descriptionTextAreaRow = createControlWithRow("Description", "textArea").appendTo(_innerTBody);
+                var isRootCheckboxRow = createControlWithRow("Root Feature", "IsRoot", "checkbox", true).appendTo(_innerTBody);
+                var nameTextboxRow = createControlWithRow("Name", "Name", "textbox", false).appendTo(_innerTBody);
+                var descriptionTextAreaRow = createControlWithRow("Description", "Description", "textarea", false).appendTo(_innerTBody);
+
+                //Set event handlers
+                for (var key in _controls) {
+                    var ctrl = _controls[key];
+                    ctrl.bind("change", function () {
+                        modes.feature.updateData();
+                    }).bind("keypress", function (e) {
+                        if (e.which == 13) {
+                            modes.feature.updateData();
+                        }
+                    });
+                }
             },
             loadData: function () {
                 var dataObj = _currentSet.items[0].data("dataObj");
+                _controls["IsRoot"].attr(dataObj.IsRoot);
                 _controls["Name"].val(dataObj.Name);
                 _controls["Description"].val(dataObj.Description);
+
             },
             updateData: function () {
-                for (var ctrl in _controls) {
+                var dataObj = _currentSet.items[0].data("dataObj");
+                dataObj.Name = _controls["Name"].val();
+                dataObj.Description = _controls["Description"].val();
 
+                //
+                _currentSet.items[0].data("children")[1].attr({ text: dataObj.Name });
+            }
+        },
+        relation: {
+            createUIControls: function () {
+
+                //Create controls
+                var relationTypeDropdownRow = createControlWithRow("Type", "RelationType", "dropdown", false).appendTo(_innerTBody);
+                var options = [{ val: 0, label: "Mandatory" }, { val: 1, label: "Optional" }, { val: 1, label: "Optional"}];
+                for (var opt in options) {
+                    var option = $("<option value='" + opt.val + "'>" + opt.label + "</option>").appendTo(;
                 }
+
+                //Load default data/options
+
+            },
+            loadData: function () {
+
+            },
+            updateData: function () {
+
             }
         }
     };
-    var createControlWithRow = function (fieldName, type) {
+    var createControlWithRow = function (label, fieldName, controlType, disabled) {
+
         //Standard html
         var row = $("<tr></tr>");
         var labelTD = $("<td></td>").appendTo(row);
-        var label = $("<span class='Label-Small'>" + fieldName + "</span>").appendTo(labelTD);
+        var label = $("<span class='Label-Small'>" + label + "</span>").appendTo(labelTD);
 
         //Control specific html
         var controlTD = $("<td></td>").appendTo(row);
         var control = null;
-        switch (type) {
-            case "textInput":
-                control = $("<input disabled='disabled' class='Textbox' type='text' id='" + fieldName + "Textbox' />").attr("fieldName", fieldName);
-                control.bind("change", function () {
-                    var newVal = $(this).val();
-                    //_currentSet.items[0].data("dataObj").Name = newVal;
-                    //_currentSet.items[0].data("children")[1].attr({ text: newVal });
-                });
+        switch (controlType) {
+            case "textbox":
+                control = $("<input class='Textbox' type='text' />");
+                break;
+            case "textarea":
+                control = $("<textarea class='Textarea'></textarea>");
+                break;
+            case "checkbox":
+                control = $("<input class='Checkbox' type='checkbox' />");
+                break;
+            case "dropdown":
+                control = $("<select class='DropDown' />");
+                break;
 
-                break;
-            case "textArea":
-                control = $("<textarea disabled='disabled' class='Textbox' id='" + fieldName + "Textarea'> </textarea>").attr("fieldName", fieldName);
-                break;
         }
+        control.attr("fieldName", fieldName).attr("id", fieldName + "Control");
+        if (disabled)
+            control.attr("disabled", "disabled");
         _controls[fieldName] = control;
         control.appendTo(controlTD);
 
         //
         return row;
     }
-    var clearControls = function () {
+    var clearUI = function () {
         for (var key in _controls) {
             var ctrl = _controls[key];
-            $(ctrl).val("");
+            $(ctrl).remove();
+            delete _controls[key];
         }
+        $(_innerTBody).html("");
+        $(_headerLabel).text("");
     }
-    var disableControls = function () {
-        for (var key in _controls) {
-            var ctrl = _controls[key];
-            $(ctrl).attr("disabled", "disabled");
-        }
-    }
-    var enableControls = function () {
-        for (var key in _controls) {
-            var ctrl = _controls[key];
-            $(ctrl).removeAttr("disabled");
-        }
-    }
-
-    //Constructor/Initalizers
-    this.Initialize = function () {
-
-        //Find controls
-        modes.feature.createUI();
-
-
-        //        //Event handlers
-        //        nameTextbox.bind("change", function () {
-        //            var newVal = $(this).val();
-        //            _currentSet.items[0].data("dataObj").Name = newVal;
-        //            _currentSet.items[0].data("children")[1].attr({ text: newVal });
-        //        }).bind("keypress", function (event) {
-        //            if (event.which == 13) {
-        //                var newVal = $(this).val();
-        //                _currentSet.items[0].data("dataObj").Name = newVal;
-        //                _currentSet.items[0].data("children")[1].attr({ text: newVal });
-        //            }
-        //        });
-    };
 
     //Public methods
     this.LoadProperties = function (set) {
 
-        //
-        enableControls();
-        clearControls();
-
-        //
+        //Variables
         _currentSet = set;
         var type = _currentSet.items[0].data("type");
+
+        //Setup UI
+        clearUI();
+        modes[type].createUIControls();
+
+        //Load data
+        $(_headerLabel).text("(" + type + ")");
         modes[type].loadData();
     }
     this.Clear = function () {
 
-        //
-        disableControls();
-        clearControls();
+        clearUI();
     }
 }
 var DiagramContext = function (canvasContainer) {
@@ -340,6 +353,9 @@ var DiagramContext = function (canvasContainer) {
         if (_selectedElements.length == 0) {
             _this.OnAllElementsDeselected.RaiseEvent();
         }
+
+        //Raise event
+        _this.OnElementDeselected.RaiseEvent(set);
     }
     function select(set) {
         var outerContainer = set.items[0];
@@ -426,7 +442,7 @@ var DiagramContext = function (canvasContainer) {
 
         return set;
     }
-    function createRaphaelRelation(setA, setB, dataObj) {
+    function createRaphaelRelation(setA, setB, dataObj, subType) {
 
         //Variables/initializations
         var set = _canvas.set();
@@ -436,6 +452,7 @@ var DiagramContext = function (canvasContainer) {
         //Create inner elements
         var line = _canvas.path(pathInfo.path).attr(styles.types.relation.unselected.primaryElement);
         var circle = _canvas.circle(pathInfo.endPoint.x, pathInfo.endPoint.y, 6).attr(styles.types.relation.unselected.circle);
+        circle.attr(settings.types.relation.subTypes[subType].circleAttr);
 
         //Create outerContainer
         outerContainer = _canvas.path(pathInfo.path).attr(settings.common.outerContainer);
@@ -444,7 +461,8 @@ var DiagramContext = function (canvasContainer) {
             .data("dataObj", dataObj)
             .data("selected", false)
             .data("children", [line, circle])
-            .data("pathInfo", pathInfo);
+            .data("pathInfo", pathInfo)
+            .data("subType", settings.types.relation.subTypes.mandatory);
         set.push(outerContainer);
 
         //Add reference to setA and setB
@@ -493,32 +511,22 @@ var DiagramContext = function (canvasContainer) {
     }
 
     //Public methods
-    this.AddFeature = function () {
-        $.ajax({
-            type: "POST",
-            url: "/ModelEditor/NewDefaultFeature",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            data: {},
-            success: function (featureObj) {
-                var set = createRaphaelFeature(featureObj);
+    this.AddFeature = function (dataObj) {
+        var set = createRaphaelFeature(dataObj);
 
-                //Raise event
-                _this.OnFeatureAdded.RaiseEvent(set);
-            },
-            error: function (req, status, error) {
-                alert('error');
-            }
-        });
+        //Raise event
+        _this.OnFeatureAdded.RaiseEvent(set);
+
     }
-    this.AddRelation = function (setA, setB, type) {
-        var set = createRaphaelRelation(setA, setB);
+    this.AddRelation = function (setA, setB, dataObj) {
+        var set = createRaphaelRelation(setA, setB,dataObj,"optional");
         _relations.push(set);
     }
 
     //Events
     this.OnFeatureAdded = new Event();
     this.OnElementSelected = new Event();
+    this.OnElementDeselected = new Event();
     this.OnAllElementsDeselected = new Event();
 
 

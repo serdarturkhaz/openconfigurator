@@ -10,3 +10,12 @@ $.pnotify.defaults.pnotify_closer = true;
 $.pnotify.defaults.pnotify_notice_icon = "pnotifyNoticeIcon";
 $.pnotify.defaults.pnotify_error_icon = "pnotifyErrorIcon";
 $.pnotify.defaults.pnotify_history = false;
+
+
+Object.size = function (obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};

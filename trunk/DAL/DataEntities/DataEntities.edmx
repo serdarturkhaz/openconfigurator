@@ -734,9 +734,9 @@
           <ConnectorPoint PointX="7.875" PointY="6.62474609375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Features_Models" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="2.03125" />
-          <ConnectorPoint PointX="5.84375" PointY="2.03125" />
-          <ConnectorPoint PointX="5.84375" PointY="5.25" />
+          <ConnectorPoint PointX="4.5" PointY="3.9113728783123554" />
+          <ConnectorPoint PointX="5.8749994999999995" PointY="3.9113728783123554" />
+          <ConnectorPoint PointX="5.8749994999999995" PointY="5.25" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Models_Users" ManuallyRouted="false">
           <ConnectorPoint PointX="2.25" PointY="1.2499995" />
@@ -747,8 +747,6 @@
         <EntityTypeShape EntityType="OpenConfigurator_Model.Rule" Width="1.5" PointX="6.5" PointY="2.125" Height="2.5571907552083326" IsExpanded="true" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_Rules_Models" >
           <ConnectorPoint PointX="4.5" PointY="3.4035953776041659" />
-          <ConnectorPoint PointX="5.760416666666667" PointY="3.4035953776041654" />
-          <ConnectorPoint PointX="5.927083333333333" PointY="3.4035953776041659" />
           <ConnectorPoint PointX="6.5" PointY="3.4035953776041659" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Rules_Rule_Types" >
