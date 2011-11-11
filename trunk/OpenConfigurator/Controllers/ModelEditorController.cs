@@ -49,5 +49,20 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
+
+        [Authorize]
+        public JsonNetResult NewDefaultRelation()
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Get a new default Feature
+            RelationService _relationService = new RelationService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Relation newRelation = (BLL.BusinessObjects.Relation)_relationService.CreateDefault();
+            result.Data = newRelation;
+
+            //
+            return result;
+        }
     }
 }

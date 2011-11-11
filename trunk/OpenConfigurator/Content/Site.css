@@ -386,6 +386,10 @@ html > body .ui-pnotify {
     width: 215px;
     height:100px;
 }
+.Checkbox
+{
+    padding-top:8px;
+}
 .Label-Small
 {
     font-family: Arial;
@@ -541,7 +545,6 @@ a:hover
     margin-top: 30px;
     width:185px;
 }
-
 
 #ModelDiagramBox
 {

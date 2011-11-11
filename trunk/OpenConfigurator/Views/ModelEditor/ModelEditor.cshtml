@@ -54,10 +54,38 @@
                 saveData();
             });
             $("#NewFeatureButton").bind("click", function () {
-                diagramContext.AddFeature();
+                $.ajax({
+                    type: "POST",
+                    url: "/ModelEditor/NewDefaultFeature",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: {},
+                    success: function (featureObj) {
+
+                        diagramContext.AddFeature(featureObj);
+
+                    },
+                    error: function (req, status, error) {
+                        alert('error');
+                    }
+                });
+                
             });
             $("#NewRelationButton").bind("click", function () {
-                diagramContext.AddRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements[1]);
+                $.ajax({
+                    type: "POST",
+                    url: "/ModelEditor/NewDefaultRelation",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: {},
+                    success: function (relationObj) {
+                        diagramContext.AddRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements[1], relationObj);
+                    },
+                    error: function (req, status, error) {
+                        alert('error');
+                    }
+                });
+                
             });
             //---------------------------------------------------------------------------------
 
@@ -74,7 +102,6 @@
             $.timer(300, function () {
                 //PropertiesComponent
                 propertiesComponent = new PropertiesComponent($("#PropertiesBox"));
-                propertiesComponent.Initialize();
 
                 //DiagramContext
                 diagramContext = new DiagramContext($("#SVGCanvas")[0]);
@@ -83,6 +110,9 @@
                 //Event handlers
                 diagramContext.OnElementSelected.AddHandler(new EventHandler(function (elem) {
                     propertiesComponent.LoadProperties(elem);
+                }));
+                diagramContext.OnElementDeselected.AddHandler(new EventHandler(function (elem) {
+                    propertiesComponent.Clear();
                 }));
                 diagramContext.OnAllElementsDeselected.AddHandler(new EventHandler(function () {
                     propertiesComponent.Clear();
