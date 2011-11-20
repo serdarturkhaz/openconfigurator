@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="ebdde825-2160-4a32-9b95-ab926e5a299d" name="DBDiagram" linkedPackageId="8296615c-9672-4c8b-807f-323fbc735fdc" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel" dslVersion="1.0.0.0" Id="ebdde825-2160-4a32-9b95-ab926e5a299d" name="DBDiagram" linkedPackageId="8296615c-9672-4c8b-807f-323fbc735fdc" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
   <ownedCommentsInternal>
     <comment Id="c0af8753-c48a-464d-ab09-daaa467932e5">
       <elementDefinition Id="2db5f2e9-a6f4-46cb-9962-aee6f9887363" />
@@ -265,12 +265,6 @@ User Input
           <property Id="46de63d9-120e-4ba4-9804-3b4e6f664932" name="FeatureGroupID" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="0f0eddb4-edcc-48ad-a237-433278aa5532" />
           </property>
-          <property Id="221a7388-833a-4bee-bed5-91e45925c011" name="LowerBound" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="e0be400e-6812-406c-adc1-cd10ad86509a" />
-          </property>
-          <property Id="e6394cb3-c472-40eb-8411-f4befbf1a894" name="UpperBound" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="abbe56c3-056f-46fe-aaa8-36cb5c69169f" />
-          </property>
         </ownedAttributesInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
@@ -292,6 +286,9 @@ User Input
           </property>
           <property Id="47ac3e72-4929-488b-aecb-ba22d326ab41" name="AttributeTypeID" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="daf196db-f4c3-4a51-846d-2c89e66b0dc3" />
+          </property>
+          <property Id="fa1e85d2-a654-4cde-91e5-71a3ea688aef" name="Description" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="932ddc6f-d2c3-4687-9045-ce764a522315" />
           </property>
         </ownedAttributesInternal>
       </class>
@@ -603,6 +600,12 @@ User Input
           </property>
           <property Id="6bec3fbf-4331-46c8-b15b-fa46258faf01" name="ChildFeatureID" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="b8428b4e-d755-4429-8766-c46c80c7f1ea" />
+          </property>
+          <property Id="040926df-84ca-46a3-92d9-a9f639a43810" name="LowerBound" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="549730f3-00db-48f6-9ac5-b2f5cd526442" />
+          </property>
+          <property Id="e12e98b0-810a-45d1-89aa-ea32b789ac8e" name="UpperBound" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="2a28f866-762f-4d6e-8f53-0e52f5cf844f" />
           </property>
         </ownedAttributesInternal>
       </class>

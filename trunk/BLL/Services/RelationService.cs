@@ -12,20 +12,18 @@ namespace BLL.Services
         //Fields
         private IRepository<DAL.DataEntities.Relation> _RelationRepository;
         private int _LoggedInUserID;
-        private BusinessObjectFactory _BusinessObjectFactory;
 
         //Constructors
         public RelationService(int loggedInUserID)
         {
             _LoggedInUserID = loggedInUserID;
-            _BusinessObjectFactory = new RelationFactory();
 
         }
 
         //Methods
         public IBusinessObject CreateDefault()
         {
-            BLL.BusinessObjects.Relation defaultRelation = (BLL.BusinessObjects.Relation)_BusinessObjectFactory.CreateDefault(_LoggedInUserID);
+            BLL.BusinessObjects.Relation defaultRelation = (BLL.BusinessObjects.Relation)BLL.BusinessObjects.Relation.CreateDefault();
             return defaultRelation;
         }
 

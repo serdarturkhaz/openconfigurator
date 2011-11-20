@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -13,6 +13,10 @@ Cloneable [0...*]</body>
         <useCaseMoniker
           Id="c169cfab-f014-4474-9bcb-115ac310c409"
           LastKnownName="Define parent-child relation"
+          LastKnownLocation="Documentation.uml" />
+        <useCaseMoniker
+          Id="bc4e9254-263f-493a-822a-4de60c938fc0"
+          LastKnownName="Define Relations (CREDO)"
           LastKnownLocation="Documentation.uml" />
       </annotatedElements>
     </comment>
@@ -45,7 +49,7 @@ Explicit consequence rules
       <annotatedElements>
         <useCaseMoniker
           Id="dd98d3dc-a892-4244-a356-84e8aebc0b67"
-          LastKnownName="Define feature attributes"
+          LastKnownName="Define feature attributes (CREDO)"
           LastKnownLocation="Documentation.uml" />
       </annotatedElements>
     </comment>
@@ -1183,6 +1187,20 @@ User Input
               LastKnownName="Define feature tree structure"
               LastKnownLocation="Documentation.uml" />
           </include>
+          <include
+            Id="f462d81c-f04f-4b97-a40b-8acb451c9538">
+            <useCaseMoniker
+              Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
+              LastKnownName="Define Features (CREDO)"
+              LastKnownLocation="Documentation.uml" />
+          </include>
+          <include
+            Id="c9a59259-08d0-49db-a99e-d5d23afb6f08">
+            <useCaseMoniker
+              Id="bc4e9254-263f-493a-822a-4de60c938fc0"
+              LastKnownName="Define Relations (CREDO)"
+              LastKnownLocation="Documentation.uml" />
+          </include>
         </additions>
         <subjects>
           <subsystemMoniker
@@ -1210,22 +1228,16 @@ User Input
             Id="f825bf65-25a6-4cf4-9701-f754decf0899">
             <useCaseMoniker
               Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
-              LastKnownName="Add feature/subfeature"
+              LastKnownName="Define Features (CREDO)"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
-        <subjects>
-          <subsystemMoniker
-            Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
-            LastKnownName="Product modeler"
-            LastKnownLocation="Documentation.uml" />
-        </subjects>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <useCase
         Id="dd98d3dc-a892-4244-a356-84e8aebc0b67"
-        name="Define feature attributes"
+        name="Define feature attributes (CREDO)"
         isAbstract="false"
         isLeaf="false">
         <extendedCases>
@@ -1233,7 +1245,7 @@ User Input
             Id="7b9b2da5-a301-4345-b99d-e8e60c56b337">
             <useCaseMoniker
               Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
-              LastKnownName="Add feature/subfeature"
+              LastKnownName="Define Features (CREDO)"
               LastKnownLocation="Documentation.uml" />
           </extend>
         </extendedCases>
@@ -1269,12 +1281,6 @@ User Input
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
-        <subjects>
-          <subsystemMoniker
-            Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
-            LastKnownName="Product modeler"
-            LastKnownLocation="Documentation.uml" />
-        </subjects>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -1887,28 +1893,6 @@ User Input
             isDerivedUnion="false"
             aggregation="None"
             isComposite="false" />
-          <property
-            Id="e0be400e-6812-406c-adc1-cd10ad86509a"
-            name="LowerBound"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="abbe56c3-056f-46fe-aaa8-36cb5c69169f"
-            name="UpperBound"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
         </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
@@ -1967,6 +1951,17 @@ User Input
           <property
             Id="daf196db-f4c3-4a51-846d-2c89e66b0dc3"
             name="AttributeTypeID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="932ddc6f-d2c3-4687-9045-ce764a522315"
+            name="Description"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -2708,18 +2703,9 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
-        name="Add feature/subfeature"
+        name="Define Features (CREDO)"
         isAbstract="false"
         isLeaf="false">
-        <additions>
-          <include
-            Id="de2b7153-d069-4c79-9a24-effe0788fa4a">
-            <useCaseMoniker
-              Id="c169cfab-f014-4474-9bcb-115ac310c409"
-              LastKnownName="Define parent-child relation"
-              LastKnownLocation="Documentation.uml" />
-          </include>
-        </additions>
         <subjects>
           <subsystemMoniker
             Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
@@ -2733,14 +2719,7 @@ User Input
         Id="c169cfab-f014-4474-9bcb-115ac310c409"
         name="Define parent-child relation"
         isAbstract="false"
-        isLeaf="false">
-        <subjects>
-          <subsystemMoniker
-            Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
-            LastKnownName="Product modeler"
-            LastKnownLocation="Documentation.uml" />
-        </subjects>
-      </useCase>
+        isLeaf="false" />
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
@@ -3426,8 +3405,68 @@ User Input
             isDerivedUnion="false"
             aggregation="None"
             isComposite="false" />
+          <property
+            Id="549730f3-00db-48f6-9ac5-b2f5cd526442"
+            name="LowerBound"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="2a28f866-762f-4d6e-8f53-0e52f5cf844f"
+            name="UpperBound"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
         </ownedAttributesInternal>
       </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="bc4e9254-263f-493a-822a-4de60c938fc0"
+        name="Define Relations (CREDO)"
+        isAbstract="false"
+        isLeaf="false">
+        <subjects>
+          <subsystemMoniker
+            Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
+            LastKnownName="Product modeler"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="d0841d8c-3074-4b5d-90d7-3200d76b496e"
+        name="Define simple Relations"
+        isAbstract="false"
+        isLeaf="false">
+        <generalsInternal>
+          <generalization
+            Id="524170b9-54a7-4767-aa78-1072ec3d2980"
+            isSubstitutable="false">
+            <useCaseMoniker
+              Id="bc4e9254-263f-493a-822a-4de60c938fc0"
+              LastKnownName="Define Relations (CREDO)"
+              LastKnownLocation="Documentation.uml" />
+          </generalization>
+        </generalsInternal>
+        <subjects>
+          <subsystemMoniker
+            Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
+            LastKnownName="Product modeler"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

@@ -63,56 +63,8 @@ var styles = {
     }
 };
 var settings = {
-    common: {
-        outerContainer: {
-            stroke: "black",
-            fill: "black",
-            "stroke-width": 10,
-            opacity: 0,
-            cursor: "default"
-        }
-    },
-    types: {
-        feature: {
-            typeName: "feature",
-            subTypes: {
-                standard: {
-                    subTypeName: "standard"
-                }
-            }
-        },
-        relation: {
-            typeName: "relation",
-            subTypes: {
-                mandatory: {
-                    subTypeName: "mandatory",
-                    typeID : 1,
-                    circleAttr: {
-                        fill: "black",
-                        opacity: 1
-                    }
-                },
-                optional: {
-                    subTypeName: "optional",
-                    typeID : 2,
-                    circleAttr: {
-                        fill: "#fff7d7",
-                        opacity: 1
-                    }
-
-                },
-                cloneable: {
-                    subTypeName: "cloneable",
-                    typeID : 3,
-                    circleAttr: {
-                        fill: "#fff7d7",
-                        opacity: 0
-                    }
-
-                }
-            }
-
-        }
+    diagramContext: {
+        fixedOrientation: "horizontal"
     }
 }
 
@@ -125,23 +77,189 @@ var ActionsComponent = function (newFeatureElem, newGroupElem) {
 }
 var PropertiesComponent = function (container, diagramContext) {
 
-    //Fields and variables
-    var _container = container;
-    var _diagramContext = diagramContext;
-    var _innerTBody = $(container).find("tbody");
-    var _headerLabel = $(container).find("#SetTypeLabel");
-    var _currentSet = null;
-    var _controls = {};
+    //Defaults and settings
+    var controlTypes = {
+        textbox: {
+            name: "textbox",
+            createControlHTML: function (dataObjField, objectTypeField) {
+                var control = $("<input class='Textbox' type='text' />");
+                return control;
+            },
+            loadData: function (control, dataObjField, objectTypeField) {
+                control.val(dataObjField);
+            }
+        },
+        textarea: {
+            name: "textarea",
+            createControlHTML: function (dataObjField, objectTypeField) {
+                control = $("<textarea class='Textarea'></textarea>");
+                return control;
+            },
+            loadData: function (control, dataObjField, objectTypeField) {
+                control.val(dataObjField);
+            }
+        },
+        checkbox: {
+            name: "checkbox",
+            createControlHTML: function (dataObjField, objectTypeField) {
+                control = $("<input class='Checkbox' type='checkbox' />");
+                return control;
+            },
+            loadData: function (control, dataObjField, objectTypeField) {
+                control.attr("checked", dataObjField);
+            }
+        },
+        dropdown: {
+            name: "dropdown",
+            createControlHTML: function (dataObjField, objectTypeField) {
+                control = $("<select class='Dropdown' />");
+                return control;
+            },
+            loadData: function (control, dataObjField, objectTypeField) {
+                //control.val(dataObjField[objectTypeField.dataName]);
+            }
+        },
+        composite: {
+            name: "composite",
+            createControlHTML: function (dataObjField, objectTypeField) {
 
-    //Private fields and methods
+                //Inner variables/functions
+                function toggleSelectSubField(subFieldControl) {
+                    var selectedSubfields = $(listContainer).children(".Selected");
+                    if ($(subFieldControl).hasClass("Selected")) { //deselect
+                        $(subFieldControl).removeClass("Selected");
+                        $(detailsContainer).css("display", "none");
+                    }
+                    else { //select
+                        $(selectedSubfields).removeClass("Selected");
+                        $(subFieldControl).addClass("Selected");
+                        $(detailsContainer).css("display", "block");
+                    }
+                }
+                function loadSubFieldData(subFieldControl) {
+                    var subFieldIndex = parseInt(subFieldControl.attr("subFieldIndex"));
+                }
+
+                //Outer control
+                var control = $("<div class='Composite''></div>");
+
+                //List
+                var listContainer = $("<div class='ListDiv'></div>").appendTo(control);
+                for (var i = 0; i < dataObjField.length; i++) {
+                    var subFieldControl = createSubField(dataObjField[i].Name);
+                    subFieldControl.attr("subFieldIndex", i);
+                    subFieldControl.appendTo(listContainer);
+                    subFieldControl.bind("click", function () {
+                        toggleSelectSubField($(this));
+                    });
+                }
+                var listActionsDiv = $("<div class='ListActionsDiv'></div>").appendTo(listContainer);
+                var addButton = $("<div class='Button-Thin'></div>").append("<img src='../../Content/themes/base/images/Icons/Add.png' />").append("<span>Add new</span>").appendTo(listActionsDiv);
+
+                //Details
+                var detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(control);
+                var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(detailsContainer).find("tbody");
+                for (var subFieldKey in objectTypeField.subFields) {
+                    var subField = objectTypeField.subFields[subFieldKey];
+                    var subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjField[subField.dataName], subField);
+                    var row = createControlTableRow(subField.label, subFieldControl);
+                    row.appendTo(detailsInnerTableTbody);
+                }
+
+
+                return control;
+            },
+            loadData: function (control, dataObjField, objectTypeField) {
+                //control.val(dataObjField[objectTypeField.dataName]);
+            }
+        }
+    };
+    var objectTypes = {
+        feature: {
+            areas: {
+                basicArea: {
+                    displayTitle: false,
+                    tableLayout: true,
+                    fields: {
+                        rootFeature: {
+                            label: "Root Feature",
+                            dataName: "IsRoot",
+                            controlType: controlTypes.checkbox.name,
+                            disabled: true
+                        },
+                        name: {
+                            label: "Name",
+                            dataName: "Name",
+                            controlType: controlTypes.textbox.name
+                        },
+                        description: {
+                            label: "Description",
+                            dataName: "Description",
+                            controlType: controlTypes.textarea.name
+                        }
+                    }
+                },
+                attributesArea: {
+                    displayTitle: "Attributes",
+                    tableLayout: false,
+                    fields: {
+                        attributes: {
+                            label: "Attributes",
+                            dataName: "Attributes",
+                            controlType: controlTypes.composite.name,
+                            subFields: {
+                                name: {
+                                    label: "Name",
+                                    dataName: "Name",
+                                    controlType: controlTypes.textbox.name
+                                },
+                                description: {
+                                    label: "Description",
+                                    dataName: "Description",
+                                    controlType: controlTypes.textarea.name
+                                },
+                                type: {
+                                    label: "Attribute Type",
+                                    dataName: "AttributeType",
+                                    controlType: controlTypes.dropdown.name
+                                },
+                                datatype: {
+                                    label: "Data Type",
+                                    dataName: "DataType",
+                                    controlType: controlTypes.dropdown.name
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        relation: {
+            areas: {
+                basicArea: {
+                    displayTitle: false,
+                    tableLayout: true,
+                    fields: {
+                        relationType: {
+                            label: "Relation type",
+                            dataName: "RelationType",
+                            controlType: controlTypes.dropdown.name
+                        }
+                    }
+                }
+            }
+        }
+    };
+
     var modes = {
         feature: {
             createUIControls: function () {
 
-                //Create controls
-                createControlWithRow("Root Feature", "IsRoot", "checkbox", true);
-                createControlWithRow("Name", "Name", "textbox", false);
-                createControlWithRow("Description", "Description", "textarea", false);
+                //Create main controls-----------------------------------------------------
+                var mainAreaTbody = createSectionArea();
+                createControlWithRow(mainAreaTbody, "Root Feature", "IsRoot", "checkbox", true);
+                createControlWithRow(mainAreaTbody, "Name", "Name", "textbox", false);
+                createControlWithRow(mainAreaTbody, "Description", "Description", "textarea", false);
 
                 //Set event handlers
                 for (var key in _controls) {
@@ -154,12 +272,31 @@ var PropertiesComponent = function (container, diagramContext) {
                         }
                     });
                 }
+                //------------------------------------------------------------------------
+
+                //Create Attributes area--------------------------------------------------
+                var attributesAreaInnerDiv = createSectionArea("Attributes", true);
+                var listContainer = $("<div class='ListDiv'></div>").appendTo(attributesAreaInnerDiv);
+
+                var detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(attributesAreaInnerDiv);
+                var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(detailsContainer).find("tbody");
+                createControlWithRow(detailsInnerTableTbody, "Name", "Attributes.Name", "textbox", false);
+                createControlWithRow(detailsInnerTableTbody, "Description", "Attributes.Description", "textarea", false);
+                createControlWithRow(detailsInnerTableTbody, "Type", "Attributes.Type", "dropdown", false);
+                createControlWithRow(detailsInnerTableTbody, "Data Type", "Attributes.DataType", "dropdown", false);
+
+                $(_mainContainer).children(".AreaDiv:gt(0)").css("margin-top", "10px");
+                //------------------------------------------------------------------------
             },
             loadData: function () {
                 var dataObj = _currentSet.items[0].data("dataObj");
                 _controls["IsRoot"].attr("checked", dataObj.IsRoot);
                 _controls["Name"].val(dataObj.Name);
                 _controls["Description"].val(dataObj.Description);
+                var attributes = dataObj.Attributes;
+                for (var i = 0; i < attributes.length; i++) {
+                    createSubField(_areas["Attributes"], attributes[i].Name, attributes[i].Name);
+                }
 
             },
             updateData: function () {
@@ -170,9 +307,9 @@ var PropertiesComponent = function (container, diagramContext) {
         },
         relation: {
             createUIControls: function () {
-
-                //Create controls
-                var relationTypeDropdown = createControlWithRow("Type", "RelationType", "dropdown", false);
+                //Create main controls-----------------------------------------------------
+                var mainAreaTbody = createSectionArea();
+                var relationTypeDropdown = createControlWithRow(mainAreaTbody, "Type", "RelationType", "dropdown", false);
                 var options = [{ val: 1, label: "Mandatory" }, { val: 2, label: "Optional" }, { val: 3, label: "Cloneable"}];
                 for (var i = 0; i < options.length; i++) {
                     var optionCtrl = $("<option value='" + options[i].val + "'>" + options[i].label + "</option>").appendTo(relationTypeDropdown);
@@ -181,7 +318,7 @@ var PropertiesComponent = function (container, diagramContext) {
                 relationTypeDropdown.bind("change", function () {
                     modes.relation.updateData();
                 })
-
+                //------------------------------------------------------------------------
             },
             loadData: function () {
                 var dataObj = _currentSet.items[0].data("dataObj");
@@ -193,40 +330,102 @@ var PropertiesComponent = function (container, diagramContext) {
             }
         }
     };
-    var createControlWithRow = function (label, fieldName, controlType, disabled) {
+
+    //Fields and variables
+    var _container = container;
+    var _diagramContext = diagramContext;
+    var _mainContainer = $(container).find("#MainContainer");
+    var _headerLabel = $(container).find("#SetTypeLabel");
+    var _currentSet = null;
+
+    var _controls = {};
+
+
+    //Helper methods
+    var createControlTableRow = function (label, control) {
 
         //Standard html
         var row = $("<tr></tr>");
         var labelTD = $("<td></td>").appendTo(row);
         var label = $("<span class='Label-Small'>" + label + "</span>").appendTo(labelTD);
-
-        //Control specific html
         var controlTD = $("<td></td>").appendTo(row);
-        var control = null;
-        switch (controlType) {
-            case "textbox":
-                control = $("<input class='Textbox' type='text' />");
-                break;
-            case "textarea":
-                control = $("<textarea class='Textarea'></textarea>");
-                break;
-            case "checkbox":
-                control = $("<input class='Checkbox' type='checkbox' />");
-                break;
-            case "dropdown":
-                control = $("<select class='Dropdown' />");
-                break;
-
-        }
-        control.attr("fieldName", fieldName).attr("id", fieldName + "Control");
-        if (disabled)
-            control.attr("disabled", "disabled");
-        _controls[fieldName] = control;
-        control.appendTo(controlTD);
-        row.appendTo(_innerTBody);
 
         //
-        return control;
+        control.appendTo(controlTD);
+
+        //
+        return row;
+    }
+    var createSubField = function (label) {
+
+        var subFieldControl = $("<div class='Subfield'></div>");
+        var controlLabel = $("<span class='Label-Small'>" + label + "</span>").appendTo(subFieldControl);
+        var deleteButton = $("<div class='IconButton-Simple'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").appendTo(subFieldControl);
+
+        return subFieldControl;
+    }
+    var createSectionArea = function (displayTitle, createTable) {
+
+        //Area html
+        var area = $("<div class='AreaDiv'></div>").appendTo(_mainContainer);
+        if (displayTitle != false) {
+            var titleLabel = $("<span class='Label'>" + displayTitle + "</span>").appendTo(area);
+        }
+        var innerAreaContainer = $("<div class='InnerContainer'></div>").appendTo(area);
+        var clearDiv = $("<div style='clear:both'></div>").appendTo(area);
+
+
+        //InnerTable
+        if (createTable == true) {
+            var innerTable = $("<table class='InnerTable'></table>").appendTo(innerAreaContainer);
+            var tbody = $("<tbody></tbody>").appendTo(innerTable);
+            return tbody;
+        } else if (createTable == false) {
+            return innerAreaContainer;
+        }
+    }
+
+    //Private fields and methods
+    var loadUI = function (type) {
+
+        //Variables
+        var dataObj = _currentSet.items[0].data("dataObj");
+
+        //Go through each Area
+        for (var areaKey in objectTypes[type].areas) {
+
+            //Create an html area
+            var area = objectTypes[type].areas[areaKey];
+            var areaInnerContainer = createSectionArea(area.displayTitle, area.tableLayout);
+
+            //Go through each field in the Area
+            for (var fieldKey in area.fields) {
+
+                //Create a control
+                var field = area.fields[fieldKey];
+                var control = controlTypes[field.controlType].createControlHTML(dataObj[field.dataName], field);
+                control.attr("fieldName", field.dataName).attr("id", field.dataName + "Control");
+                if (field.disabled)
+                    control.attr("disabled", "disabled");
+
+                //Add it to the Area
+                if (area.tableLayout == true) {
+                    var row = createControlTableRow(field.label, control);
+                    row.appendTo(areaInnerContainer);
+                } else {
+                    control.appendTo(areaInnerContainer);
+                }
+
+                //Load data values
+                controlTypes[field.controlType].loadData(control, dataObj[field.dataName], field);
+
+                //
+                _controls[field.dataName] = control;
+            }
+        }
+
+        //Special hack
+        $(_mainContainer).children(".AreaDiv:gt(0)").css("margin-top", "10px");
     }
     var clearUI = function () {
         for (var key in _controls) {
@@ -234,7 +433,7 @@ var PropertiesComponent = function (container, diagramContext) {
             $(ctrl).remove();
             delete _controls[key];
         }
-        $(_innerTBody).html("");
+        $(_mainContainer).html("");
         $(_headerLabel).text("");
     }
 
@@ -247,24 +446,17 @@ var PropertiesComponent = function (container, diagramContext) {
 
         //Setup UI
         clearUI();
-        modes[type].createUIControls();
-
-        //Load data
+        loadUI(type);
         $(_headerLabel).text("(" + type + ")");
-        modes[type].loadData();
     }
     this.Clear = function () {
 
         clearUI();
     }
-
 }
 var DiagramContext = function (canvasContainer) {
 
-    //Fields
-    var _this = this;
-    var _canvas = null, _canvasContainer = canvasContainer;
-    var _selectedElements = new Array();
+    //Defaults and settings
     var orientations = {
         horizontal: {
             name: "horizontal",
@@ -279,7 +471,57 @@ var DiagramContext = function (canvasContainer) {
             angleIntervals: [{ min: 46, max: 135 }, { min: 225, max: 315}]
         }
     };
-    var _fixedOrientation = orientations.horizontal.name;
+    var objectTypes = {
+        common: {
+            outerContainer: {
+                stroke: "black",
+                fill: "black",
+                "stroke-width": 10,
+                opacity: 0,
+                cursor: "default"
+            }
+        },
+        feature: {
+            typeName: "feature"
+        },
+        relation: {
+            typeName: "relation",
+            subTypes: {
+                mandatory: {
+                    subTypeName: "mandatory",
+                    typeID: 1,
+                    circleAttr: {
+                        fill: "black",
+                        opacity: 1
+                    }
+                },
+                optional: {
+                    subTypeName: "optional",
+                    typeID: 2,
+                    circleAttr: {
+                        fill: "#fff7d7",
+                        opacity: 1
+                    }
+
+                },
+                cloneable: {
+                    subTypeName: "cloneable",
+                    typeID: 3,
+                    circleAttr: {
+                        fill: "#fff7d7",
+                        opacity: 0
+                    }
+
+                }
+            }
+
+        }
+    };
+
+    //Fields
+    var _this = this;
+    var _canvas = null, _canvasContainer = canvasContainer;
+    var _selectedElements = new Array();
 
     //Properties
     this.SelectedElements = _selectedElements;
@@ -289,8 +531,11 @@ var DiagramContext = function (canvasContainer) {
         _canvas = Raphael(canvasContainer, "100%", "100%");
 
         //Handlers
-        $(_canvasContainer).click(function () {
-        })
+        $(_canvasContainer).bind("click", function (e) {
+            if (e.target.nodeName == "svg") {
+                deselectAll();
+            }
+        });
 
     };
 
@@ -325,8 +570,8 @@ var DiagramContext = function (canvasContainer) {
 
         //Determine the orientation
         var currentOrientation = null;
-        if (_fixedOrientation != false) {
-            currentOrientation = _fixedOrientation; //use default fixed orientation without calculating angle
+        if (settings.diagramContext.fixedOrientation != false) {
+            currentOrientation = settings.diagramContext.fixedOrientation; //use default fixed orientation without calculating angle
         }
         else {
             var centerdx = objBcenter.x - objAcenter.x, centerdy = objBcenter.y - objAcenter.y;
@@ -393,17 +638,24 @@ var DiagramContext = function (canvasContainer) {
         };
         return returnObj;
     }
+    function deselectAll() {
+        for (var i = _selectedElements.length - 1; i >= 0; i--) {
+            var selElem = _selectedElements[i];
+            deselect(selElem);
+        }
+    }
     function deselect(set) {
         var isSelected = set.items[0].data("selected");
         if (isSelected) {
+
+            //Deselect
             var outerContainer = set.items[0];
             var type = outerContainer.data("type");
-
             outerContainer.data("children")[0].attr(styles.types[type].unselected.primaryElement);
             outerContainer.data("selected", false);
 
             //Remove from selectedElements collection
-            var index = $(_selectedElements).index(outerContainer);
+            var index = $(_selectedElements).index(set);
             _selectedElements.splice(index, 1);
             if (_selectedElements.length == 0) {
                 _this.OnAllElementsDeselected.RaiseEvent();
@@ -416,19 +668,16 @@ var DiagramContext = function (canvasContainer) {
     function select(set, shift) {
         var isSelected = set.items[0].data("selected");
         if (!isSelected) {
+            //Deselect everything
+            if (shift == false) {
+                deselectAll();
+            }
+
+            //Select current set
             var outerContainer = set.items[0];
             var type = outerContainer.data("type");
-
             outerContainer.data("children")[0].attr(styles.types[type].selected.primaryElement);
             outerContainer.data("selected", true);
-
-            if (shift != true) {
-                //Deselect everything else and save element into selectedElements collection
-                for (var i = 0; i < _selectedElements.length; i++) {
-                    var selElem = _selectedElements[i];
-                    deselect(selElem);
-                }
-            }
 
             //Raise event
             _selectedElements.push(set);
@@ -436,22 +685,25 @@ var DiagramContext = function (canvasContainer) {
         }
     }
     function setSelectable(set) {
+
+        //Selectable
         var outerContainer = set.items[0];
         outerContainer.click(function (e) {
-            toggleSelect(set, e.shiftKey);
-        })
+            select(set, e.shiftKey);
+        });
+
+        //Hoverable
+        var primaryElement = outerContainer.data("children")[0];
+        var glow = null;
+        outerContainer.mouseover(function (e) {
+            glow = primaryElement.glow(styles.types.common.hoverGlow);
+        }).mouseout(function (e) {
+            if (glow != null)
+                glow.remove();
+        });
     }
 
     //Private methods
-    function toggleSelect(set, shift) {
-        var isSelected = set.items[0].data("selected");
-        if (!isSelected) {
-            select(set, shift);
-        }
-        else if (isSelected) {
-            deselect(set);
-        }
-    }
     function updateRaphaelFeature(set, name, description) {
         var dataObj = set.items[0].data("dataObj");
         if (name != undefined)
@@ -476,17 +728,19 @@ var DiagramContext = function (canvasContainer) {
         var text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, dataObj.Name).attr(styles.types.feature.unselected.text);
 
         //Create outerContainer
-        outerContainer = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(settings.common.outerContainer);
+        outerContainer = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(objectTypes.common.outerContainer);
         outerContainer
-            .data("type", settings.types.feature.typeName)
+            .data("type", objectTypes.feature.typeName)
             .data("dataObj", dataObj)
             .data("selected", false)
             .data("children", [box, text])
             .data("relations", new Array());
         set.push(outerContainer);
 
-        //Selectable + Editable
-        var glow = null;
+        //Selectable
+        setSelectable(set);
+
+        //Editable
         outerContainer.dblclick(function (e) {
             var bb1 = this.getBBox();
             var xoffset = 13, yoffset = boxHeight + 15;
@@ -518,15 +772,6 @@ var DiagramContext = function (canvasContainer) {
             select(set);
         });
 
-        //Hover effect
-        outerContainer.mouseover(function (e) {
-            if (glow != null)
-                glow.remove();
-            glow = box.glow(styles.types.common.hoverGlow);
-        }).mouseout(function (e) {
-            glow.remove();
-        });
-
         //Drag and droppable
         var start = function () {
             outerContainer.originalx = outerContainer.attr("x");
@@ -537,7 +782,6 @@ var DiagramContext = function (canvasContainer) {
                 childElem.originalx = childElem.attr("x");
                 childElem.originaly = childElem.attr("y");
             }
-
         };
         move = function (dx, dy) {
             outerContainer.attr({ x: outerContainer.originalx + dx, y: outerContainer.originaly + dy });
@@ -554,13 +798,9 @@ var DiagramContext = function (canvasContainer) {
                 refreshRaphaelRelation(rel);
             }
 
-            if (glow != null)
-                glow.remove();
+
         };
         up = function () {
-            if (glow != null)
-                glow.remove();
-            glow = box.glow(styles.types.common.hoverGlow);
         };
         outerContainer.drag(move, start, up);
 
@@ -569,10 +809,10 @@ var DiagramContext = function (canvasContainer) {
     function updateRaphaelRelation(set, relationType) {
         var dataObj = set.items[0].data("dataObj");
         if (relationType != undefined)
-            dataObj.RelationType = settings.types.relation.subTypes[relationType].typeID;
+            dataObj.RelationType = objectTypes.relation.subTypes[relationType].typeID;
 
         //
-        set.items[0].data("children")[1].attr(settings.types.relation.subTypes[relationType].circleAttr); //circle
+        set.items[0].data("children")[1].attr(objectTypes.relation.subTypes[relationType].circleAttr); //circle
     }
     function createRaphaelRelation(setA, setB, dataObj, relationType) {
 
@@ -584,32 +824,24 @@ var DiagramContext = function (canvasContainer) {
         //Create inner elements
         var line = _canvas.path(pathInfo.path).attr(styles.types.relation.unselected.primaryElement);
         var circle = _canvas.circle(pathInfo.endPoint.x, pathInfo.endPoint.y, 6).attr(styles.types.relation.unselected.circle);
-        circle.attr(settings.types.relation.subTypes[relationType].circleAttr);
+        circle.attr(objectTypes.relation.subTypes[relationType].circleAttr);
 
         //Create outerContainer
-        outerContainer = _canvas.path(pathInfo.path).attr(settings.common.outerContainer);
+        outerContainer = _canvas.path(pathInfo.path).attr(objectTypes.common.outerContainer);
         outerContainer
-            .data("type", settings.types.relation.typeName)
+            .data("type", objectTypes.relation.typeName)
             .data("dataObj", dataObj)
             .data("selected", false)
             .data("children", [line, circle])
             .data("pathInfo", pathInfo);
         set.push(outerContainer);
 
+        //Selectable
+        setSelectable(set);
+
         //Add reference to setA and setB
         setA.items[0].data("relations").push(set);
         setB.items[0].data("relations").push(set);
-
-        //Selectable
-        var glow = null;
-        outerContainer.mouseover(function (e) {
-            if (glow != null)
-                glow.remove();
-            glow = line.glow(styles.types.common.hoverGlow);
-        }).mouseout(function (e) {
-            if (glow != null)
-                glow.remove();
-        });
 
         return set;
     }
@@ -629,14 +861,6 @@ var DiagramContext = function (canvasContainer) {
         line.attr({ path: newPath.path });
         circle.attr({ cx: newPath.endPoint.x, cy: newPath.endPoint.y });
 
-    }
-    function deselectAll() {
-        for (var i = 0; i < _selectedElements.length; i++) {
-            var selElem = _selectedElements[i];
-            deselect(selElem);
-        }
-
-        _this.OnAllElementsDeselected.RaiseEvent();
     }
 
     //Public methods
@@ -662,10 +886,11 @@ var DiagramContext = function (canvasContainer) {
             var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5;
             var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5;
             var set = createRaphaelFeature(dataObj, posx, posy);
-            setSelectable(set);
+            
 
             //
-            $(_canvasContainer).unbind();
+            $(_canvasContainer).unbind("click", clickHandler);
+            $(_canvasContainer).unbind("mousemove", mousemoveHandler);
             $(_canvasContainer).css("cursor", "default");
             wireframebox.remove();
 
@@ -675,6 +900,10 @@ var DiagramContext = function (canvasContainer) {
         $(_canvasContainer).bind("click", clickHandler);
     }
     this.AddRelation = function (setA, setB, dataObj) {
+
+        var set = createRaphaelRelation(setA, setB, dataObj, "mandatory");
+        
+    }
     this.UpdateFeature = function (set, name, description) {
         updateRaphaelFeature(set, name, description);
 
@@ -686,9 +915,6 @@ var DiagramContext = function (canvasContainer) {
 
         //Raise event
         _this.OnFeatureUpdated.RaiseEvent(set);
-    }
-        var set = createRaphaelRelation(setA, setB, dataObj, "mandatory");
-        setSelectable(set);
     }
 
     //Events

@@ -7,25 +7,41 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class FeatureService : IService<BLL.BusinessObjects.Feature>
+    public class ModelService : IService<BLL.BusinessObjects.Model>
     {
         //Fields
-        private IRepository<DAL.DataEntities.Feature> _FeatureRepository;
+        private IRepository<DAL.DataEntities.Model> _ModelRepository;
         private int _LoggedInUserID;
-        private BusinessObjectFactory _BusinessObjectFactory;
 
         //Constructors
-        public FeatureService(int loggedInUserID)
+        public ModelService(int loggedInUserID)
         {
             _LoggedInUserID = loggedInUserID;
-            _BusinessObjectFactory = new FeatureFactory();
 
         }
 
         //Methods
+        public IList<BLL.BusinessObjects.Model> GetByUserID(int userid)
+        {
+            //
+            List<BLL.BusinessObjects.Model> BModels;
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
+            {
+                IEnumerable<DAL.DataEntities.Model> models = _ModelRepository.Find(m =>
+                    m.UserID == userid);
+
+                //Create Business objects for each DAL object
+                BModels = new List<BusinessObjects.Model>();
+                foreach (DAL.DataEntities.Model model in models)
+                {
+                    BModels.Add((BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.FromDataEntity(model));
+                }
+            }
+            return BModels;
+        }
         public IBusinessObject CreateDefault()
         {
-            BLL.BusinessObjects.Feature defaultModel = (BLL.BusinessObjects.Feature)_BusinessObjectFactory.CreateDefault(_LoggedInUserID);
+            BLL.BusinessObjects.Model defaultModel = (BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.CreateDefault(_LoggedInUserID);
             return defaultModel;
         }
 
@@ -33,52 +49,53 @@ namespace BLL.Services
         //Interface members
         #region IService<Model> Members
 
-        public BusinessObjects.Feature GetByID(int id)
+        public BusinessObjects.Model GetByID(int id)
         {
-            DAL.DataEntities.Feature  feature;
-            using (_FeatureRepository = new GenericRepository<DAL.DataEntities.Feature>())
+            DAL.DataEntities.Model model;
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
             {
-                feature = _FeatureRepository.SingleOrDefault(m => m.ID == id);
+                model = _ModelRepository.SingleOrDefault(m => m.ID == id);
             }
             //
-            return new BLL.BusinessObjects.Feature(feature);
+            return new BLL.BusinessObjects.Model(model);
         }
 
-        public IList<BusinessObjects.Feature> GetAll()
+        public IList<BusinessObjects.Model> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public void Update(BusinessObjects.Feature entity)
+        public void Update(BusinessObjects.Model entity)
         {
-            using (_FeatureRepository = new GenericRepository<DAL.DataEntities.Feature>())
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
             {
+                entity.LastModifiedDate = DateTime.Now;
                 //
-                _FeatureRepository.Attach((DAL.DataEntities.Feature) entity.InnerEntity);
-                _FeatureRepository.SaveChanges();
+                _ModelRepository.Attach((DAL.DataEntities.Model)entity.InnerEntity);
+                _ModelRepository.SaveChanges();
             }
         }
 
-        public void Delete(BusinessObjects.Feature entity)
+        public void Delete(BusinessObjects.Model entity)
         {
             throw new NotImplementedException();
         }
         public void Delete(int id)
         {
-            DAL.DataEntities.Feature feature;
-            using (_FeatureRepository = new GenericRepository<DAL.DataEntities.Feature>())
+            DAL.DataEntities.Model model;
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
             {
-                feature = _FeatureRepository.SingleOrDefault(m => m.ID == id);
-                _FeatureRepository.Delete(feature);
-                _FeatureRepository.SaveChanges();
+                model = _ModelRepository.SingleOrDefault(m => m.ID == id);
+                _ModelRepository.Delete(model);
+                _ModelRepository.SaveChanges();
             }
         }
-        public void Add(BusinessObjects.Feature entity)
+        public void Add(BusinessObjects.Model entity)
         {
-            using (_FeatureRepository = new GenericRepository<DAL.DataEntities.Feature>())
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
             {
-                _FeatureRepository.Add((DAL.DataEntities.Feature)entity.InnerEntity);
-                _FeatureRepository.SaveChanges();
+                _ModelRepository.Add((DAL.DataEntities.Model)entity.InnerEntity);
+                _ModelRepository.SaveChanges();
             }
         }
 

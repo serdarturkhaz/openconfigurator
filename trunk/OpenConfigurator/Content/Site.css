@@ -46,27 +46,25 @@ body
 }
 .OuterMenuArea .InnerMenuArea .MenuItem
 {
-    height:40px;
-    float:left;
-    margin-right:5px;
-    width:184px;
+    height: 40px;
+    float: left;
+    margin-right: 5px;
+    width: 184px;
 }
 .OuterMenuArea .InnerMenuArea .MenuItem a
 {
     box-sizing: border-box;
     background-color: #6c7275;
-    display:block;
-    width:100%;
-    
-    height:40px;
-    padding:10px 5px 10px 5px;
-   
+    display: block;
+    width: 100%;
+    height: 40px;
+    padding: 10px 5px 10px 5px;
     float: left;
     color: #FFCC00;
     font-size: 17px;
     font-family: Arial;
     letter-spacing: 1.8px;
-    text-align:center;
+    text-align: center;
 }
 .OuterMenuArea .InnerMenuArea .MenuItem a:hover
 {
@@ -128,7 +126,7 @@ body
     height: 100%;
     background: white;
     padding: 10px;
-    padding-bottom:5px;
+    padding-bottom: 5px;
 }
 
 .RoundedBox .BoxBottomActions
@@ -146,7 +144,6 @@ body
     width: 100%;
     height: 6px;
     padding-right: 20px;
-    
 }
 .RoundedBox .BoxInnerFooter
 {
@@ -179,7 +176,7 @@ body
     padding: 0px 5px 0px 5px;
     background-color: #FFF7D7;
     border-bottom: solid 1px #FFEFB0;
-    height:40px;
+    height: 40px;
 }
 
 .grid tbody tr:hover td
@@ -203,13 +200,12 @@ body
 .grid tbody td.FirstColumn a
 {
     color: #3a4043;
-    
 }
 .grid tbody td.FirstColumn img
 {
     margin-right: 5px;
     vertical-align: middle;
-    margin-top:-3px;
+    margin-top: -3px;
 }
 
 .grid tbody tr:hover td
@@ -217,8 +213,8 @@ body
 }
 .grid tbody td.ActionsTD .Wrapper
 {
-    margin-left:auto;
-    margin-right:auto;
+    margin-left: auto;
+    margin-right: auto;
     height: 38px;
     width: 50px;
 }
@@ -230,7 +226,6 @@ body
 /*BlockUI-----------------------------------------------------------------------*/
 div.blockMsg
 {
-    
     padding: 5px !important;
     display: table-cell;
     width: 150px !important;
@@ -258,59 +253,66 @@ div.blockMsg img
 }
 /*------------------------------------------------------------------------------*/
 /*PinesNotify-------------------------------------------------------------------*/
-.ui-pnotify {
-	top: 18px;
-	right: 18px;
-	position: absolute;
-	height: auto;
-	border: 1px solid #ffe784;
-    background-color: #fff7d7;
-	/* Ensure that the notices are on top of everything else. */
-	z-index: 9999;
+.ui-pnotify
+{
+    top: 18px;
+    right: 18px;
+    position: absolute;
+    height: auto;
+    border: 1px solid #ffe784;
+    background-color: #fff7d7; /* Ensure that the notices are on top of everything else. */
+    z-index: 9999;
 }
 /* This hides position: fixed from IE6, which doesn't understand it. */
-html > body .ui-pnotify {
-	position: fixed;
+html > body .ui-pnotify
+{
+    position: fixed;
 }
-.ui-pnotify .ui-pnotify-shadow {
-	margin: 0;
-	position: absolute;
-	top: .1em;
-	left: .1em;
-	bottom: -.2em;
-	right: -.2em;
-	z-index: -1;
+.ui-pnotify .ui-pnotify-shadow
+{
+    margin: 0;
+    position: absolute;
+    top: .1em;
+    left: .1em;
+    bottom: -.2em;
+    right: -.2em;
+    z-index: -1;
 }
-.ui-pnotify-container {
-	background-position: 0 0;
-	padding: 10px;
-	height: 100%;
+.ui-pnotify-container
+{
+    background-position: 0 0;
+    padding: 10px;
+    height: 100%;
 }
-.ui-pnotify-closer {
-	float: right;
-	margin-left: .2em;
-	background:solid 1px red;
+.ui-pnotify-closer
+{
+    float: right;
+    margin-left: .2em;
+    background: solid 1px red;
 }
-.ui-pnotify-title {
-	display: block;
-	font-size: 1.2em;
-	float:left;
-	width:70%;
-	margin-top:5px;
+.ui-pnotify-title
+{
+    display: block;
+    font-size: 1.2em;
+    float: left;
+    width: 70%;
+    margin-top: 5px;
 }
-.ui-pnotify-text {
-	display: block;
-	font-family: Arial;
+.ui-pnotify-text
+{
+    display: block;
+    font-family: Arial;
     letter-spacing: 0.8px;
     font-size: 13px;
     color: #3a4043;
-    float:left;
-    padding:10px;
+    float: left;
+    padding: 10px;
 }
-.ui-pnotify-icon, .ui-pnotify-icon span {
-	display: block;
-	float: left;
-	margin-right: 5px;
+.ui-pnotify-icon, .ui-pnotify-icon span
+{
+    display: block;
+    float: left;
+    margin-right: 5px;
 }
 
 .pnotifyNoticeIcon
@@ -318,7 +320,6 @@ html > body .ui-pnotify {
     width: 32px;
     height: 32px;
     background: url(themes/base/images/icons/success-notification.png) no-repeat center center;
-    
 }
 
 .pnotifyErrorIcon
@@ -328,34 +329,38 @@ html > body .ui-pnotify {
     background: url(themes/base/images/icons/error-notification.png) no-repeat center center;
 }
 /*History Pulldown*/
-.ui-pnotify-history-container {
-	position: absolute;
-	top: 0;
-	right: 18px;
-	width: 70px;
-	border-top: none;
-	/* Ensure that the history container is on top of the notices. */
-	z-index: 10000;
+.ui-pnotify-history-container
+{
+    position: absolute;
+    top: 0;
+    right: 18px;
+    width: 70px;
+    border-top: none; /* Ensure that the history container is on top of the notices. */
+    z-index: 10000;
 }
-.ui-pnotify-history-container .ui-pnotify-history-header {
-	padding: 2px;
+.ui-pnotify-history-container .ui-pnotify-history-header
+{
+    padding: 2px;
 }
-.ui-pnotify-history-container button {
-	cursor: pointer;
-	display: block;
-	width: 100%;
+.ui-pnotify-history-container button
+{
+    cursor: pointer;
+    display: block;
+    width: 100%;
 }
-.ui-pnotify-history-container .ui-pnotify-history-pulldown {
-	display: block;
-	margin: 0 auto;
+.ui-pnotify-history-container .ui-pnotify-history-pulldown
+{
+    display: block;
+    margin: 0 auto;
 }
 
-.ui-pnotify .picon {
-	background-color: transparent;
-	background-repeat: no-repeat;
-	background-position: center center;
-	width: 17px;
-	height: 17px;
+.ui-pnotify .picon
+{
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 17px;
+    height: 17px;
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/
@@ -384,17 +389,17 @@ html > body .ui-pnotify {
     border: 1px solid #E6E6E6;
     padding: 5px;
     width: 215px;
-    height:100px;
+    height: 100px;
 }
 .Checkbox
 {
-    padding-top:8px;
+    padding-top: 8px;
 }
 .Label-Small
 {
     font-family: Arial;
-    letter-spacing: 0.8px;
-    font-size: 11px;
+    letter-spacing: 0.3px;
+    font-size: 10px;
     color: #4F575B;
 }
 .HeaderLabel
@@ -426,7 +431,7 @@ a:hover
     list-style-type: none;
     padding-left: 0;
     margin-top: 0;
-    margin-bottom:0;
+    margin-bottom: 0;
 }
 .ActionList li
 {
@@ -472,14 +477,45 @@ a:hover
 {
     border: 1px solid #D8D8D8;
     background: #D8D8D8;
-    cursor:default;
+    cursor: default;
 }
 .Button-Normal[disabled=disabled]:hover
 {
     border: 1px solid #D8D8D8;
     background: #D8D8D8;
-    cursor:default;
+    cursor: default;
 }
+
+.Button-Thin
+{
+    border: 1px solid #E6E6E6;
+    background-color: #EFEFEF;
+    padding: 3px 8px 3px 8px;
+    cursor: pointer;
+    height: 20px;
+    min-width: 80px;
+}
+.Button-Thin:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+.Button-Thin span
+{
+    display: block;
+    margin-top: 4px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #3a4043;
+}
+.Button-Thin img
+{
+    float: right;
+    margin-top: 2px;
+}
+
 
 .IconButton-Normal
 {
@@ -488,7 +524,7 @@ a:hover
     display: inline-block;
     cursor: pointer;
     text-align: center;
-    height:31px;
+    height: 31px;
 }
 .IconButton-Normal:hover
 {
@@ -499,16 +535,35 @@ a:hover
 {
     float: left;
     clear: both;
-    margin-bottom:3px;
-    margin-left:6px;
+    margin-bottom: 3px;
+    margin-left: 6px;
 }
 .IconButton-Normal span
 {
-    display:block;
+    display: block;
     float: left;
     font-size: 8px;
     clear: both;
-    text-align:center;
+    text-align: center;
+}
+
+.IconButton-Simple
+{
+    border: 1px solid transparent;
+    padding: 2px;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+}
+.IconButton-Simple:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+.IconButton-Simple img
+{
+    float: left;
+    clear: both;
 }
 /***********************************************************************************************/
 /*Pages*****************************************************************************************/
@@ -543,9 +598,110 @@ a:hover
 {
     float: left;
     margin-top: 30px;
-    width:185px;
+    width: 185px;
 }
 
+
+/*PropertiesBox*/
+#PropertiesBox
+{
+    float: right;
+    margin-top: 30px;
+    width: 300px;
+}
+#PropertiesBox table
+{
+    width: 100%;
+}
+#PropertiesBox table tbody td
+{
+    vertical-align: top;
+}
+#PropertiesBox table tbody td .Label-Small
+{
+    display: block;
+    margin-top: 8px;
+    float: left;
+    white-space: nowrap;
+}
+#PropertiesBox .Textbox, #PropertiesBox .Dropdown, #PropertiesBox .Textarea
+{
+    width: 100%;
+    min-width:150px;
+    box-sizing: border-box;
+}
+#PropertiesBox .AreaDiv
+{
+    background-color: #F7F7F7;
+    padding: 5px;
+    
+}
+#PropertiesBox .AreaDiv .InnerContainer
+{
+    padding: 5px;
+}
+#PropertiesBox .AreaDiv .InnerContainer .ListDiv
+{
+    box-sizing: border-box;
+    float: left;
+    width: 100%;
+    min-height: 80px;
+    padding: 5px;
+    padding-bottom: 5px;
+}
+#PropertiesBox .AreaDiv .InnerContainer .ListDiv .ListActionsDiv
+{
+    box-sizing: border-box;
+    float:left;
+    margin-top:10px;
+}
+
+#PropertiesBox .AreaDiv .InnerContainer .ListDiv .Subfield
+{
+    box-sizing: border-box;
+    float: left;
+    width: 100%;
+    border: 1px solid #E6E6E6;
+    background-color: #EFEFEF;
+    text-align: left;
+    padding: 8px;
+    margin-bottom: 2px;
+    cursor: default;
+}
+
+
+
+#PropertiesBox .AreaDiv .InnerContainer .ListDiv .Selected
+{
+    background-color: #FFEDA4;
+    border: 1px solid #FFDB48;
+}
+#PropertiesBox .AreaDiv .InnerContainer .ListDiv .Subfield:hover
+{
+    background-color: #fff7d7;
+    border: 1px solid #FFE88A;
+}
+#PropertiesBox .AreaDiv .InnerContainer .ListDiv .Subfield .IconButton-Simple
+{
+    float:right;
+}
+#PropertiesBox .AreaDiv .InnerContainer .DetailsDiv
+{
+    box-sizing: border-box;
+    width: 100%;
+    clear: both;
+    float: left;
+    border-top: 1px solid #DDDDDD;
+    padding: 5px;
+    overflow:auto;
+    background-color:#fff7d7;
+}
+#PropertiesBox .AreaDiv .InnerContainer .DetailsDiv .Composite
+{
+    width:100%;
+}
+
+/*ModelDiagramBox*/ 
 #ModelDiagramBox
 {
     float: right;
@@ -554,45 +710,17 @@ a:hover
     margin-right: 29px;
     width: 80%;
 }
-
-#PropertiesBox
-{
-    float: right;
-    margin-top: 30px;
-    width:300px;
-}
-#PropertiesBox table
-{
-    width:100%;
-}
-#PropertiesBox table tbody td
-{
-    vertical-align:top;
-}
-#PropertiesBox table tbody td .Label-Small
-{
-    display:block;
-    margin-top:8px;
-    float:left;
-}
-
-#PropertiesBox .Textbox, #PropertiesBox .Dropdown, #PropertiesBox .Textarea
-{
-    width:100%;
-    box-sizing: border-box;
-}
-
 #ModelDiagramBox #SVGCanvas
 {
-    background-color:#fff7d7;
-    width:100%;
-    height:900px;
+    /*background-color:#fff7d7;*/
+    width: 100%;
+    height: 900px;
 }
 #ModelDiagramBox #SVGCanvas .Inputbox
 {
     border: 1px solid #E6E6E6;
-    font-size:11px;
-    text-align:center;
+    font-size: 11px;
+    text-align: center;
 }
 
 /*Overriden stuff*/
@@ -603,25 +731,24 @@ a:hover
     font-size: 17px;
     font-family: Arial;
     letter-spacing: 0.8px;
-    height:30px;
-    padding-top:10px;
-    text-align:center;
-    width:29px;
-    padding-right:1px;
+    height: 30px;
+    padding-top: 10px;
+    text-align: center;
+    width: 29px;
+    padding-right: 1px;
 }
 .OuterMenuArea .InnerMenuArea #ModelMenuBar
 {
-    height:40px;
-    float:left;
+    height: 40px;
+    float: left;
 }
 .OuterMenuArea .InnerMenuArea #ModelMenuBar #ModelNameTextbox
 {
-    margin:7px 20px 0 0;
+    margin: 7px 20px 0 0;
     float: left;
     width: 200px;
     border: none !important;
     padding-left: 10px;
-    
 }
 .OuterMenuArea .InnerMenuArea #ModelMenuBar .Button-Toolbar
 {
@@ -645,14 +772,14 @@ a:hover
     font-size: 11px;
     font-weight: bold;
     color: white;
-    float:right;
+    float: right;
 }
 .Button-Toolbar img
 {
     float: left;
     margin-top: 2px;
-    margin-right:3px;
-    vertical-align:middle;
+    margin-right: 3px;
+    vertical-align: middle;
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/
