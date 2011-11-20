@@ -18,9 +18,90 @@ namespace BLL.BusinessObjects
 
 
     //BusinessObjects
-    public class Attribute
+    public class Attribute : IBusinessObject
     {
+        //Fields
+        private DAL.DataEntities.Attribute _innerEntity;
 
+        //Constructor
+        internal Attribute()
+        {
+        }
+        internal Attribute(DAL.DataEntities.Attribute innerEntity)
+        {
+            this._innerEntity = innerEntity;
+        }
+
+        //Properties
+        [ReadOnly(true)]
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return _innerEntity.Name;
+            }
+            set
+            {
+                _innerEntity.Name = value;
+            }
+        }
+        public string Description
+        {
+            get
+            {
+                return _innerEntity.Description;
+            }
+            set
+            {
+                _innerEntity.Description = value;
+            }
+        }
+
+        //Conversion
+        public static BLL.BusinessObjects.Attribute FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.Attribute attribute = new BLL.BusinessObjects.Attribute((DAL.DataEntities.Attribute)innerEntity);
+            return attribute;
+        }
+        //Factory
+        public static BLL.BusinessObjects.Attribute CreateDefault()
+        {
+            //Create a new Feature and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Attribute();
+            BLL.BusinessObjects.Attribute attribute = new BLL.BusinessObjects.Attribute((DAL.DataEntities.Attribute)innerEntity);
+
+            //Set default fields
+            attribute.Name = "Default Attribute";
+            attribute.Description = "Default attribute description";
+            
+
+            //Return the object instance
+            return attribute;
+        }
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.Attribute)value;
+            }
+        }
+
+        #endregion
     }
 
     public class AttributeDataType
@@ -37,6 +118,7 @@ namespace BLL.BusinessObjects
     {
         //Fields
         private DAL.DataEntities.Feature _innerEntity;
+        private List<BLL.BusinessObjects.Attribute> _attributes = new List<Attribute>();
 
         //Constructor
         internal Feature()
@@ -45,6 +127,13 @@ namespace BLL.BusinessObjects
         internal Feature(DAL.DataEntities.Feature innerEntity)
         {
             this._innerEntity = innerEntity;
+
+            //Create BLL attributes from each DAL attribute
+            foreach (DAL.DataEntities.Attribute dataAttr in _innerEntity.Attributes)
+            {
+                BLL.BusinessObjects.Attribute BLLattr = BLL.BusinessObjects.Attribute.FromDataEntity(dataAttr);
+                _attributes.Add(BLLattr);
+            }
         }
 
         //Properties
@@ -82,13 +171,43 @@ namespace BLL.BusinessObjects
         {
             get
             {
+                return true;
                 if (_innerEntity.IsRoot != null)
                     return _innerEntity.IsRoot;
                 else
                     return false;
             }
         }
+        public List<BLL.BusinessObjects.Attribute> Attributes
+        {
+            get
+            {
+                return _attributes;
+            }
+        }
+        
+        //Conversion
+        public static BLL.BusinessObjects.Feature FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.Feature feature = new BLL.BusinessObjects.Feature((DAL.DataEntities.Feature)innerEntity);
+            return feature;
+        }
+        //Factory
+        public static BLL.BusinessObjects.Feature CreateDefault()
+        {
+            //Create a new Feature and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Feature();
+            BLL.BusinessObjects.Feature feature = new Feature((DAL.DataEntities.Feature)innerEntity);
 
+            //Set default fields
+            feature.Name = "Default Feature";
+            feature.Description = "Default description";
+            feature.Attributes.Add(BLL.BusinessObjects.Attribute.CreateDefault());
+            feature.Attributes.Add(BLL.BusinessObjects.Attribute.CreateDefault());
+
+            //Return the object instance
+            return feature;
+        }
 
         //Interface members
         #region IBusinessObject Members
@@ -141,6 +260,26 @@ namespace BLL.BusinessObjects
             {
                 _innerEntity.RelationTypeID = (int)value;
             }
+        }
+
+        //Conversion
+        public static BLL.BusinessObjects.Relation FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.Relation relation = new BLL.BusinessObjects.Relation((DAL.DataEntities.Relation)innerEntity);
+            return relation;
+        }
+        //Factory
+        public static BLL.BusinessObjects.Relation CreateDefault()
+        {
+            //Create a new Feature and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Relation();
+            BLL.BusinessObjects.Relation relation = new Relation((DAL.DataEntities.Relation)innerEntity);
+
+            //Set default fields
+            relation.RelationType = RelationTypes.Mandatory;
+
+            //Return the object instance
+            return relation;
         }
 
 
@@ -239,6 +378,31 @@ namespace BLL.BusinessObjects
         }
 
 
+        //Conversion
+        public static BLL.BusinessObjects.Model FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.Model model = new BLL.BusinessObjects.Model((DAL.DataEntities.Model)innerEntity);
+            return model;
+        }
+        //Factory
+        public static BLL.BusinessObjects.Model CreateDefault(int userId)
+        {
+            //Create a new Model and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Model();
+            BLL.BusinessObjects.Model model = new Model((DAL.DataEntities.Model)innerEntity);
+
+            //Set default fields
+            model.CreatedDate = DateTime.Now;
+            model.LastModifiedDate = DateTime.Now;
+            model.Name = "Default Model";
+
+            //Set inner entity fields
+            ((DAL.DataEntities.Model)model.InnerEntity).UserID = userId;
+
+            //Return the object instance
+            return model;
+        }
+
         //Interface members
         #region IBusinessObject Members
         [JsonIgnore]
@@ -312,6 +476,16 @@ namespace BLL.BusinessObjects
                 _innerEntity.Password = value;
             }
         }
+
+        //Conversion
+        public static BLL.BusinessObjects.User FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.User user = new BLL.BusinessObjects.User((DAL.DataEntities.User)innerEntity);
+            return user;
+        }
+        //Factory
+        
+
 
         //Interface members
         #region IBusinessObject Members

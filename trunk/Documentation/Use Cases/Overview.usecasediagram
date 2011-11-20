@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
   <packagedElements>
     <useCaseModelRootHasTypes>
       <subsystem Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" name="Product modeler" isAbstract="false" isLeaf="false" isActiveClass="false">
@@ -10,7 +10,7 @@
 Mandatory [1...1]
 Cloneable [0...*]</body>
             <annotatedElements>
-              <useCaseMoniker Id="bcc9c14a-4886-459d-a2bf-381e0a273e38" LastKnownName="Define parent-child relation" />
+              <useCaseMoniker Id="4f7d770f-3d70-4e2b-bc04-0ab28b15fbdc" LastKnownName="Define Relations (CREDO)" />
             </annotatedElements>
           </comment>
           <comment Id="b6202542-364e-408e-9896-1892b90d734a">
@@ -34,7 +34,7 @@ Explicit consequence rules
             <elementDefinition Id="8bb50c43-3c68-4c11-adf2-7296cb92ce38" />
             <body>Int , String, Bool</body>
             <annotatedElements>
-              <useCaseMoniker Id="31f7881c-5794-4723-a12b-4fa84b3a6a66" LastKnownName="Define feature attributes" />
+              <useCaseMoniker Id="31f7881c-5794-4723-a12b-4fa84b3a6a66" LastKnownName="Define feature attributes (CREDO)" />
             </annotatedElements>
           </comment>
           <comment Id="45d2a5c3-b4b3-42dd-b47e-6f37f16ca10f">
@@ -77,9 +77,13 @@ Cardinal OR [*...*</body>
       <useCase Id="d230f5fe-ee90-4e0b-97f0-87bae04abaaf" name="Define feature model" isAbstract="false" isLeaf="false">
         <elementDefinition Id="d199c0c0-3af3-438e-afe3-b5f8da5d8f43" />
         <additions>
-          <include Id="6210fe13-4cf7-4596-8dc9-891def97b137">
-            <useCaseMoniker Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" LastKnownName="Define feature tree structure" />
-            <elementDefinition Id="f4b9b889-8602-45c2-893f-3f8d5e441ace" />
+          <include Id="f3ce670e-a685-42b5-bc49-2e87a18b906a">
+            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Define Features (CREDO)" />
+            <elementDefinition Id="f462d81c-f04f-4b97-a40b-8acb451c9538" />
+          </include>
+          <include Id="7181c725-bdee-4d9a-82c9-f2db2cee4046">
+            <useCaseMoniker Id="4f7d770f-3d70-4e2b-bc04-0ab28b15fbdc" LastKnownName="Define Relations (CREDO)" />
+            <elementDefinition Id="c9a59259-08d0-49db-a99e-d5d23afb6f08" />
           </include>
         </additions>
         <subjects>
@@ -88,48 +92,14 @@ Cardinal OR [*...*</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" name="Define feature tree structure" isAbstract="false" isLeaf="false">
-        <elementDefinition Id="28b7ad4b-4706-4651-a4f3-1de68c789a45" />
-        <additions>
-          <include Id="0b095ab2-3f4a-4bc1-9c35-1251feeea512">
-            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Add feature/subfeature" />
-            <elementDefinition Id="f825bf65-25a6-4cf4-9701-f754decf0899" />
-          </include>
-        </additions>
-        <subjects>
-          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
-        </subjects>
-      </useCase>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <useCase Id="31f7881c-5794-4723-a12b-4fa84b3a6a66" name="Define feature attributes" isAbstract="false" isLeaf="false">
+      <useCase Id="31f7881c-5794-4723-a12b-4fa84b3a6a66" name="Define feature attributes (CREDO)" isAbstract="false" isLeaf="false">
         <elementDefinition Id="dd98d3dc-a892-4244-a356-84e8aebc0b67" />
         <extendedCases>
           <extend Id="ebafe7af-4a8c-44fc-81a2-d8abacfd98e7">
-            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Add feature/subfeature" />
+            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Define Features (CREDO)" />
             <elementDefinition Id="7b9b2da5-a301-4345-b99d-e8e60c56b337" />
           </extend>
         </extendedCases>
-        <subjects>
-          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
-        </subjects>
-      </useCase>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <useCase Id="8f33f022-997e-4a9c-b16f-8214f6467e5a" name="Group features into a Feature Group" isAbstract="false" isLeaf="false">
-        <elementDefinition Id="6263cbbe-16ab-4899-85db-df641f67d63a" />
-        <extendedCases>
-          <extend Id="d02bd60d-5b3b-4cdf-9000-68eb670cb80e">
-            <useCaseMoniker Id="ab63374b-231c-4c7a-9a2e-43228ca49d89" LastKnownName="Define feature tree structure" />
-            <elementDefinition Id="f99bed64-fbb3-4209-81f4-56f725cd4784" />
-          </extend>
-        </extendedCases>
-        <additions>
-          <include Id="f9b74bf4-37a8-40e5-954e-983e90240716">
-            <useCaseMoniker Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" LastKnownName="Define group relation to parent feature" />
-            <elementDefinition Id="ba408c0c-6e87-46fb-802c-0f4e7ebc27dc" />
-          </include>
-        </additions>
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
         </subjects>
@@ -223,22 +193,8 @@ Cardinal OR [*...*</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="3f831426-dce1-485d-837c-e938f091a4fc" name="Add feature/subfeature" isAbstract="false" isLeaf="false">
+      <useCase Id="3f831426-dce1-485d-837c-e938f091a4fc" name="Define Features (CREDO)" isAbstract="false" isLeaf="false">
         <elementDefinition Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802" />
-        <additions>
-          <include Id="8e3efa9b-88d4-46e3-9517-9c3dc8823a7f">
-            <useCaseMoniker Id="bcc9c14a-4886-459d-a2bf-381e0a273e38" LastKnownName="Define parent-child relation" />
-            <elementDefinition Id="de2b7153-d069-4c79-9a24-effe0788fa4a" />
-          </include>
-        </additions>
-        <subjects>
-          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
-        </subjects>
-      </useCase>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <useCase Id="bcc9c14a-4886-459d-a2bf-381e0a273e38" name="Define parent-child relation" isAbstract="false" isLeaf="false">
-        <elementDefinition Id="c169cfab-f014-4474-9bcb-115ac310c409" />
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
         </subjects>
@@ -247,6 +203,28 @@ Cardinal OR [*...*</body>
     <packageHasNamedElement>
       <useCase Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" name="Define group relation to parent feature" isAbstract="false" isLeaf="false">
         <elementDefinition Id="75616a27-7a38-4020-99f3-96a8f2da8c47" />
+        <subjects>
+          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="4f7d770f-3d70-4e2b-bc04-0ab28b15fbdc" name="Define Relations (CREDO)" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="bc4e9254-263f-493a-822a-4de60c938fc0" />
+        <subjects>
+          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="a8a70a06-aee6-4abc-9e52-f90b2a91ce86" name="Define simple Relations" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="d0841d8c-3074-4b5d-90d7-3200d76b496e" />
+        <generalsInternal>
+          <generalization Id="8c1e23d1-d5fe-4175-be0d-bf3ba3667146" isSubstitutable="false">
+            <useCaseMoniker Id="4f7d770f-3d70-4e2b-bc04-0ab28b15fbdc" LastKnownName="Define Relations (CREDO)" />
+            <elementDefinition Id="524170b9-54a7-4767-aa78-1072ec3d2980" />
+          </generalization>
+        </generalsInternal>
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
         </subjects>
