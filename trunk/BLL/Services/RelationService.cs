@@ -26,7 +26,15 @@ namespace BLL.Services
             BLL.BusinessObjects.Relation defaultRelation = (BLL.BusinessObjects.Relation)BLL.BusinessObjects.Relation.CreateDefault();
             return defaultRelation;
         }
+        public Dictionary<int, string> GetRelationTypes()
+        {
+            Dictionary<int, string> dict = new Dictionary<int, string>();
+            dict = Enum.GetValues(typeof(BLL.BusinessObjects.RelationTypes))
+               .Cast<BLL.BusinessObjects.RelationTypes>()
+               .ToDictionary(t => (int)t, t => t.ToString());
 
+            return dict;
+        }
 
         //Interface members
         #region IService<Model> Members

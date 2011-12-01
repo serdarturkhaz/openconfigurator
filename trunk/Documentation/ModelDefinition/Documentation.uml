@@ -15,8 +15,8 @@ Cloneable [0...*]</body>
           LastKnownName="Define parent-child relation"
           LastKnownLocation="Documentation.uml" />
         <useCaseMoniker
-          Id="bc4e9254-263f-493a-822a-4de60c938fc0"
-          LastKnownName="Define Relations (CREDO)"
+          Id="d0841d8c-3074-4b5d-90d7-3200d76b496e"
+          LastKnownName="Define simple Relations"
           LastKnownLocation="Documentation.uml" />
       </annotatedElements>
     </comment>
@@ -86,7 +86,7 @@ Cardinal OR [*...*</body>
       <annotatedElements>
         <useCaseMoniker
           Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
-          LastKnownName="Define group relation to parent feature"
+          LastKnownName="Define group Relations"
           LastKnownLocation="Documentation.uml" />
       </annotatedElements>
     </comment>
@@ -1277,7 +1277,7 @@ User Input
             Id="ba408c0c-6e87-46fb-802c-0f4e7ebc27dc">
             <useCaseMoniker
               Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
-              LastKnownName="Define group relation to parent feature"
+              LastKnownName="Define group Relations"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -2797,9 +2797,19 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
-        name="Define group relation to parent feature"
+        name="Define group Relations"
         isAbstract="false"
         isLeaf="false">
+        <generalsInternal>
+          <generalization
+            Id="cfa04c7b-d567-42c9-8ed2-093e123142cd"
+            isSubstitutable="false">
+            <useCaseMoniker
+              Id="bc4e9254-263f-493a-822a-4de60c938fc0"
+              LastKnownName="Define Relations (CREDO)"
+              LastKnownLocation="Documentation.uml" />
+          </generalization>
+        </generalsInternal>
         <subjects>
           <subsystemMoniker
             Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"

@@ -10,7 +10,7 @@
 Mandatory [1...1]
 Cloneable [0...*]</body>
             <annotatedElements>
-              <useCaseMoniker Id="4f7d770f-3d70-4e2b-bc04-0ab28b15fbdc" LastKnownName="Define Relations (CREDO)" />
+              <useCaseMoniker Id="a8a70a06-aee6-4abc-9e52-f90b2a91ce86" LastKnownName="Define simple Relations" />
             </annotatedElements>
           </comment>
           <comment Id="b6202542-364e-408e-9896-1892b90d734a">
@@ -43,7 +43,7 @@ Explicit consequence rules
 XOR [1...1]
 Cardinal OR [*...*</body>
             <annotatedElements>
-              <useCaseMoniker Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" LastKnownName="Define group relation to parent feature" />
+              <useCaseMoniker Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" LastKnownName="Define group Relations" />
             </annotatedElements>
           </comment>
         </ownedCommentsInternal>
@@ -201,8 +201,14 @@ Cardinal OR [*...*</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" name="Define group relation to parent feature" isAbstract="false" isLeaf="false">
+      <useCase Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" name="Define group Relations" isAbstract="false" isLeaf="false">
         <elementDefinition Id="75616a27-7a38-4020-99f3-96a8f2da8c47" />
+        <generalsInternal>
+          <generalization Id="d98ac2a9-c064-41e8-8825-7cf5a4ab7451" isSubstitutable="false">
+            <useCaseMoniker Id="4f7d770f-3d70-4e2b-bc04-0ab28b15fbdc" LastKnownName="Define Relations (CREDO)" />
+            <elementDefinition Id="cfa04c7b-d567-42c9-8ed2-093e123142cd" />
+          </generalization>
+        </generalsInternal>
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
         </subjects>

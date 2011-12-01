@@ -65,5 +65,19 @@ namespace PresentationLayer.Controllers
             return result;
         }
 
+        [Authorize]
+        public JsonNetResult GetRelationTypes()
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Get a dictionary of standard RelationTypes
+            RelationService _relationService = new RelationService(SessionData.LoggedInUser.ID);
+            Dictionary<int, string> relationTypes = _relationService.GetRelationTypes();
+            result.Data = relationTypes;
+
+            //
+            return result;
+        }
     }
 }
