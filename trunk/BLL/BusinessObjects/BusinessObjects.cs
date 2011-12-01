@@ -15,7 +15,18 @@ namespace BLL.BusinessObjects
         Optional = 2,
         Cloneable = 3
     }
-
+    public enum AttributeTypes
+    {
+        Constant = 1,
+        Dynamic = 2,
+        UserInput = 3
+    }
+    public enum AttributeDataTypes
+    {
+        Integer = 1,
+        Boolean = 2,
+        String = 3
+    }
 
     //BusinessObjects
     public class Attribute : IBusinessObject
@@ -63,6 +74,28 @@ namespace BLL.BusinessObjects
                 _innerEntity.Description = value;
             }
         }
+        public AttributeTypes AttributeType
+        {
+            get
+            {
+                return (AttributeTypes)Enum.Parse(typeof(AttributeTypes), _innerEntity.AttributeTypeID.ToString());
+            }
+            set
+            {
+                _innerEntity.AttributeTypeID = (int)value;
+            }
+        }
+        public AttributeDataTypes AttributeDataType
+        {
+            get
+            {
+                return (AttributeDataTypes)Enum.Parse(typeof(AttributeDataTypes), _innerEntity.DataTypeID.ToString());
+            }
+            set
+            {
+                _innerEntity.DataTypeID = (int)value;
+            }
+        }
 
         //Conversion
         public static BLL.BusinessObjects.Attribute FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
@@ -80,7 +113,8 @@ namespace BLL.BusinessObjects
             //Set default fields
             attribute.Name = "Default Attribute";
             attribute.Description = "Default attribute description";
-            
+            attribute.AttributeType = AttributeTypes.UserInput;
+            attribute.AttributeDataType = AttributeDataTypes.Integer;
 
             //Return the object instance
             return attribute;
@@ -171,7 +205,6 @@ namespace BLL.BusinessObjects
         {
             get
             {
-                return true;
                 if (_innerEntity.IsRoot != null)
                     return _innerEntity.IsRoot;
                 else

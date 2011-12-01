@@ -101,7 +101,6 @@
             $("#ModelDiagramBox").block({ message: "Loading diagram...", fadeIn: 300 });
             $.timer(300, function () {
                 
-
                 //DiagramContext
                 diagramContext = new DiagramContext($("#SVGCanvas")[0]);
                 diagramContext.Initialize();
@@ -119,9 +118,9 @@
                 diagramContext.OnAllElementsDeselected.AddHandler(new EventHandler(function () {
                     propertiesComponent.Clear();
                 }));
-                diagramContext.OnFeatureUpdated.AddHandler(new EventHandler(function (set) {
-                    propertiesComponent.LoadProperties(set);
-                }));
+//                diagramContext.OnElementUpdated.AddHandler(new EventHandler(function (set) {
+//                    propertiesComponent.LoadProperties(set);
+//                }));
 
                 //
                 $("#ModelDiagramBox").unblock();

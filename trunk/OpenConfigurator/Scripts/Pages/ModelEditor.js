@@ -66,6 +66,16 @@ var settings = {
     diagramContext: {
         fixedOrientation: "horizontal"
     }
+};
+
+//Global helper methods
+function getSubTypeByID(collection, id) {
+    for (var key in collection) {
+        var subType = collection[key];
+        if (subType.typeID == id) {
+            return subType;
+        }
+    }
 }
 
 //Components
@@ -81,8 +91,30 @@ var PropertiesComponent = function (container, diagramContext) {
     var controlTypes = {
         textbox: {
             name: "textbox",
-            createControlHTML: function (dataObjField, objectTypeField) {
+            createControlHTML: function (dataObjFieldName, objectTypeField) {
+
+                //Create control
                 var control = $("<input class='Textbox' type='text' />");
+
+                //Event handlers
+                var _this = this;
+                control.bind("change", function () {
+                    var newVal = control.val();
+                    _currentDataObj[dataObjFieldName] = newVal;
+
+                    //Call handler
+                    onDataChanged();
+                }).bind("keypress", function (e) {
+                    if (e.which == 13) {
+                        var newVal = control.val();
+                        _currentDataObj[dataObjFieldName] = newVal;
+                    }
+
+                    //Call handler
+                    onDataChanged();
+                });
+
+                //
                 return control;
             },
             loadData: function (control, dataObjField, objectTypeField) {
@@ -91,8 +123,22 @@ var PropertiesComponent = function (container, diagramContext) {
         },
         textarea: {
             name: "textarea",
-            createControlHTML: function (dataObjField, objectTypeField) {
+            createControlHTML: function (dataObjFieldName, objectTypeField) {
+
+                //Create control
                 control = $("<textarea class='Textarea'></textarea>");
+
+                //Event handlers
+                var _this = this;
+                control.bind("change", function () {
+                    var newVal = control.val();
+                    _currentDataObj[dataObjFieldName] = newVal;
+
+                    //Call handler
+                    onDataChanged();
+                })
+
+                //
                 return control;
             },
             loadData: function (control, dataObjField, objectTypeField) {
@@ -101,8 +147,22 @@ var PropertiesComponent = function (container, diagramContext) {
         },
         checkbox: {
             name: "checkbox",
-            createControlHTML: function (dataObjField, objectTypeField) {
+            createControlHTML: function (dataObjFieldName, objectTypeField) {
+
+                //Create control
                 control = $("<input class='Checkbox' type='checkbox' />");
+
+                //Event handlers
+                var _this = this;
+                control.bind("change", function () {
+                    var newVal = control.attr("checked");
+                    _currentDataObj[dataObjFieldName] = newVal;
+
+                    //Call handler
+                    onDataChanged();
+                })
+
+                //
                 return control;
             },
             loadData: function (control, dataObjField, objectTypeField) {
@@ -111,66 +171,136 @@ var PropertiesComponent = function (container, diagramContext) {
         },
         dropdown: {
             name: "dropdown",
-            createControlHTML: function (dataObjField, objectTypeField) {
+            createControlHTML: function (dataObjFieldName, objectTypeField) {
+
+                //Create control
                 control = $("<select class='Dropdown' />");
+
+                //Create default options
+                var options = objectTypeField.defaultOptions;
+                if (options != undefined) {
+                    for (var i = 0; i < options.length; i++) {
+                        var option = $("<option value='" + options[i].value + "'>" + options[i].text + "</option>").appendTo(control);
+                    }
+                }
+
+                //Event handlers
+                var _this = this;
+                control.bind("change", function () {
+                    var newVal = $(control).find("option:selected").attr("value");
+                    _currentDataObj[dataObjFieldName] = newVal;
+
+                    //Call handler
+                    onDataChanged();
+                });
+
                 return control;
             },
             loadData: function (control, dataObjField, objectTypeField) {
-                //control.val(dataObjField[objectTypeField.dataName]);
+                control.val(dataObjField);
             }
         },
         composite: {
             name: "composite",
-            createControlHTML: function (dataObjField, objectTypeField) {
-
-                //Inner variables/functions
-                function toggleSelectSubField(subFieldControl) {
-                    var selectedSubfields = $(listContainer).children(".Selected");
-                    if ($(subFieldControl).hasClass("Selected")) { //deselect
-                        $(subFieldControl).removeClass("Selected");
-                        $(detailsContainer).css("display", "none");
-                    }
-                    else { //select
-                        $(selectedSubfields).removeClass("Selected");
-                        $(subFieldControl).addClass("Selected");
-                        $(detailsContainer).css("display", "block");
-                    }
-                }
-                function loadSubFieldData(subFieldControl) {
-                    var subFieldIndex = parseInt(subFieldControl.attr("subFieldIndex"));
-                }
+            createControlHTML: function (dataObjFieldName, objectTypeField) {
 
                 //Outer control
                 var control = $("<div class='Composite''></div>");
 
                 //List
                 var listContainer = $("<div class='ListDiv'></div>").appendTo(control);
-                for (var i = 0; i < dataObjField.length; i++) {
-                    var subFieldControl = createSubField(dataObjField[i].Name);
-                    subFieldControl.attr("subFieldIndex", i);
-                    subFieldControl.appendTo(listContainer);
-                    subFieldControl.bind("click", function () {
-                        toggleSelectSubField($(this));
-                    });
-                }
                 var listActionsDiv = $("<div class='ListActionsDiv'></div>").appendTo(listContainer);
                 var addButton = $("<div class='Button-Thin'></div>").append("<img src='../../Content/themes/base/images/Icons/Add.png' />").append("<span>Add new</span>").appendTo(listActionsDiv);
 
                 //Details
                 var detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(control);
                 var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(detailsContainer).find("tbody");
+
+                //Create controls for SubFields in Details area
                 for (var subFieldKey in objectTypeField.subFields) {
                     var subField = objectTypeField.subFields[subFieldKey];
-                    var subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjField[subField.dataName], subField);
+
+                    //var innerDataObjFieldReference = dataObjField[subField.dataName];
+                    var subFieldControl = controlTypes[subField.controlType].createControlHTML(_currentDataObj[dataObjFieldName][subField.dataName], subField).attr("subField", subField.dataName);
                     var row = createControlTableRow(subField.label, subFieldControl);
                     row.appendTo(detailsInnerTableTbody);
                 }
 
-
                 return control;
             },
             loadData: function (control, dataObjField, objectTypeField) {
-                //control.val(dataObjField[objectTypeField.dataName]);
+                //
+                var listContainer = $(control).find(".ListDiv");
+                var _this = this;
+
+                //Create nestedControls for nested Objects
+                for (var i = 0; i < dataObjField.length; i++) {
+                    var nestedObjectControl = this.privateMethods.createNestedObject(dataObjField[i].Name);
+                    nestedObjectControl.attr("nestedObjectIndex", i);
+                    nestedObjectControl.prependTo(listContainer);
+                    nestedObjectControl.bind("click", function () {
+                        _this.privateMethods.toggleSelectNestedObject($(this), control, dataObjField, objectTypeField);
+                    });
+                }
+
+            },
+            privateMethods: {
+                //Method for creating HTMl for a nested Object----------------------------------------------------
+                createNestedObject: function (label) {
+                    var nestedObjectControl = $("<div class='NestedControl'></div>");
+                    var controlLabel = $("<span class='Label-Small'>" + label + "</span>").appendTo(nestedObjectControl);
+                    var deleteButton = $("<div class='IconButton-Simple'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").appendTo(nestedObjectControl);
+
+                    return nestedObjectControl;
+                },
+                //------------------------------------------------------------------------------------------------
+                //Method for selecting/deselecting a nested Object control----------------------------------------
+                toggleSelectNestedObject: function (nestedObjectControl, control, dataObjFieldName, objectTypeField) {
+
+                    //Variables and controls
+                    var listContainer = $(control).find(".ListDiv");
+                    var detailsContainer = $(control).find(".DetailsDiv");
+                    var selectedNestedObjects = $(listContainer).children(".Selected");
+
+                    //Deselect if already selected
+                    if ($(nestedObjectControl).hasClass("Selected")) {
+                        $(nestedObjectControl).removeClass("Selected");
+
+                        //Clear details
+                        $(detailsContainer).css("display", "none");
+                        $(detailsContainer).find("tbody").html("");
+                    }
+                    //Select if not selected
+                    else {
+                        $(selectedNestedObjects).removeClass("Selected");
+                        $(nestedObjectControl).addClass("Selected");
+
+                        //Show details and create subField controls
+                        $(detailsContainer).css("display", "block");
+
+                        //
+                        this.loadNestedObjectData(nestedObjectControl, control, dataObjField, objectTypeField);
+                    }
+                },
+                //------------------------------------------------------------------------------------------------
+                //Loads data for a nested Object------------------------------------------------------------------
+                loadNestedObjectData: function (nestedObjectControl, control, dataObjField, objectTypeField) {
+
+                    //Variables and controls
+                    var detailsContainer = $(control).find(".DetailsDiv");
+                    var nestedObjectIndex = parseInt(nestedObjectControl.attr("nestedObjectIndex"));
+
+                    //Create SubFieldControls
+
+                    //Load data into SubFieldControls
+                    for (var subFieldKey in objectTypeField.subFields) {
+                        var subField = objectTypeField.subFields[subFieldKey];
+                        var subFieldControl = $(detailsContainer).find("[subField='" + subField.dataName + "']");
+
+                        controlTypes[subField.controlType].loadData(subFieldControl, dataObjField[nestedObjectIndex][subField.dataName], subField);
+                    }
+                }
+                //------------------------------------------------------------------------------------------------
             }
         }
     };
@@ -221,12 +351,40 @@ var PropertiesComponent = function (container, diagramContext) {
                                 type: {
                                     label: "Attribute Type",
                                     dataName: "AttributeType",
-                                    controlType: controlTypes.dropdown.name
+                                    controlType: controlTypes.dropdown.name,
+                                    defaultOptions: [
+                                    {
+                                        value: 1,
+                                        text: "Constant"
+                                    },
+                                    {
+                                        value: 2,
+                                        text: "Dynamic"
+                                    },
+                                    {
+                                        value: 3,
+                                        text: "UserInput"
+                                    }
+                                    ]
                                 },
                                 datatype: {
                                     label: "Data Type",
-                                    dataName: "DataType",
-                                    controlType: controlTypes.dropdown.name
+                                    dataName: "AttributeDataType",
+                                    controlType: controlTypes.dropdown.name,
+                                    defaultOptions: [
+                                    {
+                                        value: 1,
+                                        text: "Integer"
+                                    },
+                                    {
+                                        value: 2,
+                                        text: "Boolean"
+                                    },
+                                    {
+                                        value: 3,
+                                        text: "String"
+                                    }
+                                    ]
                                 }
                             }
                         }
@@ -243,103 +401,122 @@ var PropertiesComponent = function (container, diagramContext) {
                         relationType: {
                             label: "Relation type",
                             dataName: "RelationType",
-                            controlType: controlTypes.dropdown.name
+                            controlType: controlTypes.dropdown.name,
+                            defaultOptions: [
+                                {
+                                    value: 1,
+                                    text: "Mandatory"
+                                },
+                                {
+                                    value: 2,
+                                    text: "Optional"
+                                },
+                                {
+                                    value: 3,
+                                    text: "Cloneable"
+                                }
+                            ]
                         }
+                    },
+                    updateData: function () {
+                        this.fields
+                        var relationType = $(_controls["RelationType"]).find("option:selected").text().toLowerCase();
+                        _diagramContext.UpdateRelation(_currentSet, relationType);
                     }
                 }
             }
         }
     };
 
-    var modes = {
-        feature: {
-            createUIControls: function () {
+    /*var modes = {
+    feature: {
+    createUIControls: function () {
 
-                //Create main controls-----------------------------------------------------
-                var mainAreaTbody = createSectionArea();
-                createControlWithRow(mainAreaTbody, "Root Feature", "IsRoot", "checkbox", true);
-                createControlWithRow(mainAreaTbody, "Name", "Name", "textbox", false);
-                createControlWithRow(mainAreaTbody, "Description", "Description", "textarea", false);
+    //Create main controls-----------------------------------------------------
+    var mainAreaTbody = createSectionArea();
+    createControlWithRow(mainAreaTbody, "Root Feature", "IsRoot", "checkbox", true);
+    createControlWithRow(mainAreaTbody, "Name", "Name", "textbox", false);
+    createControlWithRow(mainAreaTbody, "Description", "Description", "textarea", false);
 
-                //Set event handlers
-                for (var key in _controls) {
-                    var ctrl = _controls[key];
-                    ctrl.bind("change", function () {
-                        modes.feature.updateData();
-                    }).bind("keypress", function (e) {
-                        if (e.which == 13) {
-                            modes.feature.updateData();
-                        }
-                    });
-                }
-                //------------------------------------------------------------------------
+    //Set event handlers
+    for (var key in _controls) {
+    var ctrl = _controls[key];
+    ctrl.bind("change", function () {
+    modes.feature.updateData();
+    }).bind("keypress", function (e) {
+    if (e.which == 13) {
+    modes.feature.updateData();
+    }
+    });
+    }
+    //------------------------------------------------------------------------
 
-                //Create Attributes area--------------------------------------------------
-                var attributesAreaInnerDiv = createSectionArea("Attributes", true);
-                var listContainer = $("<div class='ListDiv'></div>").appendTo(attributesAreaInnerDiv);
+    //Create Attributes area--------------------------------------------------
+    var attributesAreaInnerDiv = createSectionArea("Attributes", true);
+    var listContainer = $("<div class='ListDiv'></div>").appendTo(attributesAreaInnerDiv);
 
-                var detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(attributesAreaInnerDiv);
-                var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(detailsContainer).find("tbody");
-                createControlWithRow(detailsInnerTableTbody, "Name", "Attributes.Name", "textbox", false);
-                createControlWithRow(detailsInnerTableTbody, "Description", "Attributes.Description", "textarea", false);
-                createControlWithRow(detailsInnerTableTbody, "Type", "Attributes.Type", "dropdown", false);
-                createControlWithRow(detailsInnerTableTbody, "Data Type", "Attributes.DataType", "dropdown", false);
+    var detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(attributesAreaInnerDiv);
+    var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(detailsContainer).find("tbody");
+    createControlWithRow(detailsInnerTableTbody, "Name", "Attributes.Name", "textbox", false);
+    createControlWithRow(detailsInnerTableTbody, "Description", "Attributes.Description", "textarea", false);
+    createControlWithRow(detailsInnerTableTbody, "Type", "Attributes.Type", "dropdown", false);
+    createControlWithRow(detailsInnerTableTbody, "Data Type", "Attributes.DataType", "dropdown", false);
 
-                $(_mainContainer).children(".AreaDiv:gt(0)").css("margin-top", "10px");
-                //------------------------------------------------------------------------
-            },
-            loadData: function () {
-                var dataObj = _currentSet.items[0].data("dataObj");
-                _controls["IsRoot"].attr("checked", dataObj.IsRoot);
-                _controls["Name"].val(dataObj.Name);
-                _controls["Description"].val(dataObj.Description);
-                var attributes = dataObj.Attributes;
-                for (var i = 0; i < attributes.length; i++) {
-                    createSubField(_areas["Attributes"], attributes[i].Name, attributes[i].Name);
-                }
+    $(_mainContainer).children(".AreaDiv:gt(0)").css("margin-top", "10px");
+    //------------------------------------------------------------------------
+    },
+    loadData: function () {
+    var dataObj = _currentSet.items[0].data("dataObj");
+    _controls["IsRoot"].attr("checked", dataObj.IsRoot);
+    _controls["Name"].val(dataObj.Name);
+    _controls["Description"].val(dataObj.Description);
+    var attributes = dataObj.Attributes;
+    for (var i = 0; i < attributes.length; i++) {
+    createSubField(_areas["Attributes"], attributes[i].Name, attributes[i].Name);
+    }
 
-            },
-            updateData: function () {
-                var name = _controls["Name"].val();
-                var description = _controls["Description"].val();
-                _diagramContext.UpdateFeature(_currentSet, name, description);
-            }
-        },
-        relation: {
-            createUIControls: function () {
-                //Create main controls-----------------------------------------------------
-                var mainAreaTbody = createSectionArea();
-                var relationTypeDropdown = createControlWithRow(mainAreaTbody, "Type", "RelationType", "dropdown", false);
-                var options = [{ val: 1, label: "Mandatory" }, { val: 2, label: "Optional" }, { val: 3, label: "Cloneable"}];
-                for (var i = 0; i < options.length; i++) {
-                    var optionCtrl = $("<option value='" + options[i].val + "'>" + options[i].label + "</option>").appendTo(relationTypeDropdown);
-                }
+    },
+    updateData: function () {
+    var name = _controls["Name"].val();
+    var description = _controls["Description"].val();
+    _diagramContext.UpdateFeature(_currentSet, name, description);
+    }
+    },
+    relation: {
+    createUIControls: function () {
+    //Create main controls-----------------------------------------------------
+    var mainAreaTbody = createSectionArea();
+    var relationTypeDropdown = createControlWithRow(mainAreaTbody, "Type", "RelationType", "dropdown", false);
+    var options = [{ val: 1, label: "Mandatory" }, { val: 2, label: "Optional" }, { val: 3, label: "Cloneable"}];
+    for (var i = 0; i < options.length; i++) {
+    var optionCtrl = $("<option value='" + options[i].val + "'>" + options[i].label + "</option>").appendTo(relationTypeDropdown);
+    }
 
-                relationTypeDropdown.bind("change", function () {
-                    modes.relation.updateData();
-                })
-                //------------------------------------------------------------------------
-            },
-            loadData: function () {
-                var dataObj = _currentSet.items[0].data("dataObj");
-                _controls["RelationType"].val(dataObj.RelationType);
-            },
-            updateData: function () {
-                var relationType = $(_controls["RelationType"]).find("option:selected").text().toLowerCase();
-                _diagramContext.UpdateRelation(_currentSet, relationType);
-            }
-        }
-    };
+    relationTypeDropdown.bind("change", function () {
+    modes.relation.updateData();
+    })
+    //------------------------------------------------------------------------
+    },
+    loadData: function () {
+    var dataObj = _currentSet.items[0].data("dataObj");
+    _controls["RelationType"].val(dataObj.RelationType);
+    },
+    updateData: function () {
+    var relationType = $(_controls["RelationType"]).find("option:selected").text().toLowerCase();
+    _diagramContext.UpdateRelation(_currentSet, relationType);
+    }
+    }
+    };*/
+
 
     //Fields and variables
     var _container = container;
     var _diagramContext = diagramContext;
+    var _currentSet = null, _currentDataObj = null, _currentSetType = null;
+
+    //Controls
     var _mainContainer = $(container).find("#MainContainer");
     var _headerLabel = $(container).find("#SetTypeLabel");
-    var _currentSet = null;
-
-    var _controls = {};
-
 
     //Helper methods
     var createControlTableRow = function (label, control) {
@@ -349,20 +526,10 @@ var PropertiesComponent = function (container, diagramContext) {
         var labelTD = $("<td></td>").appendTo(row);
         var label = $("<span class='Label-Small'>" + label + "</span>").appendTo(labelTD);
         var controlTD = $("<td></td>").appendTo(row);
-
-        //
         control.appendTo(controlTD);
 
         //
         return row;
-    }
-    var createSubField = function (label) {
-
-        var subFieldControl = $("<div class='Subfield'></div>");
-        var controlLabel = $("<span class='Label-Small'>" + label + "</span>").appendTo(subFieldControl);
-        var deleteButton = $("<div class='IconButton-Simple'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").appendTo(subFieldControl);
-
-        return subFieldControl;
     }
     var createSectionArea = function (displayTitle, createTable) {
 
@@ -386,16 +553,13 @@ var PropertiesComponent = function (container, diagramContext) {
     }
 
     //Private fields and methods
-    var loadUI = function (type) {
-
-        //Variables
-        var dataObj = _currentSet.items[0].data("dataObj");
+    var loadUI = function () {
 
         //Go through each Area
-        for (var areaKey in objectTypes[type].areas) {
+        for (var areaKey in objectTypes[_currentSetType].areas) {
 
             //Create an html area
-            var area = objectTypes[type].areas[areaKey];
+            var area = objectTypes[_currentSetType].areas[areaKey];
             var areaInnerContainer = createSectionArea(area.displayTitle, area.tableLayout);
 
             //Go through each field in the Area
@@ -403,7 +567,9 @@ var PropertiesComponent = function (container, diagramContext) {
 
                 //Create a control
                 var field = area.fields[fieldKey];
-                var control = controlTypes[field.controlType].createControlHTML(dataObj[field.dataName], field);
+                var dataObjFieldName = field.dataName;
+
+                var control = controlTypes[field.controlType].createControlHTML(dataObjFieldName, field);
                 control.attr("fieldName", field.dataName).attr("id", field.dataName + "Control");
                 if (field.disabled)
                     control.attr("disabled", "disabled");
@@ -417,22 +583,22 @@ var PropertiesComponent = function (container, diagramContext) {
                 }
 
                 //Load data values
-                controlTypes[field.controlType].loadData(control, dataObj[field.dataName], field);
-
-                //
-                _controls[field.dataName] = control;
+                controlTypes[field.controlType].loadData(control, _currentDataObj[field.dataName], field);
             }
         }
 
         //Special hack
         $(_mainContainer).children(".AreaDiv:gt(0)").css("margin-top", "10px");
     }
+    var onDataChanged = function () {
+        _diagramContext.UpdateElement(_currentSet, _currentDataObj);
+    }
     var clearUI = function () {
-        for (var key in _controls) {
-            var ctrl = _controls[key];
-            $(ctrl).remove();
-            delete _controls[key];
-        }
+        //        for (var key in _controls) {
+        //            var ctrl = _controls[key];
+        //            $(ctrl).remove();
+        //            delete _controls[key];
+        //        }
         $(_mainContainer).html("");
         $(_headerLabel).text("");
     }
@@ -442,12 +608,13 @@ var PropertiesComponent = function (container, diagramContext) {
 
         //Variables
         _currentSet = set;
-        var type = _currentSet.items[0].data("type");
+        _currentSetType = set.items[0].data("type");
+        _currentDataObj = set.items[0].data("dataObj");
 
         //Setup UI
         clearUI();
-        loadUI(type);
-        $(_headerLabel).text("(" + type + ")");
+        loadUI();
+        $(_headerLabel).text("(" + _currentSetType + ")");
     }
     this.Clear = function () {
 
@@ -696,10 +863,15 @@ var DiagramContext = function (canvasContainer) {
         var primaryElement = outerContainer.data("children")[0];
         var glow = null;
         outerContainer.mouseover(function (e) {
-            glow = primaryElement.glow(styles.types.common.hoverGlow);
+            if (glow == null) {
+                glow = primaryElement.glow(styles.types.common.hoverGlow);
+                outerContainer.data("glow", glow);
+            }
         }).mouseout(function (e) {
-            if (glow != null)
+            if (glow != null) {
                 glow.remove();
+                glow = null;
+            }
         });
     }
 
@@ -711,8 +883,8 @@ var DiagramContext = function (canvasContainer) {
         if (description != undefined)
             dataObj.Description = description;
 
-        //
-        set.items[0].data("children")[1].attr({ text: dataObj.Name }); //text
+        //Set text
+        set.items[0].data("children")[1].attr({ text: dataObj.Name });
     }
     function createRaphaelFeature(dataObj, x, y) {
 
@@ -752,13 +924,14 @@ var DiagramContext = function (canvasContainer) {
                 height: 20
             }).bind("change", function () {
                 var newName = $(this).val();
-                _this.select
-                _this.UpdateFeature(set, newName);
+                dataObj.Name = newName;
+                _this.UpdateElement(set, dataObj);
                 $(this).remove();
             }).bind("keypress", function (e) {
                 if (e.which == 13) {
                     var newName = $(this).val();
-                    _this.UpdateFeature(set, newName);
+                    dataObj.Name = newName;
+                    _this.UpdateElement(set, dataObj);
                     $(this).remove();
                 }
                 else if (e.which == 27) {
@@ -784,6 +957,11 @@ var DiagramContext = function (canvasContainer) {
             }
         };
         move = function (dx, dy) {
+            var glow = outerContainer.data("glow");
+            if (glow != null) {
+                glow.remove();
+                outerContainer.data("glow", null)
+            }
             outerContainer.attr({ x: outerContainer.originalx + dx, y: outerContainer.originaly + dy });
 
             //Move child elements
@@ -807,12 +985,15 @@ var DiagramContext = function (canvasContainer) {
         return set;
     }
     function updateRaphaelRelation(set, relationType) {
-        var dataObj = set.items[0].data("dataObj");
-        if (relationType != undefined)
-            dataObj.RelationType = objectTypes.relation.subTypes[relationType].typeID;
-
         //
-        set.items[0].data("children")[1].attr(objectTypes.relation.subTypes[relationType].circleAttr); //circle
+        var dataObj = set.items[0].data("dataObj");
+        var relationSubType = getSubTypeByID(objectTypes.relation.subTypes, relationType);
+
+        //Update relationType data
+        dataObj.RelationType = relationType;
+
+        //Update visuals
+        set.items[0].data("children")[1].attr(relationSubType.circleAttr); //circle
     }
     function createRaphaelRelation(setA, setB, dataObj, relationType) {
 
@@ -886,7 +1067,7 @@ var DiagramContext = function (canvasContainer) {
             var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5;
             var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5;
             var set = createRaphaelFeature(dataObj, posx, posy);
-            
+
 
             //
             $(_canvasContainer).unbind("click", clickHandler);
@@ -902,24 +1083,27 @@ var DiagramContext = function (canvasContainer) {
     this.AddRelation = function (setA, setB, dataObj) {
 
         var set = createRaphaelRelation(setA, setB, dataObj, "mandatory");
-        
+
     }
-    this.UpdateFeature = function (set, name, description) {
-        updateRaphaelFeature(set, name, description);
+    this.UpdateElement = function (set, updatedDataObj) {
+        var type = set.items[0].data("type");
+        switch (type) {
+            case "feature":
+                updateRaphaelFeature(set, updatedDataObj.Name, updatedDataObj.Description);
+                break;
+
+            case "relation":
+                updateRaphaelRelation(set, updatedDataObj.RelationType);
+                break;
+        }
 
         //Raise event
-        _this.OnFeatureUpdated.RaiseEvent(set);
-    }
-    this.UpdateRelation = function (set, relationType) {
-        updateRaphaelRelation(set, relationType);
-
-        //Raise event
-        _this.OnFeatureUpdated.RaiseEvent(set);
+        _this.OnElementUpdated.RaiseEvent(set);
     }
 
     //Events
     this.OnFeatureAdded = new Event();
-    this.OnFeatureUpdated = new Event();
+    this.OnElementUpdated = new Event();
     this.OnElementSelected = new Event();
     this.OnElementDeselected = new Event();
     this.OnAllElementsDeselected = new Event();
