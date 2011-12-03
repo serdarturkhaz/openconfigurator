@@ -11,7 +11,7 @@ $.pnotify.defaults.pnotify_notice_icon = "pnotifyNoticeIcon";
 $.pnotify.defaults.pnotify_error_icon = "pnotifyErrorIcon";
 $.pnotify.defaults.pnotify_history = false;
 
-
+//
 Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
@@ -19,3 +19,17 @@ Object.size = function (obj) {
     }
     return size;
 };
+
+//
+$(document).ready(function () {
+    $.ajaxSetup({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        cache: false,
+        error: function (response) {
+
+            alert('error');
+        }
+    });
+});

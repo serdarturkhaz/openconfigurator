@@ -46,6 +46,17 @@
                 }
             });
         }
+        
+        //
+        function getDefaultAttribute() {
+            $.ajax({
+                url: "/ModelEditor/NewDefaultRelation",
+                data: {},
+                success: function (attributeObj) {
+                    return attributeObj;
+                }
+            });
+        }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
@@ -55,37 +66,21 @@
             });
             $("#NewFeatureButton").bind("click", function () {
                 $.ajax({
-                    type: "POST",
                     url: "/ModelEditor/NewDefaultFeature",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
                     data: {},
                     success: function (featureObj) {
-
                         diagramContext.AddFeature(featureObj);
-
-                    },
-                    error: function (req, status, error) {
-                        alert('error');
                     }
                 });
-                
             });
             $("#NewRelationButton").bind("click", function () {
                 $.ajax({
-                    type: "POST",
                     url: "/ModelEditor/NewDefaultRelation",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
                     data: {},
                     success: function (relationObj) {
                         diagramContext.AddRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements[1], relationObj);
-                    },
-                    error: function (req, status, error) {
-                        alert('error');
                     }
                 });
-                
             });
             //---------------------------------------------------------------------------------
 

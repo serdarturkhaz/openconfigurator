@@ -66,6 +66,21 @@ namespace PresentationLayer.Controllers
         }
 
         [Authorize]
+        public JsonNetResult NewDefaultAttribute()
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Get a new default Feature
+            FeatureService _featureService = new FeatureService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Attribute newAttribute = (BLL.BusinessObjects.Attribute)_featureService.CreateDefaultAttribute();
+            result.Data = newAttribute;
+
+            //
+            return result;
+        }
+
+        [Authorize]
         public JsonNetResult GetRelationTypes()
         {
             //Default return variable
