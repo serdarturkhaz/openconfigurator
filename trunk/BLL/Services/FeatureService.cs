@@ -26,6 +26,12 @@ namespace BLL.Services
             return defaultFeature;
         }
 
+        public IBusinessObject CreateDefaultAttribute()
+        {
+            BLL.BusinessObjects.Attribute defaultAttribute = BLL.BusinessObjects.Attribute.CreateDefault();
+            return defaultAttribute;
+        }
+
 
         //Interface members
         #region IService<Feature> Members
