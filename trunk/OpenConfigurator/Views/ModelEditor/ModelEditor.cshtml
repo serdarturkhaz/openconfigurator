@@ -9,6 +9,7 @@
         var modelId = '@(ViewBag.ModelId)';
         var diagramContext = null;
         var propertiesComponent = null;
+
         //
         function calcWidth() {
             //Set width for ModelsBox
@@ -46,16 +47,19 @@
                 }
             });
         }
-        
+
         //
-        function getDefaultAttribute() {
+        function getDefaultDataObj(type) {
+            var returnObj;
             $.ajax({
-                url: "/ModelEditor/NewDefaultRelation",
+                url: "/ModelEditor/NewDefault" + type,
                 data: {},
-                success: function (attributeObj) {
-                    return attributeObj;
+                async: false,
+                success: function (dataObj) {
+                    returnObj = dataObj;
                 }
             });
+            return returnObj;
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,22 +69,20 @@
                 saveData();
             });
             $("#NewFeatureButton").bind("click", function () {
-                $.ajax({
-                    url: "/ModelEditor/NewDefaultFeature",
-                    data: {},
-                    success: function (featureObj) {
-                        diagramContext.AddFeature(featureObj);
-                    }
-                });
+                var featureObj = getDefaultDataObj("Feature");
+                diagramContext.AddFeature(featureObj);
             });
             $("#NewRelationButton").bind("click", function () {
-                $.ajax({
-                    url: "/ModelEditor/NewDefaultRelation",
-                    data: {},
-                    success: function (relationObj) {
-                        diagramContext.AddRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements[1], relationObj);
-                    }
-                });
+                if (diagramContext.SelectedElements.length == 2) {
+                    var relationObj = getDefaultDataObj("Relation");
+                    diagramContext.AddRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements[1], relationObj);
+                }
+            });
+            $("#NewGroupRelationButton").bind("click", function () {
+                if (diagramContext.SelectedElements.length > 2) {
+                    var groupRelationObj = null;
+                    diagramContext.AddGroupRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements.slice(1), groupRelationObj);
+                }
             });
             //---------------------------------------------------------------------------------
 
@@ -95,7 +97,7 @@
             //Load data
             $("#ModelDiagramBox").block({ message: "Loading diagram...", fadeIn: 300 });
             $.timer(300, function () {
-                
+
                 //DiagramContext
                 diagramContext = new DiagramContext($("#SVGCanvas")[0]);
                 diagramContext.Initialize();
@@ -113,11 +115,7 @@
                 diagramContext.OnAllElementsDeselected.AddHandler(new EventHandler(function () {
                     propertiesComponent.Clear();
                 }));
-//                diagramContext.OnElementUpdated.AddHandler(new EventHandler(function (set) {
-//                    propertiesComponent.LoadProperties(set);
-//                }));
 
-                //
                 $("#ModelDiagramBox").unblock();
             });
         });
@@ -141,7 +139,6 @@
             <img src="../../Content/themes/base/images/Icons/redo-toolbar.png" />
             <span>Redo</span>
         </div>
-
     </div>
 }
 @*Toolbox*@
@@ -159,6 +156,9 @@
             <li class="Button-Normal" id="NewRelationButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
                 <span>New Relation</span> </li>
+            <li class="Button-Normal" id="NewGroupRelationButton">
+                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                <span>New Group Relation</span> </li>
         </ul>
     </div>
     <div class="BoxFooter">
@@ -171,12 +171,10 @@
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
             <span class="HeaderLabel">Properties - <span id="SetTypeLabel"></span></span>
-            
         </div>
     </div>
     <div class="BoxContent">
         <div id="MainContainer">
-        
         </div>
     </div>
     <div class="BoxFooter">

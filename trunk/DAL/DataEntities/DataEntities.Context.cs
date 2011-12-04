@@ -101,6 +101,24 @@ namespace DAL.DataEntities
             get { return _relations  ?? (_relations = CreateObjectSet<Relation>("Relations")); }
         }
         private ObjectSet<Relation> _relations;
+    
+        public ObjectSet<GroupRelation_Types> GroupRelation_Types
+        {
+            get { return _groupRelation_Types  ?? (_groupRelation_Types = CreateObjectSet<GroupRelation_Types>("GroupRelation_Types")); }
+        }
+        private ObjectSet<GroupRelation_Types> _groupRelation_Types;
+    
+        public ObjectSet<GroupRelation> GroupRelations
+        {
+            get { return _groupRelations  ?? (_groupRelations = CreateObjectSet<GroupRelation>("GroupRelations")); }
+        }
+        private ObjectSet<GroupRelation> _groupRelations;
+    
+        public ObjectSet<GroupRelations_To_Features> GroupRelations_To_Features
+        {
+            get { return _groupRelations_To_Features  ?? (_groupRelations_To_Features = CreateObjectSet<GroupRelations_To_Features>("GroupRelations_To_Features")); }
+        }
+        private ObjectSet<GroupRelations_To_Features> _groupRelations_To_Features;
 
         #endregion
     }

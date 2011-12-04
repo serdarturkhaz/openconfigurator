@@ -71,6 +71,15 @@
     <Compile Include="DataEntities\Feature.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataEntities\GroupRelation.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities\GroupRelations_To_Features.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities\GroupRelation_Types.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataEntities\IDataEntity.cs" />
     <Compile Include="DataEntities\Model.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="920f37e8-18d6-4675-92b2-89bce3a3f024" name="DomainModel" linkedPackageId="5cc612a1-8dd7-4304-baab-c61b74550699" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel" dslVersion="1.0.0.0" Id="920f37e8-18d6-4675-92b2-89bce3a3f024" name="DomainModel" linkedPackageId="5cc612a1-8dd7-4304-baab-c61b74550699" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
   <packagedElements>
     <logicalClassDesignerModelHasTypes>
       <class Id="ee94a714-1d83-4730-aef2-b9e96f1611f3" name="Feature" isAbstract="false" isLeaf="false" isActiveClass="false">
@@ -254,10 +254,10 @@
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="ada82d05-8032-415a-b22e-0167fba47b76" name="Feature Group" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="ada82d05-8032-415a-b22e-0167fba47b76" name="Relation Group" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="873e5a97-73e5-4788-8b77-443dd2b26e14" />
         <targetEnds>
-          <association Id="89b90ff2-9f76-4d6c-aa64-594f1623a067" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" name="Groups together" isAbstract="false">
+          <association Id="89b90ff2-9f76-4d6c-aa64-594f1623a067" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
             <classMoniker Id="ee94a714-1d83-4730-aef2-b9e96f1611f3" LastKnownName="Feature" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -268,12 +268,12 @@
               <associationHasOwnedEnds>
                 <memberEnd Id="8bde9ef0-bc8c-4adf-bc4a-daa8dd5c5707" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
                   <lowerValueInternal>
-                    <literalString Id="a7f75e32-9a63-4307-a02e-8015d98895ef" name="Lower" value="*">
+                    <literalString Id="a7f75e32-9a63-4307-a02e-8015d98895ef" name="Lower" value="2">
                       <elementDefinition Id="3e21f4a8-d5da-4959-8acb-31d5fef66f32" />
                     </literalString>
                   </lowerValueInternal>
                   <upperValueInternal>
-                    <literalString Id="569e67fc-7846-4ebd-9760-463c62c53b49" name="Upper" value="*">
+                    <literalString Id="569e67fc-7846-4ebd-9760-463c62c53b49" name="Upper" value=".*">
                       <elementDefinition Id="479587ec-67fb-450f-af44-271885925604" />
                     </literalString>
                   </upperValueInternal>
@@ -284,7 +284,7 @@
             <elementDefinition Id="00833b74-ed44-40f1-8436-05986060e9bb" />
           </association>
           <association Id="2c6861e5-27b2-4e5b-8fce-0dc837628fb0" isDerived="false" sourceEndRoleName="FeatureGroupType" targetEndRoleName="" isLeaf="false" isAbstract="false">
-            <enumerationMoniker Id="dbd81429-0b7e-46be-9a1a-c1add58f5d56" LastKnownName="FeatureGroup types" />
+            <enumerationMoniker Id="dbd81429-0b7e-46be-9a1a-c1add58f5d56" LastKnownName="RelationGroup types" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="f4053293-aef5-4fe7-b3ca-5a04e6ae83ee" name="FeatureGroupType" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
@@ -307,9 +307,6 @@
           <property Id="f4521da7-cba3-485d-80e8-c3feb4b3048b" name="Description" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="9df356c2-042d-4a8e-82f9-23533e8b8bf2" />
           </property>
-          <property Id="b1713bf3-9292-4c42-8720-232808c634df" name="FeatureGroupType" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="ddeae01f-9316-4e35-a71f-601f801c9679" />
-          </property>
         </ownedAttributesInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
@@ -330,7 +327,7 @@
       </enumeration>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <enumeration Id="dbd81429-0b7e-46be-9a1a-c1add58f5d56" name="FeatureGroup types" isAbstract="false" isLeaf="false">
+      <enumeration Id="dbd81429-0b7e-46be-9a1a-c1add58f5d56" name="RelationGroup types" isAbstract="false" isLeaf="false">
         <elementDefinition Id="fc641a3f-08c6-4cad-8493-3fcd1fbcda5f" />
         <ownedLiterals>
           <enumerationLiteral Id="3489aea1-227a-4500-ae55-d03f0cc88520" name="OR [1...*]">

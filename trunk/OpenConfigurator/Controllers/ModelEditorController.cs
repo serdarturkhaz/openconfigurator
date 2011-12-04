@@ -66,6 +66,21 @@ namespace PresentationLayer.Controllers
         }
 
         [Authorize]
+        public JsonNetResult NewDefaultGroupRelation()
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Get a new default Feature
+            GroupRelationService _groupRelationService = new GroupRelationService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.GroupRelation newGroupRelation = (BLL.BusinessObjects.GroupRelation)_groupRelationService.CreateDefault();
+            result.Data = newGroupRelation;
+
+            //
+            return result;
+        }
+
+        [Authorize]
         public JsonNetResult NewDefaultAttribute()
         {
             //Default return variable
