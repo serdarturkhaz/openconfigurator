@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -110,7 +110,7 @@ Custom OR [*...*]</body>
       <annotatedElements>
         <classMoniker
           Id="a1599c36-8b09-4c15-922d-e4e32662db1e"
-          LastKnownName="FeatureGroup_Types"
+          LastKnownName="GroupRelation_Types"
           LastKnownLocation="Documentation.uml" />
       </annotatedElements>
     </comment>
@@ -1541,56 +1541,6 @@ User Input
             </relationshipOwnedElementsInternal>
           </association>
           <association
-            Id="1eca0e91-dec2-4df6-ac76-b18dcd22cdac"
-            isDerived="false"
-            sourceEndRoleName=""
-            targetEndRoleName=""
-            isLeaf="false"
-            isAbstract="false">
-            <classMoniker
-              Id="77cad96d-e4b0-41d3-9d9b-bd99daefca9d"
-              LastKnownName="FeatureGroups"
-              LastKnownLocation="Documentation.uml" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="6351df0b-994e-473e-90ef-7c7a120acdf7"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false"
-                  isNavigableOwned="false" />
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="7f77c8dc-820e-4fed-97f2-891226ff15b6"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false">
-                  <lowerValueInternal>
-                    <literalString
-                      Id="c950df6e-c050-498a-81d9-0ded81e9b82b"
-                      name="Lower"
-                      value="*" />
-                  </lowerValueInternal>
-                  <upperValueInternal>
-                    <literalString
-                      Id="868b17e4-907d-4f32-8106-2a570e497f1b"
-                      name="Upper"
-                      value="*" />
-                  </upperValueInternal>
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-          </association>
-          <association
             Id="30f8be10-be26-4e77-95a5-9a69916390cd"
             isDerived="false"
             sourceEndRoleName=""
@@ -1633,6 +1583,106 @@ User Input
                   <upperValueInternal>
                     <literalString
                       Id="ab07a674-b1bb-4ef2-a5da-70546793edc1"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="7efb4911-edff-4b75-994f-3672aa09fe4a"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="77cad96d-e4b0-41d3-9d9b-bd99daefca9d"
+              LastKnownName="GroupRelations"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="41732c0e-221b-4389-b4f5-66f4eb05154b"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="bb1302f5-ad56-4cc1-9d37-00306d45921d"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="38f4b270-665a-48c6-a70d-93dfdb48cdf3"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="0a7706fd-4969-4fee-9688-17aeebf2b177"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="ba85d708-3dd0-48d8-9214-b28c857bf386"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="a1deae0d-f7f8-426d-ba5f-75c58cd2763c"
+              LastKnownName="Relations"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="a8962dd1-fa1d-4f6f-bbbc-e604590ac833"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="e55fd12c-1b68-4e72-ac68-4e95df827df5"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="51f8e5c9-e1ff-44d7-9f1b-976ac1bafb24"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="ab9e1317-cc51-4573-aac1-87b779800334"
                       name="Upper"
                       value="*" />
                   </upperValueInternal>
@@ -1836,6 +1886,56 @@ User Input
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="f71f6716-7ffb-4195-8781-c9c3c0a232af"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="e4897c9d-e022-4081-b87b-5fe394a2d17e"
+              LastKnownName="GroupRelationsToFeatures"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="f0c145fa-8ccc-45b8-85d2-bf13d3f89a37"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="67e69180-03e0-44b8-9589-882667da2115"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="015f10bb-3853-4d25-9143-ad685f46a70a"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="9f800535-dfec-4d59-a3e3-1c8e273f4b67"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
         <ownedAttributesInternal>
           <property
@@ -1872,19 +1972,8 @@ User Input
             aggregation="None"
             isComposite="false" />
           <property
-            Id="877d7f26-8b51-421b-9691-88e8cf144f1d"
-            name="ParentFeatureID"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="0f0eddb4-edcc-48ad-a237-433278aa5532"
-            name="FeatureGroupID"
+            Id="8c2e1d8c-c846-441d-895a-08d8ca31d475"
+            name="ID"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -2042,26 +2131,26 @@ User Input
     <packageHasNamedElement>
       <class
         Id="77cad96d-e4b0-41d3-9d9b-bd99daefca9d"
-        name="FeatureGroups"
+        name="GroupRelations"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
         <targetEnds>
           <association
-            Id="a73309e0-9ad3-4a3a-98b0-6f64397415be"
+            Id="2e990bc6-ffd6-4a1d-9430-8083e6d1b1da"
             isDerived="false"
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
             isAbstract="false">
             <classMoniker
-              Id="ccba7042-b8b1-4be8-8668-1de3d7b3b05c"
-              LastKnownName="Features"
+              Id="e4897c9d-e022-4081-b87b-5fe394a2d17e"
+              LastKnownName="GroupRelationsToFeatures"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="f86d8893-a990-459f-8f97-4e8fd0035c34"
+                  Id="2b29dc0e-68fb-435b-85dd-89a7fa41b2fa"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -2073,7 +2162,7 @@ User Input
               </associationHasOwnedEnds>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="6641b3c5-133b-4551-98ac-ca850c764c6f"
+                  Id="b3137d6b-fb55-4da2-998d-9c032dc4a3fe"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -2083,13 +2172,13 @@ User Input
                   isComposite="false">
                   <lowerValueInternal>
                     <literalString
-                      Id="632bccdf-8166-4ac4-b377-8a7d0387e1ef"
+                      Id="3d1726ff-d0f9-4c4e-8d7f-ec5ae0373ffa"
                       name="Lower"
                       value="*" />
                   </lowerValueInternal>
                   <upperValueInternal>
                     <literalString
-                      Id="475798ae-8f73-4e91-bc4d-54b4c1464c1b"
+                      Id="ab0fc779-4664-4b03-9b18-eb7d93d4645f"
                       name="Upper"
                       value="*" />
                   </upperValueInternal>
@@ -2102,17 +2191,6 @@ User Input
           <property
             Id="69a8ab90-97d6-4d8c-82c0-0d72672f20a6"
             name="ID"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="1003e038-3d0e-44b9-9891-8da738a508a8"
-            name="ParentFeatureID"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -2156,7 +2234,7 @@ User Input
             isComposite="false" />
           <property
             Id="c41749f6-0074-474c-be5f-a438c301a1c2"
-            name="FeatureGroupTypeID"
+            name="GroupRelationTypeID"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -2546,7 +2624,7 @@ User Input
     <packageHasNamedElement>
       <class
         Id="873e5a97-73e5-4788-8b77-443dd2b26e14"
-        name="Feature Group"
+        name="Relation Group"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -2557,7 +2635,6 @@ User Input
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
-            name="Groups together"
             isAbstract="false">
             <classMoniker
               Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
@@ -2590,13 +2667,13 @@ User Input
                     <literalString
                       Id="3e21f4a8-d5da-4959-8acb-31d5fef66f32"
                       name="Lower"
-                      value="*" />
+                      value="2" />
                   </lowerValueInternal>
                   <upperValueInternal>
                     <literalString
                       Id="479587ec-67fb-450f-af44-271885925604"
                       name="Upper"
-                      value="*" />
+                      value=".*" />
                   </upperValueInternal>
                 </memberEnd>
               </associationHasOwnedEnds>
@@ -2611,7 +2688,7 @@ User Input
             isAbstract="false">
             <enumerationMoniker
               Id="fc641a3f-08c6-4cad-8493-3fcd1fbcda5f"
-              LastKnownName="FeatureGroup types"
+              LastKnownName="RelationGroup types"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -2656,17 +2733,6 @@ User Input
           <property
             Id="9df356c2-042d-4a8e-82f9-23533e8b8bf2"
             name="Description"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="ddeae01f-9316-4e35-a71f-601f801c9679"
-            name="FeatureGroupType"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -2770,7 +2836,7 @@ User Input
     <packageHasNamedElement>
       <enumeration
         Id="fc641a3f-08c6-4cad-8493-3fcd1fbcda5f"
-        name="FeatureGroup types"
+        name="RelationGroup types"
         isAbstract="false"
         isLeaf="false">
         <ownedLiterals>
@@ -2928,7 +2994,7 @@ User Input
     <packageHasNamedElement>
       <class
         Id="a1599c36-8b09-4c15-922d-e4e32662db1e"
-        name="FeatureGroup_Types"
+        name="GroupRelation_Types"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -2942,7 +3008,7 @@ User Input
             isAbstract="false">
             <classMoniker
               Id="77cad96d-e4b0-41d3-9d9b-bd99daefca9d"
-              LastKnownName="FeatureGroups"
+              LastKnownName="GroupRelations"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -3477,6 +3543,61 @@ User Input
             LastKnownLocation="Documentation.uml" />
         </subjects>
       </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="e4897c9d-e022-4081-b87b-5fe394a2d17e"
+        name="GroupRelationsToFeatures"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="0f7c573e-bd04-4462-bf6f-07f76a1b65c4"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="f1a99123-15d6-4080-abc0-b14b6b7c8673"
+            name="ParentFeatureID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="9e14ce8d-3400-4988-9a60-ad32513b6698"
+            name="ChildFeatureID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="948efb35-8246-4403-851d-a54c4e4f8fe2"
+            name="GroupRelationID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

@@ -179,6 +179,38 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<Relation> _parentRelations;
+    
+        public virtual ICollection<GroupRelations_To_Features> GroupRelations_To_Features
+        {
+            get
+            {
+                if (_groupRelations_To_Features == null)
+                {
+                    var newCollection = new FixupCollection<GroupRelations_To_Features>();
+                    newCollection.CollectionChanged += FixupGroupRelations_To_Features;
+                    _groupRelations_To_Features = newCollection;
+                }
+                return _groupRelations_To_Features;
+            }
+            set
+            {
+                if (!ReferenceEquals(_groupRelations_To_Features, value))
+                {
+                    var previousValue = _groupRelations_To_Features as FixupCollection<GroupRelations_To_Features>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupGroupRelations_To_Features;
+                    }
+                    _groupRelations_To_Features = value;
+                    var newValue = value as FixupCollection<GroupRelations_To_Features>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupGroupRelations_To_Features;
+                    }
+                }
+            }
+        }
+        private ICollection<GroupRelations_To_Features> _groupRelations_To_Features;
 
         #endregion
         #region Association Fixup
@@ -264,6 +296,28 @@ namespace DAL.DataEntities
                     if (ReferenceEquals(item.ChildFeature, this))
                     {
                         item.ChildFeature = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupGroupRelations_To_Features(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (GroupRelations_To_Features item in e.NewItems)
+                {
+                    item.ParentFeature = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (GroupRelations_To_Features item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.ParentFeature, this))
+                    {
+                        item.ParentFeature = null;
                     }
                 }
             }

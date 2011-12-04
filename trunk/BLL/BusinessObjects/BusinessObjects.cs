@@ -15,6 +15,12 @@ namespace BLL.BusinessObjects
         Optional = 2,
         Cloneable = 3
     }
+    public enum GroupRelationTypes
+    {
+        OR = 1,
+        XOR = 2,
+        Cardinal = 3
+    }
     public enum AttributeTypes
     {
         Constant = 1,
@@ -235,8 +241,6 @@ namespace BLL.BusinessObjects
             //Set default fields
             feature.Name = "Default Feature";
             feature.Description = "Default description";
-            feature.Attributes.Add(BLL.BusinessObjects.Attribute.CreateDefault());
-            feature.Attributes.Add(BLL.BusinessObjects.Attribute.CreateDefault());
 
             //Return the object instance
             return feature;
@@ -304,7 +308,7 @@ namespace BLL.BusinessObjects
         //Factory
         public static BLL.BusinessObjects.Relation CreateDefault()
         {
-            //Create a new Feature and InnerEntity
+            //Create a new Relation and InnerEntity
             DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Relation();
             BLL.BusinessObjects.Relation relation = new Relation((DAL.DataEntities.Relation)innerEntity);
 
@@ -314,9 +318,6 @@ namespace BLL.BusinessObjects
             //Return the object instance
             return relation;
         }
-
-
-
 
 
         //Interface members
@@ -335,6 +336,81 @@ namespace BLL.BusinessObjects
         }
 
         #endregion
+    }
+
+    public class GroupRelation : IBusinessObject
+    {
+        //Fields
+        private DAL.DataEntities.GroupRelation _innerEntity;
+
+        //Constructor
+        internal GroupRelation()
+        {
+        }
+        internal GroupRelation(DAL.DataEntities.GroupRelation innerEntity)
+        {
+            this._innerEntity = innerEntity;
+        }
+
+        //Properties
+        [ReadOnly(true)]
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+        }
+        public GroupRelationTypes GroupRelationType
+        {
+            get
+            {
+                return (GroupRelationTypes)Enum.Parse(typeof(RelationTypes), _innerEntity.GroupRelationTypeID.ToString());
+            }
+            set
+            {
+                _innerEntity.GroupRelationTypeID = (int)value;
+            }
+        }
+
+        //Conversion
+        public static BLL.BusinessObjects.GroupRelation FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.GroupRelation groupRelation = new BLL.BusinessObjects.GroupRelation((DAL.DataEntities.GroupRelation)innerEntity);
+            return groupRelation;
+        }
+        //Factory
+        public static BLL.BusinessObjects.GroupRelation CreateDefault()
+        {
+            //Create a new Feature and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.GroupRelation();
+            BLL.BusinessObjects.GroupRelation groupRelation = new GroupRelation((DAL.DataEntities.GroupRelation)innerEntity);
+
+            //Set default fields
+            groupRelation.GroupRelationType = GroupRelationTypes.OR;
+
+            //Return the object instance
+            return groupRelation;
+        }
+
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.GroupRelation)value;
+            }
+        }
+
+        #endregion
+
     }
 
     public class Model : IBusinessObject

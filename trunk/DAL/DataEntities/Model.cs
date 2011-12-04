@@ -173,6 +173,38 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<Relation> _relations;
+    
+        public virtual ICollection<GroupRelation> GroupRelations
+        {
+            get
+            {
+                if (_groupRelations == null)
+                {
+                    var newCollection = new FixupCollection<GroupRelation>();
+                    newCollection.CollectionChanged += FixupGroupRelations;
+                    _groupRelations = newCollection;
+                }
+                return _groupRelations;
+            }
+            set
+            {
+                if (!ReferenceEquals(_groupRelations, value))
+                {
+                    var previousValue = _groupRelations as FixupCollection<GroupRelation>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupGroupRelations;
+                    }
+                    _groupRelations = value;
+                    var newValue = value as FixupCollection<GroupRelation>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupGroupRelations;
+                    }
+                }
+            }
+        }
+        private ICollection<GroupRelation> _groupRelations;
 
         #endregion
         #region Association Fixup
@@ -254,6 +286,28 @@ namespace DAL.DataEntities
             if (e.OldItems != null)
             {
                 foreach (Relation item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Model, this))
+                    {
+                        item.Model = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupGroupRelations(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (GroupRelation item in e.NewItems)
+                {
+                    item.Model = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (GroupRelation item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Model, this))
                     {

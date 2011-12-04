@@ -11,7 +11,7 @@ var styles = {
         feature: {
             unselected: {
                 primaryElement: {
-                    fill: "#ffe784",
+                    fill: "#E1E9FF",
                     stroke: "#CECECE",
                     "stroke-width": 1,
                     opacity: 1
@@ -22,7 +22,7 @@ var styles = {
             },
             selected: {
                 primaryElement: {
-                    fill: "#ffe784",
+                    fill: "#E1E9FF",
                     stroke: "black",
                     "stroke-width": 1.2,
                     opacity: 1
@@ -59,12 +59,112 @@ var styles = {
                     stroke: "black"
                 }
             }
+        },
+        groupRelation: {
+            unselected: {
+                primaryElement: {
+                    stroke: "#666666",
+                    fill: "none",
+                    "stroke-width": 1
+                },
+                box: {
+                    stroke: "#666666"
+                }
+            },
+            selected: {
+                primaryElement: {
+                    stroke: "black",
+                    fill: "none",
+                    "stroke-width": 2
+                },
+                box: {
+                    stroke: "black"
+                }
+            }
+
         }
     }
 };
 var settings = {
     diagramContext: {
         fixedOrientation: "horizontal"
+    }
+};
+var objectTypes = {
+    common: {
+        wrapper: {
+            opacity: 0
+        },
+        outerContainer: {
+            stroke: "black",
+            fill: "black",
+            "stroke-width": 10,
+            opacity: 0,
+            cursor: "default"
+        }
+    },
+    feature: {
+        typeName: "feature"
+    },
+    relation: {
+        typeName: "relation",
+        subTypes: {
+            mandatory: {
+                subTypeName: "mandatory",
+                typeID: 1,
+                circleAttr: {
+                    fill: "black",
+                    opacity: 1
+                }
+            },
+            optional: {
+                subTypeName: "optional",
+                typeID: 2,
+                circleAttr: {
+                    fill: "#fff7d7",
+                    opacity: 1
+                }
+
+            },
+            cloneable: {
+                subTypeName: "cloneable",
+                typeID: 3,
+                circleAttr: {
+                    fill: "#fff7d7",
+                    opacity: 0
+                }
+
+            }
+        }
+    },
+    groupRelation: {
+        typeName: "relation",
+        subTypes: {
+            or: {
+                subTypeName: "or",
+                typeID: 1,
+                boxAttr: {
+                    fill: "black",
+                    opacity: 1
+                }
+            },
+            xor: {
+                subTypeName: "xor",
+                typeID: 2,
+                boxAttr: {
+                    fill: "black",
+                    opacity: 1
+                }
+            },
+            cardinal: {
+                subTypeName: "cardinal",
+                typeID: 2,
+                boxAttr: {
+                    fill: "black",
+                    opacity: 1
+                }
+            }
+        }
     }
 };
 
@@ -78,13 +178,162 @@ function getSubTypeByID(collection, id) {
     }
 }
 
-//Components
-var ActionsComponent = function (newFeatureElem, newGroupElem) {
+//UIObjects
+var UIFeature = function (diagramContext, dataObj, x, y) {
 
     //Fields
-    var newFeatureButton = null;
-    var newGroupButton = null;
+    var _diagramContext = diagramContext;
+    var _outerElement = null;
+    var _innerElements = {}, _connections = [];
+    var _selected = false;
+    var _dataObj = dataObj;
+    var _glow = null;
+    var _thisUIFeature = this;
+
+    //Properties
+    this.GetDataObj = function () {
+        return _dataObj;
+    }
+
+    //Private methods
+    var makeSelectable = function () {
+
+        //Selectable
+        _outerElement.click(function (e) {
+            _thisUIFeature.Select();
+        });
+
+        //Hoverable
+        _outerElement.mouseover(function (e) {
+            if (_glow == null) {
+                _glow = _innerElements.box.glow(styles.types.common.hoverGlow);
+            }
+        }).mouseout(function (e) {
+            if (_glow != null) {
+                _glow.remove();
+                _glow = null;
+            }
+        });
+
+    }
+    var makeDraggable = function () {
+
+        //Drag and droppable
+        var start = function () {
+            _outerElement.originalx = _outerElement.attr("x");
+            _outerElement.originaly = _outerElement.attr("y");
+
+            for (var innerElemKey in _innerElements) {
+                var innerElem = _innerElements[innerElemKey];
+                innerElem.originalx = innerElem.attr("x");
+                innerElem.originaly = innerElem.attr("y");
+            }
+        };
+        move = function (dx, dy) {
+            if (_glow != null) {
+                _glow.remove();
+                _glow = null;
+            }
+            _outerElement.attr({ x: _outerElement.originalx + dx, y: _outerElement.originaly + dy });
+
+            //Move child elements
+            for (var innerElemKey in _innerElements) {
+                var innerElem = _innerElements[innerElemKey];
+                innerElem.attr({ x: innerElem.originalx + dx, y: innerElem.originaly + dy });
+            }
+
+            //Refresh connections
+            //            for (var j = 0; j < uiElements[0].data("relations").length; j++) {
+            //                var rel = uiElements[0].data("relations")[j];
+            //                refreshRaphaelRelation(rel);
+            //            }
+        };
+        up = function () {
+        };
+        _outerElement.drag(move, start, up);
+    }
+    var makeEditable = function () {
+        _outerElement.dblclick(function (e) {
+            var bb1 = this.getBBox();
+            var xoffset = 13, yoffset = boxHeight + 15;
+            var textinput = $("<input class='Inputbox' type='text' />").appendTo(_diagramContext.GetCanvasContainer()).css({
+                position: "absolute",
+                left: bb1.x + xoffset,
+                top: bb1.y + yoffset,
+                width: 90,
+                height: 20
+            }).bind("change", function () {
+                var newName = $(this).val();
+                _thisUIFeature.Update(newName);
+                $(this).remove();
+            }).bind("keypress", function (e) {
+                if (e.which == 13) { //Enter
+                    var newName = $(this).val();
+                    _thisUIFeature.Update(newName);
+                    $(this).remove();
+                }
+                else if (e.which == 27) { //Escape
+                    $(this).remove();
+                }
+            }).bind("blur", function (e) {
+                $(this).remove();
+            });
+            $(textinput).val(_dataObj.Name).select();
+            _thisUIFeature.Select();
+        });
+    }
+
+    //Public methods
+    this.CreateGraphicalRepresentation = function () {
+        //
+        var box = null, text = null;
+        x = x == undefined ? 40.5 : x;
+        y = y == undefined ? 40.5 : y;
+        var boxWidth = 100, boxHeight = 30;
+
+
+        //Create inner elements
+        box = _diagramContext.GetCanvas().rect(x, y, boxWidth, boxHeight, 0).attr(styles.types.feature.unselected.primaryElement);
+        text = _diagramContext.GetCanvas().text(boxWidth / 2 + x, boxHeight / 2 + y, dataObj.Name).attr(styles.types.feature.unselected.text);
+        _innerElements.box = box;
+        _innerElements.text = text;
+
+        //Create the main outer element
+        _outerElement = _diagramContext.GetCanvas().rect(x, y, boxWidth, boxHeight, 0).attr(objectTypes.common.outerContainer);
+        _outerElement
+            .data("innerElements", [box, text])
+            .data("connections", new Array());
+
+        //Setup 
+        makeSelectable();
+        makeDraggable();
+        makeEditable();
+    }
+    this.Select = function () {
+        _innerElements.box.attr(styles.types.feature.selected.primaryElement);
+    }
+    this.Update = function (name) {
+        _dataObj.Name = name;
+        //_dataObj.Description = newDataObj.Description;
+        //_dataObj.Attributes = newDataObj.Attributes;
+
+        //Set text
+        _innerElements.text.attr({ text: _dataObj.Name });
+    }
 }
+var UIRelation = function (diagramContext, dataObj, parentFeature, childFeature) {
+    //Fields
+    var _diagramContext = diagramContext;
+    var _outerElement = null;
+    var _innerElements = {};
+    var _selected = false;
+    var _dataObj = dataObj;
+    var _glow = null;
+    var _thisUIRelation = this;
+
+}
+
+//Components
 var PropertiesComponent = function (container, diagramContext, getDefaultAttribute) {
 
     //Defaults and settings
@@ -214,22 +463,39 @@ var PropertiesComponent = function (container, diagramContext, getDefaultAttribu
             createControlHTML: function (dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
 
                 //Outer control
+                var _this = this;
                 var control = $("<div class='Composite''></div>");
 
                 //List
                 var listContainer = $("<div class='ListDiv'></div>").appendTo(control);
+                var listInnerContainer = $("<div class='ListInnerContainer'></div>").appendTo(listContainer);
                 var listActionsDiv = $("<div class='ListActionsDiv'></div>").appendTo(listContainer);
                 var addButton = $("<div class='Button-Thin'></div>").append("<img src='../../Content/themes/base/images/Icons/Add.png' />").append("<span>Add new</span>").appendTo(listActionsDiv);
+                addButton.bind("click", function () {
+                    var attributeDataObj = getDefaultDataObj("Attribute");
+                    var newIndex = dataObjParent[dataObjFieldName].length;
+                    dataObjParent[dataObjFieldName][newIndex] = attributeDataObj;
+
+                    //Create a new NestedObjectControl
+                    var label = dataObjParent[dataObjFieldName][newIndex].Name;
+                    var nestedObjectControl = _this.privateMethods.createNestedObject(label, dataObjParent, dataObjFieldName, newIndex, objectTypeField, listContainer, detailsContainer);
+                    nestedObjectControl.appendTo(listInnerContainer);
+
+                    //Call handler
+                    onDataChanged();
+                });
 
                 //Details
                 var detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(control);
                 var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(detailsContainer).find("tbody");
 
+                //
                 return control;
             },
             loadData: function (control, dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
                 //
                 var listContainer = $(control).find(".ListDiv");
+                var listInnerContainer = $(listContainer).find(".ListInnerContainer");
                 var detailsContainer = $(control).find(".DetailsDiv");
                 var _this = this;
 
@@ -238,7 +504,7 @@ var PropertiesComponent = function (container, diagramContext, getDefaultAttribu
                     if (dataObjParent[dataObjFieldName][i] != null) {
                         var label = dataObjParent[dataObjFieldName][i].Name;
                         var nestedObjectControl = this.privateMethods.createNestedObject(label, dataObjParent, dataObjFieldName, i, objectTypeField, listContainer, detailsContainer);
-                        nestedObjectControl.prependTo(listContainer);
+                        nestedObjectControl.appendTo(listInnerContainer);
                     }
                 }
             },
@@ -246,13 +512,13 @@ var PropertiesComponent = function (container, diagramContext, getDefaultAttribu
                 createNestedObject: function (label, dataObjParent, dataObjFieldName, index, objectTypeField, listContainer, detailsContainer) {
                     //Inner methods
                     function deSelectAll() {
-                        var selectedNestedObjects = $(listContainer).children(".Selected");
+                        var selectedNestedObjects = $(listContainer).find(".ListInnerContainer").children(".Selected");
                         $(selectedNestedObjects).removeClass("Selected");
                         $(detailsContainer).find("tbody").html("");
                         $(detailsContainer).css("display", "none")
                     }
                     function toggleSelected(nestedObjectControl) {
-                        var selectedNestedObjects = $(listContainer).children(".Selected");
+                        var selectedNestedObjects = $(listContainer).find(".ListInnerContainer").children(".Selected");
 
                         //Deselect if already selected
                         if ($(nestedObjectControl).hasClass("Selected")) {
@@ -262,8 +528,8 @@ var PropertiesComponent = function (container, diagramContext, getDefaultAttribu
                         else {
                             $(selectedNestedObjects).removeClass("Selected");
                             $(nestedObjectControl).addClass("Selected");
-                            $(detailsContainer).find("tbody").html("");
                             $(detailsContainer).css("display", "block")
+                            $(detailsContainer).find("tbody").html("");
 
                             //
                             loadNestedObjectData(nestedObjectControl);
@@ -300,12 +566,13 @@ var PropertiesComponent = function (container, diagramContext, getDefaultAttribu
                     }
                     function deleteNestedObject(nestedObjectControl) {
                         var nestedObjectIndex = $(nestedObjectControl).attr("nestedObjectIndex");
-                        //dataObjParent[dataObjFieldName].splice(nestedObjectIndex, 1);
                         dataObjParent[dataObjFieldName][index] = null;
                         $(nestedObjectControl).remove();
-
                         $(detailsContainer).find("tbody").html("");
                         $(detailsContainer).css("display", "none")
+
+                        //
+                        onDataChanged();
                     }
 
                     //Create nestedObject control
@@ -454,7 +721,7 @@ var PropertiesComponent = function (container, diagramContext, getDefaultAttribu
     //Fields and variables
     var _container = container;
     var _diagramContext = diagramContext;
-    var _currentSet = null, _currentDataObj = null, _currentSetType = null;
+    var _currentElemWrapper = null, _currentDataObj = null, _currentElemType = null;
 
     //Controls
     var _mainContainer = $(container).find("#MainContainer");
@@ -498,10 +765,10 @@ var PropertiesComponent = function (container, diagramContext, getDefaultAttribu
     var loadUI = function () {
 
         //Go through each Area
-        for (var areaKey in objectTypes[_currentSetType].areas) {
+        for (var areaKey in objectTypes[_currentElemType].areas) {
 
             //Create an html area
-            var area = objectTypes[_currentSetType].areas[areaKey];
+            var area = objectTypes[_currentElemType].areas[areaKey];
             var areaInnerContainer = createSectionArea(area.displayTitle, area.tableLayout);
 
             //Go through each field in the Area
@@ -531,30 +798,25 @@ var PropertiesComponent = function (container, diagramContext, getDefaultAttribu
         $(_mainContainer).children(".AreaDiv:gt(0)").css("margin-top", "10px");
     }
     var onDataChanged = function () {
-        _diagramContext.UpdateElement(_currentSet, _currentDataObj);
+        _diagramContext.UpdateElement(_currentElemWrapper, _currentDataObj);
     }
     var clearUI = function () {
-        //        for (var key in _controls) {
-        //            var ctrl = _controls[key];
-        //            $(ctrl).remove();
-        //            delete _controls[key];
-        //        }
         $(_mainContainer).html("");
         $(_headerLabel).text("");
     }
 
     //Public methods
-    this.LoadProperties = function (set) {
+    this.LoadProperties = function (elemWrapper) {
 
         //Variables
-        _currentSet = set;
-        _currentSetType = set.items[0].data("type");
-        _currentDataObj = jQuery.extend(true, {}, set.items[0].data("dataObj"));
+        _currentElemWrapper = elemWrapper;
+        _currentElemType = elemWrapper.data("type");
+        _currentDataObj = jQuery.extend(true, {}, elemWrapper.data("dataObj"));
 
         //Setup UI
         clearUI();
         loadUI();
-        $(_headerLabel).text("(" + _currentSetType + ")");
+        $(_headerLabel).text("(" + _currentElemType + ")");
     }
     this.Clear = function () {
 
@@ -578,52 +840,6 @@ var DiagramContext = function (canvasContainer) {
             angleIntervals: [{ min: 46, max: 135 }, { min: 225, max: 315}]
         }
     };
-    var objectTypes = {
-        common: {
-            outerContainer: {
-                stroke: "black",
-                fill: "black",
-                "stroke-width": 10,
-                opacity: 0,
-                cursor: "default"
-            }
-        },
-        feature: {
-            typeName: "feature"
-        },
-        relation: {
-            typeName: "relation",
-            subTypes: {
-                mandatory: {
-                    subTypeName: "mandatory",
-                    typeID: 1,
-                    circleAttr: {
-                        fill: "black",
-                        opacity: 1
-                    }
-                },
-                optional: {
-                    subTypeName: "optional",
-                    typeID: 2,
-                    circleAttr: {
-                        fill: "#fff7d7",
-                        opacity: 1
-                    }
-
-                },
-                cloneable: {
-                    subTypeName: "cloneable",
-                    typeID: 3,
-                    circleAttr: {
-                        fill: "#fff7d7",
-                        opacity: 0
-                    }
-
-                }
-            }
-
-        }
-    };
 
     //Fields
     var _this = this;
@@ -632,6 +848,12 @@ var DiagramContext = function (canvasContainer) {
 
     //Properties
     this.SelectedElements = _selectedElements;
+    this.GetCanvas = function () {
+        return _canvas;
+    }
+    this.GetCanvasContainer = function () {
+        return _canvasContainer;
+    }
 
     //Constructor/Initalizers
     this.Initialize = function () {
@@ -727,7 +949,6 @@ var DiagramContext = function (canvasContainer) {
         closestConnection.x2 - closestConnection.curveModifier.x,
         closestConnection.y2 - closestConnection.curveModifier.y,
         closestConnection.x2.toFixed(1), closestConnection.y2.toFixed(1)]];
-        //var path = ["M", closestConnection.x1.toFixed(1), closestConnection.y1.toFixed(1), "C", extraX1, extraY1, closestConnection.x2.toFixed(1), closestConnection.y2.toFixed(1)].join(","); //curve
         //var path = ["M", closestConnection.x1.toFixed(3), closestConnection.y1.toFixed(3), "L", closestConnection.x2.toFixed(3), closestConnection.y2.toFixed(3)].join(","); //line
 
         var returnObj = {
@@ -751,108 +972,121 @@ var DiagramContext = function (canvasContainer) {
             deselect(selElem);
         }
     }
-    function deselect(set) {
-        var isSelected = set.items[0].data("selected");
+    function deselect(elemWrapper) {
+        var isSelected = elemWrapper.data("selected");
         if (isSelected) {
+            elemWrapper.data("selected", false);
+            var type = elemWrapper.data("type");
 
-            //Deselect
-            var outerContainer = set.items[0];
-            var type = outerContainer.data("type");
-            outerContainer.data("children")[0].attr(styles.types[type].unselected.primaryElement);
-            outerContainer.data("selected", false);
+            //Select innerElements uiElementWrapper
+            var uiElements = elemWrapper.data("uiElements");
+            for (var i = 0; i < uiElements.length; i++) {
+                var uiElement = uiElements[i];
+                uiElement.data("innerElements")[0].attr(styles.types[type].unselected.primaryElement);
+            }
 
             //Remove from selectedElements collection
-            var index = $(_selectedElements).index(set);
+            var index = $(_selectedElements).index(elemWrapper);
             _selectedElements.splice(index, 1);
             if (_selectedElements.length == 0) {
-                _this.OnAllElementsDeselected.RaiseEvent();
+                _this.OnAllElementsDeselected.RaiseEvent(elemWrapper);
             }
 
             //Raise event
-            _this.OnElementDeselected.RaiseEvent(set);
+            _this.OnElementDeselected.RaiseEvent(elemWrapper);
         }
     }
-    function select(set, shift) {
-        var isSelected = set.items[0].data("selected");
-        if (!isSelected) {
+    function select(UIObject, shift) {
+        if (!UIObject.selected) {
+            UIObject.selected = false;
+
             //Deselect everything
             if (shift == false) {
                 deselectAll();
             }
 
-            //Select current set
-            var outerContainer = set.items[0];
-            var type = outerContainer.data("type");
-            outerContainer.data("children")[0].attr(styles.types[type].selected.primaryElement);
-            outerContainer.data("selected", true);
+            //Select current uiElementWrapper
+            var uiElements = elemWrapper.data("uiElements");
+            for (var i = 0; i < uiElements.length; i++) {
+                var uiElement = uiElements[i];
+                uiElement.data("innerElements")[0].attr(styles.types[type].selected.primaryElement);
+            }
 
             //Raise event
-            _selectedElements.push(set);
-            _this.OnElementSelected.RaiseEvent(set);
+            _selectedElements.push(elemWrapper);
+            _this.OnElementSelected.RaiseEvent(elemWrapper);
         }
     }
-    function setSelectable(set) {
+    function setSelectable(elemWrapper) {
 
-        //Selectable
-        var outerContainer = set.items[0];
-        outerContainer.click(function (e) {
-            select(set, e.shiftKey);
-        });
+        //Go through all outerContainers in the set
+        var uiElements = elemWrapper.data("uiElements");
+        for (var i = 0; i < uiElements.length; i++) {
 
-        //Hoverable
-        var primaryElement = outerContainer.data("children")[0];
-        var glow = null;
-        outerContainer.mouseover(function (e) {
-            if (glow == null) {
-                glow = primaryElement.glow(styles.types.common.hoverGlow);
-                outerContainer.data("glow", glow);
-            }
-        }).mouseout(function (e) {
-            if (glow != null) {
-                glow.remove();
-                glow = null;
-            }
-        });
+            //Selectable
+            uiElements[i].click(function (e) {
+                select(elemWrapper, e.shiftKey);
+            });
+
+            //Hoverable
+            var primaryElement = uiElements[i].data("innerElements")[0];
+            var glow = null;
+            uiElements[i].mouseover(function (e) {
+                if (glow == null) {
+                    glow = primaryElement.glow(styles.types.common.hoverGlow);
+                    uiElements[0].data("glow", glow);
+                }
+            }).mouseout(function (e) {
+                if (glow != null) {
+                    glow.remove();
+                    glow = null;
+                }
+            });
+        }
     }
 
-    //Private methods
-    function updateRaphaelFeature(set, name, description, attributes) {
-        var dataObj = set.items[0].data("dataObj");
-        dataObj.Name = name;
-        dataObj.Description = description;
-        dataObj.Attributes = attributes;
+    //Feature methods
+    function updateRaphaelFeature(elemWrapper, name, description, attributes) {
+        var dataObj = elemWrapper.data("dataObj");
+        if (name != undefined)
+            dataObj.Name = name;
+        if (description != undefined)
+            dataObj.Description = description;
+        if (attributes != undefined)
+            dataObj.Attributes = attributes;
 
         //Set text
-        set.items[0].data("children")[1].attr({ text: dataObj.Name });
+        elemWrapper.data("uiElements")[0].data("innerElements")[1].attr({ text: dataObj.Name });
     }
     function createRaphaelFeature(dataObj, x, y) {
 
         //Variables/initializations
-        var set = _canvas.set();
-        var outerContainer = null;
+        var uiElementWrapper = _canvas.rect(x, y, 1, 1, 0).attr(objectTypes.common.wrapper);
+        var uiElements = [];
         x = x == undefined ? 40.5 : x;
         y = y == undefined ? 40.5 : y;
         var boxWidth = 100, boxHeight = 30;
+
+        //Create wrapper
+        uiElementWrapper
+            .data("type", objectTypes.feature.typeName)
+            .data("uiElements", uiElements)
+            .data("dataObj", dataObj)
+            .data("selected", false);
 
         //Create inner elements
         var box = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(styles.types.feature.unselected.primaryElement);
         var text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, dataObj.Name).attr(styles.types.feature.unselected.text);
 
-        //Create outerContainer
-        outerContainer = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(objectTypes.common.outerContainer);
-        outerContainer
-            .data("type", objectTypes.feature.typeName)
-            .data("dataObj", dataObj)
-            .data("selected", false)
-            .data("children", [box, text])
+        //Create uiElement(s)
+        uiElements[0] = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(objectTypes.common.outerContainer);
+        uiElements[0]
+            .data("innerElements", [box, text])
             .data("relations", new Array());
-        set.push(outerContainer);
 
-        //Selectable
-        setSelectable(set);
-
-        //Editable
-        outerContainer.dblclick(function (e) {
+        //Selectable & Editable
+        setSelectable(uiElementWrapper);
+        uiElements[0].dblclick(function (e) {
             var bb1 = this.getBBox();
             var xoffset = 13, yoffset = boxHeight + 15;
             var textinput = $("<input class='Inputbox' type='text' />").appendTo(_canvasContainer).css({
@@ -864,13 +1098,13 @@ var DiagramContext = function (canvasContainer) {
             }).bind("change", function () {
                 var newName = $(this).val();
                 dataObj.Name = newName;
-                _this.UpdateElement(set, dataObj);
+                _this.UpdateElement(uiElementWrapper, dataObj);
                 $(this).remove();
             }).bind("keypress", function (e) {
                 if (e.which == 13) {
                     var newName = $(this).val();
                     dataObj.Name = newName;
-                    _this.UpdateElement(set, dataObj);
+                    _this.UpdateElement(uiElementWrapper, dataObj);
                     $(this).remove();
                 }
                 else if (e.which == 27) {
@@ -881,112 +1115,143 @@ var DiagramContext = function (canvasContainer) {
             });
             $(textinput).val(dataObj.Name).select();
 
-            select(set);
+            select(uiElementWrapper);
         });
 
         //Drag and droppable
         var start = function () {
-            outerContainer.originalx = outerContainer.attr("x");
-            outerContainer.originaly = outerContainer.attr("y");
+            uiElements[0].originalx = uiElements[0].attr("x");
+            uiElements[0].originaly = uiElements[0].attr("y");
 
-            for (var i = 0; i < outerContainer.data("children").length; i++) {
-                var childElem = outerContainer.data("children")[i];
+            for (var i = 0; i < uiElements[0].data("innerElements").length; i++) {
+                var childElem = uiElements[0].data("innerElements")[i];
                 childElem.originalx = childElem.attr("x");
                 childElem.originaly = childElem.attr("y");
             }
         };
         move = function (dx, dy) {
-            var glow = outerContainer.data("glow");
+            var glow = uiElements[0].data("glow");
             if (glow != null) {
                 glow.remove();
-                outerContainer.data("glow", null)
+                uiElements[0].data("glow", null);
             }
-            outerContainer.attr({ x: outerContainer.originalx + dx, y: outerContainer.originaly + dy });
+            uiElements[0].attr({ x: uiElements[0].originalx + dx, y: uiElements[0].originaly + dy });
 
             //Move child elements
-            for (var i = 0; i < outerContainer.data("children").length; i++) {
-                var childElem = outerContainer.data("children")[i];
+            for (var i = 0; i < uiElements[0].data("innerElements").length; i++) {
+                var childElem = uiElements[0].data("innerElements")[i];
                 childElem.attr({ x: childElem.originalx + dx, y: childElem.originaly + dy });
             }
 
             //Refresh relations
-            for (var j = 0; j < outerContainer.data("relations").length; j++) {
-                var rel = outerContainer.data("relations")[j];
+            for (var j = 0; j < uiElements[0].data("relations").length; j++) {
+                var rel = uiElements[0].data("relations")[j];
                 refreshRaphaelRelation(rel);
             }
-
-
         };
         up = function () {
         };
-        outerContainer.drag(move, start, up);
+        uiElements[0].drag(move, start, up);
 
-        return set;
+        return uiElementWrapper;
     }
-    function updateRaphaelRelation(set, relationType) {
+
+    //Relation methods
+    function updateRaphaelRelation(elemWrapper, relationType) {
         //
-        var dataObj = set.items[0].data("dataObj");
+        var dataObj = elemWrapper.data("dataObj");
         var relationSubType = getSubTypeByID(objectTypes.relation.subTypes, relationType);
 
         //Update relationType data
         dataObj.RelationType = relationType;
 
         //Update visuals
-        set.items[0].data("children")[1].attr(relationSubType.circleAttr); //circle
+        elemWrapper.data("uiElements")[0].data("innerElements")[1].attr(relationSubType.circleAttr); //circle
     }
-    function createRaphaelRelation(setA, setB, dataObj, relationType) {
+    function createRaphaelRelation(parentFeatureElem, childFeatureElem, dataObj, relationType) {
 
         //Variables/initializations
-        var set = _canvas.set();
-        var outerContainer = null;
-        var pathInfo = getPath(setA, setB);
+        var uiElementWrapper = _canvas.rect(0, 0, 1, 1, 0).attr(objectTypes.common.wrapper);
+        var uiElements = [];
+
+        //Create wrapper
+        uiElementWrapper
+            .data("type", objectTypes.relation.typeName)
+            .data("uiElements", uiElements)
+            .data("dataObj", dataObj)
+            .data("selected", false);
 
         //Create inner elements
+        var pathInfo = getPath(parentFeatureElem.data("uiElements")[0], childFeatureElem.data("uiElements")[0]);
         var line = _canvas.path(pathInfo.path).attr(styles.types.relation.unselected.primaryElement);
         var circle = _canvas.circle(pathInfo.endPoint.x, pathInfo.endPoint.y, 6).attr(styles.types.relation.unselected.circle);
         circle.attr(objectTypes.relation.subTypes[relationType].circleAttr);
 
-        //Create outerContainer
-        outerContainer = _canvas.path(pathInfo.path).attr(objectTypes.common.outerContainer);
-        outerContainer
-            .data("type", objectTypes.relation.typeName)
-            .data("dataObj", dataObj)
-            .data("selected", false)
-            .data("children", [line, circle])
+        //Create uiElement(s)
+        uiElements[0] = _canvas.path(pathInfo.path).attr(objectTypes.common.outerContainer);
+        uiElements[0]
+            .data("innerElements", [line, circle])
             .data("pathInfo", pathInfo);
-        set.push(outerContainer);
 
         //Selectable
-        setSelectable(set);
+        setSelectable(uiElementWrapper);
 
         //Add reference to setA and setB
-        setA.items[0].data("relations").push(set);
-        setB.items[0].data("relations").push(set);
+        parentFeatureElem.data("uiElements")[0].data("relations").push(uiElementWrapper);
+        childFeatureElem.data("uiElements")[0].data("relations").push(uiElementWrapper);
 
-        return set;
+        return uiElementWrapper;
     }
-    function refreshRaphaelRelation(relationSet) {
+    function refreshRaphaelRelation(relElemWrapper) {
 
         //
-        var outerContainer = relationSet.items[0];
-        var originalPathInfo = outerContainer.data("pathInfo");
+        var uiElement = relElemWrapper.data("uiElements")[0];
+        var originalPathInfo = uiElement.data("pathInfo");
 
         //
         var newPath = getPath(originalPathInfo.startObj, originalPathInfo.endObj);
-        var line = outerContainer.data("children")[0];
-        var circle = outerContainer.data("children")[1];
+        var line = uiElement.data("innerElements")[0];
+        var circle = uiElement.data("innerElements")[1];
 
         //Refresh 
-        outerContainer.attr({ path: newPath.path });
+        uiElement.attr({ path: newPath.path });
         line.attr({ path: newPath.path });
         circle.attr({ cx: newPath.endPoint.x, cy: newPath.endPoint.y });
+    }
 
+    //RelationGroup methods
+    function createRaphaelGroupRelation(parentFeatureElem, childFeatureElements, dataObj, groupRelationType) {
+
+        //Variables/initializations
+        var uiElementWrapper = _canvas.rect(0, 0, 1, 1, 0).attr(objectTypes.common.wrapper);
+        var uiElements = [];
+
+        //Create wrapper
+        uiElementWrapper
+            .data("type", objectTypes.groupRelation.typeName)
+            .data("uiElements", uiElements)
+            .data("dataObj", dataObj)
+            .data("selected", false);
+
+        //Create connections for each child feature
+        for (var i = 0; i < childFeatureElements.length; i++) {
+            var pathInfo = getPath(parentFeatureElem.data("uiElements")[0], childFeatureElements[i].data("uiElements")[0]);
+            var line = _canvas.path(pathInfo.path).attr(styles.types.groupRelation.unselected.primaryElement);
+            childFeatureElements[i].data("uiElements")[0].data("relations").push(uiElementWrapper);
+        }
+
+        //Add reference to parentSet
+        parentFeatureElem.data("uiElements")[0].data("relations").push(uiElementWrapper);
+
+        //
+        return uiElementWrapper;
     }
 
     //Public methods
     this.AddFeature = function (dataObj) {
+        var _thisContextDiagram = this;
 
-        //Create and set a mouseover handler
+        //Create wireframe
         $(_canvasContainer).css("cursor", "crosshair");
         var wireframebox = null;
         var mousemoveHandler = function (e) {
@@ -1001,47 +1266,44 @@ var DiagramContext = function (canvasContainer) {
         };
         $(_canvasContainer).bind("mousemove", mousemoveHandler);
 
-        //Create and set a click handler
+        //Create actual Feature on click
         var clickHandler = function (e) {
             var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5;
             var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5;
-            var set = createRaphaelFeature(dataObj, posx, posy);
-
+            var newUIFeature = new UIFeature(_thisContextDiagram, dataObj, posx, posy);
+            newUIFeature.CreateGraphicalRepresentation();
 
             //
             $(_canvasContainer).unbind("click", clickHandler);
             $(_canvasContainer).unbind("mousemove", mousemoveHandler);
             $(_canvasContainer).css("cursor", "default");
             wireframebox.remove();
-
-            //Raise event
-            _this.OnFeatureAdded.RaiseEvent(set);
         };
         $(_canvasContainer).bind("click", clickHandler);
     }
-    this.AddRelation = function (setA, setB, dataObj) {
-
-        var set = createRaphaelRelation(setA, setB, dataObj, "mandatory");
-
+    this.AddRelation = function (parentElemWrapper, childElemWrapper, dataObj) {
+        createRaphaelRelation(parentElemWrapper, childElemWrapper, dataObj, "mandatory");
     }
-    this.UpdateElement = function (set, updatedDataObj) {
-        var type = set.items[0].data("type");
+    this.AddGroupRelation = function (parentSet, childSets, dataObj) {
+        var set = createRaphaelGroupRelation(parentSet, childSets, dataObj, "or");
+    }
+    this.UpdateElement = function (elemWrapper, updatedDataObj) {
+        var type = elemWrapper.data("type");
         switch (type) {
             case "feature":
-                updateRaphaelFeature(set, updatedDataObj.Name, updatedDataObj.Description, updatedDataObj.Attributes);
+                updateRaphaelFeature(elemWrapper, updatedDataObj.Name, updatedDataObj.Description, updatedDataObj.Attributes);
                 break;
 
             case "relation":
-                updateRaphaelRelation(set, updatedDataObj.RelationType);
+                updateRaphaelRelation(elemWrapper, updatedDataObj.RelationType);
                 break;
         }
 
         //Raise event
-        _this.OnElementUpdated.RaiseEvent(set);
+        _this.OnElementUpdated.RaiseEvent(elemWrapper);
     }
 
     //Events
-    this.OnFeatureAdded = new Event();
     this.OnElementUpdated = new Event();
     this.OnElementSelected = new Event();
     this.OnElementDeselected = new Event();
