@@ -12,15 +12,9 @@ $.pnotify.defaults.pnotify_error_icon = "pnotifyErrorIcon";
 $.pnotify.defaults.pnotify_history = false;
 
 //
-Object.size = function (obj) {
-    var size = 0, key;
-    for (key in obj) {
-        if (obj.hasOwnProperty(key)) size++;
-    }
-    return size;
-};
 
-//
+
+//Ajax
 $(document).ready(function () {
     $.ajaxSetup({
         type: "POST",
@@ -33,3 +27,32 @@ $(document).ready(function () {
         }
     });
 });
+
+
+//Helper methods/small plugins***********************************************************************************
+var readyToPress = true;
+$.ctrl = function (key, callback, args) {
+    $(document).keydown(function (e) {
+        if (e.keyCode == key.charCodeAt(0) && e.ctrlKey) {
+            if (readyToPress) {
+                readyToPress = false;
+
+                if (!args) args = []; // IE barks when args is null
+                callback.apply(this, args);
+
+                $.timer(500, function () {
+                    readyToPress = true;
+                });
+            }
+            return false;
+        }
+    });
+};
+Object.size = function (obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+//**************************************************************************************************************

@@ -47,8 +47,6 @@
                 }
             });
         }
-
-        //
         function getDefaultDataObj(type) {
             var returnObj;
             $.ajax({
@@ -65,6 +63,7 @@
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
             //Event handlers-------------------------------------------------------------------
+            //Buttons
             $("#SaveButton").bind("click", function () {
                 saveData();
             });
@@ -73,16 +72,30 @@
                 diagramContext.AddFeature(featureObj);
             });
             $("#NewRelationButton").bind("click", function () {
-                if (diagramContext.SelectedElements.length == 2) {
-                    var relationObj = getDefaultDataObj("Relation");
-                    diagramContext.AddRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements[1], relationObj);
-                }
+                var relationObj = getDefaultDataObj("Relation");
+                diagramContext.AddRelation(relationObj);
             });
             $("#NewGroupRelationButton").bind("click", function () {
                 if (diagramContext.SelectedElements.length > 2) {
                     var groupRelationObj = null;
                     diagramContext.AddGroupRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements.slice(1), groupRelationObj);
                 }
+            });
+
+            //Keypresses
+            $(document).keydown(function (e) {
+                if (e.which == 46) { //del key
+                    diagramContext.DeleteElements();
+                }
+                $.ctrl('R', function () { //create Relation
+                    var relationObj = getDefaultDataObj("Relation");
+                    diagramContext.AddRelation(relationObj);
+                });
+                $.ctrl('F', function () { //create Feature
+                    var featureObj = getDefaultDataObj("Feature");
+                    diagramContext.AddFeature(featureObj);
+                });
+
             });
             //---------------------------------------------------------------------------------
 
@@ -106,10 +119,10 @@
                 propertiesComponent = new PropertiesComponent($("#PropertiesBox"), diagramContext);
 
                 //Event handlers
-                diagramContext.OnElementSelected.AddHandler(new EventHandler(function (set) {
-                    propertiesComponent.LoadProperties(set);
+                diagramContext.OnElementSelected.AddHandler(new EventHandler(function (UIElement) {
+                    propertiesComponent.LoadProperties(UIElement);
                 }));
-                diagramContext.OnElementDeselected.AddHandler(new EventHandler(function (set) {
+                diagramContext.OnElementDeselected.AddHandler(new EventHandler(function (UIElement) {
                     propertiesComponent.Clear();
                 }));
                 diagramContext.OnAllElementsDeselected.AddHandler(new EventHandler(function () {
