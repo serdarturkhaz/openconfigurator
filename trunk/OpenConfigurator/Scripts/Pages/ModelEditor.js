@@ -1,16 +1,31 @@
 ﻿//Settings and defaults
+var settings = {
+    diagramContext: {
+        fixedOrientation: "vertical",
+        drawCurves: true
+    }
+};
+
 var styles = {
-    types: {
-        common: {
-            hoverGlow: {
-                width: 10,
-                opacity: 0.5,
-                color: "blue"
+    common: {
+        glow: {
+            width: 10,
+            opacity: 0.5,
+            color: "blue"
+        }
+    },
+    feature: {
+        general: {
+            box: {
+                dimensions: {
+                    width: 100,
+                    height: 30
+                }
             }
         },
-        feature: {
+        states: {
             unselected: {
-                primaryElement: {
+                box: {
                     fill: "#E1E9FF",
                     stroke: "#CECECE",
                     "stroke-width": 1,
@@ -21,7 +36,7 @@ var styles = {
                 }
             },
             selected: {
-                primaryElement: {
+                box: {
                     fill: "#E1E9FF",
                     stroke: "black",
                     "stroke-width": 1.2,
@@ -32,71 +47,182 @@ var styles = {
                 }
             },
             wireframe: {
-                fill: "#E4E4E4",
-                stroke: "Gray",
-                "stroke-width": 1.2,
-                opacity: 0.5
-            }
-        },
-        relation: {
-            unselected: {
-                primaryElement: {
-                    stroke: "#666666",
-                    fill: "none",
-                    "stroke-width": 1
+                box: {
+                    fill: "#E4E4E4",
+                    stroke: "Gray",
+                    "stroke-width": 1.2,
+                    opacity: 0.5
                 },
-                circle: {
-                    stroke: "#666666"
+                text: {
+                    opacity: 0
                 }
-            },
-            selected: {
-                primaryElement: {
-                    stroke: "black",
-                    fill: "none",
-                    "stroke-width": 2
-                },
-                circle: {
-                    stroke: "black"
+            }
+        }
+    },
+    relation: {
+        general: {
+            connection: {
+                endConnector: {
+                    raphaelType: "circle",
+                    dimensionModifier: 0,
+                    dimensions: {
+                        radius: 6
+                    }
                 }
             }
         },
-        groupRelation: {
+        states: {
             unselected: {
-                primaryElement: {
-                    stroke: "#666666",
-                    fill: "none",
-                    "stroke-width": 1
-                },
-                box: {
-                    stroke: "#666666"
-                }
-            },
-            selected: {
-                primaryElement: {
-                    stroke: "black",
-                    fill: "none",
-                    "stroke-width": 2
-                },
-                box: {
-                    stroke: "black"
-                }
-            }
+                connection: {
+                    line: {
+                        stroke: "#666666",
+                        fill: "none",
+                        "stroke-width": 1
 
+                    },
+                    endConnector: {
+                        attr: {
+                            stroke: "red",
+                            r: 12
+                        }
+                    }
+                }
+            },
+            selected: {
+                connection: {
+                    line: {
+                        stroke: "Black",
+                        fill: "none",
+                        "stroke-width": 2
+                    },
+                    endConnector: {
+                        attr: {
+                            stroke: "Black",
+                            r: 12
+                        }
+                    }
+                }
+            }
+        },
+        subTypes: {
+            mandatory: {
+                connection: {
+                    endConnector: {
+                        attr: {
+                            fill: "black",
+                            opacity: 1
+                        }
+                    }
+                }
+            },
+            optional: {
+                connection: {
+                    endConnector: {
+                        attr: {
+                            fill: "#fff7d7",
+                            opacity: 1
+                        }
+                    }
+                }
+            },
+            cloneable: {
+                connection: {
+                    endConnector: {
+                        raphaelType: "circle",
+                        attr: {
+                            fill: "#fff7d7",
+                            opacity: 0
+                        }
+                    }
+
+                }
+            }
+        }
+    },
+    groupRelation: {
+        general: {
+            connection: {
+                endConnector: {
+                    raphaelType: "rect",
+                    dimensionModifier: 5, //used to center rect
+                    dimensions: {
+                        width: 10,
+                        height: 10
+                    }
+                }
+            }
+        },
+        states: {
+            unselected: {
+                connection: {
+                    line: {
+                        stroke: "#666666",
+                        fill: "none",
+                        "stroke-width": 1
+
+                    },
+                    endConnector: {
+                        attr: {
+                            stroke: "red",
+                            r: 12
+                        }
+                    }
+                }
+            },
+            selected: {
+                connection: {
+                    line: {
+                        stroke: "Black",
+                        fill: "none",
+                        "stroke-width": 2
+                    },
+                    endConnector: {
+                        attr: {
+                            stroke: "Black",
+                            r: 12
+                        }
+                    }
+                }
+            }
+        },
+        subTypes: {
+            or: {
+                connection: {
+                    endConnector: {
+                        attr: {
+                            fill: "#fff7d7",
+                            opacity: 1
+                        }
+                    }
+                }
+            },
+            xor: {
+                connection: {
+                    endConnector: {
+                        attr: {
+                            fill: "black",
+                            opacity: 1
+                        }
+                    }
+                }
+            },
+            cardinal: {
+                connection: {
+                    endConnector: {
+                        attr: {
+                            fill: "#fff7d7",
+                            opacity: 0
+                        }
+                    }
+                }
+            }
         }
     }
-};
-var settings = {
-    diagramContext: {
-        fixedOrientation: "horizontal",
-        drawCurves: true
-    }
-};
-var objectTypes = {
+}
+
+var systemDefaults = {
     common: {
-        wrapper: {
-            opacity: 0
-        },
-        outerContainer: {
+        outerElement: {
             stroke: "black",
             fill: "black",
             "stroke-width": 10,
@@ -104,102 +230,101 @@ var objectTypes = {
             cursor: "default"
         }
     },
-    feature: {
-        typeName: "feature"
+    uiElementStates: {
+        selected: "selected",
+        unselected: "unselected",
+        wireframe: "wireframe"
     },
-    relation: {
-        typeName: "relation",
-        subTypes: {
+    enums: {
+        relationTypes: {
             mandatory: {
-                subTypeName: "mandatory",
-                typeID: 1,
-                circleAttr: {
-                    fill: "black",
-                    opacity: 1
-                }
+                name: "mandatory",
+                label: "Mandatory",
+                id: 1
             },
             optional: {
-                subTypeName: "optional",
-                typeID: 2,
-                circleAttr: {
-                    fill: "#fff7d7",
-                    opacity: 1
-                }
-
+                name: "optional",
+                label: "Optional",
+                id: 2
             },
             cloneable: {
-                subTypeName: "cloneable",
-                typeID: 3,
-                circleAttr: {
-                    fill: "#fff7d7",
-                    opacity: 0
-                }
-
+                name: "cloneable",
+                label: "Cloneable",
+                id: 3
             }
-        }
-    },
-    groupRelation: {
-        typeName: "relation",
-        subTypes: {
+        },
+        groupRelationTypes: {
             or: {
-                subTypeName: "or",
-                typeID: 1,
-                boxAttr: {
-                    fill: "black",
-                    opacity: 1
-                }
+                name: "or",
+                label: "OR",
+                id: 1
             },
             xor: {
-                subTypeName: "xor",
-                typeID: 2,
-                boxAttr: {
-                    fill: "black",
-                    opacity: 1
-                }
+                name: "xor",
+                label: "XOR",
+                id: 2
             },
             cardinal: {
-                subTypeName: "cardinal",
-                typeID: 2,
-                boxAttr: {
-                    fill: "black",
-                    opacity: 1
-                }
+                name: "cardinal",
+                label: "Cardinal",
+                id: 3
+            }
+        },
+        attributeTypes: {
+            constant: {
+                name: "constant",
+                label: "Constant Value",
+                id: 1
+            },
+            dynamic: {
+                name: "dynamic",
+                label: "Dynamic Value",
+                id: 2
+            },
+            userInput: {
+                name: "userInput",
+                label: "User Input",
+                id: 3
+            }
+        },
+        attributeDataTypes: {
+            integer: {
+                name: "integer",
+                label: "Integer",
+                id: 1
+            },
+            boolean: {
+                name: "boolean",
+                label: "Boolean",
+                id: 2
+            },
+            string: {
+                name: "string",
+                label: "String",
+                id: 3
             }
         }
     }
-};
-var orientations = {
-    horizontal: {
-        name: "horizontal",
-        connections: [["left", "right"], ["right", "left"]],
-        curveModifiers: [{ x: -40, y: 0 }, { x: +40, y: 0}],
-        angleIntervals: [{ min: 0, max: 45 }, { min: 136, max: 224 }, { min: 316, max: 359}]
-    },
-    vertical: {
-        name: "vertical",
-        connections: [["top", "bottom"], ["bottom", "top"]],
-        curveModifiers: [{ x: 0, y: -40 }, { x: 0, y: +40}],
-        angleIntervals: [{ min: 46, max: 135 }, { min: 225, max: 315}]
-    }
-};
-
-
-var UIElementStates = {
-    selected: "selected",
-    deselected: "deselected"
 }
 
 //Global helper methods
-function getSubTypeByID(collection, id) {
+function getEnumEntryByID(collection, id) {
     for (var key in collection) {
-        var subType = collection[key];
-        if (subType.typeID == id) {
-            return subType;
+        var enumEntry = collection[key];
+        if (enumEntry.id == id) {
+            return enumEntry;
         }
     }
 }
+function paramsToString(collection) {
+    var returnString = "";
+    for (var key in collection) {
+        var collectionEntry = collection[key];
+        returnString += "," + collectionEntry;
+    }
+    return returnString;
+}
 
-//Components
 var PropertiesComponent = function (container, diagramContext) {
 
     //Defaults and settings
@@ -299,10 +424,10 @@ var PropertiesComponent = function (container, diagramContext) {
                 var control = $("<select class='Dropdown' />");
 
                 //Create default options
-                var options = objectTypeField.defaultOptions;
-                if (options != undefined) {
-                    for (var i = 0; i < options.length; i++) {
-                        var option = $("<option value='" + options[i].value + "'>" + options[i].text + "</option>").appendTo(control);
+                if (objectTypeField.defaultOptions != undefined) {
+                    for (var key in objectTypeField.defaultOptions) {
+                        var enumEntry = objectTypeField.defaultOptions[key];
+                        var option = $("<option value='" + enumEntry.id + "'>" + enumEntry.label + "</option>").appendTo(control);
                     }
                 }
 
@@ -334,8 +459,8 @@ var PropertiesComponent = function (container, diagramContext) {
 
                 //List
                 var listContainer = $("<div class='ListDiv'></div>").appendTo(control);
-                var listInnerContainer = $("<div class='ListInnerContainer'></div>").appendTo(listContainer);
                 var listActionsDiv = $("<div class='ListActionsDiv'></div>").appendTo(listContainer);
+                var listInnerContainer = $("<div class='ListInnerContainer'></div>").appendTo(listContainer);
                 var addButton = $("<div class='Button-Thin'></div>").append("<img src='../../Content/themes/base/images/Icons/Add.png' />").append("<span>Add new</span>").appendTo(listActionsDiv);
                 addButton.bind("click", function () {
                     var attributeDataObj = getDefaultDataObj("Attribute");
@@ -414,6 +539,7 @@ var PropertiesComponent = function (container, diagramContext) {
                                 subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField, function (newVal) {
                                     nestedObjectControl.find(".Label-Small").text(newVal);
                                 });
+
                             } else {
                                 subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField);
                             }
@@ -423,11 +549,15 @@ var PropertiesComponent = function (container, diagramContext) {
                         }
 
                         //Load data into SubFieldControls
+                        var defaultFieldName = null;
                         for (var subFieldKey in objectTypeField.subFields) {
                             var subField = objectTypeField.subFields[subFieldKey];
                             var subFieldControl = $(detailsContainer).find("[subField='" + subField.dataName + "']");
-
                             controlTypes[subField.controlType].loadData(subFieldControl, dataObjParent[dataObjFieldName][index], subField.dataName, subField);
+
+                            //Default select
+                            if (subField.defaultSelect == true)
+                                $(subFieldControl).select();
                         }
                     }
                     function deleteNestedObject(nestedObjectControl) {
@@ -497,7 +627,8 @@ var PropertiesComponent = function (container, diagramContext) {
                                 name: {
                                     label: "Name",
                                     dataName: "Name",
-                                    controlType: controlTypes.textbox.name
+                                    controlType: controlTypes.textbox.name,
+                                    defaultSelect: true
                                 },
                                 description: {
                                     label: "Description",
@@ -508,39 +639,13 @@ var PropertiesComponent = function (container, diagramContext) {
                                     label: "Attribute Type",
                                     dataName: "AttributeType",
                                     controlType: controlTypes.dropdown.name,
-                                    defaultOptions: [
-                                        {
-                                            value: 1,
-                                            text: "Constant"
-                                        },
-                                        {
-                                            value: 2,
-                                            text: "Dynamic"
-                                        },
-                                        {
-                                            value: 3,
-                                            text: "UserInput"
-                                        }
-                                    ]
+                                    defaultOptions: systemDefaults.enums.attributeTypes
                                 },
                                 datatype: {
                                     label: "Data Type",
                                     dataName: "AttributeDataType",
                                     controlType: controlTypes.dropdown.name,
-                                    defaultOptions: [
-                                        {
-                                            value: 1,
-                                            text: "Integer"
-                                        },
-                                        {
-                                            value: 2,
-                                            text: "Boolean"
-                                        },
-                                        {
-                                            value: 3,
-                                            text: "String"
-                                        }
-                                    ]
+                                    defaultOptions: systemDefaults.enums.attributeDataTypes
                                 }
                             }
                         }
@@ -558,27 +663,22 @@ var PropertiesComponent = function (container, diagramContext) {
                             label: "Relation type",
                             dataName: "RelationType",
                             controlType: controlTypes.dropdown.name,
-                            defaultOptions: [
-                                {
-                                    value: 1,
-                                    text: "Mandatory"
-                                },
-                                {
-                                    value: 2,
-                                    text: "Optional"
-                                },
-                                {
-                                    value: 3,
-                                    text: "Cloneable"
-                                }
-                            ]
+                            defaultOptions: systemDefaults.enums.relationTypes
                         }
                     },
                     updateData: function () {
-                        this.fields
                         var relationType = $(_controls["RelationType"]).find("option:selected").text().toLowerCase();
                         _diagramContext.UpdateRelation(_currentSet, relationType);
                     }
+                }
+            }
+        },
+        groupRelation: {
+            areas: {
+                basicArea: {
+                    displayTitle: false,
+                    tableLayout: true
+
                 }
             }
         }
@@ -615,7 +715,6 @@ var PropertiesComponent = function (container, diagramContext) {
         }
         var innerAreaContainer = $("<div class='InnerContainer'></div>").appendTo(area);
         var clearDiv = $("<div style='clear:both'></div>").appendTo(area);
-
 
         //InnerTable
         if (createTable == true) {
@@ -695,18 +794,18 @@ var DiagramContext = function (canvasContainer) {
     var _thisDiagramContext = this;
     var _canvas = null, _canvasContainer = canvasContainer;
     var _selectedElements = new Array();
-    var _createFeatureMode = false;
+    var _createFeatureMode = false, _inlineEditMode = false;
 
-    //UIObjects
+    //UIObjects & Defaults/Settings
     var UIFeature = function (dataObj, x, y) {
 
         //Fields
         var _outerElement = null;
         var _innerElements = {};
-        var _selected = false;
+        var _currentState = systemDefaults.uiElementStates.unselected;
         var _dataObj = dataObj;
         var _glow = null;
-        var boxWidth = 100, boxHeight = 30;
+        var boxWidth = styles.feature.general.box.dimensions.width, boxHeight = styles.feature.general.box.dimensions.height;
         var _thisUIFeature = this;
         var _adjConnections = [];
 
@@ -735,7 +834,7 @@ var DiagramContext = function (canvasContainer) {
             _outerElement.mouseover(function (e) {
                 if (_glow == null) {
                     _innerElements.box.getBBox(); //hack fix for weird RaphaelJS bug
-                    _glow = _innerElements.box.glow(styles.types.common.hoverGlow);
+                    _glow = _innerElements.box.glow(styles.common.glow);
                 }
             }).mouseout(function (e) {
                 if (_glow != null) {
@@ -781,6 +880,8 @@ var DiagramContext = function (canvasContainer) {
         }
         var makeEditable = function () {
             _outerElement.dblclick(function (e) {
+                _inlineEditMode = true;
+
                 var bb1 = this.getBBox();
                 var xoffset = 13, yoffset = boxHeight + 15;
                 var textinput = $("<input class='Inputbox' type='text' />").appendTo(_canvasContainer).css({
@@ -795,6 +896,7 @@ var DiagramContext = function (canvasContainer) {
                     newDataObj.Name = newName;
                     _thisUIFeature.Update(newDataObj);
                     $(this).remove();
+                    _inlineEditMode = false;
                 }).bind("keypress", function (e) {
                     if (e.which == 13) { //Enter
                         var newName = $(this).val();
@@ -802,12 +904,15 @@ var DiagramContext = function (canvasContainer) {
                         newDataObj.Name = newName;
                         _thisUIFeature.Update(newDataObj);
                         $(this).remove();
+                        _inlineEditMode = false;
                     }
                     else if (e.which == 27) { //Escape
                         $(this).remove();
+                        _inlineEditMode = false;
                     }
                 }).bind("blur", function (e) {
                     $(this).remove();
+                    _inlineEditMode = false;
                 });
                 $(textinput).val(_dataObj.Name).select();
 
@@ -825,13 +930,13 @@ var DiagramContext = function (canvasContainer) {
             y = y == undefined ? 40.5 : y;
 
             //Create inner elements
-            box = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(styles.types.feature.unselected.primaryElement);
-            text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, dataObj.Name).attr(styles.types.feature.unselected.text);
+            box = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(styles.feature.states.unselected.box);
+            text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, dataObj.Name).attr(styles.feature.states.unselected.text);
             _innerElements.box = box;
             _innerElements.text = text;
 
             //Create the main outer element
-            _outerElement = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(objectTypes.common.outerContainer);
+            _outerElement = _canvas.rect(x, y, boxWidth, boxHeight).attr(systemDefaults.common.outerElement);
             _outerElement
             .data("connections", new Array());
 
@@ -842,13 +947,13 @@ var DiagramContext = function (canvasContainer) {
         }
         this.ChangeState = function (state) {
             switch (state) {
-                case UIElementStates.selected:
-                    _selected = true;
-                    _innerElements.box.attr(styles.types.feature.selected.primaryElement);
+                case systemDefaults.uiElementStates.selected:
+                    _currentState = state;
+                    _innerElements.box.attr(styles.feature.states.selected.box);
                     break;
-                case UIElementStates.deselected:
-                    _selected = false;
-                    _innerElements.box.attr(styles.types.feature.unselected.primaryElement);
+                case systemDefaults.uiElementStates.deselected:
+                    _currentState = state;
+                    _innerElements.box.attr(styles.feature.states.unselected.box);
                     break;
             }
         }
@@ -861,14 +966,26 @@ var DiagramContext = function (canvasContainer) {
             _innerElements.text.attr({ text: _dataObj.Name });
         }
         this.Delete = function () {
+            if (!_inlineEditMode) {
+                //Remove Raphael objects
+                _outerElement.remove();
+                _innerElements.box.remove();
+                _innerElements.text.remove();
+                if (_glow != null)
+                    _glow.remove();
 
+                //Notify any adjacent UIConnections
+                for (var i = _adjConnections.length - 1; i >= 0; i--) {
+                    _adjConnections[i].NotifyAdjFeatureDeleted(_thisUIFeature);
+                }
+            }
         }
     }
     var UIRelation = function (dataObj, parentFeature, childFeature) {
 
         //Fields
         var _innerElements = {};
-        var _selected = false;
+        var _currentState = systemDefaults.uiElementStates.unselected;
         var _dataObj = dataObj;
         var _thisUIRelation = this;
 
@@ -878,6 +995,10 @@ var DiagramContext = function (canvasContainer) {
         }
         this.GetTypeName = function () {
             return "relation";
+        }
+        this.GetSubTypeName = function () {
+            var relationSubTypeName = getEnumEntryByID(systemDefaults.enums.relationTypes, _dataObj.RelationType).name;
+            return relationSubTypeName;
         }
 
         //Private methods
@@ -901,7 +1022,7 @@ var DiagramContext = function (canvasContainer) {
         this.CreateGraphicalRepresentation = function () {
 
             //Create a new UIConnection
-            var newUIConnection = new UIConnection(parentFeature, childFeature);
+            var newUIConnection = new UIConnection(_thisUIRelation, parentFeature, childFeature);
             newUIConnection.CreateGraphicalRepresentation();
             _innerElements.connection = newUIConnection;
 
@@ -910,13 +1031,13 @@ var DiagramContext = function (canvasContainer) {
         }
         this.ChangeState = function (state) {
             switch (state) {
-                case UIElementStates.selected:
-                    _selected = true;
-                    _innerElements.connection.ChangeState(UIElementStates.selected);
+                case systemDefaults.uiElementStates.selected:
+                    _currentState = state;
+                    _innerElements.connection.ChangeState(state);
                     break;
-                case UIElementStates.deselected:
-                    _selected = false;
-                    _innerElements.connection.ChangeState(UIElementStates.deselected);
+                case systemDefaults.uiElementStates.deselected:
+                    _currentState = state;
+                    _innerElements.connection.ChangeState(state);
                     break;
             }
         }
@@ -924,19 +1045,81 @@ var DiagramContext = function (canvasContainer) {
             _dataObj.RelationType = newDataObj.RelationType;
 
             //Update visuals
-            var relationSubType = getSubTypeByID(objectTypes.relation.subTypes, newDataObj.RelationType);
-            _innerElements.connection.InnerElements.circle.attr(relationSubType.circleAttr); //circle
+            var relationSubTypeName = getEnumEntryByID(systemDefaults.enums.relationTypes, newDataObj.RelationType).name;
+            _innerElements.connection.InnerElements.endConnector.attr(styles.relation.subTypes[relationSubTypeName].connection.endConnector.attr); //endConnector
         }
         this.Delete = function () {
             _innerElements.connection.Delete();
         }
+        this.NotifyConnectionDeleted = function (UIConnection) {
+
+        }
     }
-    var UIConnection = function (parentUIFeature, childUIFeature) {
+    var UIGroupRelation = function (dataObj, parentFeature, childFeatures) {
+        //Fields
+        var _innerElements = {};
+        var _currentState = systemDefaults.uiElementStates.unselected; ;
+        var _dataObj = dataObj;
+        var _thisUIGroupRelation = this;
+
+        //Properties
+        this.GetDataObj = function () {
+            return _dataObj;
+        }
+        this.GetTypeName = function () {
+            return "groupRelation";
+        }
+        this.GetSubTypeName = function () {
+            var groupRelationSubTypeName = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, _dataObj.GroupRelationType).name;
+            return groupRelationSubTypeName;
+        }
+
+        //Private methods
+        function makeSelectable() {
+            //
+            var handlers = {
+                onClick: function (e) {
+                    selectElement(_thisUIGroupRelation, e.shiftKey);
+                },
+                onMouseOver: function (e) {
+                    for (var i = 0; i < _innerElements.connections.length; i++) {
+                        _innerElements.connections[i].ShowGlow();
+                    }
+                },
+                onMouseOut: function (e) {
+                    for (var i = 0; i < _innerElements.connections.length; i++) {
+                        _innerElements.connections[i].HideGlow();
+                    }
+                }
+            }
+            for (var i = 0; i < _innerElements.connections.length; i++) {
+                _innerElements.connections[i].MakeSelectable(handlers);
+            }
+        }
+
+        //Public methods
+        this.CreateGraphicalRepresentation = function () {
+            _innerElements.connections = [];
+
+            //Create UIConnections for each child Feature
+            for (var i = 0; i < childFeatures.length; i++) {
+                var newUIConnection = new UIConnection(_thisUIGroupRelation, parentFeature, childFeatures[i]);
+                newUIConnection.CreateGraphicalRepresentation();
+                _innerElements.connections.push(newUIConnection);
+            }
+
+            //Setup
+            makeSelectable();
+        }
+    }
+    var UIConnection = function (containingUIElement, parentUIFeature, childUIFeature) {
 
         //Fields
         var _diagramContext = diagramContext;
+        var _currentState = systemDefaults.uiElementStates.unselected;
+        var _containingUIElement = containingUIElement;
         var _outerElement = null, _innerElements = {};
-        var pathInfo = null, _selected = false;
+        var pathInfo = null;
         var _glow = null, _handlers = null;
         var _thisUIConnection = this;
 
@@ -1072,50 +1255,63 @@ var DiagramContext = function (canvasContainer) {
         this.CreateGraphicalRepresentation = function () {
 
             //Variables
-            var line = null, circle = null;
+            var line = null, endConnector = null;
             pathInfo = getPath(parentUIFeature.InnerElements.box, childUIFeature.InnerElements.box);
+            var containingElementType = _containingUIElement.GetTypeName();
+            var containingElementSubType = _containingUIElement.GetSubTypeName();
+            var endConnectorType = styles[containingElementType].general.connection.endConnector;
+            var subTypeStyle = styles[containingElementType].states[_currentState].connection;
+            var xPos = pathInfo.endPoint.x - endConnectorType.dimensionModifier, yPos = pathInfo.endPoint.y - endConnectorType.dimensionModifier;
 
             //Create inner elements
-            line = _canvas.path(pathInfo.path).attr(styles.types.relation.unselected.primaryElement);
-            circle = _canvas.circle(pathInfo.endPoint.x, pathInfo.endPoint.y, 6).attr(styles.types.relation.unselected.circle);
-            circle.attr(objectTypes.relation.subTypes.mandatory.circleAttr);
+            line = _canvas.path(pathInfo.path).attr(styles[containingElementType].states[_currentState].connection.line);
+            endConnector = eval("_canvas." + endConnectorType.raphaelType + "(xPos, yPos" + paramsToString(endConnectorType.dimensions) + ")");
+            endConnector.attr(subTypeStyle.endConnector);
             _innerElements.line = line;
-            _innerElements.circle = circle;
+            _innerElements.endConnector = endConnector;
+
+            //Set connector subType specific appearance
+            endConnector.attr(styles[containingElementType].subTypes[containingElementSubType].connection.endConnector.attr);
 
             //Create the main outer element
-            _outerElement = _canvas.path(pathInfo.path).attr(objectTypes.common.outerContainer);
+            _outerElement = _canvas.path(pathInfo.path).attr(systemDefaults.common.outerElement);
 
             //Add references for Refresh
             parentUIFeature.AdjConnections.push(_thisUIConnection);
             childUIFeature.AdjConnections.push(_thisUIConnection);
-
-
         }
         this.Refresh = function () {
+            //Calculate a new path
             var newPath = getPath(pathInfo.startObj, pathInfo.endObj);
+
+            //Variables
             var line = _innerElements.line;
-            var circle = _innerElements.circle;
+            var endConnector = _innerElements.endConnector;
+            var endConnectorType = styles[_containingUIElement.GetTypeName()].general.connection.endConnector;
 
             //Refresh 
             _outerElement.attr({ path: newPath.path });
             line.attr({ path: newPath.path });
-            circle.attr({ cx: newPath.endPoint.x, cy: newPath.endPoint.y });
+
+            //Refresh position of endConnector
+            var xPos = newPath.endPoint.x - endConnectorType.dimensionModifier, yPos = newPath.endPoint.y - endConnectorType.dimensionModifier;
+            endConnector.attr({ cx: xPos, cy: yPos, x: xPos, y: yPos });
         }
         this.ChangeState = function (state) {
             switch (state) {
-                case UIElementStates.selected:
-                    _selected = true;
-                    _innerElements.line.attr(styles.types.relation.selected.primaryElement);
+                case systemDefaults.uiElementStates.selected:
+                    _currentState = state;
+                    _innerElements.line.attr(styles[_containingUIElement.GetTypeName()].states.selected.connection.line);
                     break;
-                case UIElementStates.deselected:
-                    _selected = false;
-                    _innerElements.line.attr(styles.types.relation.unselected.primaryElement);
+                case systemDefaults.uiElementStates.deselected:
+                    _currentState = state;
+                    _innerElements.line.attr(styles[_containingUIElement.GetTypeName()].states.unselected.connection.line);
                     break;
             }
         }
         this.ShowGlow = function () {
             if (_glow == null) {
-                _glow = _innerElements.line.glow(styles.types.common.hoverGlow);
+                _glow = _innerElements.line.glow(styles.common.glow);
             }
         }
         this.HideGlow = function () {
@@ -1136,12 +1332,33 @@ var DiagramContext = function (canvasContainer) {
 
             //Remove Raphael objects
             _innerElements.line.remove();
-            _innerElements.circle.remove();
+            _innerElements.endConnector.remove();
             _outerElement.remove();
             if (_glow != null)
                 _glow.remove();
+
+            //Notify containingUIElement
+            containingUIElement.NotifyConnectionDeleted(_thisUIConnection);
+        }
+        this.NotifyAdjFeatureDeleted = function (UIFeature) {
+            this.Delete();
         }
     }
+    var orientations = {
+        horizontal: {
+            name: "horizontal",
+            connections: [["left", "right"], ["right", "left"]],
+            curveModifiers: [{ x: -40, y: 0 }, { x: +40, y: 0}],
+            angleIntervals: [{ min: 0, max: 45 }, { min: 136, max: 224 }, { min: 316, max: 359}]
+        },
+        vertical: {
+            name: "vertical",
+            connections: [["top", "bottom"], ["bottom", "top"]],
+            curveModifiers: [{ x: 0, y: -40 }, { x: 0, y: +40}],
+            angleIntervals: [{ min: 46, max: 135 }, { min: 225, max: 315}]
+        }
+    };
+
 
     //Properties
     this.SelectedElements = _selectedElements;
@@ -1171,7 +1388,7 @@ var DiagramContext = function (canvasContainer) {
         _selectedElements.splice(index, 1);
 
         //Deselect UIElement
-        UIElement.ChangeState(UIElementStates.deselected);
+        UIElement.ChangeState(systemDefaults.uiElementStates.deselected);
 
         //Raise events
         if (_selectedElements.length == 0) {
@@ -1188,7 +1405,7 @@ var DiagramContext = function (canvasContainer) {
         _selectedElements.push(UIElement);
 
         //Select UIElement
-        UIElement.ChangeState(UIElementStates.selected);
+        UIElement.ChangeState(systemDefaults.uiElementStates.selected);
 
         //Raise events
         _thisDiagramContext.OnElementSelected.RaiseEvent(UIElement);
@@ -1205,12 +1422,13 @@ var DiagramContext = function (canvasContainer) {
 
             //Create wireframe
             $(_canvasContainer).css("cursor", "crosshair");
-            var wireframebox = _canvas.rect(-100, -100, 100, 30, 0).attr(styles.types.feature.wireframe);
+            var boxWidth = styles.feature.general.box.dimensions.width, boxHeight = styles.feature.general.box.dimensions.height;
+            var wireframebox = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
             var mousemoveHandler = function (e) {
-                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5;
-                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5;
+                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2;
+                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2;
                 if (wireframebox == null) {
-                    wireframebox = _canvas.rect(posx, posy, 100, 30, 0).attr(styles.types.feature.wireframe);
+                    wireframebox = _canvas.rect(posx, posy, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
                 }
                 else {
                     wireframebox.attr({ x: posx, y: posy });
@@ -1220,8 +1438,8 @@ var DiagramContext = function (canvasContainer) {
 
             //Create actual Feature on click
             var clickHandler = function (e) {
-                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5;
-                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5;
+                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2;
+                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2;
                 var newUIFeature = new UIFeature(dataObj, posx, posy);
                 newUIFeature.CreateGraphicalRepresentation();
 
@@ -1244,6 +1462,14 @@ var DiagramContext = function (canvasContainer) {
             var childFeature = _selectedElements[1];
             var newUIRelation = new UIRelation(dataObj, parentFeature, childFeature);
             newUIRelation.CreateGraphicalRepresentation();
+        }
+    }
+    this.AddGroupRelation = function (dataObj) {
+        if (_selectedElements.length > 2) {
+            var parentFeature = _selectedElements[0];
+            var childFeatures = _selectedElements.slice(1);
+            var newUIGroupRelation = new UIGroupRelation(dataObj, parentFeature, childFeatures);
+            newUIGroupRelation.CreateGraphicalRepresentation();
         }
     }
     this.UpdateElement = function (UIElement, updatedDataObj) {
@@ -1291,119 +1517,3 @@ var EventHandler = function (func) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Old code
-this.AddRelation = function (parentFeature, childFeature, dataObj) {
-    //createRaphaelRelation(parentElemWrapper, childElemWrapper, dataObj, "mandatory");
-
-    //var newUIConnection = new newUIConnection(_thisContextDiagram, dataObj, posx, posy);
-    //newUIFeature.CreateGraphicalRepresentation();
-}
-this.AddGroupRelation = function (parentSet, childSets, dataObj) {
-    var set = createRaphaelGroupRelation(parentSet, childSets, dataObj, "or");
-}
-
-//Relation methods
-function updateRaphaelRelation(elemWrapper, relationType) {
-    //
-    var dataObj = elemWrapper.data("dataObj");
-    var relationSubType = getSubTypeByID(objectTypes.relation.subTypes, relationType);
-
-    //Update relationType data
-    dataObj.RelationType = relationType;
-
-    //Update visuals
-    elemWrapper.data("uiElements")[0].data("innerElements")[1].attr(relationSubType.circleAttr); //circle
-}
-function createRaphaelRelation(parentFeatureElem, childFeatureElem, dataObj, relationType) {
-
-    //Variables/initializations
-    var uiElementWrapper = _canvas.rect(0, 0, 1, 1, 0).attr(objectTypes.common.wrapper);
-    var uiElements = [];
-
-    //Create wrapper
-    uiElementWrapper
-            .data("type", objectTypes.relation.typeName)
-            .data("uiElements", uiElements)
-            .data("dataObj", dataObj)
-            .data("selected", false);
-
-    //Create inner elements
-    var pathInfo = getPath(parentFeatureElem.data("uiElements")[0], childFeatureElem.data("uiElements")[0]);
-    var line = _canvas.path(pathInfo.path).attr(styles.types.relation.unselected.primaryElement);
-    var circle = _canvas.circle(pathInfo.endPoint.x, pathInfo.endPoint.y, 6).attr(styles.types.relation.unselected.circle);
-    circle.attr(objectTypes.relation.subTypes[relationType].circleAttr);
-
-    //Create uiElement(s)
-    uiElements[0] = _canvas.path(pathInfo.path).attr(objectTypes.common.outerContainer);
-    uiElements[0]
-            .data("innerElements", [line, circle])
-            .data("pathInfo", pathInfo);
-
-    //Selectable
-    setSelectable(uiElementWrapper);
-
-    //Add reference to setA and setB
-    parentFeatureElem.data("uiElements")[0].data("relations").push(uiElementWrapper);
-    childFeatureElem.data("uiElements")[0].data("relations").push(uiElementWrapper);
-
-    return uiElementWrapper;
-}
-function refreshRaphaelRelation(relElemWrapper) {
-
-    //
-    var uiElement = relElemWrapper.data("uiElements")[0];
-    var originalPathInfo = uiElement.data("pathInfo");
-
-    //
-    var newPath = getPath(originalPathInfo.startObj, originalPathInfo.endObj);
-    var line = uiElement.data("innerElements")[0];
-    var circle = uiElement.data("innerElements")[1];
-
-    //Refresh 
-    uiElement.attr({ path: newPath.path });
-    line.attr({ path: newPath.path });
-    circle.attr({ cx: newPath.endPoint.x, cy: newPath.endPoint.y });
-}
-
-//RelationGroup methods
-function createRaphaelGroupRelation(parentFeatureElem, childFeatureElements, dataObj, groupRelationType) {
-
-    //Variables/initializations
-    var uiElementWrapper = _canvas.rect(0, 0, 1, 1, 0).attr(objectTypes.common.wrapper);
-    var uiElements = [];
-
-    //Create wrapper
-    uiElementWrapper
-            .data("type", objectTypes.groupRelation.typeName)
-            .data("uiElements", uiElements)
-            .data("dataObj", dataObj)
-            .data("selected", false);
-
-    //Create connections for each child feature
-    for (var i = 0; i < childFeatureElements.length; i++) {
-        var pathInfo = getPath(parentFeatureElem.data("uiElements")[0], childFeatureElements[i].data("uiElements")[0]);
-        var line = _canvas.path(pathInfo.path).attr(styles.types.groupRelation.unselected.primaryElement);
-        childFeatureElements[i].data("uiElements")[0].data("relations").push(uiElementWrapper);
-    }
-
-    //Add reference to parentSet
-    parentFeatureElem.data("uiElements")[0].data("relations").push(uiElementWrapper);
-
-    //
-    return uiElementWrapper;
-}

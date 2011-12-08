@@ -63,7 +63,8 @@
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
             //Event handlers-------------------------------------------------------------------
-            //Buttons
+
+            //Button handlers
             $("#SaveButton").bind("click", function () {
                 saveData();
             });
@@ -76,24 +77,26 @@
                 diagramContext.AddRelation(relationObj);
             });
             $("#NewGroupRelationButton").bind("click", function () {
-                if (diagramContext.SelectedElements.length > 2) {
-                    var groupRelationObj = null;
-                    diagramContext.AddGroupRelation(diagramContext.SelectedElements[0], diagramContext.SelectedElements.slice(1), groupRelationObj);
-                }
+                var groupRelationObj = getDefaultDataObj("GroupRelation");
+                diagramContext.AddGroupRelation(groupRelationObj);
             });
 
-            //Keypresses
+            //Key handlers
             $(document).keydown(function (e) {
                 if (e.which == 46) { //del key
                     diagramContext.DeleteElements();
                 }
+                $.ctrl('F', function () { //create Feature
+                    var featureObj = getDefaultDataObj("Feature");
+                    diagramContext.AddFeature(featureObj);
+                });
                 $.ctrl('R', function () { //create Relation
                     var relationObj = getDefaultDataObj("Relation");
                     diagramContext.AddRelation(relationObj);
                 });
-                $.ctrl('F', function () { //create Feature
-                    var featureObj = getDefaultDataObj("Feature");
-                    diagramContext.AddFeature(featureObj);
+                $.ctrl('G', function () { //create GroupRelation
+                    var groupRelationObj = getDefaultDataObj("GroupRelation");
+                    diagramContext.AddGroupRelation(groupRelationObj);
                 });
 
             });
@@ -111,11 +114,9 @@
             $("#ModelDiagramBox").block({ message: "Loading diagram...", fadeIn: 300 });
             $.timer(300, function () {
 
-                //DiagramContext
+                //Instantiate/Initialize controls
                 diagramContext = new DiagramContext($("#SVGCanvas")[0]);
                 diagramContext.Initialize();
-
-                //PropertiesComponent
                 propertiesComponent = new PropertiesComponent($("#PropertiesBox"), diagramContext);
 
                 //Event handlers
@@ -129,6 +130,7 @@
                     propertiesComponent.Clear();
                 }));
 
+                //
                 $("#ModelDiagramBox").unblock();
             });
         });
@@ -165,13 +167,13 @@
         <ul class="ActionList">
             <li class="Button-Normal" id="NewFeatureButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New Feature</span> </li>
+                <span>New <span class="underline">F</span>eature</span> </li>
             <li class="Button-Normal" id="NewRelationButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New Relation</span> </li>
+                <span>New <span class="underline">R</span>elation</span> </li>
             <li class="Button-Normal" id="NewGroupRelationButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New Group Relation</span> </li>
+                <span>New <span class="underline">G</span>roup Relation</span> </li>
         </ul>
     </div>
     <div class="BoxFooter">
