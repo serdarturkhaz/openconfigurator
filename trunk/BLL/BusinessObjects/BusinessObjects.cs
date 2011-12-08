@@ -117,8 +117,7 @@ namespace BLL.BusinessObjects
             BLL.BusinessObjects.Attribute attribute = new BLL.BusinessObjects.Attribute((DAL.DataEntities.Attribute)innerEntity);
 
             //Set default fields
-            attribute.Name = "Default Attribute";
-            attribute.Description = "Default attribute description";
+            attribute.Name = "New Attribute";
             attribute.AttributeType = AttributeTypes.UserInput;
             attribute.AttributeDataType = AttributeDataTypes.Integer;
 
@@ -239,8 +238,7 @@ namespace BLL.BusinessObjects
             BLL.BusinessObjects.Feature feature = new Feature((DAL.DataEntities.Feature)innerEntity);
 
             //Set default fields
-            feature.Name = "Default Feature";
-            feature.Description = "Default description";
+            feature.Name = "New Feature";
 
             //Return the object instance
             return feature;
