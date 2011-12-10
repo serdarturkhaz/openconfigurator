@@ -1,9 +1,10 @@
 ﻿//Settings and defaults
 var settings = {
     diagramContext: {
-        fixedOrientation: "vertical", //determines orientation of diagram -options: horizontal/vertical/false (automatic - needs bug fixing to work properly)
-        drawCurves: true, //determines whether curves should be used for drawing relations -options: true/false
-        dynamicRefresh: true //determines whether refresh (redraw) operations are executed real-time or after a move event is completed
+        fixedOrientation: "vertical", //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
+        drawCurves: true, //determines whether curves should be used for drawing relations - options: true / false
+        dynamicRefresh: true, //determines whether refresh (redraw) operations are executed real-time or after a move event is completed
+        displayCardinalities: "all" //determines how many cardinalities to display - options : false(none) / partial(only cloneable and cardinal groups) / all (all relations and groupRelations)
     }
 };
 var styles = {
@@ -62,6 +63,23 @@ var styles = {
     },
     relation: {
         general: {
+            cardinalityText: {
+                attr: {
+                    "font-size":9
+                },
+                box: {
+                    dimensions: {
+                        width:30,
+                        height:15
+                    },
+                    attr: {
+                        opacity:1, 
+                        fill:"#FFFFC6", 
+                        "stroke-width": 1, 
+                        stroke:"#CECECE" 
+                    }
+                }
+            },
             connection: {
                 endConnector: {
                     raphaelType: "circle",
@@ -70,6 +88,7 @@ var styles = {
                         radius: 6
                     }
                 }
+                
             }
         },
         states: {
@@ -142,6 +161,23 @@ var styles = {
     },
     groupRelation: {
         general: {
+            cardinalityText: {
+                attr: {
+                    "font-size":9
+                },
+                box: {
+                    dimensions: {
+                        width:30,
+                        height:15
+                    },
+                    attr: {
+                        opacity:1, 
+                        fill:"#FFFFC6", 
+                        "stroke-width": 1, 
+                        stroke:"#CECECE" 
+                    }
+                }
+            },
             rootArc: {
                 attr: {
                     stroke: "Black",
@@ -362,6 +398,10 @@ var systemDefaults = {
     orientations: {
         horizontal: {
             name: "horizontal",
+            cardinalityDistances: {
+                groupRelation: 45,
+                relation: 30
+            },
             arcModifiers: { rx: 6, ry: 12 },
             arcDirection: {
                 leftToRight: {
@@ -370,7 +410,7 @@ var systemDefaults = {
                             return true;
                         }
                     },
-                    arcSweep: 1
+                    arcSweep: 0
                 },
                 rightToLeft: {
                     check: function (rootPoint, pointA) {
@@ -378,7 +418,7 @@ var systemDefaults = {
                             return true;
                         }
                     },
-                    arcSweep: 0
+                    arcSweep: 1
                 }
             },
             connections: [["left", "right"], ["right", "left"]],
@@ -387,6 +427,10 @@ var systemDefaults = {
         },
         vertical: {
             name: "vertical",
+            cardinalityDistances: {
+                groupRelation: 45,
+                relation: 30
+            },
             arcModifiers: { rx: 12, ry: 6 },
             arcDirection: {
                 upToDown: {
@@ -834,13 +878,13 @@ var PropertiesComponent = function (container, diagramContext) {
                             onFieldDataChanged: function (newVal, control) {
                                 var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
                                 var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
-                                var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(newVal));
+                                var groupRelationType = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, parseFloat(newVal));
 
                                 //
-                                lowerBoundControl.val(relationType.bounds.lowerBound).trigger("change");
-                                upperBoundControl.val(relationType.bounds.upperBound).trigger("change");
+                                lowerBoundControl.val(groupRelationType.bounds.lowerBound).trigger("change");
+                                upperBoundControl.val(groupRelationType.bounds.upperBound).trigger("change");
 
-                                if(relationType.bounds.editable == true) {
+                                if(groupRelationType.bounds.editable == true) {
                                     lowerBoundControl.removeAttr("disabled");
                                     upperBoundControl.removeAttr("disabled");
                                 }
@@ -853,9 +897,9 @@ var PropertiesComponent = function (container, diagramContext) {
                             onFieldDataLoaded: function(val, control) {
                                 var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
                                 var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
-                                var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(val));
+                                var groupRelationType = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, parseFloat(val));
 
-                                if(relationType.bounds.editable == true) {
+                                if(groupRelationType.bounds.editable == true) {
                                     lowerBoundControl.removeAttr("disabled");
                                     upperBoundControl.removeAttr("disabled");
                                 }
@@ -1152,15 +1196,11 @@ var DiagramContext = function (canvasContainer) {
             y = y == undefined ? 40.5 : y;
 
             //Create inner elements
-            box = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(styles.feature.states.unselected.box);
-            text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, dataObj.Name).attr(styles.feature.states.unselected.text);
-            _innerElements.box = box;
-            _innerElements.text = text;
+            _innerElements.box = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(styles.feature.states.unselected.box);
+            _innerElements.text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, dataObj.Name).attr(styles.feature.states.unselected.text);
 
             //Create the main outer element
             _outerElement = _canvas.rect(x, y, boxWidth, boxHeight).attr(systemDefaults.common.outerElement);
-            _outerElement
-            .data("connections", new Array());
 
             //Setup 
             makeSelectable();
@@ -1210,6 +1250,7 @@ var DiagramContext = function (canvasContainer) {
         var _guid = jQuery.Guid.New(); //special ui identifier
         var _innerElements = {};
         var _currentState = systemDefaults.uiElementStates.unselected;
+        var cardinalityBoxWidth = styles.relation.general.cardinalityText.box.dimensions.width, cardinalityBoxHeight = styles.relation.general.cardinalityText.box.dimensions.height;
         var _dataObj = dataObj;
         var _thisUIRelation = this;
 
@@ -1244,6 +1285,7 @@ var DiagramContext = function (canvasContainer) {
         }
         function refreshGraphicalRepresentation() {
             _innerElements.connection.RefreshGraphicalRepresentation();
+            refreshCardinalityLabel();
         }
         function removeFromFeature(UIFeature) {
             var index = $(UIFeature.RelatedCompositeElements).index(_thisUIRelation);
@@ -1251,9 +1293,17 @@ var DiagramContext = function (canvasContainer) {
                 UIFeature.RelatedCompositeElements.splice(index, 1);
             }
         }
-        function getCardinalityLabelPosition() {
+        function getCardinalityLabelPoint() {
+            var cardinalityDistance = systemDefaults.orientations[settings.diagramContext.fixedOrientation].cardinalityDistances.relation;
             var line = _innerElements.connection.InnerElements.line;
-            var position = line.getTotalLength();
+            var labelPoint = line.getPointAtLength(line.getTotalLength() - cardinalityDistance);
+
+            return labelPoint;
+        }
+        function refreshCardinalityLabel() {
+            var labelPoint = getCardinalityLabelPoint();
+            _innerElements.cardinalityBox.attr({x:labelPoint.x- cardinalityBoxWidth/2, y:labelPoint.y- cardinalityBoxHeight/2});
+            _innerElements.cardinalityText.attr({x:labelPoint.x , y:labelPoint.y});
         }
 
         //Public methods
@@ -1267,6 +1317,11 @@ var DiagramContext = function (canvasContainer) {
             //Add references
             parentFeature.RelatedCompositeElements.push(_thisUIRelation);
             childFeature.RelatedCompositeElements.push(_thisUIRelation);
+            
+            //Create cardinalityLabel
+            var labelPoint = getCardinalityLabelPoint();
+            _innerElements.cardinalityBox = _canvas.rect(labelPoint.x - cardinalityBoxWidth /2, labelPoint.y - cardinalityBoxHeight/2, cardinalityBoxWidth, cardinalityBoxHeight, 0).attr(styles.relation.general.cardinalityText.box.attr);
+            _innerElements.cardinalityText = _canvas.text(labelPoint.x, labelPoint.y, "[" + _dataObj.LowerBound + ".." + _dataObj.UpperBound + "]").attr(styles.relation.general.cardinalityText.attr);
 
             //Setup
             makeSelectable();
@@ -1291,10 +1346,16 @@ var DiagramContext = function (canvasContainer) {
             //Update visuals
             var relationSubTypeName = getEnumEntryByID(systemDefaults.enums.relationTypes, newDataObj.RelationType).name;
             _innerElements.connection.InnerElements.endConnector.attr(styles.relation.subTypes[relationSubTypeName].connection.endConnector.attr); //endConnector
+            _innerElements.cardinalityText.attr({text: "[" + _dataObj.LowerBound + ".." + _dataObj.UpperBound + "]"});
         }
         this.Delete = function () {
             _innerElements.connection.Delete(true);
             _innerElements.connection = null;
+
+            _innerElements.cardinalityText.remove();
+            _innerElements.cardinalityText = null;
+            _innerElements.cardinalityBox.remove();
+            _innerElements.cardinalityBox = null;
 
             //Remove references
             removeFromFeature(parentFeature);
@@ -1316,6 +1377,7 @@ var DiagramContext = function (canvasContainer) {
         var _innerElements = {};
         var _currentState = systemDefaults.uiElementStates.unselected;
         var _dataObj = dataObj;
+        var cardinalityBoxWidth = styles.relation.general.cardinalityText.box.dimensions.width, cardinalityBoxHeight = styles.relation.general.cardinalityText.box.dimensions.height;
         var _featuresToConnections = {}; // (UIFeatureGUID, UIConnection) dictionary
         var _thisUIGroupRelation = this;
 
@@ -1372,6 +1434,7 @@ var DiagramContext = function (canvasContainer) {
             var rx = systemDefaults.orientations[currentOrientation].arcModifiers.rx;
             var ry = systemDefaults.orientations[currentOrientation].arcModifiers.ry;
             var arcSweep = null;
+           
             for (var key in systemDefaults.orientations[currentOrientation].arcDirection) {
                 var arcDirection = systemDefaults.orientations[currentOrientation].arcDirection[key];
                 if (arcDirection.check(rootPoint, pointA) == true) {
@@ -1379,7 +1442,6 @@ var DiagramContext = function (canvasContainer) {
                     break;
                 }
             }
-
             //Create the path
             var path = ["M", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3),
                     "L", pointA.x.toFixed(3), pointA.y.toFixed(3),
@@ -1388,7 +1450,6 @@ var DiagramContext = function (canvasContainer) {
                     "L", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3)].join(",");
             return path;
         }
-
         function refreshArc() {
 
             //Get the new path
@@ -1401,6 +1462,7 @@ var DiagramContext = function (canvasContainer) {
             }
 
             refreshArc();
+            refreshCardinalityLabel()
         }
         function refreshSingleConnection(UIFeature) {
 
@@ -1418,6 +1480,18 @@ var DiagramContext = function (canvasContainer) {
             //Remove from collection
             var index = $(_innerElements.connections).index(connection);
             _innerElements.connections.splice(index, 1);
+        }
+        function getCardinalityLabelPoint() {
+            var cardinalityDistance = systemDefaults.orientations[settings.diagramContext.fixedOrientation].cardinalityDistances.groupRelation;
+            var line = _innerElements.connections[0].InnerElements.line;
+            var labelPoint = line.getPointAtLength(cardinalityDistance);
+
+            return labelPoint;
+        }
+        function refreshCardinalityLabel() {
+            var labelPoint = getCardinalityLabelPoint();
+            _innerElements.cardinalityBox.attr({x:labelPoint.x- cardinalityBoxWidth/2, y:labelPoint.y- cardinalityBoxHeight/2});
+            _innerElements.cardinalityText.attr({x:labelPoint.x , y:labelPoint.y});
         }
 
         //Public methods
@@ -1444,6 +1518,11 @@ var DiagramContext = function (canvasContainer) {
             var arcPath = getArcPath(_innerElements.connections[0], _innerElements.connections[_innerElements.connections.length - 1]);
             _innerElements.rootArc = _canvas.path(arcPath).attr(styles.groupRelation.general.rootArc.attr);
             _innerElements.rootArc.attr(styles.groupRelation.subTypes.or.rootArc.attr);
+
+            //Create cardinalityLabel
+            var labelPoint = getCardinalityLabelPoint();
+            _innerElements.cardinalityBox = _canvas.rect(labelPoint.x - cardinalityBoxWidth /2, labelPoint.y - cardinalityBoxHeight/2, cardinalityBoxWidth, cardinalityBoxHeight, 0).attr(styles.groupRelation.general.cardinalityText.box.attr);
+            _innerElements.cardinalityText = _canvas.text(labelPoint.x, labelPoint.y, "[" + _dataObj.LowerBound + ".." + _dataObj.UpperBound + "]").attr(styles.groupRelation.general.cardinalityText.attr);
 
             //Setup
             makeSelectable();
@@ -1476,21 +1555,30 @@ var DiagramContext = function (canvasContainer) {
                 _innerElements.connections[i].InnerElements.endConnector.attr(styles.groupRelation.subTypes[groupRelationSubTypeName].connection.endConnector.attr); //endConnector
             }
             _innerElements.rootArc.attr(styles.groupRelation.subTypes[groupRelationSubTypeName].rootArc.attr);
+            _innerElements.cardinalityText.attr({text: "[" + _dataObj.LowerBound + ".." + _dataObj.UpperBound + "]"});
 
         }
         this.Delete = function () {
+            //Remove connections
             for (var i = _innerElements.connections.length - 1; i >= 0; i--) {
                 _innerElements.connections[i].Delete(true);
                 _innerElements.connections.splice(i, 1);
             }
-            _innerElements.rootArc.remove();
-            _innerElements.rootArc = null;
-
             //Remove references
             removeFromFeature(parentFeature);
             for (var i = 0; i < childFeatures.length; i++) {
                 removeFromFeature(childFeatures[i]);
             }
+     
+            //Remove Arc
+            _innerElements.rootArc.remove();
+            _innerElements.rootArc = null;
+
+            //Remove CardinalityText
+            _innerElements.cardinalityText.remove();
+            _innerElements.cardinalityText = null;
+            _innerElements.cardinalityBox.remove();
+            _innerElements.cardinalityBox = null;
         }
 
         //Event handlers
