@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel" dslVersion="1.0.0.0" Id="c49a1113-228c-4e4b-889a-836cf6b89752" name="ModelEditorJS" linkedPackageId="5705e1b5-45f0-4201-ad0d-94691a6e38bd" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <packagedElements>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="b1138dde-fcea-4885-a1b1-b04e6114c8cd" name="ContextDiagram" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="cd9b4dae-ecf8-4118-8c01-1f6dd7830e22" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="ed27f7cb-128d-4fb6-ae09-3f4d237fb122" name="PropertiesComponent" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="f9220b43-9d90-48c7-af0d-461bf4062b8c" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d8f1fb48-9426-4177-807d-a189926033c5" name="UIFeature" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="883a2184-a902-426c-bba3-2265ef463166" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="b0e0e71e-c43a-4d63-bf26-76d66c482dcc" name="CompositeElement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="dedf65f5-d62c-409a-9fef-90fa380d6fc9" />
+        <targetEnds>
+          <association Id="bff6beea-49f4-435e-a68c-c92928fff242" isDerived="false" sourceEndRoleName="_ContainingElement" targetEndRoleName="Connection" isLeaf="false" isAbstract="false">
+            <classMoniker Id="94396768-d8a3-494a-a454-25a20ddeb669" LastKnownName="UIConnection" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="44181e3a-8823-4bf8-b47b-ac4dd116b1ed" name="_ContainingElement" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="8db83287-66c5-4ce1-ac05-bcd41d2373c3" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="0cb03d0d-9c8a-48f1-8a47-dea174a16114" name="Connection" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="4aec2e98-bc1f-401b-95c6-1d1093c2bcc3" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="f7364a78-4c4f-472a-8059-5bf9104a1712" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="98d1f1a9-8e43-4d52-a315-fb6b46743379" name="UIGroupRelation" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="57cdedf3-9456-47fa-afd8-60efc54bbe2e" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="94396768-d8a3-494a-a454-25a20ddeb669" name="UIConnection" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="5f31ec7d-a3cd-49c7-b3fe-d0ed947b6b91" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+  </packagedElements>
+  <package Id="5705e1b5-45f0-4201-ad0d-94691a6e38bd" name="Documentation">
+    <elementDefinition Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747" />
+    <profileInstances>
+      <packageHasProfileInstances Id="be303e4d-f87e-4b64-88d1-9f943d47e73e">
+        <profileInstance Id="ca9c61e7-1a6b-4298-a3e6-2373a5a03665" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="7a68627b-6d47-4daf-9a8e-35d3a26a7d6a">
+        <profileInstance Id="d51eecad-9780-4c20-a1b8-4f5008620b52" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
+  </package>
+</logicalClassDesignerModel>

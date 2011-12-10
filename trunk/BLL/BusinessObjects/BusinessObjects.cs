@@ -296,6 +296,16 @@ namespace BLL.BusinessObjects
                 _innerEntity.RelationTypeID = (int)value;
             }
         }
+        public Nullable<int> LowerBound
+        {
+            get { return _innerEntity.LowerBound; }
+            set { _innerEntity.LowerBound = value; }
+        }
+        public Nullable<int> UpperBound
+        {
+            get { return _innerEntity.UpperBound; }
+            set { _innerEntity.UpperBound = value; }
+        }
 
         //Conversion
         public static BLL.BusinessObjects.Relation FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
@@ -312,6 +322,8 @@ namespace BLL.BusinessObjects
 
             //Set default fields
             relation.RelationType = RelationTypes.Mandatory;
+            relation.LowerBound = 1;
+            relation.UpperBound = 1;
 
             //Return the object instance
             return relation;
@@ -370,6 +382,16 @@ namespace BLL.BusinessObjects
                 _innerEntity.GroupRelationTypeID = (int)value;
             }
         }
+        public Nullable<int> LowerBound
+        {
+            get { return _innerEntity.LowerBound; }
+            set { _innerEntity.LowerBound = value; }
+        }
+        public Nullable<int> UpperBound
+        {
+            get { return _innerEntity.UpperBound; }
+            set { _innerEntity.UpperBound = value; }
+        }
 
         //Conversion
         public static BLL.BusinessObjects.GroupRelation FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
@@ -386,6 +408,8 @@ namespace BLL.BusinessObjects
 
             //Set default fields
             groupRelation.GroupRelationType = GroupRelationTypes.OR;
+            groupRelation.LowerBound = 0;
+            groupRelation.UpperBound = 1;
 
             //Return the object instance
             return groupRelation;

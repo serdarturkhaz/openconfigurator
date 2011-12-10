@@ -3599,6 +3599,104 @@ User Input
         </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="cd9b4dae-ecf8-4118-8c01-1f6dd7830e22"
+        name="ContextDiagram"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f9220b43-9d90-48c7-af0d-461bf4062b8c"
+        name="PropertiesComponent"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="883a2184-a902-426c-bba3-2265ef463166"
+        name="UIFeature"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="dedf65f5-d62c-409a-9fef-90fa380d6fc9"
+        name="CompositeElement"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="f7364a78-4c4f-472a-8059-5bf9104a1712"
+            isDerived="false"
+            sourceEndRoleName="_ContainingElement"
+            targetEndRoleName="Connection"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="5f31ec7d-a3cd-49c7-b3fe-d0ed947b6b91"
+              LastKnownName="UIConnection"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8db83287-66c5-4ce1-ac05-bcd41d2373c3"
+                  name="_ContainingElement"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4aec2e98-bc1f-401b-95c6-1d1093c2bcc3"
+                  name="Connection"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="57cdedf3-9456-47fa-afd8-60efc54bbe2e"
+        name="UIGroupRelation"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="5f31ec7d-a3cd-49c7-b3fe-d0ed947b6b91"
+        name="UIConnection"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="552616e8-9807-426c-b6a6-edd68fabfe33"
+        name="Class1"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
   </packagedElements>
   <primitiveType
     Id="220a3521-e091-4221-bae9-3ef9018e845c"
