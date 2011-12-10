@@ -17,6 +17,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\ArchitectureTools\Microsoft.VisualStudio.TeamArchitect.ModelingProject.targets" />
   <ItemGroup>
+    <Content Include="Architecture\ModelEditorJS.classdiagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Architecture\ModelEditorJS.classdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Architecture\ModelEditorJS.classdiagram</DependentUpon>
+    </Content>
     <Content Include="Database\DBDiagram.classdiagram">
       <SubType>Content</SubType>
     </Content>

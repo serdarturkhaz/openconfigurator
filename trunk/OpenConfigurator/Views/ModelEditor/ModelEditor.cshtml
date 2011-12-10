@@ -120,13 +120,16 @@
                 propertiesComponent = new PropertiesComponent($("#PropertiesBox"), diagramContext);
 
                 //Event handlers
-                diagramContext.OnElementSelected.AddHandler(new EventHandler(function (UIElement) {
+                diagramContext.OnElementSelected.Add(new EventHandler(function (UIElement) {
                     propertiesComponent.LoadProperties(UIElement);
                 }));
-                diagramContext.OnElementDeselected.AddHandler(new EventHandler(function (UIElement) {
+                diagramContext.OnElementEdited.Add(new EventHandler(function (UIElement) {
+                    propertiesComponent.LoadProperties(UIElement);
+                }));
+                diagramContext.OnElementDeselected.Add(new EventHandler(function (UIElement) {
                     propertiesComponent.Clear();
                 }));
-                diagramContext.OnAllElementsDeselected.AddHandler(new EventHandler(function () {
+                diagramContext.OnAllElementsDeselected.Add(new EventHandler(function () {
                     propertiesComponent.Clear();
                 }));
 
@@ -205,7 +208,9 @@
         </div>
     </div>
     <div class="BoxContent">
-        <div id="SVGCanvas">
+        <div id="SVGCanvasWrapper">
+            <div id="SVGCanvas">
+            </div>
         </div>
     </div>
     <div class="BoxFooter">

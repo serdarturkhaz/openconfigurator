@@ -1,11 +1,11 @@
 ﻿//Settings and defaults
 var settings = {
     diagramContext: {
-        fixedOrientation: "vertical",
-        drawCurves: true
+        fixedOrientation: "vertical", //determines orientation of diagram -options: horizontal/vertical/false (automatic - needs bug fixing to work properly)
+        drawCurves: true, //determines whether curves should be used for drawing relations -options: true/false
+        dynamicRefresh: true //determines whether refresh (redraw) operations are executed real-time or after a move event is completed
     }
 };
-
 var styles = {
     common: {
         glow: {
@@ -43,7 +43,8 @@ var styles = {
                     opacity: 1
                 },
                 text: {
-                    cursor: "default"
+                    cursor: "default",
+                    fill: "red"
                 }
             },
             wireframe: {
@@ -141,6 +142,15 @@ var styles = {
     },
     groupRelation: {
         general: {
+            rootArc: {
+                attr: {
+                    stroke: "Black",
+                    "stroke-width": 1
+                },
+                dimensions: {
+                    length: 30
+                }
+            },
             connection: {
                 endConnector: {
                     raphaelType: "rect",
@@ -187,6 +197,12 @@ var styles = {
         },
         subTypes: {
             or: {
+                rootArc: {
+                    attr: {
+                        fill: "Black",
+                        opacity: 1
+                    }
+                },
                 connection: {
                     endConnector: {
                         attr: {
@@ -197,6 +213,12 @@ var styles = {
                 }
             },
             xor: {
+                rootArc: {
+                    attr: {
+                        fill: "#ffffff",
+                        opacity: 1
+                    }
+                },
                 connection: {
                     endConnector: {
                         attr: {
@@ -207,6 +229,12 @@ var styles = {
                 }
             },
             cardinal: {
+                rootArc: {
+                    attr: {
+                        fill: "#ffffff",
+                        opacity: 0
+                    }
+                },
                 connection: {
                     endConnector: {
                         attr: {
@@ -219,13 +247,12 @@ var styles = {
         }
     }
 }
-
 var systemDefaults = {
     common: {
         outerElement: {
             stroke: "black",
             fill: "black",
-            "stroke-width": 10,
+            "stroke-width": 15,
             opacity: 0,
             cursor: "default"
         }
@@ -240,34 +267,61 @@ var systemDefaults = {
             mandatory: {
                 name: "mandatory",
                 label: "Mandatory",
-                id: 1
+                id: 1,
+                bounds: {
+                    lowerBound: 1,
+                    upperBound: 1
+                }
             },
             optional: {
                 name: "optional",
                 label: "Optional",
-                id: 2
+                id: 2,
+                bounds: {
+                    lowerBound: 0,
+                    upperBound: 1
+                    
+                }
             },
             cloneable: {
                 name: "cloneable",
                 label: "Cloneable",
-                id: 3
+                id: 3,
+                bounds: {
+                    editable:true,
+                    lowerBound: 0,
+                    upperBound: 0
+                },
             }
         },
         groupRelationTypes: {
             or: {
                 name: "or",
                 label: "OR",
-                id: 1
+                id: 1,
+                bounds: {
+                    lowerBound: 0,
+                    upperBound: 1
+                }
             },
             xor: {
                 name: "xor",
                 label: "XOR",
-                id: 2
+                id: 2,
+                bounds: {
+                    lowerBound: 1,
+                    upperBound: 1
+                }
             },
             cardinal: {
                 name: "cardinal",
                 label: "Cardinal",
-                id: 3
+                id: 3,
+                bounds: {
+                    editable: true,
+                    lowerBound: 0,
+                    upperBound: 0
+                }
             }
         },
         attributeTypes: {
@@ -303,6 +357,58 @@ var systemDefaults = {
                 label: "String",
                 id: 3
             }
+        }
+    },
+    orientations: {
+        horizontal: {
+            name: "horizontal",
+            arcModifiers: { rx: 6, ry: 12 },
+            arcDirection: {
+                leftToRight: {
+                    check: function (rootPoint, pointA) {
+                        if (rootPoint.x < pointA.x) {
+                            return true;
+                        }
+                    },
+                    arcSweep: 1
+                },
+                rightToLeft: {
+                    check: function (rootPoint, pointA) {
+                        if (rootPoint.x > pointA.x) {
+                            return true;
+                        }
+                    },
+                    arcSweep: 0
+                }
+            },
+            connections: [["left", "right"], ["right", "left"]],
+            curveModifiers: [{ x: -30, y: 0 }, { x: +30, y: 0}],
+            angleIntervals: [{ min: 0, max: 45 }, { min: 136, max: 224 }, { min: 316, max: 359}]
+        },
+        vertical: {
+            name: "vertical",
+            arcModifiers: { rx: 12, ry: 6 },
+            arcDirection: {
+                upToDown: {
+                    check: function (rootPoint, pointA) {
+                        if (rootPoint.y < pointA.y) {
+                            return true;
+                        }
+                    },
+                    arcSweep: 0
+                },
+                downToUp: {
+                    check: function (rootPoint, pointA) {
+                        if (rootPoint.y > pointA.y) {
+                            return true;
+                        }
+                    },
+                    arcSweep: 1
+                }
+            },
+            connections: [["top", "bottom"], ["bottom", "top"]],
+            curveModifiers: [{ x: 0, y: -30 }, { x: 0, y: +30}],
+            angleIntervals: [{ min: 46, max: 135 }, { min: 225, max: 315}]
         }
     }
 }
@@ -342,17 +448,18 @@ var PropertiesComponent = function (container, diagramContext) {
                     var newVal = control.val();
                     dataObjParent[dataObjFieldName] = newVal;
 
-                    //Call handler
+                    //Call handlers
+                    if (onChangedCallBack != undefined) onChangedCallBack(newVal, control);
                     onDataChanged();
-                    if (onChangedCallBack != undefined) onChangedCallBack(newVal);
                 }).bind("keypress", function (e) {
                     if (e.which == 13) {
                         var newVal = control.val();
                         dataObjParent[dataObjFieldName] = newVal;
 
-                        //Call handler
+                        //Call handlers
+                        if (onChangedCallBack != undefined) onChangedCallBack(newVal, control);
                         onDataChanged();
-                        if (onChangedCallBack != undefined) onChangedCallBack(newVal);
+                        
                     }
                 });
 
@@ -377,9 +484,10 @@ var PropertiesComponent = function (container, diagramContext) {
                     var newVal = control.val();
                     dataObjParent[dataObjFieldName] = newVal;
 
-                    //Call handler
+                    //Call handlers
+                    if (onChangedCallBack != undefined) onChangedCallBack(newVal, control);
                     onDataChanged();
-                    if (onChangedCallBack != undefined) onChangedCallBack(newVal);
+                    
                 })
 
                 //
@@ -403,9 +511,10 @@ var PropertiesComponent = function (container, diagramContext) {
                     var newVal = control.attr("checked");
                     dataObjParent[dataObjFieldName] = newVal;
 
-                    //Call handler
+                    //Call handlers
+                    if (onChangedCallBack != undefined) onChangedCallBack(newVal, control);
                     onDataChanged();
-                    if (onChangedCallBack != undefined) onChangedCallBack(newVal);
+                    
                 })
 
                 //
@@ -437,9 +546,10 @@ var PropertiesComponent = function (container, diagramContext) {
                     var newVal = $(control).find("option:selected").attr("value");
                     dataObjParent[dataObjFieldName] = newVal;
 
-                    //Call handler
+                    //Call handlers
+                    if (onChangedCallBack != undefined) onChangedCallBack(newVal, control);
                     onDataChanged();
-                    if (onChangedCallBack != undefined) onChangedCallBack(newVal);
+                    
                 });
 
                 return control;
@@ -536,7 +646,7 @@ var PropertiesComponent = function (container, diagramContext) {
 
                             var subFieldControl = null;
                             if (subField.dataName == "Name") { //special handler for Name
-                                subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField, function (newVal) {
+                                subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField, function (newVal, control) {
                                     nestedObjectControl.find(".Label-Small").text(newVal);
                                 });
 
@@ -663,12 +773,49 @@ var PropertiesComponent = function (container, diagramContext) {
                             label: "Relation type",
                             dataName: "RelationType",
                             controlType: controlTypes.dropdown.name,
-                            defaultOptions: systemDefaults.enums.relationTypes
+                            defaultOptions: systemDefaults.enums.relationTypes,
+                            onFieldDataChanged: function (newVal, control) {
+                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
+                                var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
+                                var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(newVal));
+
+                                //
+                                lowerBoundControl.val(relationType.bounds.lowerBound).trigger("change");
+                                upperBoundControl.val(relationType.bounds.upperBound).trigger("change");
+
+                                if(relationType.bounds.editable == true) {
+                                    lowerBoundControl.removeAttr("disabled");
+                                    upperBoundControl.removeAttr("disabled");
+                                }
+                                else{
+                                    lowerBoundControl.attr("disabled", "disabled");
+                                    upperBoundControl.attr("disabled", "disabled");
+                                }
+
+                            },
+                            onFieldDataLoaded: function(val, control) {
+                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
+                                var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
+                                var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(val));
+
+                                if(relationType.bounds.editable == true) {
+                                    lowerBoundControl.removeAttr("disabled");
+                                    upperBoundControl.removeAttr("disabled");
+                                }
+                            }
+                        },
+                        lowerBound: {
+                            label: "Lower bound",
+                            dataName: "LowerBound",
+                            controlType: controlTypes.textbox.name,
+                            disabled: true
+                        },
+                        upperBound: {
+                            label: "Upper bound",
+                            dataName: "UpperBound",
+                            controlType: controlTypes.textbox.name,
+                            disabled: true
                         }
-                    },
-                    updateData: function () {
-                        var relationType = $(_controls["RelationType"]).find("option:selected").text().toLowerCase();
-                        _diagramContext.UpdateRelation(_currentSet, relationType);
                     }
                 }
             }
@@ -677,8 +824,56 @@ var PropertiesComponent = function (container, diagramContext) {
             areas: {
                 basicArea: {
                     displayTitle: false,
-                    tableLayout: true
+                    tableLayout: true,
+                    fields: {
+                        groupRelationType: {
+                            label: "GroupRel. type",
+                            dataName: "GroupRelationType",
+                            controlType: controlTypes.dropdown.name,
+                            defaultOptions: systemDefaults.enums.groupRelationTypes,
+                            onFieldDataChanged: function (newVal, control) {
+                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
+                                var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
+                                var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(newVal));
 
+                                //
+                                lowerBoundControl.val(relationType.bounds.lowerBound).trigger("change");
+                                upperBoundControl.val(relationType.bounds.upperBound).trigger("change");
+
+                                if(relationType.bounds.editable == true) {
+                                    lowerBoundControl.removeAttr("disabled");
+                                    upperBoundControl.removeAttr("disabled");
+                                }
+                                else{
+                                    lowerBoundControl.attr("disabled", "disabled");
+                                    upperBoundControl.attr("disabled", "disabled");
+                                }
+
+                            },
+                            onFieldDataLoaded: function(val, control) {
+                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
+                                var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
+                                var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(val));
+
+                                if(relationType.bounds.editable == true) {
+                                    lowerBoundControl.removeAttr("disabled");
+                                    upperBoundControl.removeAttr("disabled");
+                                }
+                            }
+                        },
+                        lowerBound: {
+                            label: "Lower bound",
+                            dataName: "LowerBound",
+                            controlType: controlTypes.textbox.name,
+                            disabled: true
+                        },
+                        upperBound: {
+                            label: "Upper bound",
+                            dataName: "UpperBound",
+                            controlType: controlTypes.textbox.name,
+                            disabled: true
+                        }
+                    }
                 }
             }
         }
@@ -741,8 +936,10 @@ var PropertiesComponent = function (container, diagramContext) {
 
                 //Create a control
                 var field = area.fields[fieldKey];
-                var control = controlTypes[field.controlType].createControlHTML(_currentDataObj, field.dataName, field, onDataChanged);
+                var control = controlTypes[field.controlType].createControlHTML(_currentDataObj, field.dataName, field, field.onFieldDataChanged);
                 control.attr("fieldName", field.dataName).attr("id", field.dataName + "Control");
+
+                //Disabled
                 if (field.disabled)
                     control.attr("disabled", "disabled");
 
@@ -756,6 +953,17 @@ var PropertiesComponent = function (container, diagramContext) {
 
                 //Load data values
                 controlTypes[field.controlType].loadData(control, _currentDataObj, field.dataName, field, onDataChanged);
+                
+            }
+
+            //Rego through fields and all onFieldDataLoaded
+            for (var fieldKey in area.fields) {
+
+                //Get the field and control
+                var field = area.fields[fieldKey];
+                if(field.onFieldDataLoaded != undefined){
+                    field.onFieldDataLoaded(_currentDataObj[field.dataName] ,control);
+                }
             }
         }
 
@@ -800,6 +1008,7 @@ var DiagramContext = function (canvasContainer) {
     var UIFeature = function (dataObj, x, y) {
 
         //Fields
+        var _guid = jQuery.Guid.New(); //special ui identifier
         var _outerElement = null;
         var _innerElements = {};
         var _currentState = systemDefaults.uiElementStates.unselected;
@@ -807,9 +1016,10 @@ var DiagramContext = function (canvasContainer) {
         var _glow = null;
         var boxWidth = styles.feature.general.box.dimensions.width, boxHeight = styles.feature.general.box.dimensions.height;
         var _thisUIFeature = this;
-        var _adjConnections = [];
+        var _relatedCompositeElements = [];
 
         //Properties
+        this.GUID = _guid;
         this.GetDataObj = function () {
             return _dataObj;
         }
@@ -820,7 +1030,7 @@ var DiagramContext = function (canvasContainer) {
             return "feature";
         }
         this.InnerElements = _innerElements;
-        this.AdjConnections = _adjConnections;
+        this.RelatedCompositeElements = _relatedCompositeElements;
 
         //Private methods
         var makeSelectable = function () {
@@ -828,6 +1038,7 @@ var DiagramContext = function (canvasContainer) {
             //Selectable
             _outerElement.click(function (e) {
                 selectElement(_thisUIFeature, e.shiftKey);
+                
             });
 
             //Hoverable
@@ -869,12 +1080,21 @@ var DiagramContext = function (canvasContainer) {
                     innerElem.attr({ x: innerElem.originalx + dx, y: innerElem.originaly + dy });
                 }
 
-                //Refresh connections
-                for (var j = 0; j < _adjConnections.length; j++) {
-                    _adjConnections[j].Refresh();
+                if (settings.diagramContext.dynamicRefresh == true) {
+                    //Notify related CompositeElements
+                    for (var j = 0; j < _relatedCompositeElements.length; j++) {
+                        _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
+                    }
                 }
             };
             up = function () {
+
+                if (settings.diagramContext.dynamicRefresh == false) {
+                    //Notify related CompositeElements
+                    for (var j = 0; j < _relatedCompositeElements.length; j++) {
+                        _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
+                    }
+                }
             };
             _outerElement.drag(move, start, up);
         }
@@ -897,6 +1117,7 @@ var DiagramContext = function (canvasContainer) {
                     _thisUIFeature.Update(newDataObj);
                     $(this).remove();
                     _inlineEditMode = false;
+                    _thisDiagramContext.OnElementEdited.RaiseEvent(_thisUIFeature);
                 }).bind("keypress", function (e) {
                     if (e.which == 13) { //Enter
                         var newName = $(this).val();
@@ -905,6 +1126,7 @@ var DiagramContext = function (canvasContainer) {
                         _thisUIFeature.Update(newDataObj);
                         $(this).remove();
                         _inlineEditMode = false;
+                        _thisDiagramContext.OnElementEdited.RaiseEvent(_thisUIFeature);
                     }
                     else if (e.which == 27) { //Escape
                         $(this).remove();
@@ -967,6 +1189,7 @@ var DiagramContext = function (canvasContainer) {
         }
         this.Delete = function () {
             if (!_inlineEditMode) {
+
                 //Remove Raphael objects
                 _outerElement.remove();
                 _innerElements.box.remove();
@@ -974,22 +1197,24 @@ var DiagramContext = function (canvasContainer) {
                 if (_glow != null)
                     _glow.remove();
 
-                //Notify any adjacent UIConnections
-                for (var i = _adjConnections.length - 1; i >= 0; i--) {
-                    _adjConnections[i].NotifyAdjFeatureDeleted(_thisUIFeature);
+                //Notify related CompositeElements
+                for (var j = _relatedCompositeElements.length - 1; j >= 0; j--) {
+                    _relatedCompositeElements[j].OnAdjacentFeatureDeleted(_thisUIFeature);
                 }
             }
         }
     }
-    var UIRelation = function (dataObj, parentFeature, childFeature) {
+    var UIRelation = function (dataObj, parentFeature, childFeature) { //CompositeElement
 
         //Fields
+        var _guid = jQuery.Guid.New(); //special ui identifier
         var _innerElements = {};
         var _currentState = systemDefaults.uiElementStates.unselected;
         var _dataObj = dataObj;
         var _thisUIRelation = this;
 
         //Properties
+        this.GUID = _guid;
         this.GetDataObj = function () {
             return _dataObj;
         }
@@ -1017,14 +1242,31 @@ var DiagramContext = function (canvasContainer) {
             }
             _innerElements.connection.MakeSelectable(handlers);
         }
+        function refreshGraphicalRepresentation() {
+            _innerElements.connection.RefreshGraphicalRepresentation();
+        }
+        function removeFromFeature(UIFeature) {
+            var index = $(UIFeature.RelatedCompositeElements).index(_thisUIRelation);
+            if (index != -1) {
+                UIFeature.RelatedCompositeElements.splice(index, 1);
+            }
+        }
+        function getCardinalityLabelPosition() {
+            var line = _innerElements.connection.InnerElements.line;
+            var position = line.getTotalLength();
+        }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
 
             //Create a new UIConnection
-            var newUIConnection = new UIConnection(_thisUIRelation, parentFeature, childFeature);
+            var newUIConnection = new UIConnection(_thisUIRelation, parentFeature.InnerElements.box, childFeature.InnerElements.box);
             newUIConnection.CreateGraphicalRepresentation();
             _innerElements.connection = newUIConnection;
+
+            //Add references
+            parentFeature.RelatedCompositeElements.push(_thisUIRelation);
+            childFeature.RelatedCompositeElements.push(_thisUIRelation);
 
             //Setup
             makeSelectable();
@@ -1043,26 +1285,42 @@ var DiagramContext = function (canvasContainer) {
         }
         this.Update = function (newDataObj) {
             _dataObj.RelationType = newDataObj.RelationType;
+            _dataObj.LowerBound = newDataObj.LowerBound;
+            _dataObj.UpperBound = newDataObj.UpperBound;
 
             //Update visuals
             var relationSubTypeName = getEnumEntryByID(systemDefaults.enums.relationTypes, newDataObj.RelationType).name;
             _innerElements.connection.InnerElements.endConnector.attr(styles.relation.subTypes[relationSubTypeName].connection.endConnector.attr); //endConnector
         }
         this.Delete = function () {
-            _innerElements.connection.Delete();
-        }
-        this.NotifyConnectionDeleted = function (UIConnection) {
+            _innerElements.connection.Delete(true);
+            _innerElements.connection = null;
 
+            //Remove references
+            removeFromFeature(parentFeature);
+            removeFromFeature(childFeature);
+        }
+
+        //Event handlers
+        this.OnAdjacentFeatureDeleted = function (UIFeature) {
+            this.Delete();
+        }
+        this.OnAdjacentFeatureMoved = function (UIFeature) {
+            refreshGraphicalRepresentation();
         }
     }
-    var UIGroupRelation = function (dataObj, parentFeature, childFeatures) {
+    var UIGroupRelation = function (dataObj, parentFeature, childFeatures) { //CompositeElement
+
         //Fields
+        var _guid = jQuery.Guid.New(); //special ui identifier
         var _innerElements = {};
-        var _currentState = systemDefaults.uiElementStates.unselected; ;
+        var _currentState = systemDefaults.uiElementStates.unselected;
         var _dataObj = dataObj;
+        var _featuresToConnections = {}; // (UIFeatureGUID, UIConnection) dictionary
         var _thisUIGroupRelation = this;
 
         //Properties
+        this.GUID = _guid;
         this.GetDataObj = function () {
             return _dataObj;
         }
@@ -1096,34 +1354,188 @@ var DiagramContext = function (canvasContainer) {
                 _innerElements.connections[i].MakeSelectable(handlers);
             }
         }
+        function removeFromFeature(UIFeature) {
+            var index = $(UIFeature.RelatedCompositeElements).index(_thisUIGroupRelation);
+            if (index != -1) {
+                UIFeature.RelatedCompositeElements.splice(index, 1);
+            }
+        }
+        function getArcPath(firstConnection, lastConnection) {
+
+            //Get points
+            var rootPoint = firstConnection.InnerElements.line.getPointAtLength(0);
+            var pointA = firstConnection.InnerElements.line.getPointAtLength(styles.groupRelation.general.rootArc.dimensions.length);
+            var pointB = lastConnection.InnerElements.line.getPointAtLength(styles.groupRelation.general.rootArc.dimensions.length);
+
+            //Get arc modifiers
+            var currentOrientation = settings.diagramContext.fixedOrientation;
+            var rx = systemDefaults.orientations[currentOrientation].arcModifiers.rx;
+            var ry = systemDefaults.orientations[currentOrientation].arcModifiers.ry;
+            var arcSweep = null;
+            for (var key in systemDefaults.orientations[currentOrientation].arcDirection) {
+                var arcDirection = systemDefaults.orientations[currentOrientation].arcDirection[key];
+                if (arcDirection.check(rootPoint, pointA) == true) {
+                    arcSweep = arcDirection.arcSweep;
+                    break;
+                }
+            }
+
+            //Create the path
+            var path = ["M", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3),
+                    "L", pointA.x.toFixed(3), pointA.y.toFixed(3),
+            //"L", pointB.x.toFixed(3), pointB.y.toFixed(3),
+                    "A", rx, ry, 0, 0, arcSweep, pointB.x.toFixed(3), pointB.y.toFixed(3),
+                    "L", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3)].join(",");
+            return path;
+        }
+
+        function refreshArc() {
+
+            //Get the new path
+            var newPath = getArcPath(_innerElements.connections[0], _innerElements.connections[_innerElements.connections.length - 1]);
+            _innerElements.rootArc.attr({ path: newPath });
+        }
+        function refreshAll() {
+            for (var i = 0; i < _innerElements.connections.length; i++) {
+                _innerElements.connections[i].RefreshGraphicalRepresentation();
+            }
+
+            refreshArc();
+        }
+        function refreshSingleConnection(UIFeature) {
+
+            //Refresh connection connected to UIFeature
+            var connection = _featuresToConnections[UIFeature.GUID];
+            connection.RefreshGraphicalRepresentation();
+
+            //Refresh arc
+            refreshArc();
+        }
+        function deleteSingleConnection(UIFeature) {
+            var connection = _featuresToConnections[UIFeature.GUID];
+            connection.Delete();
+
+            //Remove from collection
+            var index = $(_innerElements.connections).index(connection);
+            _innerElements.connections.splice(index, 1);
+        }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
             _innerElements.connections = [];
+            _innerElements.rootArc = null;
 
             //Create UIConnections for each child Feature
             for (var i = 0; i < childFeatures.length; i++) {
-                var newUIConnection = new UIConnection(_thisUIGroupRelation, parentFeature, childFeatures[i]);
+                var newUIConnection = new UIConnection(_thisUIGroupRelation, parentFeature.InnerElements.box, childFeatures[i].InnerElements.box);
                 newUIConnection.CreateGraphicalRepresentation();
                 _innerElements.connections.push(newUIConnection);
+
+                //Add references
+                childFeatures[i].RelatedCompositeElements.push(_thisUIGroupRelation);
+                _featuresToConnections[childFeatures[i].GUID] = newUIConnection;
+
             }
+
+            //Add reference to parentFeature
+            parentFeature.RelatedCompositeElements.push(_thisUIGroupRelation);
+
+            //Create Arc
+            var arcPath = getArcPath(_innerElements.connections[0], _innerElements.connections[_innerElements.connections.length - 1]);
+            _innerElements.rootArc = _canvas.path(arcPath).attr(styles.groupRelation.general.rootArc.attr);
+            _innerElements.rootArc.attr(styles.groupRelation.subTypes.or.rootArc.attr);
 
             //Setup
             makeSelectable();
         }
+        this.ChangeState = function (state) {
+            switch (state) {
+                case systemDefaults.uiElementStates.selected:
+                    _currentState = state;
+                    for (var i = 0; i < _innerElements.connections.length; i++) {
+                        _innerElements.connections[i].ChangeState(state);
+                    }
+
+                    break;
+                case systemDefaults.uiElementStates.deselected:
+                    _currentState = state;
+                    for (var i = 0; i < _innerElements.connections.length; i++) {
+                        _innerElements.connections[i].ChangeState(state);
+                    }
+                    break;
+            }
+        }
+        this.Update = function (newDataObj) {
+            _dataObj.GroupRelationType = newDataObj.GroupRelationType;
+            _dataObj.LowerBound = newDataObj.LowerBound;
+            _dataObj.UpperBound = newDataObj.UpperBound;
+
+            //Update visuals
+            var groupRelationSubTypeName = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, newDataObj.GroupRelationType).name;
+            for (var i = 0; i < _innerElements.connections.length; i++) {
+                _innerElements.connections[i].InnerElements.endConnector.attr(styles.groupRelation.subTypes[groupRelationSubTypeName].connection.endConnector.attr); //endConnector
+            }
+            _innerElements.rootArc.attr(styles.groupRelation.subTypes[groupRelationSubTypeName].rootArc.attr);
+
+        }
+        this.Delete = function () {
+            for (var i = _innerElements.connections.length - 1; i >= 0; i--) {
+                _innerElements.connections[i].Delete(true);
+                _innerElements.connections.splice(i, 1);
+            }
+            _innerElements.rootArc.remove();
+            _innerElements.rootArc = null;
+
+            //Remove references
+            removeFromFeature(parentFeature);
+            for (var i = 0; i < childFeatures.length; i++) {
+                removeFromFeature(childFeatures[i]);
+            }
+        }
+
+        //Event handlers
+        this.OnAdjacentFeatureMoved = function (UIFeature) {
+            //ParentFeature moved
+            if (UIFeature === parentFeature) {
+                refreshAll();
+            }
+            //ChildFeature moved
+            else {
+                refreshSingleConnection(UIFeature);
+            }
+        }
+        this.OnAdjacentFeatureDeleted = function (UIFeature) {
+
+            //ParentFeature deleted
+            if (UIFeature === parentFeature) {
+                this.Delete();
+            }
+            //ChildFeature deleted
+            else {
+                deleteSingleConnection(UIFeature);
+                refreshArc();
+
+                //Delete whole GroupRelation if less than 2 connections left
+                if (_innerElements.connections.length < 2) {
+                    this.Delete();
+                }
+            }
+        }
     }
-    var UIConnection = function (containingUIElement, parentUIFeature, childUIFeature) {
+    var UIConnection = function (compositeElement, parentBox, childBox) {
 
         //Fields
+        var _guid = jQuery.Guid.New(); //special ui identifier
         var _diagramContext = diagramContext;
         var _currentState = systemDefaults.uiElementStates.unselected;
-        var _containingUIElement = containingUIElement;
+        var _compositeElement = compositeElement;
         var _outerElement = null, _innerElements = {};
         var pathInfo = null;
         var _glow = null, _handlers = null;
         var _thisUIConnection = this;
 
         //Properties
+        this.GUID = _guid;
         this.InnerElements = _innerElements;
 
         //Private methods
@@ -1166,8 +1578,8 @@ var DiagramContext = function (canvasContainer) {
                 angle = parseInt(angle.toFixed());
                 if (angle < 0)
                     angle += 360;
-                for (var key in orientations) {
-                    var orientation = orientations[key];
+                for (var key in systemDefaults.orientations) {
+                    var orientation = systemDefaults.orientations[key];
                     for (var i = 0; i < orientation.angleIntervals.length; i++) {
                         if (angle >= orientation.angleIntervals[i].min && angle <= orientation.angleIntervals[i].max) {
                             currentOrientation = orientation.name;
@@ -1179,8 +1591,8 @@ var DiagramContext = function (canvasContainer) {
 
             //Determine which connection points in the current orientation make the shortest path
             var distances = [], points = {};
-            for (var i = 0; i < orientations[currentOrientation].connections.length; i++) {
-                var con = orientations[currentOrientation].connections[i];
+            for (var i = 0; i < systemDefaults.orientations[currentOrientation].connections.length; i++) {
+                var con = systemDefaults.orientations[currentOrientation].connections[i];
                 var x1 = connectionPoints.firstObject[con[0]].x, y1 = connectionPoints.firstObject[con[0]].y;
                 var x2 = connectionPoints.secondObject[con[1]].x, y2 = connectionPoints.secondObject[con[1]].y;
 
@@ -1194,7 +1606,7 @@ var DiagramContext = function (canvasContainer) {
                     y1: y1,
                     x2: x2,
                     y2: y2,
-                    curveModifier: orientations[currentOrientation].curveModifiers[i]
+                    curveModifier: systemDefaults.orientations[currentOrientation].curveModifiers[i]
                 };
             }
             var closestConnection = points[Math.min.apply(Math, distances)];
@@ -1244,11 +1656,22 @@ var DiagramContext = function (canvasContainer) {
                 });
             }
         }
-        function removeFromFeature(UIFeature) {
-            var index = $(parentUIFeature.AdjConnections).index(_thisUIConnection);
-            if (index != -1) {
-                parentUIFeature.AdjConnections.splice(index, 1);
-            }
+        function refresh() {
+            //Calculate a new path
+            var newPath = getPath(pathInfo.startObj, pathInfo.endObj);
+
+            //Variables
+            var line = _innerElements.line;
+            var endConnector = _innerElements.endConnector;
+            var endConnectorType = styles[_compositeElement.GetTypeName()].general.connection.endConnector;
+
+            //Refresh line path
+            _outerElement.attr({ path: newPath.path });
+            line.attr({ path: newPath.path });
+
+            //Refresh position of endConnector
+            var xPos = newPath.endPoint.x - endConnectorType.dimensionModifier, yPos = newPath.endPoint.y - endConnectorType.dimensionModifier;
+            endConnector.attr({ cx: xPos, cy: yPos, x: xPos, y: yPos });
         }
 
         //Public methods
@@ -1256,12 +1679,12 @@ var DiagramContext = function (canvasContainer) {
 
             //Variables
             var line = null, endConnector = null;
-            pathInfo = getPath(parentUIFeature.InnerElements.box, childUIFeature.InnerElements.box);
-            var containingElementType = _containingUIElement.GetTypeName();
-            var containingElementSubType = _containingUIElement.GetSubTypeName();
+            pathInfo = getPath(parentBox, childBox);
+            var containingElementType = _compositeElement.GetTypeName();
+            var containingElementSubType = _compositeElement.GetSubTypeName();
             var endConnectorType = styles[containingElementType].general.connection.endConnector;
             var subTypeStyle = styles[containingElementType].states[_currentState].connection;
-            var xPos = pathInfo.endPoint.x - endConnectorType.dimensionModifier, yPos = pathInfo.endPoint.y - endConnectorType.dimensionModifier;
+            var xPos = pathInfo.endPoint.x - endConnectorType.dimensionModifier, yPos = pathInfo.endPoint.y - endConnectorType.dimensionModifier; //position for endConnector
 
             //Create inner elements
             line = _canvas.path(pathInfo.path).attr(styles[containingElementType].states[_currentState].connection.line);
@@ -1276,36 +1699,19 @@ var DiagramContext = function (canvasContainer) {
             //Create the main outer element
             _outerElement = _canvas.path(pathInfo.path).attr(systemDefaults.common.outerElement);
 
-            //Add references for Refresh
-            parentUIFeature.AdjConnections.push(_thisUIConnection);
-            childUIFeature.AdjConnections.push(_thisUIConnection);
         }
-        this.Refresh = function () {
-            //Calculate a new path
-            var newPath = getPath(pathInfo.startObj, pathInfo.endObj);
-
-            //Variables
-            var line = _innerElements.line;
-            var endConnector = _innerElements.endConnector;
-            var endConnectorType = styles[_containingUIElement.GetTypeName()].general.connection.endConnector;
-
-            //Refresh 
-            _outerElement.attr({ path: newPath.path });
-            line.attr({ path: newPath.path });
-
-            //Refresh position of endConnector
-            var xPos = newPath.endPoint.x - endConnectorType.dimensionModifier, yPos = newPath.endPoint.y - endConnectorType.dimensionModifier;
-            endConnector.attr({ cx: xPos, cy: yPos, x: xPos, y: yPos });
+        this.RefreshGraphicalRepresentation = function () {
+            refresh();
         }
         this.ChangeState = function (state) {
             switch (state) {
                 case systemDefaults.uiElementStates.selected:
                     _currentState = state;
-                    _innerElements.line.attr(styles[_containingUIElement.GetTypeName()].states.selected.connection.line);
+                    _innerElements.line.attr(styles[_compositeElement.GetTypeName()].states.selected.connection.line);
                     break;
                 case systemDefaults.uiElementStates.deselected:
                     _currentState = state;
-                    _innerElements.line.attr(styles[_containingUIElement.GetTypeName()].states.unselected.connection.line);
+                    _innerElements.line.attr(styles[_compositeElement.GetTypeName()].states.unselected.connection.line);
                     break;
             }
         }
@@ -1326,39 +1732,14 @@ var DiagramContext = function (canvasContainer) {
         }
         this.Delete = function () {
 
-            //Remove references
-            removeFromFeature(parentUIFeature);
-            removeFromFeature(childUIFeature);
-
             //Remove Raphael objects
             _innerElements.line.remove();
             _innerElements.endConnector.remove();
             _outerElement.remove();
             if (_glow != null)
                 _glow.remove();
-
-            //Notify containingUIElement
-            containingUIElement.NotifyConnectionDeleted(_thisUIConnection);
-        }
-        this.NotifyAdjFeatureDeleted = function (UIFeature) {
-            this.Delete();
         }
     }
-    var orientations = {
-        horizontal: {
-            name: "horizontal",
-            connections: [["left", "right"], ["right", "left"]],
-            curveModifiers: [{ x: -40, y: 0 }, { x: +40, y: 0}],
-            angleIntervals: [{ min: 0, max: 45 }, { min: 136, max: 224 }, { min: 316, max: 359}]
-        },
-        vertical: {
-            name: "vertical",
-            connections: [["top", "bottom"], ["bottom", "top"]],
-            curveModifiers: [{ x: 0, y: -40 }, { x: 0, y: +40}],
-            angleIntervals: [{ min: 46, max: 135 }, { min: 225, max: 315}]
-        }
-    };
-
 
     //Properties
     this.SelectedElements = _selectedElements;
@@ -1369,7 +1750,14 @@ var DiagramContext = function (canvasContainer) {
 
         //Handler for canvas click
         $(_canvasContainer).bind("click", function (e) {
-            if (e.target.nodeName == "svg") {
+            if (e.target.nodeName == "svg" && e.shiftKey != true) {
+                deselectAll();
+            }
+        });
+
+        //Handler for selection rectangle
+        $(_canvasContainer).bind("mousedown", function (e) {
+            if (e.target.nodeName == "svg" && e.shiftKey != true) {
                 deselectAll();
             }
         });
@@ -1485,6 +1873,7 @@ var DiagramContext = function (canvasContainer) {
     }
 
     //Events
+    this.OnElementEdited = new Event();
     this.OnElementUpdated = new Event();
     this.OnElementSelected = new Event();
     this.OnElementDeselected = new Event();
@@ -1498,7 +1887,7 @@ var Event = function () {
     var _Handlers = new Array();
 
     //Methods
-    this.AddHandler = function (handler) {
+    this.Add = function (handler) {
         _Handlers.push(handler);
     }
     this.RaiseEvent = function (args) {

@@ -4,6 +4,7 @@ body
     background: #e8e8dd;
     font-family: "Trebuchet MS" , Verdana, Helvetica, Sans-Serif;
     margin: 0;
+    margin-bottom:30px;
     padding: 0;
 }
 
@@ -718,15 +719,22 @@ a:hover
     margin-top: 30px;
     margin-left: 25px;
     margin-right: 29px;
+    
     width: 80%;
     
 }
-#ModelDiagramBox #SVGCanvas
+
+#ModelDiagramBox #SVGCanvasWrapper 
 {
-    /*background-color:#fff7d7;*/
-    width: 100%;
-    height: 900px;
-    
+    overflow:scroll;
+    width:100%;
+    height:700px;
+}
+#ModelDiagramBox #SVGCanvasWrapper #SVGCanvas
+{
+    width: 6500px;
+    height: 4500px;
+    background-color:White;
 }
 #ModelDiagramBox #SVGCanvas .Inputbox
 {
