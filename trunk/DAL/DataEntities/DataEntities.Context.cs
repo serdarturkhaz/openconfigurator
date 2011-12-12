@@ -119,6 +119,18 @@ namespace DAL.DataEntities
             get { return _groupRelations_To_Features  ?? (_groupRelations_To_Features = CreateObjectSet<GroupRelations_To_Features>("GroupRelations_To_Features")); }
         }
         private ObjectSet<GroupRelations_To_Features> _groupRelations_To_Features;
+    
+        public ObjectSet<CompositionRule_Type> CompositionRule_Types
+        {
+            get { return _compositionRule_Types  ?? (_compositionRule_Types = CreateObjectSet<CompositionRule_Type>("CompositionRule_Types")); }
+        }
+        private ObjectSet<CompositionRule_Type> _compositionRule_Types;
+    
+        public ObjectSet<CompositionRule> CompositionRules
+        {
+            get { return _compositionRules  ?? (_compositionRules = CreateObjectSet<CompositionRule>("CompositionRules")); }
+        }
+        private ObjectSet<CompositionRule> _compositionRules;
 
         #endregion
     }
