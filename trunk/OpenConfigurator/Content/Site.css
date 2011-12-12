@@ -735,7 +735,7 @@ a:hover
     height: 4500px;
     background-color:White;
 }
-#ModelDiagramBox #SVGCanvas .Inputbox
+.Inputbox
 {
     border: 1px solid #E6E6E6;
     font-size: 11px;

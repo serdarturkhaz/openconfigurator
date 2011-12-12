@@ -205,6 +205,38 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<GroupRelation> _groupRelations;
+    
+        public virtual ICollection<CompositionRule> CompositionRules
+        {
+            get
+            {
+                if (_compositionRules == null)
+                {
+                    var newCollection = new FixupCollection<CompositionRule>();
+                    newCollection.CollectionChanged += FixupCompositionRules;
+                    _compositionRules = newCollection;
+                }
+                return _compositionRules;
+            }
+            set
+            {
+                if (!ReferenceEquals(_compositionRules, value))
+                {
+                    var previousValue = _compositionRules as FixupCollection<CompositionRule>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupCompositionRules;
+                    }
+                    _compositionRules = value;
+                    var newValue = value as FixupCollection<CompositionRule>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupCompositionRules;
+                    }
+                }
+            }
+        }
+        private ICollection<CompositionRule> _compositionRules;
 
         #endregion
         #region Association Fixup
@@ -308,6 +340,28 @@ namespace DAL.DataEntities
             if (e.OldItems != null)
             {
                 foreach (GroupRelation item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Model, this))
+                    {
+                        item.Model = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupCompositionRules(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (CompositionRule item in e.NewItems)
+                {
+                    item.Model = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (CompositionRule item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Model, this))
                     {
