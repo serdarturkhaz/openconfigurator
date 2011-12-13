@@ -13,6 +13,26 @@ var styles = {
             width: 10,
             opacity: 0.5,
             color: "blue"
+        },
+        connection: {
+            states: {
+                unselected: {
+                    line: {
+                        fill: "none",
+                        stroke: "#333333",
+                        "stroke-width": 1,
+                        "stroke-linejoin": "round"
+
+                    }
+                },
+                selected: {
+                    line: {
+                        stroke: "Black",
+                        fill: "none",
+                        "stroke-width": 2
+                    }
+                }
+            }
         }
     },
     feature: {
@@ -91,39 +111,6 @@ var styles = {
 
             }
         },
-        states: {
-            unselected: {
-                connection: {
-                    line: {
-                        stroke: "#666666",
-                        fill: "none",
-                        "stroke-width": 1
-
-                    },
-                    endConnector: {
-                        attr: {
-                            stroke: "red",
-                            r: 12
-                        }
-                    }
-                }
-            },
-            selected: {
-                connection: {
-                    line: {
-                        stroke: "Black",
-                        fill: "none",
-                        "stroke-width": 2
-                    },
-                    endConnector: {
-                        attr: {
-                            stroke: "Black",
-                            r: 12
-                        }
-                    }
-                }
-            }
-        },
         subTypes: {
             mandatory: {
                 connection: {
@@ -198,39 +185,6 @@ var styles = {
                 }
             }
         },
-        states: {
-            unselected: {
-                connection: {
-                    line: {
-                        stroke: "#666666",
-                        fill: "none",
-                        "stroke-width": 1
-
-                    },
-                    endConnector: {
-                        attr: {
-                            stroke: "red",
-                            r: 12
-                        }
-                    }
-                }
-            },
-            selected: {
-                connection: {
-                    line: {
-                        stroke: "Black",
-                        fill: "none",
-                        "stroke-width": 2
-                    },
-                    endConnector: {
-                        attr: {
-                            stroke: "Black",
-                            r: 12
-                        }
-                    }
-                }
-            }
-        },
         subTypes: {
             or: {
                 rootArc: {
@@ -281,7 +235,34 @@ var styles = {
                 }
             }
         }
+    },
+    compositionRule: {
+        general: {
+            connection: {
+                line: {
+                    "stroke-dasharray": ["- "],
+                    opacity: 0.5
+                }
+            }
+        },
+        subTypes: {
+            dependency: {
+                connection: {
+                    line: {
+                        stroke: "green"
+                    }
+                }
+            },
+            exclusion: {
+                connection: {
+                    line: {
+                        stroke: "red"
+                    }
+                }
+            }
+        }
     }
+
 }
 var systemDefaults = {
     common: {
@@ -393,11 +374,24 @@ var systemDefaults = {
                 label: "String",
                 id: 3
             }
+        },
+        compositionRuleTypes: {
+            dependency: {
+                name: "dependency",
+                label: "Dependency",
+                id: 1
+            },
+            exclusion: {
+                name: "exclusion",
+                label: "Exclusion",
+                id: 2
+            }
         }
     },
     orientations: {
         horizontal: {
             name: "horizontal",
+            opposite: "vertical",
             cardinalityDistances: {
                 groupRelation: 45,
                 relation: 30
@@ -427,6 +421,7 @@ var systemDefaults = {
         },
         vertical: {
             name: "vertical",
+            opposite: "horizontal",
             cardinalityDistances: {
                 groupRelation: 45,
                 relation: 30
@@ -920,6 +915,19 @@ var PropertiesComponent = function (container, diagramContext) {
                     }
                 }
             }
+        },
+        compositionRule: {
+            areas: {
+                basicArea: {
+                    displayTitle: false,
+                    tableLayout: true,
+                    fields: {
+
+
+                    }
+
+                }
+            }
         }
     };
 
@@ -1147,7 +1155,7 @@ var DiagramContext = function (canvasContainer) {
                 _inlineEditMode = true;
                 var bb1 = this.getBBox();
                 var canvasOffsets = $(_canvasContainer).offset();
-                var xoffset = canvasOffsets.left+ 3 , yoffset = canvasOffsets.top +3;
+                var xoffset = canvasOffsets.left + 3, yoffset = canvasOffsets.top + 3;
                 var textinput = $("<input class='Inputbox' type='text' />").appendTo("body").css({
                     position: "absolute",
                     left: bb1.x + xoffset,
@@ -1208,16 +1216,8 @@ var DiagramContext = function (canvasContainer) {
             makeEditable();
         }
         this.ChangeState = function (state) {
-            switch (state) {
-                case systemDefaults.uiElementStates.selected:
-                    _currentState = state;
-                    _innerElements.box.attr(styles.feature.states.selected.box);
-                    break;
-                case systemDefaults.uiElementStates.deselected:
-                    _currentState = state;
-                    _innerElements.box.attr(styles.feature.states.unselected.box);
-                    break;
-            }
+            _currentState = state;
+            _innerElements.box.attr(styles.feature.states[state].box);
         }
         this.Update = function (newDataObj) {
             _dataObj.Name = newDataObj.Name;
@@ -1359,16 +1359,8 @@ var DiagramContext = function (canvasContainer) {
             makeSelectable();
         }
         this.ChangeState = function (state) {
-            switch (state) {
-                case systemDefaults.uiElementStates.selected:
-                    _currentState = state;
-                    _innerElements.connection.ChangeState(state);
-                    break;
-                case systemDefaults.uiElementStates.deselected:
-                    _currentState = state;
-                    _innerElements.connection.ChangeState(state);
-                    break;
-            }
+            _currentState = state;
+            _innerElements.connection.ChangeState(state);
         }
         this.Update = function (newDataObj) {
             _dataObj.RelationType = newDataObj.RelationType;
@@ -1376,8 +1368,7 @@ var DiagramContext = function (canvasContainer) {
             _dataObj.UpperBound = newDataObj.UpperBound;
 
             //Update visuals
-            var relationSubTypeName = getEnumEntryByID(systemDefaults.enums.relationTypes, newDataObj.RelationType).name;
-            _innerElements.connection.InnerElements.endConnector.attr(styles.relation.subTypes[relationSubTypeName].connection.endConnector.attr); //endConnector
+            _innerElements.connection.Update();
             toggleCardinalityElement(); //cardinalityElement
         }
         this.Delete = function () {
@@ -1563,14 +1554,13 @@ var DiagramContext = function (canvasContainer) {
                 childFeatures[i].RelatedCompositeElements.push(_thisUIGroupRelation);
                 _featuresToConnections[childFeatures[i].GUID] = newUIConnection;
             }
-
             //Add reference to parentFeature
             parentFeature.RelatedCompositeElements.push(_thisUIGroupRelation);
 
             //Create Arc
             var arcPath = getArcPath(_innerElements.connections[0], _innerElements.connections[_innerElements.connections.length - 1]);
             _innerElements.rootArc = _canvas.path(arcPath).attr(styles.groupRelation.general.rootArc.attr);
-            _innerElements.rootArc.attr(styles.groupRelation.subTypes.or.rootArc.attr);
+            _innerElements.rootArc.attr(styles.groupRelation.subTypes[_thisUIGroupRelation.GetSubTypeName()].rootArc.attr);
 
             //Setup cardinality element
             toggleCardinalityElement();
@@ -1579,20 +1569,9 @@ var DiagramContext = function (canvasContainer) {
             makeSelectable();
         }
         this.ChangeState = function (state) {
-            switch (state) {
-                case systemDefaults.uiElementStates.selected:
-                    _currentState = state;
-                    for (var i = 0; i < _innerElements.connections.length; i++) {
-                        _innerElements.connections[i].ChangeState(state);
-                    }
-
-                    break;
-                case systemDefaults.uiElementStates.deselected:
-                    _currentState = state;
-                    for (var i = 0; i < _innerElements.connections.length; i++) {
-                        _innerElements.connections[i].ChangeState(state);
-                    }
-                    break;
+            _currentState = state;
+            for (var i = 0; i < _innerElements.connections.length; i++) {
+                _innerElements.connections[i].ChangeState(state);
             }
         }
         this.Update = function (newDataObj) {
@@ -1601,11 +1580,10 @@ var DiagramContext = function (canvasContainer) {
             _dataObj.UpperBound = newDataObj.UpperBound;
 
             //Update visuals
-            var groupRelationSubTypeName = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, newDataObj.GroupRelationType).name;
             for (var i = 0; i < _innerElements.connections.length; i++) {
-                _innerElements.connections[i].InnerElements.endConnector.attr(styles.groupRelation.subTypes[groupRelationSubTypeName].connection.endConnector.attr); //endConnector
+                _innerElements.connections[i].Update(); //endConnector
             }
-            _innerElements.rootArc.attr(styles.groupRelation.subTypes[groupRelationSubTypeName].rootArc.attr);
+            _innerElements.rootArc.attr(styles.groupRelation.subTypes[_thisUIGroupRelation.GetSubTypeName()].rootArc.attr);
             toggleCardinalityElement(); //cardinalityElement
 
         }
@@ -1671,19 +1649,108 @@ var DiagramContext = function (canvasContainer) {
             }
         }
     }
-    var UICompositionalRule = function (dataObj, firstFeature, secondFeature) {
-
-    }
-    var UIConnection = function (compositeElement, parentBox, childBox) {
+    var UICompositionRule = function (dataObj, firstFeature, secondFeature) {
 
         //Fields
         var _guid = jQuery.Guid.New(); //special ui identifier
+        var _innerElements = {
+            connection: null
+        };
+        var _currentState = systemDefaults.uiElementStates.unselected;
+        var _dataObj = dataObj;
+        var _thisUICompositionRule = this;
+
+        //Properties
+        this.GUID = _guid;
+        this.GetDataObj = function () {
+            return _dataObj;
+        }
+        this.GetTypeName = function () {
+            return "compositionRule";
+        }
+        this.GetSubTypeName = function () {
+            var compositionRuleSubTypeName = getEnumEntryByID(systemDefaults.enums.compositionRuleTypes, _dataObj.CompositionRuleType).name;
+            return compositionRuleSubTypeName;
+        }
+
+        //Private methods
+        function makeSelectable() {
+            //
+            var handlers = {
+                onClick: function (e) {
+                    selectElement(_thisUICompositionRule, e.shiftKey);
+                },
+                onMouseOver: function (e) {
+                    _innerElements.connection.ShowGlow();
+                },
+                onMouseOut: function (e) {
+                    _innerElements.connection.HideGlow();
+                }
+            }
+            _innerElements.connection.MakeSelectable(handlers);
+        }
+        function refresh() {
+            _innerElements.connection.RefreshGraphicalRepresentation();
+        }
+        function removeFromFeature(UIFeature) {
+            var index = $(UIFeature.RelatedCompositeElements).index(_thisUICompositionRule);
+            if (index != -1) {
+                UIFeature.RelatedCompositeElements.splice(index, 1);
+            }
+        }
+
+        //Public methods
+        this.CreateGraphicalRepresentation = function () {
+
+            //Create a new UIConnection
+            _innerElements.connection = new UIConnection(_thisUICompositionRule, firstFeature.InnerElements.box, secondFeature.InnerElements.box, true, true);
+            _innerElements.connection.CreateGraphicalRepresentation();
+
+            //Add references
+            firstFeature.RelatedCompositeElements.push(_thisUICompositionRule);
+            secondFeature.RelatedCompositeElements.push(_thisUICompositionRule);
+
+            //Setup
+            makeSelectable();
+        }
+        this.ChangeState = function (state) {
+            _currentState = state;
+            _innerElements.connection.ChangeState(state);
+        }
+        this.Delete = function () {
+            //Remove connection
+            _innerElements.connection.Delete();
+            _innerElements.connection = null;
+
+            //Remove references
+            removeFromFeature(firstFeature);
+            removeFromFeature(secondFeature);
+        }
+
+        //Event handlers
+        this.OnAdjacentFeatureDeleted = function (UIFeature) {
+            this.Delete();
+        }
+        this.OnAdjacentFeatureMoved = function (UIFeature) {
+            refresh();
+        }
+    }
+    var UIConnection = function (compositeElement, parentBox, childBox, invertOrientation, toBack) {
+
+        //Fields
+        var _guid = jQuery.Guid.New(); //special ui identifier
+        var _innerElements = {
+            line: null,
+            endConnector: null
+        };
         var _diagramContext = diagramContext;
         var _currentState = systemDefaults.uiElementStates.unselected;
         var _compositeElement = compositeElement;
-        var _outerElement = null, _innerElements = {};
+        var _outerElement = null;
         var _glow = null, _handlers = null;
         var _thisUIConnection = this;
+        var _invertOrientation = (invertOrientation != undefined) ? invertOrientation : null; //parameter used to force the path to draw in the opposite orientation
+        var _toBack = (toBack != undefined) ? toBack : null; //parameter used to draw connection behind other elements
 
         //Properties
         this.GUID = _guid;
@@ -1739,6 +1806,11 @@ var DiagramContext = function (canvasContainer) {
                     }
                 }
             }
+
+            //Invert orientation if necessary
+            if (invertOrientation)
+                currentOrientation = systemDefaults.orientations[currentOrientation].opposite;
+
 
             //Determine which connection points in the current orientation make the shortest path
             var distances = [], points = {};
@@ -1811,60 +1883,59 @@ var DiagramContext = function (canvasContainer) {
             //Calculate a new path
             var newPath = getPath(parentBox, childBox);
 
-            //Variables
+            //Refresh line 
             var line = _innerElements.line;
-            var endConnector = _innerElements.endConnector;
-            var endConnectorType = styles[_compositeElement.GetTypeName()].general.connection.endConnector;
-
-            //Refresh line path
             _outerElement.attr({ path: newPath.path });
             line.attr({ path: newPath.path });
 
             //Refresh position of endConnector
-            var xPos = newPath.endPoint.x - endConnectorType.dimensionModifier, yPos = newPath.endPoint.y - endConnectorType.dimensionModifier;
-            endConnector.attr({ cx: xPos, cy: yPos, x: xPos, y: yPos });
+            if (_innerElements.endConnector != null) {
+                var endConnectorType = styles[_compositeElement.GetTypeName()].general.connection.endConnector;
+                var xPos = newPath.endPoint.x - endConnectorType.dimensionModifier, yPos = newPath.endPoint.y - endConnectorType.dimensionModifier;
+                _innerElements.endConnector.attr({ cx: xPos, cy: yPos, x: xPos, y: yPos });
+            }
         }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
 
-            //Variables
-            var line = null, endConnector = null;
+            //Create line
             pathInfo = getPath(parentBox, childBox);
-            var containingElementType = _compositeElement.GetTypeName();
-            var containingElementSubType = _compositeElement.GetSubTypeName();
-            var endConnectorType = styles[containingElementType].general.connection.endConnector;
-            var subTypeStyle = styles[containingElementType].states[_currentState].connection;
-            var xPos = pathInfo.endPoint.x - endConnectorType.dimensionModifier, yPos = pathInfo.endPoint.y - endConnectorType.dimensionModifier; //position for endConnector
+            _innerElements.line = _canvas.path(pathInfo.path);
 
-            //Create inner elements
-            line = _canvas.path(pathInfo.path).attr(styles[containingElementType].states[_currentState].connection.line);
-            endConnector = eval("_canvas." + endConnectorType.raphaelType + "(xPos, yPos" + paramsToString(endConnectorType.dimensions) + ")");
-            endConnector.attr(subTypeStyle.endConnector);
-            _innerElements.line = line;
-            _innerElements.endConnector = endConnector;
+            //Set line styles
+            var generalStyle = styles[_compositeElement.GetTypeName()].general.connection.line;
+            if (generalStyle != undefined)
+                _innerElements.line.attr(generalStyle);
+            var specificLineStyle = styles[_compositeElement.GetTypeName()].subTypes[_compositeElement.GetSubTypeName()].connection.line;
+            var commonLineStyle = styles.common.connection.states[_currentState].line;
+            var style = (specificLineStyle != undefined) ? specificLineStyle : commonLineStyle;
+            _innerElements.line.attr(style);
 
-            //Set connector subType specific appearance
-            endConnector.attr(styles[containingElementType].subTypes[containingElementSubType].connection.endConnector.attr);
+            //Create endConnector
+            var endConnectorType = styles[_compositeElement.GetTypeName()].general.connection.endConnector;
+            if (endConnectorType != undefined) {
+                var xPos = pathInfo.endPoint.x - endConnectorType.dimensionModifier, yPos = pathInfo.endPoint.y - endConnectorType.dimensionModifier; //position for endConnector
+                _innerElements.endConnector = eval("_canvas." + endConnectorType.raphaelType + "(xPos, yPos" + paramsToString(endConnectorType.dimensions) + ")");
+                _innerElements.endConnector.attr(styles[_compositeElement.GetTypeName()].subTypes[_compositeElement.GetSubTypeName()].connection.endConnector.attr);
+            }
 
             //Create the main outer element
             _outerElement = _canvas.path(pathInfo.path).attr(systemDefaults.common.outerElement);
 
+            //
+            if (toBack) {
+                _outerElement.toBack();
+                _innerElements.line.toBack();
+            }
         }
         this.RefreshGraphicalRepresentation = function () {
             refresh();
         }
         this.ChangeState = function (state) {
-            switch (state) {
-                case systemDefaults.uiElementStates.selected:
-                    _currentState = state;
-                    _innerElements.line.attr(styles[_compositeElement.GetTypeName()].states.selected.connection.line);
-                    break;
-                case systemDefaults.uiElementStates.deselected:
-                    _currentState = state;
-                    _innerElements.line.attr(styles[_compositeElement.GetTypeName()].states.unselected.connection.line);
-                    break;
-            }
+            _currentState = state;
+            _innerElements.line.attr(styles.common.connection.states[state].line);
+            _thisUIConnection.Update();
         }
         this.ShowGlow = function () {
             if (_glow == null) {
@@ -1885,10 +1956,22 @@ var DiagramContext = function (canvasContainer) {
 
             //Remove Raphael objects
             _innerElements.line.remove();
-            _innerElements.endConnector.remove();
+            if (_innerElements.endConnector != null)
+                _innerElements.endConnector.remove();
             _outerElement.remove();
             if (_glow != null)
                 _glow.remove();
+        }
+        this.Update = function () {
+            //Update line
+            var specificLineStyle = styles[_compositeElement.GetTypeName()].subTypes[_compositeElement.GetSubTypeName()].connection.line;
+            var commonLineStyle = styles.common.connection.states[_currentState].line;
+            var style = (specificLineStyle != undefined) ? specificLineStyle : commonLineStyle;
+            _innerElements.line.attr(style);
+
+            //Update EndConnector
+            if (_innerElements.endConnector != null)
+                _innerElements.endConnector.attr(styles[_compositeElement.GetTypeName()].subTypes[_compositeElement.GetSubTypeName()].connection.endConnector.attr);
         }
     }
     var UICardinalityLabel = function (compositeElement, calculatePositionFunction) {
@@ -1971,7 +2054,7 @@ var DiagramContext = function (canvasContainer) {
         _selectedElements.splice(index, 1);
 
         //Deselect UIElement
-        UIElement.ChangeState(systemDefaults.uiElementStates.deselected);
+        UIElement.ChangeState(systemDefaults.uiElementStates.unselected);
 
         //Raise events
         if (_selectedElements.length == 0) {
@@ -2053,6 +2136,14 @@ var DiagramContext = function (canvasContainer) {
             var childFeatures = _selectedElements.slice(1);
             var newUIGroupRelation = new UIGroupRelation(dataObj, parentFeature, childFeatures);
             newUIGroupRelation.CreateGraphicalRepresentation();
+        }
+    }
+    this.AddCompositionRule = function (dataObj) {
+        if (_selectedElements.length == 2) {
+            var firstFeature = _selectedElements[0];
+            var secondFeature = _selectedElements[1];
+            var newUICompositionRule = new UICompositionRule(dataObj, firstFeature, secondFeature);
+            newUICompositionRule.CreateGraphicalRepresentation();
         }
     }
     this.UpdateElement = function (UIElement, updatedDataObj) {

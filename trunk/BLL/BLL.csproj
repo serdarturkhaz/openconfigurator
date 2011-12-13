@@ -48,6 +48,7 @@
     <Compile Include="BusinessObjects\BusinessObjects.cs" />
     <Compile Include="BusinessObjects\IBusinessObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CompositionRuleService.cs" />
     <Compile Include="Services\GroupRelationService.cs" />
     <Compile Include="Services\RelationService.cs" />
     <Compile Include="Services\ModelService.cs" />

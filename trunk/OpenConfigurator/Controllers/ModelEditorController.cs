@@ -35,6 +35,7 @@ namespace PresentationLayer.Controllers
         }
 
 
+        //Methods for default Entities
         [Authorize]
         public JsonNetResult NewDefaultFeature()
         {
@@ -49,7 +50,6 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
-
         [Authorize]
         public JsonNetResult NewDefaultRelation()
         {
@@ -64,7 +64,6 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
-
         [Authorize]
         public JsonNetResult NewDefaultGroupRelation()
         {
@@ -79,14 +78,13 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
-
         [Authorize]
         public JsonNetResult NewDefaultAttribute()
         {
             //Default return variable
             JsonNetResult result = new JsonNetResult() { Data = null };
 
-            //Get a new default Feature
+            //Get a new default Attribute
             FeatureService _featureService = new FeatureService(SessionData.LoggedInUser.ID);
             BLL.BusinessObjects.Attribute newAttribute = (BLL.BusinessObjects.Attribute)_featureService.CreateDefaultAttribute();
             result.Data = newAttribute;
@@ -95,6 +93,20 @@ namespace PresentationLayer.Controllers
             return result;
         }
 
+        [Authorize]
+        public JsonNetResult NewDefaultCompositionRule()
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Get a new default CompositionRule
+            CompositionRuleService _compositionRuleService = new CompositionRuleService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.CompositionRule newCompositionRule = (BLL.BusinessObjects.CompositionRule)_compositionRuleService.CreateDefault();
+            result.Data = newCompositionRule;
+
+            //
+            return result;
+        }
         [Authorize]
         public JsonNetResult GetRelationTypes()
         {
