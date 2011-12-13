@@ -53,6 +53,12 @@
     <Compile Include="DataEntities\Attribute_Type.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataEntities\CompositionRule.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities\CompositionRule_Type.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataEntities\DataEntities.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

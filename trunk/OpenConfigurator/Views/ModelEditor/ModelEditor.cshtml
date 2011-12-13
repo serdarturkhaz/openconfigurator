@@ -80,6 +80,10 @@
                 var groupRelationObj = getDefaultDataObj("GroupRelation");
                 diagramContext.AddGroupRelation(groupRelationObj);
             });
+            $("#NewCompositionRuleButton").bind("click", function () {
+                var compositionRuleObj = getDefaultDataObj("CompositionRule");
+                diagramContext.AddCompositionRule(compositionRuleObj);
+            });
 
             //Key handlers
             $(document).keydown(function (e) {
@@ -98,7 +102,11 @@
                     var groupRelationObj = getDefaultDataObj("GroupRelation");
                     diagramContext.AddGroupRelation(groupRelationObj);
                 });
-
+                $.ctrl('M', function () { //create CompositionRule
+                    var compositionRuleObj = getDefaultDataObj("CompositionRule");
+                    diagramContext.AddCompositionRule(compositionRuleObj);
+                    return false;
+                });
             });
             //---------------------------------------------------------------------------------
 
@@ -163,20 +171,23 @@
 <div id="ToolBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
-            <span class="HeaderLabel">Actions</span>
+            <span class="HeaderLabel">Toolbox</span>
         </div>
     </div>
     <div class="BoxContent">
         <ul class="ActionList">
             <li class="Button-Normal" id="NewFeatureButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New <span class="underline">F</span>eature</span> </li>
+                <span> <span class="underline">F</span>eature</span> </li>
             <li class="Button-Normal" id="NewRelationButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New <span class="underline">R</span>elation</span> </li>
+                <span> <span class="underline">R</span>elation</span> </li>
             <li class="Button-Normal" id="NewGroupRelationButton">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New <span class="underline">G</span>roup Relation</span> </li>
+                <span> <span class="underline">G</span>roup Relation</span> </li>
+            <li class="Button-Normal" id="NewCompositionRuleButton">
+                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                <span> Co<span class="underline">m</span>position Rule</span> </li>
         </ul>
     </div>
     <div class="BoxFooter">
