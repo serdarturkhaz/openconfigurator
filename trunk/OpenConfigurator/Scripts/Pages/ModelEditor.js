@@ -1135,6 +1135,19 @@ var PropertiesComponent = function (container, diagramContext) {
         clearUI();
     }
 }
+var ModelExplorer = function (container) {
+
+    //Fields
+    var _thisModelExplorer = this;
+
+    //Constructor/Initalizers
+    this.Initialize = function () {
+        //var tree = $(container).tree("c:\\");
+        //var t1 = tree.createChild("Document and Settings").createChild('My Documents').createChild('jquery.js');
+        //tree.paint();
+
+    }
+}
 var DiagramContext = function (canvasContainer) {
 
     //Fields
@@ -2345,6 +2358,7 @@ var DiagramContext = function (canvasContainer) {
     this.OnElementDeselected = new Event();
     this.OnAllElementsDeselected = new Event();
 }
+
 
 //Events
 var Event = function () {

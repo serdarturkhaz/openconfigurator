@@ -9,6 +9,7 @@
         var modelId = '@(ViewBag.ModelId)';
         var diagramContext = null;
         var propertiesComponent = null;
+        var modelExplorer = null;
 
         //
         function calcWidth() {
@@ -126,6 +127,8 @@
                 diagramContext = new DiagramContext($("#SVGCanvas")[0]);
                 diagramContext.Initialize();
                 propertiesComponent = new PropertiesComponent($("#PropertiesBox"), diagramContext);
+                modelExplorer = new ModelExplorer($("#ModelExplorerTree"));
+                modelExplorer.Initialize();
 
                 //Event handlers
                 diagramContext.OnElementSelected.Add(new EventHandler(function (UIElement) {
@@ -204,6 +207,9 @@
             </div>
         </div>
         <div class="BoxContent">
+            <div id="ModelExplorerTree">
+            
+            </div>
         </div>
         <div class="BoxFooter">
             <div class="BoxInnerFooter">
