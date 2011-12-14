@@ -77,6 +77,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\themes\base\images\Controls\folder.png" />
     <Content Include="Content\themes\base\images\Controls\progress.gif" />
     <Content Include="Content\themes\base\images\Controls\textbox-bg.png" />
     <Content Include="Content\themes\base\images\Icons\Login.png" />
@@ -94,6 +95,7 @@
     <Content Include="Scripts\jquery-ui-1.8.11.js" />
     <Content Include="Scripts\jquery-ui-1.8.11.min.js" />
     <Content Include="Scripts\jquery.guid.js" />
+    <Content Include="Scripts\jquery.simpleTree.js" />
     <Content Include="Scripts\Own\common.js" />
     <Content Include="Scripts\Own\jquery.blockUI.js" />
     <Content Include="Scripts\Own\jquery.pnotify.min.js" />

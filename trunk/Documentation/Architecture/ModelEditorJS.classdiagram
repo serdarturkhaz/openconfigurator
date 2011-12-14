@@ -4,16 +4,70 @@
     <logicalClassDesignerModelHasTypes>
       <class Id="d8f1fb48-9426-4177-807d-a189926033c5" name="UIFeature" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="883a2184-a902-426c-bba3-2265ef463166" />
+        <ownedOperationsInternal>
+          <operation Id="aabe1428-ad82-4277-814d-7ed8664e4f10" name="CreateGraphicalRepresentation" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="f640ba5e-e689-497b-855c-1b9cb58a7010" />
+          </operation>
+          <operation Id="55a579a8-9579-416c-80b1-f1529073ebe7" name="ChangeState" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="0528841b-9b7d-4386-894e-8c30bd40b958" />
+          </operation>
+          <operation Id="fc8848a0-41ba-4c97-a528-7d5c4eb7c243" name="Update" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="d3be459d-7c41-4f35-9517-873ecfc43790" />
+          </operation>
+          <operation Id="0bda83e2-6ec9-41a6-a561-0e15e624b40a" name="Delete" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="5e9252e9-d33c-4806-8ffd-1ec9d846ee0d" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
       <class Id="98d1f1a9-8e43-4d52-a315-fb6b46743379" name="UIGroupRelation" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="57cdedf3-9456-47fa-afd8-60efc54bbe2e" />
+        <ownedOperationsInternal>
+          <operation Id="4cfed6e7-db03-4897-8526-e69807084fe6" name="ChangeState" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="72a83a41-31d1-4b7a-a200-9fbf2061e20f" />
+          </operation>
+          <operation Id="2cd25973-6b22-4d99-a11d-0624c8a9039f" name="CreateGraphicalRepresentation" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="f79efb9f-2357-4d45-b11f-b822f282e623" />
+          </operation>
+          <operation Id="9f61543c-2f98-4a37-836f-1c4a9d4f9db8" name="Delete" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="87af5309-a5c2-432a-96b1-43e5fa157e94" />
+          </operation>
+          <operation Id="964e9ac4-c3f0-4437-ae81-d57a949cfdbe" name="Update" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="2d46d369-9c39-4e31-a56a-b9f637112205" />
+          </operation>
+          <operation Id="5569150c-07b9-40fe-8f58-4026d8f558a6" name="OnAdjacentFeatureDeleted" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="814a61c3-79c7-4e51-97c3-03043e84cd01" />
+          </operation>
+          <operation Id="2b8bb6c9-57b5-4d58-82f6-45fb46ac3306" name="OnAdjacentFeatureMoved" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="372ac8ed-a62b-4128-873c-e017e3ea671f" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
       <class Id="94396768-d8a3-494a-a454-25a20ddeb669" name="UIRelation" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="5f31ec7d-a3cd-49c7-b3fe-d0ed947b6b91" />
+        <ownedOperationsInternal>
+          <operation Id="189a7029-af7c-4f6f-88bb-de23bbe164d8" name="ChangeState" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="529093b8-c0ea-4bf9-8c43-01a4376926f3" />
+          </operation>
+          <operation Id="4a01fb87-d3c0-416a-949b-27e3a8196b4b" name="CreateGraphicalRepresentation" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="43892862-1990-48ad-8434-295ee58fc882" />
+          </operation>
+          <operation Id="43142492-2f3a-41dc-b843-e058d466d572" name="Delete" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="4c43ff45-9fa5-4e8a-9a4d-2ac5e1f1647f" />
+          </operation>
+          <operation Id="79ef61b1-9136-4875-be41-9bb1b9bb1bdc" name="OnAdjacentFeatureDeleted" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="eb32f929-eec0-4781-88c9-11441721cdb2" />
+          </operation>
+          <operation Id="c6e4deb0-d428-40dd-b26b-322c929277d7" name="OnAdjacentFeatureMoved" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="6acdeb60-23fd-4827-b92f-afb5154f7f9e" />
+          </operation>
+          <operation Id="ecc0221f-0d51-45d1-a853-a8754dc5e591" name="Update" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="896faeae-79e8-4d0e-a917-4cb49a201993" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -107,7 +161,7 @@
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="e36004df-34a4-4602-a137-c5e2747655c8" name="UIGenericObject" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="e36004df-34a4-4602-a137-c5e2747655c8" name="UICompositeObject" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="9e2a32ff-ec86-4636-a9ca-d27e845751cb" />
       </class>
     </logicalClassDesignerModelHasTypes>
