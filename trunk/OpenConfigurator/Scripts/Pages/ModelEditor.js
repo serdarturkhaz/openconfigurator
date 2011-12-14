@@ -7,26 +7,29 @@ var settings = {
         displayCardinalities: "full" //determines how many cardinalities to display - options : none / partial(only cloneable and cardinal groups) / all (all relations and groupRelations)
     }
 };
-var styles = {
-    common: {
-        glow: {
+var commonStyles = {
+    glow: {
+        attr: {
             width: 10,
             opacity: 0.5,
             color: "blue"
-        },
-        connection: {
-            states: {
-                unselected: {
-                    line: {
+        }
+    },
+    connection: {
+        states: {
+            unselected: {
+                line: {
+                    attr: {
                         fill: "none",
                         stroke: "#333333",
                         "stroke-width": 1,
                         "stroke-linejoin": "round"
-
                     }
-                },
-                selected: {
-                    line: {
+                }
+            },
+            selected: {
+                line: {
+                    attr: {
                         stroke: "Black",
                         fill: "none",
                         "stroke-width": 2
@@ -35,6 +38,28 @@ var styles = {
             }
         }
     },
+    cardinalityLabel: {
+        text: {
+            attr: {
+                "font-size": 9
+            }
+        },
+        box: {
+            dimensions: {
+                width: 30,
+                height: 15
+            },
+            attr: {
+                opacity: 1,
+                fill: "#FFFFC6",
+                "stroke-width": 1,
+                stroke: "#CECECE"
+            }
+        }
+    }
+}
+
+var UIObjectStyles = {
     feature: {
         general: {
             box: {
@@ -47,124 +72,107 @@ var styles = {
         states: {
             unselected: {
                 box: {
-                    fill: "#E1E9FF",
-                    stroke: "#CECECE",
-                    "stroke-width": 1,
-                    opacity: 1
+                    attr: {
+                        fill: "#E1E9FF",
+                        stroke: "#CECECE",
+                        "stroke-width": 1,
+                        opacity: 1
+                    }
                 },
                 text: {
-                    cursor: "default"
+                    attr: {
+                        cursor: "default"
+                    }
                 }
             },
             selected: {
                 box: {
-                    fill: "#E1E9FF",
-                    stroke: "black",
-                    "stroke-width": 1.2,
-                    opacity: 1
+                    attr: {
+                        fill: "#E1E9FF",
+                        stroke: "black",
+                        "stroke-width": 1.2,
+                        opacity: 1
+                    }
                 },
                 text: {
-                    cursor: "default",
-                    fill: "red"
+                    attr: {
+                        cursor: "default",
+                        fill: "red"
+                    }
                 }
             },
             wireframe: {
                 box: {
-                    fill: "#E4E4E4",
-                    stroke: "Gray",
-                    "stroke-width": 1.2,
-                    opacity: 0.5
+                    attr: {
+                        fill: "#E4E4E4",
+                        stroke: "Gray",
+                        "stroke-width": 1.2,
+                        opacity: 0.5
+                    }
                 },
                 text: {
-                    opacity: 0
+                    attr: {
+                        opacity: 0
+                    }
                 }
             }
         }
     },
     relation: {
         general: {
-            cardinalityText: {
-                attr: {
-                    "font-size": 9
-                },
-                box: {
-                    dimensions: {
-                        width: 30,
-                        height: 15
-                    },
-                    attr: {
-                        opacity: 1,
-                        fill: "#FFFFC6",
-                        "stroke-width": 1,
-                        stroke: "#CECECE"
-                    }
-                }
-            },
             connection: {
-                endConnector: {
-                    raphaelType: "circle",
-                    dimensionModifier: 0,
-                    dimensions: {
-                        radius: 6
+                connectors: {
+                    endConnector: {
+                        raphaelType: "circle",
+                        dimensionModifier: 0,
+                        dimensions: {
+                            radius: 6
+                        }
                     }
                 }
-
             }
         },
         subTypes: {
             mandatory: {
                 connection: {
-                    endConnector: {
-                        attr: {
-                            fill: "black",
-                            opacity: 1
+                    connectors: {
+                        endConnector: {
+                            attr: {
+                                fill: "black",
+                                opacity: 1
+                            }
                         }
                     }
                 }
             },
             optional: {
                 connection: {
-                    endConnector: {
-                        attr: {
-                            fill: "#fff7d7",
-                            opacity: 1
+                    connectors: {
+                        endConnector: {
+                            attr: {
+                                fill: "#fff7d7",
+                                opacity: 1
+                            }
                         }
                     }
                 }
             },
             cloneable: {
                 connection: {
-                    endConnector: {
-                        raphaelType: "circle",
-                        attr: {
-                            fill: "#fff7d7",
-                            opacity: 0
+                    connectors: {
+                        endConnector: {
+                            attr: {
+                                fill: "#fff7d7",
+                                opacity: 0
+                            }
                         }
                     }
-
                 }
             }
         }
     },
     groupRelation: {
         general: {
-            cardinalityText: {
-                attr: {
-                    "font-size": 9
-                },
-                box: {
-                    dimensions: {
-                        width: 30,
-                        height: 15
-                    },
-                    attr: {
-                        opacity: 1,
-                        fill: "#FFFFC6",
-                        "stroke-width": 1,
-                        stroke: "#CECECE"
-                    }
-                }
-            },
             rootArc: {
                 attr: {
                     stroke: "Black",
@@ -175,12 +183,14 @@ var styles = {
                 }
             },
             connection: {
-                endConnector: {
-                    raphaelType: "rect",
-                    dimensionModifier: 5, //used to center rect
-                    dimensions: {
-                        width: 10,
-                        height: 10
+                connectors: {
+                    endConnector: {
+                        raphaelType: "rect",
+                        dimensionModifier: 5, //used to center rect
+                        dimensions: {
+                            width: 10,
+                            height: 10
+                        }
                     }
                 }
             }
@@ -194,13 +204,16 @@ var styles = {
                     }
                 },
                 connection: {
-                    endConnector: {
-                        attr: {
-                            fill: "black",
-                            opacity: 1
+                    connectors: {
+                        endConnector: {
+                            attr: {
+                                fill: "black",
+                                opacity: 1
+                            }
                         }
                     }
                 }
+
             },
             xor: {
                 rootArc: {
@@ -210,10 +223,12 @@ var styles = {
                     }
                 },
                 connection: {
-                    endConnector: {
-                        attr: {
-                            fill: "#fff7d7",
-                            opacity: 1
+                    connectors: {
+                        endConnector: {
+                            attr: {
+                                fill: "#fff7d7",
+                                opacity: 1
+                            }
                         }
                     }
                 }
@@ -226,10 +241,12 @@ var styles = {
                     }
                 },
                 connection: {
-                    endConnector: {
-                        attr: {
-                            fill: "#fff7d7",
-                            opacity: 0
+                    connectors: {
+                        endConnector: {
+                            attr: {
+                                fill: "#fff7d7",
+                                opacity: 0
+                            }
                         }
                     }
                 }
@@ -240,8 +257,26 @@ var styles = {
         general: {
             connection: {
                 line: {
-                    "stroke-dasharray": ["- "],
-                    opacity: 0.5
+                    attr: {
+                        "stroke-dasharray": ["- "],
+                        opacity: 0.5
+                    }
+                },
+                connectors: {
+                    endConnector: {
+                        raphaelType: "circle",
+                        dimensionModifier: 0,
+                        dimensions: {
+                            radius: 3
+                        }
+                    },
+                    startConnector: {
+                        raphaelType: "circle",
+                        dimensionModifier: 0,
+                        dimensions: {
+                            radius: 3
+                        }
+                    }
                 }
             }
         },
@@ -249,29 +284,62 @@ var styles = {
             dependency: {
                 connection: {
                     line: {
-                        stroke: "green"
+                        attr: {
+                            stroke: "green"
+                        }
+                    },
+                    connectors: {
+                        startConnector: {
+                            attr: {
+                                fill: "green",
+                                stroke: "green"
+                            }
+                        },
+                        endConnector: {
+                            attr: {
+                                fill: "green",
+                                stroke: "green"
+                            }
+                        }
                     }
                 }
             },
             exclusion: {
                 connection: {
                     line: {
-                        stroke: "red"
+                        attr: {
+                            stroke: "red"
+                        }
+                    },
+                    connectors: {
+                        startConnector: {
+                            attr: {
+                                fill: "red",
+                                stroke: "red"
+                            }
+                        },
+                        endConnector: {
+                            attr: {
+                                fill: "red",
+                                stroke: "red"
+                            }
+                        }
                     }
                 }
             }
         }
     }
-
 }
 var systemDefaults = {
     common: {
         outerElement: {
-            stroke: "black",
-            fill: "black",
-            "stroke-width": 15,
-            opacity: 0,
-            cursor: "default"
+            attr: {
+                stroke: "black",
+                fill: "black",
+                "stroke-width": 15,
+                opacity: 0,
+                cursor: "default"
+            }
         }
     },
     uiElementStates: {
@@ -922,8 +990,27 @@ var PropertiesComponent = function (container, diagramContext) {
                     displayTitle: false,
                     tableLayout: true,
                     fields: {
-
-
+                        name: {
+                            label: "Name",
+                            dataName: "Name",
+                            controlType: controlTypes.textbox.name
+                        },
+                        description: {
+                            label: "Description",
+                            dataName: "Description",
+                            controlType: controlTypes.textarea.name
+                        },
+                        compositionRuleType: {
+                            label: "Composition type",
+                            dataName: "CompositionRuleType",
+                            controlType: controlTypes.dropdown.name,
+                            defaultOptions: systemDefaults.enums.compositionRuleTypes
+                        },
+                        mutual: {
+                            label: "Mutual",
+                            dataName: "Mutual",
+                            controlType: controlTypes.checkbox.name
+                        }
                     }
 
                 }
@@ -1066,7 +1153,7 @@ var DiagramContext = function (canvasContainer) {
         var _currentState = systemDefaults.uiElementStates.unselected;
         var _dataObj = dataObj;
         var _glow = null;
-        var boxWidth = styles.feature.general.box.dimensions.width, boxHeight = styles.feature.general.box.dimensions.height;
+        var boxWidth = UIObjectStyles.feature.general.box.dimensions.width, boxHeight = UIObjectStyles.feature.general.box.dimensions.height;
         var _thisUIFeature = this;
         var _relatedCompositeElements = [];
 
@@ -1097,7 +1184,7 @@ var DiagramContext = function (canvasContainer) {
             _outerElement.mouseover(function (e) {
                 if (_glow == null) {
                     _innerElements.box.getBBox(); //hack fix for weird RaphaelJS bug
-                    _glow = _innerElements.box.glow(styles.common.glow);
+                    _glow = _innerElements.box.glow(commonStyles.glow.attr);
                 }
             }).mouseout(function (e) {
                 if (_glow != null) {
@@ -1204,11 +1291,11 @@ var DiagramContext = function (canvasContainer) {
             y = y == undefined ? 40.5 : y;
 
             //Create inner elements
-            _innerElements.box = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(styles.feature.states.unselected.box);
-            _innerElements.text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, dataObj.Name).attr(styles.feature.states.unselected.text);
+            _innerElements.box = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states[_currentState].box.attr);
+            _innerElements.text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, dataObj.Name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
 
             //Create the main outer element
-            _outerElement = _canvas.rect(x, y, boxWidth, boxHeight).attr(systemDefaults.common.outerElement);
+            _outerElement = _canvas.rect(x, y, boxWidth, boxHeight).attr(systemDefaults.common.outerElement.attr);
 
             //Setup 
             makeSelectable();
@@ -1217,7 +1304,7 @@ var DiagramContext = function (canvasContainer) {
         }
         this.ChangeState = function (state) {
             _currentState = state;
-            _innerElements.box.attr(styles.feature.states[state].box);
+            _innerElements.box.attr(UIObjectStyles.feature.states[state].box.attr);
         }
         this.Update = function (newDataObj) {
             _dataObj.Name = newDataObj.Name;
@@ -1454,8 +1541,8 @@ var DiagramContext = function (canvasContainer) {
 
             //Get points
             var rootPoint = firstConnection.InnerElements.line.getPointAtLength(0);
-            var pointA = firstConnection.InnerElements.line.getPointAtLength(styles.groupRelation.general.rootArc.dimensions.length);
-            var pointB = lastConnection.InnerElements.line.getPointAtLength(styles.groupRelation.general.rootArc.dimensions.length);
+            var pointA = firstConnection.InnerElements.line.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length);
+            var pointB = lastConnection.InnerElements.line.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length);
 
             //Get arc modifiers
             var currentOrientation = settings.diagramContext.fixedOrientation;
@@ -1473,7 +1560,7 @@ var DiagramContext = function (canvasContainer) {
             //Create the path
             var path = ["M", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3),
                     "L", pointA.x.toFixed(3), pointA.y.toFixed(3),
-            //"L", pointB.x.toFixed(3), pointB.y.toFixed(3),
+            //"L", pointB.x.toFixed(3), pointB.y.toFixed(3), - straight lines
                     "A", rx, ry, 0, 0, arcSweep, pointB.x.toFixed(3), pointB.y.toFixed(3),
                     "L", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3)].join(",");
             return path;
@@ -1559,8 +1646,8 @@ var DiagramContext = function (canvasContainer) {
 
             //Create Arc
             var arcPath = getArcPath(_innerElements.connections[0], _innerElements.connections[_innerElements.connections.length - 1]);
-            _innerElements.rootArc = _canvas.path(arcPath).attr(styles.groupRelation.general.rootArc.attr);
-            _innerElements.rootArc.attr(styles.groupRelation.subTypes[_thisUIGroupRelation.GetSubTypeName()].rootArc.attr);
+            _innerElements.rootArc = _canvas.path(arcPath).attr(UIObjectStyles.groupRelation.general.rootArc.attr);
+            _innerElements.rootArc.attr(UIObjectStyles.groupRelation.subTypes[_thisUIGroupRelation.GetSubTypeName()].rootArc.attr);
 
             //Setup cardinality element
             toggleCardinalityElement();
@@ -1583,7 +1670,7 @@ var DiagramContext = function (canvasContainer) {
             for (var i = 0; i < _innerElements.connections.length; i++) {
                 _innerElements.connections[i].Update(); //endConnector
             }
-            _innerElements.rootArc.attr(styles.groupRelation.subTypes[_thisUIGroupRelation.GetSubTypeName()].rootArc.attr);
+            _innerElements.rootArc.attr(UIObjectStyles.groupRelation.subTypes[_thisUIGroupRelation.GetSubTypeName()].rootArc.attr);
             toggleCardinalityElement(); //cardinalityElement
 
         }
@@ -1701,7 +1788,6 @@ var DiagramContext = function (canvasContainer) {
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
-
             //Create a new UIConnection
             _innerElements.connection = new UIConnection(_thisUICompositionRule, firstFeature.InnerElements.box, secondFeature.InnerElements.box, true, true);
             _innerElements.connection.CreateGraphicalRepresentation();
@@ -1726,6 +1812,15 @@ var DiagramContext = function (canvasContainer) {
             removeFromFeature(firstFeature);
             removeFromFeature(secondFeature);
         }
+        this.Update = function (newDataObj) {
+            _dataObj.Name = newDataObj.Name;
+            _dataObj.Description = newDataObj.Description;
+            _dataObj.CompositionRuleType = newDataObj.CompositionRuleType;
+            _dataObj.Mutual = newDataObj.Mutual;
+
+            //Update visuals
+            _innerElements.connection.Update();
+        }
 
         //Event handlers
         this.OnAdjacentFeatureDeleted = function (UIFeature) {
@@ -1737,24 +1832,33 @@ var DiagramContext = function (canvasContainer) {
     }
     var UIConnection = function (compositeElement, parentBox, childBox, invertOrientation, toBack) {
 
-        //Fields
+        //Standard fields
         var _guid = jQuery.Guid.New(); //special ui identifier
         var _innerElements = {
             line: null,
-            endConnector: null
+            connectors: {
+                startConnector: null,
+                endConnector: null
+            }
         };
         var _diagramContext = diagramContext;
-        var _currentState = systemDefaults.uiElementStates.unselected;
-        var _compositeElement = compositeElement;
-        var _outerElement = null;
         var _glow = null, _handlers = null;
+        var _currentState = systemDefaults.uiElementStates.unselected;
+        var _outerElement = null;
         var _thisUIConnection = this;
+
+        //Special fields
+        var _compositeElement = compositeElement;
+        var _currentPath = null;
         var _invertOrientation = (invertOrientation != undefined) ? invertOrientation : null; //parameter used to force the path to draw in the opposite orientation
         var _toBack = (toBack != undefined) ? toBack : null; //parameter used to draw connection behind other elements
 
         //Properties
         this.GUID = _guid;
         this.InnerElements = _innerElements;
+        this.GetCurrentPath = function () {
+            return _currentPath;
+        }
 
         //Private methods
         var getPath = function (objA, objB) {
@@ -1881,47 +1985,55 @@ var DiagramContext = function (canvasContainer) {
         }
         function refresh() {
             //Calculate a new path
-            var newPath = getPath(parentBox, childBox);
+            _currentPath = getPath(parentBox, childBox);
 
             //Refresh line 
             var line = _innerElements.line;
-            _outerElement.attr({ path: newPath.path });
-            line.attr({ path: newPath.path });
+            _outerElement.attr({ path: _currentPath.path });
+            line.attr({ path: _currentPath.path });
 
-            //Refresh position of endConnector
-            if (_innerElements.endConnector != null) {
-                var endConnectorType = styles[_compositeElement.GetTypeName()].general.connection.endConnector;
-                var xPos = newPath.endPoint.x - endConnectorType.dimensionModifier, yPos = newPath.endPoint.y - endConnectorType.dimensionModifier;
-                _innerElements.endConnector.attr({ cx: xPos, cy: yPos, x: xPos, y: yPos });
+            //Refresh position of connectors
+            if (_innerElements.startConnector != null) {
+                _innerElements.startConnector.RefreshGraphicalRepresentation();
             }
+            if (_innerElements.endConnector != null) {
+                _innerElements.endConnector.RefreshGraphicalRepresentation();
+            }
+        }
+        function getCurrentStyle() {
+            var commonStyle = commonStyles.connection.states[_currentState];
+            var generalStyle = UIObjectStyles[_compositeElement.GetTypeName()].general.connection;
+            var subTypeStyle = UIObjectStyles[_compositeElement.GetTypeName()].subTypes[_compositeElement.GetSubTypeName()].connection;
+            var currentStyle = $.extend(true, {}, commonStyle, generalStyle, subTypeStyle);
+
+            return currentStyle;
         }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
 
-            //Create line
-            pathInfo = getPath(parentBox, childBox);
-            _innerElements.line = _canvas.path(pathInfo.path);
+            //Get the current style
+            var currentStyle = getCurrentStyle();
 
-            //Set line styles
-            var generalStyle = styles[_compositeElement.GetTypeName()].general.connection.line;
-            if (generalStyle != undefined)
-                _innerElements.line.attr(generalStyle);
-            var specificLineStyle = styles[_compositeElement.GetTypeName()].subTypes[_compositeElement.GetSubTypeName()].connection.line;
-            var commonLineStyle = styles.common.connection.states[_currentState].line;
-            var style = (specificLineStyle != undefined) ? specificLineStyle : commonLineStyle;
-            _innerElements.line.attr(style);
+            //Create line
+            _currentPath = getPath(parentBox, childBox);
+            _innerElements.line = _canvas.path(_currentPath.path);
+            _innerElements.line.attr(currentStyle.line.attr);
+
+            //Create startConnector
+            if (currentStyle.connectors.startConnector != undefined) {
+                _innerElements.startConnector = new UIConnectorElement(_thisUIConnection, currentStyle.connectors.startConnector, currentStyle.connectors.startConnector.attr, "startPoint");
+                _innerElements.startConnector.CreateGraphicalRepresentation();
+            }
 
             //Create endConnector
-            var endConnectorType = styles[_compositeElement.GetTypeName()].general.connection.endConnector;
-            if (endConnectorType != undefined) {
-                var xPos = pathInfo.endPoint.x - endConnectorType.dimensionModifier, yPos = pathInfo.endPoint.y - endConnectorType.dimensionModifier; //position for endConnector
-                _innerElements.endConnector = eval("_canvas." + endConnectorType.raphaelType + "(xPos, yPos" + paramsToString(endConnectorType.dimensions) + ")");
-                _innerElements.endConnector.attr(styles[_compositeElement.GetTypeName()].subTypes[_compositeElement.GetSubTypeName()].connection.endConnector.attr);
+            if (currentStyle.connectors.endConnector != undefined) {
+                _innerElements.endConnector = new UIConnectorElement(_thisUIConnection, currentStyle.connectors.endConnector, currentStyle.connectors.endConnector.attr, "endPoint");
+                _innerElements.endConnector.CreateGraphicalRepresentation();
             }
 
             //Create the main outer element
-            _outerElement = _canvas.path(pathInfo.path).attr(systemDefaults.common.outerElement);
+            _outerElement = _canvas.path(_currentPath.path).attr(systemDefaults.common.outerElement.attr);
 
             //
             if (toBack) {
@@ -1933,13 +2045,14 @@ var DiagramContext = function (canvasContainer) {
             refresh();
         }
         this.ChangeState = function (state) {
+            //
             _currentState = state;
-            _innerElements.line.attr(styles.common.connection.states[state].line);
-            _thisUIConnection.Update();
+            _innerElements.line.attr(commonStyles.connection.states[_currentState].line.attr);
+            _thisUIConnection.Update(); //hack-fix for state style overriding line style in CompositionRule
         }
         this.ShowGlow = function () {
             if (_glow == null) {
-                _glow = _innerElements.line.glow(styles.common.glow);
+                _glow = _innerElements.line.glow(commonStyles.glow.attr);
             }
         }
         this.HideGlow = function () {
@@ -1956,22 +2069,77 @@ var DiagramContext = function (canvasContainer) {
 
             //Remove Raphael objects
             _innerElements.line.remove();
-            if (_innerElements.endConnector != null)
-                _innerElements.endConnector.remove();
+            if (_innerElements.endConnector != null) {
+                _innerElements.endConnector.Delete();
+                _innerElements.endConnector = null;
+            }
+            if (_innerElements.startConnector != null) {
+                _innerElements.startConnector.Delete();
+                _innerElements.startConnector = null;
+            }
             _outerElement.remove();
-            if (_glow != null)
+            _outerElement = null;
+            if (_glow != null) {
                 _glow.remove();
+                _glow = null;
+            }
         }
         this.Update = function () {
-            //Update line
-            var specificLineStyle = styles[_compositeElement.GetTypeName()].subTypes[_compositeElement.GetSubTypeName()].connection.line;
-            var commonLineStyle = styles.common.connection.states[_currentState].line;
-            var style = (specificLineStyle != undefined) ? specificLineStyle : commonLineStyle;
-            _innerElements.line.attr(style);
 
-            //Update EndConnector
-            if (_innerElements.endConnector != null)
-                _innerElements.endConnector.attr(styles[_compositeElement.GetTypeName()].subTypes[_compositeElement.GetSubTypeName()].connection.endConnector.attr);
+            //Get the current style
+            var currentStyle = getCurrentStyle();
+
+            //Update line
+            _innerElements.line.attr(currentStyle.line.attr);
+
+            //Update Connectors
+            if (_innerElements.startConnector != null) {
+                _innerElements.startConnector.Update(currentStyle.connectors.startConnector.attr);
+
+            }
+            if (_innerElements.endConnector != null) {
+                _innerElements.endConnector.Update(currentStyle.connectors.endConnector.attr);
+
+            }
+        }
+    }
+    var UIConnectorElement = function (parentConnection, raphaelConnectorType, connectorStyle, positionType) {
+
+        //Fields
+        var _guid = jQuery.Guid.New(); //special ui identifier
+        var _innerElements = {
+            raphaelElem: null
+        };
+        var _diagramContext = diagramContext;
+        var _connectionElement = parentConnection;
+
+        //Properties
+        this.GUID = _guid;
+        this.InnerElements = _innerElements;
+
+        //Private methods
+        function refresh() {
+            var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.dimensionModifier, yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.dimensionModifier;
+            _innerElements.raphaelElem.attr({ cx: xPos, cy: yPos, x: xPos, y: yPos });
+        }
+
+        //Public methods
+        this.CreateGraphicalRepresentation = function () {
+
+            //Create raphaelElem
+            var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.dimensionModifier, yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.dimensionModifier; //position for endConnector
+            _innerElements.raphaelElem = eval("_canvas." + raphaelConnectorType.raphaelType + "(xPos, yPos" + paramsToString(raphaelConnectorType.dimensions) + ")");
+            _innerElements.raphaelElem.attr(connectorStyle);
+        }
+        this.RefreshGraphicalRepresentation = function () {
+            refresh();
+        }
+        this.Delete = function () {
+            _innerElements.raphaelElem.remove();
+            _innerElements.raphaelElem = null;
+        }
+        this.Update = function (newConnectorStyle) {
+            _innerElements.raphaelElem.attr(newConnectorStyle);
         }
     }
     var UICardinalityLabel = function (compositeElement, calculatePositionFunction) {
@@ -1984,7 +2152,6 @@ var DiagramContext = function (canvasContainer) {
         };
         var _diagramContext = diagramContext;
         var _outerElement = null;
-        var cardinalityBoxWidth = styles[compositeElement.GetTypeName()].general.cardinalityText.box.dimensions.width, cardinalityBoxHeight = styles[compositeElement.GetTypeName()].general.cardinalityText.box.dimensions.height;
         var _thisUICardinalityLabel = this;
 
         //Properties
@@ -1993,17 +2160,30 @@ var DiagramContext = function (canvasContainer) {
 
         //Private methods
         function refresh() {
+            //Setup styles
+            var commonStyle = commonStyles.cardinalityLabel;
+            var currentStyle = commonStyle;
+
+            //
             var labelPoint = calculatePositionFunction();
-            _innerElements.box.attr({ x: labelPoint.x - cardinalityBoxWidth / 2, y: labelPoint.y - cardinalityBoxHeight / 2 });
+            _innerElements.box.attr({ x: labelPoint.x - currentStyle.box.dimensions.width / 2, y: labelPoint.y - currentStyle.box.dimensions.height / 2 });
             _innerElements.text.attr({ x: labelPoint.x, y: labelPoint.y });
 
         }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
+
+            //Setup styles
+            var commonStyle = commonStyles.cardinalityLabel;
+            var currentStyle = commonStyle;
+
+            //Create box and text
             var labelPoint = calculatePositionFunction();
-            _innerElements.box = _canvas.rect(labelPoint.x - cardinalityBoxWidth / 2, labelPoint.y - cardinalityBoxHeight / 2, cardinalityBoxWidth, cardinalityBoxHeight, 0).attr(styles[compositeElement.GetTypeName()].general.cardinalityText.box.attr);
-            _innerElements.text = _canvas.text(labelPoint.x, labelPoint.y, "[" + compositeElement.GetDataObj().LowerBound + ".." + compositeElement.GetDataObj().UpperBound + "]").attr(styles[compositeElement.GetTypeName()].general.cardinalityText.attr);
+            _innerElements.box = _canvas.rect(labelPoint.x - currentStyle.box.dimensions.width / 2, labelPoint.y - currentStyle.box.dimensions.height / 2, currentStyle.box.dimensions.width, currentStyle.box.dimensions.height, 0);
+            _innerElements.box.attr(currentStyle.box.attr);
+            _innerElements.text = _canvas.text(labelPoint.x, labelPoint.y, "[" + compositeElement.GetDataObj().LowerBound + ".." + compositeElement.GetDataObj().UpperBound + "]");
+            _innerElements.text.attr(currentStyle.text.attr);
         }
         this.RefreshGraphicalRepresentation = function () {
             refresh();
@@ -2088,8 +2268,8 @@ var DiagramContext = function (canvasContainer) {
 
             //Create wireframe
             $(_canvasContainer).css("cursor", "crosshair");
-            var boxWidth = styles.feature.general.box.dimensions.width, boxHeight = styles.feature.general.box.dimensions.height;
-            var wireframebox = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
+            var boxWidth = UIObjectStyles.feature.general.box.dimensions.width, boxHeight = UIObjectStyles.feature.general.box.dimensions.height;
+            var wireframebox = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states.wireframe.box.attr);
             var mousemoveHandler = function (e) {
                 var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2;
                 var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2;
