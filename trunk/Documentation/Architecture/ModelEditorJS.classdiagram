@@ -1,42 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel" dslVersion="1.0.0.0" Id="c49a1113-228c-4e4b-889a-836cf6b89752" name="ModelEditorJS" linkedPackageId="5705e1b5-45f0-4201-ad0d-94691a6e38bd" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="c49a1113-228c-4e4b-889a-836cf6b89752" name="ModelEditorJS" linkedPackageId="5705e1b5-45f0-4201-ad0d-94691a6e38bd" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
   <packagedElements>
-    <logicalClassDesignerModelHasTypes>
-      <class Id="b1138dde-fcea-4885-a1b1-b04e6114c8cd" name="ContextDiagram" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <elementDefinition Id="cd9b4dae-ecf8-4118-8c01-1f6dd7830e22" />
-      </class>
-    </logicalClassDesignerModelHasTypes>
-    <logicalClassDesignerModelHasTypes>
-      <class Id="ed27f7cb-128d-4fb6-ae09-3f4d237fb122" name="PropertiesComponent" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <elementDefinition Id="f9220b43-9d90-48c7-af0d-461bf4062b8c" />
-      </class>
-    </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
       <class Id="d8f1fb48-9426-4177-807d-a189926033c5" name="UIFeature" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="883a2184-a902-426c-bba3-2265ef463166" />
-      </class>
-    </logicalClassDesignerModelHasTypes>
-    <logicalClassDesignerModelHasTypes>
-      <class Id="b0e0e71e-c43a-4d63-bf26-76d66c482dcc" name="CompositeElement" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <elementDefinition Id="dedf65f5-d62c-409a-9fef-90fa380d6fc9" />
-        <targetEnds>
-          <association Id="bff6beea-49f4-435e-a68c-c92928fff242" isDerived="false" sourceEndRoleName="_ContainingElement" targetEndRoleName="Connection" isLeaf="false" isAbstract="false">
-            <classMoniker Id="94396768-d8a3-494a-a454-25a20ddeb669" LastKnownName="UIConnection" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd Id="44181e3a-8823-4bf8-b47b-ac4dd116b1ed" name="_ContainingElement" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
-                  <elementDefinition Id="8db83287-66c5-4ce1-ac05-bcd41d2373c3" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd Id="0cb03d0d-9c8a-48f1-8a47-dea174a16114" name="Connection" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                  <elementDefinition Id="4aec2e98-bc1f-401b-95c6-1d1093c2bcc3" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-            <elementDefinition Id="f7364a78-4c4f-472a-8059-5bf9104a1712" />
-          </association>
-        </targetEnds>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -45,8 +12,108 @@
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="94396768-d8a3-494a-a454-25a20ddeb669" name="UIConnection" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="94396768-d8a3-494a-a454-25a20ddeb669" name="UIRelation" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="5f31ec7d-a3cd-49c7-b3fe-d0ed947b6b91" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="e6abf4a6-1822-489c-ba1d-f2cc7d370c88" name="UIConnection" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="fe2803b5-8295-46c7-af17-b2a624d576fc" />
+        <targetEnds>
+          <association Id="d0f83708-cf16-4994-bcac-8574f42a1ce0" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="26433673-ebd5-426f-991f-da0198409028" LastKnownName="UICardinalityLabel" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="737e4e11-1708-4a8c-b215-3ba7ee0a8f1c" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="693920c3-0eda-4b6c-9f3d-85da4ba8c030" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="b7f7d915-8396-40e0-a6e4-5ba5bf0fc8ae" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <lowerValueInternal>
+                    <literalString Id="7de6edc0-35aa-41d5-bcfb-570e5ce168fc" name="Lower" value="0">
+                      <elementDefinition Id="d1a50191-890b-4322-9420-c38f3d399ad4" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="a0de53d2-7303-4bad-9a25-7e4a6d1881cf" name="Upper" value=".1">
+                      <elementDefinition Id="674a3cad-9557-40f2-b7f9-d4e8c1e0a39b" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="c7a77281-d2c1-4ff7-af80-7d4125412014" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="acbb3215-42d3-46bd-9bfd-8ac0048b52c5" />
+          </association>
+          <association Id="67d7dce4-8007-4e11-840d-cbb9be31dd06" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="7906e6d9-a4c3-4ec1-8e55-2ecb4f6d9bcc" LastKnownName="UIConnector" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="9e4ed1d9-6cac-440e-bbc8-a691d2b05886" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="95c774b9-c555-4acc-ab65-0361c7b83699" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d2138a00-6395-4114-9214-3aae2cab3014" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <lowerValueInternal>
+                    <literalString Id="81b3e223-4cdf-41e6-9025-34bfb77c8bb4" name="Lower" value="0">
+                      <elementDefinition Id="97037a76-113e-4644-9cb8-730d73c5d98a" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="9298fdbb-aa59-40b8-b118-91e25fd56c13" name="Upper" value=".2">
+                      <elementDefinition Id="f483fdcb-687f-42c7-a7c2-cab3870eaaec" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="34b00b89-43c6-4a16-85d2-4f59bab7ca00" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="348c3024-aed4-44d4-8960-734a00db1745" />
+          </association>
+          <association Id="de630bdd-c07a-4f12-bc67-51b5a074d6c5" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="f705b566-d1d4-491b-be63-3134c9cf82ce" LastKnownName="Line" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="80ef6bb8-e8b2-433c-8785-6376f7618e5e" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="036d08b3-a186-4292-a4f5-5a5f3ab2fab2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="42de550c-9e1e-40d2-ae30-2fade8ab99e2" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="738551e0-2c48-44c6-937b-6cd61e7a0d2a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="d2cf8784-acc7-49d6-88c4-d90b5bab20f8" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="691177ba-a5a5-4641-a7dc-b114882544f3" name="UICompositeRule" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="3f9e0a5f-f726-4e86-aed6-0dbd0c871b98" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="7906e6d9-a4c3-4ec1-8e55-2ecb4f6d9bcc" name="UIConnector" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="eac761c4-129a-4407-bb07-1b9d09517ed4" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="26433673-ebd5-426f-991f-da0198409028" name="UICardinalityLabel" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="5a23174e-b7f3-4cf6-8071-e7b55ccf2da8" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="e36004df-34a4-4602-a137-c5e2747655c8" name="UIGenericObject" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="9e2a32ff-ec86-4636-a9ca-d27e845751cb" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="f705b566-d1d4-491b-be63-3134c9cf82ce" name="Line" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="5f8ae8fb-6141-48c5-8ee6-836189b31e7a" />
       </class>
     </logicalClassDesignerModelHasTypes>
   </packagedElements>

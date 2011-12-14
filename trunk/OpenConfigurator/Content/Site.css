@@ -605,13 +605,30 @@ a:hover
 }
 /*------------------------------------------------------------------------------*/
 /*ModelEditor-------------------------------------------------------------------*/
+
+.LeftColumn 
+{
+    float:left;
+}
+
+.CenterColumn 
+{
+    float:right;
+}
+
+.RightColumn 
+{
+    float:right;
+}
+
+/*ToolBox*/
 #ToolBox
 {
     float: left;
     margin-top: 30px;
     width: 185px;
+    
 }
-
 
 /*PropertiesBox*/
 #PropertiesBox
@@ -678,9 +695,6 @@ a:hover
     margin-top: 2px;
     cursor: default;
 }
-
-
-
 #PropertiesBox .AreaDiv .InnerContainer .ListDiv .Selected
 {
     background-color: #FFEDA4;
@@ -722,7 +736,6 @@ a:hover
     
     width: 80%;
 }
-
 #ModelDiagramBox #SVGCanvasWrapper 
 {
     overflow:scroll;
@@ -742,6 +755,16 @@ a:hover
     text-align: center;
 }
 
+
+/*ExplorerBox*/
+#ModelExplorerBox 
+{
+     float: left;
+    margin-top: 30px;
+    width: 185px;
+    height:487px;
+    clear:left;
+}
 /*Overriden stuff*/
 .OuterMenuArea .InnerMenuArea .MenuItemSeparator
 {

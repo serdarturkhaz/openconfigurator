@@ -167,65 +167,86 @@
         </div>
     </div>
 }
-@*Toolbox*@
-<div id="ToolBox" class="RoundedBox">
-    <div class="BoxHeader">
-        <div class="BoxInnerHeader">
-            <span class="HeaderLabel">Toolbox</span>
+<div class="LeftColumn">
+    @*Toolbox*@
+    <div id="ToolBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Toolbox</span>
+            </div>
         </div>
-    </div>
-    <div class="BoxContent">
-        <ul class="ActionList">
-            <li class="Button-Normal" id="NewFeatureButton">
-                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span> <span class="underline">F</span>eature</span> </li>
-            <li class="Button-Normal" id="NewRelationButton">
-                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span> <span class="underline">R</span>elation</span> </li>
-            <li class="Button-Normal" id="NewGroupRelationButton">
-                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span> <span class="underline">G</span>roup Relation</span> </li>
-            <li class="Button-Normal" id="NewCompositionRuleButton">
-                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span> Co<span class="underline">m</span>position Rule</span> </li>
-        </ul>
-    </div>
-    <div class="BoxFooter">
-        <div class="BoxInnerFooter">
+        <div class="BoxContent">
+            <ul class="ActionList">
+                <li class="Button-Normal" id="NewFeatureButton">
+                    <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                    <span><span class="underline">F</span>eature</span> </li>
+                <li class="Button-Normal" id="NewRelationButton">
+                    <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                    <span><span class="underline">R</span>elation</span> </li>
+                <li class="Button-Normal" id="NewGroupRelationButton">
+                    <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                    <span><span class="underline">G</span>roup Relation</span> </li>
+                <li class="Button-Normal" id="NewCompositionRuleButton">
+                    <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                    <span>Co<span class="underline">m</span>position Rule</span> </li>
+            </ul>
         </div>
-    </div>
-</div>
-@*Properties*@
-<div id="PropertiesBox" class="RoundedBox">
-    <div class="BoxHeader">
-        <div class="BoxInnerHeader">
-            <span class="HeaderLabel">Properties - <span id="SetTypeLabel"></span></span>
-        </div>
-    </div>
-    <div class="BoxContent">
-        <div id="MainContainer">
-        </div>
-    </div>
-    <div class="BoxFooter">
-        <div class="BoxInnerFooter">
-        </div>
-    </div>
-</div>
-@*ModelDiagram*@
-<div id="ModelDiagramBox" class="RoundedBox">
-    <div class="BoxHeader">
-        <div class="BoxInnerHeader">
-            <span class="HeaderLabel">Model Diagram</span>
-        </div>
-    </div>
-    <div class="BoxContent">
-        <div id="SVGCanvasWrapper">
-            <div id="SVGCanvas">
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
             </div>
         </div>
     </div>
-    <div class="BoxFooter">
-        <div class="BoxInnerFooter">
+    @*ModelExplorerBox*@
+    <div id="ModelExplorerBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Model Explorer</span>
+            </div>
+        </div>
+        <div class="BoxContent">
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="RightColumn">
+    @*Properties*@
+    <div id="PropertiesBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Properties - <span id="SetTypeLabel"></span></span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div id="MainContainer">
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="CenterColumn">
+    @*ModelDiagram*@
+    <div id="ModelDiagramBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Model Diagram</span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div id="SVGCanvasWrapper">
+                <div id="SVGCanvas">
+                </div>
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
         </div>
     </div>
 </div>

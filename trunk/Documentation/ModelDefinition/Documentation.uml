@@ -3690,7 +3690,7 @@ User Input
             isAbstract="false">
             <classMoniker
               Id="5f31ec7d-a3cd-49c7-b3fe-d0ed947b6b91"
-              LastKnownName="UIConnection"
+              LastKnownName="UIRelation"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -3734,7 +3734,7 @@ User Input
     <packageHasNamedElement>
       <class
         Id="5f31ec7d-a3cd-49c7-b3fe-d0ed947b6b91"
-        name="UIConnection"
+        name="UIRelation"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />
@@ -4068,6 +4068,202 @@ User Input
             name="Consequence Rules" />
         </ownedLiterals>
       </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="fe2803b5-8295-46c7-af17-b2a624d576fc"
+        name="UIConnection"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="acbb3215-42d3-46bd-9bfd-8ac0048b52c5"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="5a23174e-b7f3-4cf6-8071-e7b55ccf2da8"
+              LastKnownName="UICardinalityLabel"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="693920c3-0eda-4b6c-9f3d-85da4ba8c030"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="c7a77281-d2c1-4ff7-af80-7d4125412014"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="d1a50191-890b-4322-9420-c38f3d399ad4"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="674a3cad-9557-40f2-b7f9-d4e8c1e0a39b"
+                      name="Upper"
+                      value=".1" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="348c3024-aed4-44d4-8960-734a00db1745"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="eac761c4-129a-4407-bb07-1b9d09517ed4"
+              LastKnownName="UIConnector"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="95c774b9-c555-4acc-ab65-0361c7b83699"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="34b00b89-43c6-4a16-85d2-4f59bab7ca00"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="97037a76-113e-4644-9cb8-730d73c5d98a"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="f483fdcb-687f-42c7-a7c2-cab3870eaaec"
+                      name="Upper"
+                      value=".2" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="d2cf8784-acc7-49d6-88c4-d90b5bab20f8"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="5f8ae8fb-6141-48c5-8ee6-836189b31e7a"
+              LastKnownName="Line"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="036d08b3-a186-4292-a4f5-5a5f3ab2fab2"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="738551e0-2c48-44c6-937b-6cd61e7a0d2a"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f9e89628-d012-4971-8497-c3054197cd0e"
+        name="UIConnectorElement"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="3f9e0a5f-f726-4e86-aed6-0dbd0c871b98"
+        name="UICompositeRule"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="eac761c4-129a-4407-bb07-1b9d09517ed4"
+        name="UIConnector"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="5a23174e-b7f3-4cf6-8071-e7b55ccf2da8"
+        name="UICardinalityLabel"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9e2a32ff-ec86-4636-a9ca-d27e845751cb"
+        name="UIGenericObject"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="5f8ae8fb-6141-48c5-8ee6-836189b31e7a"
+        name="Line"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
