@@ -1142,10 +1142,55 @@ var ModelExplorer = function (container) {
 
     //Constructor/Initalizers
     this.Initialize = function () {
-        //var tree = $(container).tree("c:\\");
-        //var t1 = tree.createChild("Document and Settings").createChild('My Documents').createChild('jquery.js');
-        //tree.paint();
+        options = {
+            data: [
+                {
+                    ID: null,
+                    Name: "Features",
+                    typeName: "folder",
+                    children: [
+                        {
+                            ID: null,
+                            Name: "Root",
+                            typeName: "feature"
+                        },
+                        {
+                            ID: null,
+                            Name: "Feature01",
+                            typeName: "feature"
+                        }
 
+                    ]
+                },
+                {
+                    ID: null,
+                    Name: "Feature Types",
+                    typeName: "folder"
+                },
+                {
+                    ID: null,
+                    Name: "Composition Rules",
+                    typeName: "folder"
+                },
+                {
+                    ID: null,
+                    Name: "Custom Rules",
+                    typeName: "folder"
+                }
+
+            ],
+            types: {
+                folder: {
+                    idField: "ID",
+                    labelField: "Name"
+                },
+                feature: {
+                    idField: "ID",
+                    labelField: "Name"
+                }
+            }
+        }
+        var tree = $(container).simpleTree(options);
     }
 }
 var DiagramContext = function (canvasContainer) {

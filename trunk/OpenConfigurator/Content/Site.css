@@ -366,80 +366,71 @@ html > body .ui-pnotify
 }
 /*------------------------------------------------------------------------------*/
 /*SimpleTree--------------------------------------------------------------------*/
-table.tsn-collapse-table
+.simpleTree
 {
-    border-collapse: collapse;
-    border: none;
-    padding: 0px;
-    margin: 0px;
+    background:#f7f7f7;
 }
-td.tsn-blank-square
+.simpleTree ul
 {
-    width: 10px;
-    height: 10px;
-    padding: 0px;
-    margin: 0px;
+    padding:0;
+    margin:0;
+    box-sizing: border-box;
+    width: 100%;
 }
-span.tsn-content
+.simpleTree .row
 {
-    font: 13px;
+    list-style-type:none;
+    margin-bottom:2px;
 }
-span.tsn-content-editable
+.simpleTree .row div.expander
 {
-    font: 13px;
+    width: 16px;
+    height: 16px;
+    display:inline-block;
 }
-td.tsn-L-square
+.simpleTree .row div.expanded
 {
-    width: 10px;
-    height: 10px;
-    width: 10px;
-    height: 10px;
-    border-left: 1px dashed #666;
-    border-bottom: 1px dashed #666;
-    padding: 0px;
-    margin: 0px;
+    background: url(themes/base/images/controls/minus.png) no-repeat center center;
+    cursor:pointer;
 }
-td.tsn-square-leftLine
+.simpleTree .row div.collapsed
 {
-    width: 10px;
-    height: 10px;
-    border-left: 1px dashed #666;
-    padding: 0px;
-    margin: 0px;
+    background: url(themes/base/images/controls/plus.png) no-repeat center center;
+    cursor:pointer;
 }
-td.tsn-rect-leftline
+
+.simpleTree .row .node 
 {
-    width: 10px;
-    height: 20px;
-    border-left: 1px dashed #666;
-    padding: 0px;
-}
-td.tsn-rect-blank
-{
-    width: 10px;
-    height: 20px;
-    padding: 0px;
-    margin: 0px;
-}
-.tsn-pure-node
-{
-    width: 24px;
-    height: 24px;
-    float: left;
-    background: url(themes/base/images/controls/folder_full.png) no-repeat left top;
+    margin-left:2px;
+    height: 16px;
+    display:inline-block;
     
+    cursor:default;
 }
-.tsn-expandable-node
+.simpleTree .row .node div.icon
 {
-    width: 20px;
-    height: 20px;
-    float: left;
+    width: 16px;
+    height: 16px;
+    display:inline-block;
+    
+    cursor:default;
 }
-.tsn-expanded-node
+.simpleTree .row .node div.nameNode
 {
-    background: url(themes/base/images/controls/folder.png) no-repeat left top;
+    margin-left:3px;
+    height: 16px;
+    vertical-align: middle;
+    
+    font-family: Arial;
+    letter-spacing: 0.3px;
+    font-size: 11px;
+    color: #2F3335;
+    display: inline-block;
+    
+    cursor:default;
 }
-.tsn-collapsed-node
+
+.simpleTree .row .node div.folder
 {
     background: url(themes/base/images/controls/folder.png) no-repeat left top;
 }
@@ -837,8 +828,15 @@ a:hover
     float: left;
     margin-top: 30px;
     width: 185px;
-    height: 487px;
+    height: 451px;
     clear: left;
+}
+#ModelExplorerBox .TreeArea
+{
+    box-sizing: border-box;
+    background-color: #F7F7F7;
+    padding: 5px;
+    height:100%;
 }
 /*Overriden stuff*/
 .OuterMenuArea .InnerMenuArea .MenuItemSeparator
