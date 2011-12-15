@@ -131,14 +131,37 @@
                 modelExplorer.Initialize();
 
                 //Event handlers
+                diagramContext.OnElementAdded.Add(new EventHandler(function (UIElement) {
+                    var elemType = UIElement.GetTypeName();
+                    switch(elemType) {
+                        case "feature":
+                            modelExplorer.AddFeatureToTree(UIElement);
+                        break;
+                    }
+                   
+                }));
                 diagramContext.OnElementSelected.Add(new EventHandler(function (UIElement) {
                     propertiesComponent.LoadProperties(UIElement);
+
+                    var elemType = UIElement.GetTypeName();
+                    switch (elemType) {
+                        case "feature":
+                            modelExplorer.SelectFeatureInTree(UIElement);
+                            break;
+                    }
                 }));
                 diagramContext.OnElementEdited.Add(new EventHandler(function (UIElement) {
                     propertiesComponent.LoadProperties(UIElement);
                 }));
                 diagramContext.OnElementDeselected.Add(new EventHandler(function (UIElement) {
                     propertiesComponent.Clear();
+
+                    var elemType = UIElement.GetTypeName();
+                    switch (elemType) {
+                        case "feature":
+                            modelExplorer.DeselectAll();
+                            break;
+                    }
                 }));
                 diagramContext.OnAllElementsDeselected.Add(new EventHandler(function () {
                     propertiesComponent.Clear();
