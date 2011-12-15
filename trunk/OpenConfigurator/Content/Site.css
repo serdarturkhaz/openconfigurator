@@ -377,62 +377,94 @@ html > body .ui-pnotify
     box-sizing: border-box;
     width: 100%;
 }
-.simpleTree .row
+
+.simpleTree ul.root
+{
+}
+.simpleTree ul.level0
+{
+    padding-left:12px;
+}
+.simpleTree li.row
 {
     list-style-type:none;
-    margin-bottom:2px;
 }
-.simpleTree .row div.expander
+.simpleTree li.row div.expander
 {
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 24px;
     display:inline-block;
 }
-.simpleTree .row div.expanded
+.simpleTree li.row div.expanded
 {
-    background: url(themes/base/images/controls/minus.png) no-repeat center center;
+    background: url(themes/base/images/controls/simpletree/minus.png) no-repeat center center;
     cursor:pointer;
 }
-.simpleTree .row div.collapsed
+.simpleTree li.row div.collapsed
 {
-    background: url(themes/base/images/controls/plus.png) no-repeat center center;
+    background: url(themes/base/images/controls/simpletree/plus.png) no-repeat center center;
     cursor:pointer;
 }
 
-.simpleTree .row .node 
+.simpleTree li.row .node 
 {
-    margin-left:2px;
-    height: 16px;
+    height: 24px;
+    display:inline-block;
+    cursor:default;
+    padding:0 6px 0 2px;
+    border:solid 1px transparent;
+}
+.simpleTree li.row .node:hover
+{
+    background-color: #EFEFEF;
+    border: solid 1px transparent;
+}
+.simpleTree li.row .selectedNode
+{
+    background-color: #E6E6E6 !important;
+    border: 1px solid #DBDBDB !important;
+}
+
+.simpleTree li.row .node div.icon
+{
+    width: 24px;
+    height: 24px;
     display:inline-block;
     
     cursor:default;
 }
-.simpleTree .row .node div.icon
-{
-    width: 16px;
-    height: 16px;
-    display:inline-block;
-    
-    cursor:default;
-}
-.simpleTree .row .node div.nameNode
+.simpleTree li.row .node div.nameNode
 {
     margin-left:3px;
-    height: 16px;
-    vertical-align: middle;
-    
+    height:24px;
+    vertical-align:middle;
+    display: inline-block;
+    cursor:default;
+}
+
+/*Font styles*/
+.simpleTree ul.root li.row .node div.nameNode
+{
     font-family: Arial;
     letter-spacing: 0.3px;
     font-size: 11px;
     color: #2F3335;
-    display: inline-block;
-    
-    cursor:default;
+}
+.simpleTree ul.level0 li.row .node div.nameNode 
+{
+    font-family: Arial;
+    letter-spacing: 0.3px;
+    font-size: 9px;
+    color: #2F3335;
 }
 
-.simpleTree .row .node div.folder
+.simpleTree li.row .node div.folder
 {
-    background: url(themes/base/images/controls/folder.png) no-repeat left top;
+    background: url(themes/base/images/controls/simpletree/folder2.png) no-repeat left top;
+}
+.simpleTree li.row .node div.feature
+{
+    background: url(themes/base/images/controls/simpletree/gear.png) no-repeat left top;
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/
@@ -837,6 +869,7 @@ a:hover
     background-color: #F7F7F7;
     padding: 5px;
     height:100%;
+    overflow:auto;
 }
 /*Overriden stuff*/
 .OuterMenuArea .InnerMenuArea .MenuItemSeparator

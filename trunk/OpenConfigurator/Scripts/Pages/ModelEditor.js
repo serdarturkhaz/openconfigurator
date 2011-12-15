@@ -58,7 +58,6 @@ var commonStyles = {
         }
     }
 }
-
 var UIObjectStyles = {
     feature: {
         general: {
@@ -520,7 +519,7 @@ var systemDefaults = {
     }
 }
 
-//Global helper methods
+//Global helper methods and variables
 function getEnumEntryByID(collection, id) {
     for (var key in collection) {
         var enumEntry = collection[key];
@@ -1139,41 +1138,30 @@ var ModelExplorer = function (container) {
 
     //Fields
     var _thisModelExplorer = this;
+    var _tree = null;
+
 
     //Constructor/Initalizers
     this.Initialize = function () {
         options = {
             data: [
                 {
-                    ID: null,
+                    ID: "featuresNode",
                     Name: "Features",
-                    typeName: "folder",
-                    children: [
-                        {
-                            ID: null,
-                            Name: "Root",
-                            typeName: "feature"
-                        },
-                        {
-                            ID: null,
-                            Name: "Feature01",
-                            typeName: "feature"
-                        }
-
-                    ]
+                    typeName: "folder"
                 },
                 {
-                    ID: null,
+                    ID: "featureTypesNode",
                     Name: "Feature Types",
                     typeName: "folder"
                 },
                 {
-                    ID: null,
+                    ID: "compositionRulesNode",
                     Name: "Composition Rules",
                     typeName: "folder"
                 },
                 {
-                    ID: null,
+                    ID: "customRulesNode",
                     Name: "Custom Rules",
                     typeName: "folder"
                 }
@@ -1182,15 +1170,38 @@ var ModelExplorer = function (container) {
             types: {
                 folder: {
                     idField: "ID",
-                    labelField: "Name"
+                    labelField: "Name",
+                    selectable: false
                 },
                 feature: {
                     idField: "ID",
-                    labelField: "Name"
+                    labelField: "Name",
+                    selectable: true
                 }
             }
         }
-        var tree = $(container).simpleTree(options);
+        _tree = $(container).simpleTree(options);
+    }
+
+    //Public methods
+    this.AddFeatureToTree = function (UIFeature) {
+        var dataObj = UIFeature.GetDataObj();
+
+        //Add a new feature to the tree
+        var newRow = {
+            ID: UIFeature.GUID,
+            Name: dataObj.Name,
+            typeName: "feature"
+        };
+        var featuresNode = $(_tree).getNode("featuresNode");
+        $(featuresNode).addNode(newRow);
+    }
+    this.SelectFeatureInTree = function (UIFeature) {
+        var node = $(_tree).getNode(UIFeature.GUID);
+        $(node).selectNode();
+    }
+    this.DeselectAll = function () {
+        $(_tree).deselectAll();
     }
 }
 var DiagramContext = function (canvasContainer) {
@@ -1200,12 +1211,13 @@ var DiagramContext = function (canvasContainer) {
     var _canvas = null, _canvasContainer = canvasContainer;
     var _selectedElements = new Array();
     var _createFeatureMode = false, _inlineEditMode = false;
+    var _internalUIObjectIDCounter = 0;
 
     //UIObjects & Defaults/Settings
     var UIFeature = function (dataObj, x, y) {
 
         //Fields
-        var _guid = jQuery.Guid.New(); //special ui identifier
+        var _guid = _internalUIObjectIDCounter++; //special ui identifier
         var _outerElement = null;
         var _innerElements = {};
         var _currentState = systemDefaults.uiElementStates.unselected;
@@ -1392,7 +1404,7 @@ var DiagramContext = function (canvasContainer) {
     var UIRelation = function (dataObj, parentFeature, childFeature) { //CompositeElement
 
         //Fields
-        var _guid = jQuery.Guid.New(); //special ui identifier
+        var _guid = _internalUIObjectIDCounter++; //special ui identifier
         var _innerElements = {
             cardinalityElement: null,
             connection: null
@@ -1543,7 +1555,7 @@ var DiagramContext = function (canvasContainer) {
     var UIGroupRelation = function (dataObj, parentFeature, childFeatures) { //CompositeElement
 
         //Fields
-        var _guid = jQuery.Guid.New(); //special ui identifier
+        var _guid = _internalUIObjectIDCounter++; //special ui identifier
         var _innerElements = {
             cardinalityElement: null,
             rootArc: null,
@@ -1797,7 +1809,7 @@ var DiagramContext = function (canvasContainer) {
     var UICompositionRule = function (dataObj, firstFeature, secondFeature) {
 
         //Fields
-        var _guid = jQuery.Guid.New(); //special ui identifier
+        var _guid = _internalUIObjectIDCounter++; //special ui identifier
         var _innerElements = {
             connection: null
         };
@@ -1891,7 +1903,7 @@ var DiagramContext = function (canvasContainer) {
     var UIConnection = function (compositeElement, parentBox, childBox, invertOrientation, toBack) {
 
         //Standard fields
-        var _guid = jQuery.Guid.New(); //special ui identifier
+        var _guid = _internalUIObjectIDCounter++; //special ui identifier
         var _innerElements = {
             line: null,
             connectors: {
@@ -2164,7 +2176,7 @@ var DiagramContext = function (canvasContainer) {
     var UIConnectorElement = function (parentConnection, raphaelConnectorType, connectorStyle, positionType) {
 
         //Fields
-        var _guid = jQuery.Guid.New(); //special ui identifier
+        var _guid = _internalUIObjectIDCounter++; //special ui identifier
         var _innerElements = {
             raphaelElem: null
         };
@@ -2203,7 +2215,7 @@ var DiagramContext = function (canvasContainer) {
     var UICardinalityLabel = function (compositeElement, calculatePositionFunction) {
 
         //Fields
-        var _guid = jQuery.Guid.New(); //special ui identifier
+        var _guid = _internalUIObjectIDCounter++; //special ui identifier
         var _innerElements = {
             box: null,
             text: null
@@ -2355,6 +2367,7 @@ var DiagramContext = function (canvasContainer) {
 
                 //
                 _createFeatureMode = false;
+                _thisDiagramContext.OnElementAdded.RaiseEvent(newUIFeature);
             };
             $(_canvasContainer).bind("click", clickHandler);
 
@@ -2397,6 +2410,7 @@ var DiagramContext = function (canvasContainer) {
     }
 
     //Events
+    this.OnElementAdded = new Event();
     this.OnElementEdited = new Event();
     this.OnElementUpdated = new Event();
     this.OnElementSelected = new Event();
