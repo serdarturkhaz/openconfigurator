@@ -389,82 +389,98 @@ html > body .ui-pnotify
 {
     list-style-type:none;
 }
-.simpleTree li.row div.expander
+
+.simpleTree li.row .node 
+{
+    width:100%;
+    float:left;
+}
+
+.simpleTree li.row .node div.expander
 {
     width: 12px;
-    height: 24px;
-    display:inline-block;
+    height: 20px;
+    float:left;
 }
-.simpleTree li.row div.expanded
+.simpleTree li.row .node[nodeDisplayState=expanded]  div.expander
 {
     background: url(themes/base/images/controls/simpletree/minus.png) no-repeat center center;
     cursor:pointer;
 }
-.simpleTree li.row div.collapsed
+.simpleTree li.row .node[nodeDisplayState=collapsed] div.expander
 {
     background: url(themes/base/images/controls/simpletree/plus.png) no-repeat center center;
     cursor:pointer;
 }
 
-.simpleTree li.row .node 
+.simpleTree li.row .node .innerNode 
 {
-    height: 24px;
-    display:inline-block;
+    width:auto;
+    float:left;
+    height: 16px;
     cursor:default;
-    padding:0 6px 0 2px;
+    padding:2px 2px 2px 2px;
     border:solid 1px transparent;
 }
-.simpleTree li.row .node:hover
+.simpleTree li.row .node .innerNode:hover
 {
     background-color: #EFEFEF;
     border: solid 1px transparent;
 }
-.simpleTree li.row .selectedNode
+.simpleTree li.row .node[selected] .innerNode
 {
-    background-color: #E6E6E6 !important;
-    border: 1px solid #DBDBDB !important;
+    background-color: #FFF0B7;
+    border: 1px solid #FFE375;
 }
 
-.simpleTree li.row .node div.icon
+.simpleTree li.row .node .innerNode div.icon
 {
-    width: 24px;
-    height: 24px;
+    float:left;
+    width: 16px;
+    height:16px;
     display:inline-block;
     
     cursor:default;
 }
-.simpleTree li.row .node div.nameNode
+.simpleTree li.row .node .innerNode div.name
 {
+    float:left;
+    margin-top:2px;
     margin-left:3px;
-    height:24px;
+    height:16px;
     vertical-align:middle;
     display: inline-block;
     cursor:default;
 }
 
 /*Font styles*/
-.simpleTree ul.root li.row .node div.nameNode
+.simpleTree ul.root li.row .node .innerNode div.name
 {
     font-family: Arial;
     letter-spacing: 0.3px;
-    font-size: 11px;
+    font-size: 12px;
     color: #2F3335;
 }
-.simpleTree ul.level0 li.row .node div.nameNode 
+.simpleTree ul.level0 li.row .node .innerNode  div.name
 {
     font-family: Arial;
     letter-spacing: 0.3px;
-    font-size: 9px;
+    font-size: 10px;
     color: #2F3335;
 }
 
-.simpleTree li.row .node div.folder
+/*Types*/
+.simpleTree li.row .folder .innerNode div.icon
 {
-    background: url(themes/base/images/controls/simpletree/folder2.png) no-repeat left top;
+    background: url(themes/base/images/controls/simpletree/folder-closed.png) no-repeat left top;
 }
-.simpleTree li.row .node div.feature
+.simpleTree li.row .folder[nodeDisplayState=expanded] .innerNode div.icon
 {
-    background: url(themes/base/images/controls/simpletree/gear.png) no-repeat left top;
+    background: url(themes/base/images/controls/simpletree/folder-open.png) no-repeat left top;
+}
+.simpleTree li.row .feature .innerNode div.icon
+{
+    background: url(themes/base/images/controls/simpletree/elementx.png) no-repeat left top;
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/
@@ -867,7 +883,7 @@ a:hover
 {
     box-sizing: border-box;
     background-color: #F7F7F7;
-    padding: 5px;
+    padding: 5px 0px 5px 2px;
     height:100%;
     overflow:auto;
 }
