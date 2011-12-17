@@ -5,13 +5,12 @@
 @section headerscripts{
     <script type="text/javascript" src="../../Scripts/Pages/ModelEditor.js"></script>
     <script type="text/javascript">
-        //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var modelId = '@(ViewBag.ModelId)';
         var diagramContext = null;
         var propertiesComponent = null;
         var modelExplorer = null;
 
-        //
         function calcWidth() {
             //Set width for ModelsBox
             var containerWidth = $(".OuterContentArea .InnerContentArea").width();
@@ -60,8 +59,8 @@
             });
             return returnObj;
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
             //Event handlers-------------------------------------------------------------------
 
@@ -130,48 +129,68 @@
                 modelExplorer = new ModelExplorer($("#ModelExplorerTree"));
                 modelExplorer.Initialize();
 
-                //Event handlers
-                diagramContext.OnElementAdded.Add(new EventHandler(function (UIElement) {
-                    var elemType = UIElement.GetTypeName();
-                    switch(elemType) {
-                        case "feature":
-                            modelExplorer.AddFeatureToTree(UIElement);
-                        break;
-                    }
-                   
-                }));
-                diagramContext.OnElementSelected.Add(new EventHandler(function (UIElement) {
-                    propertiesComponent.LoadProperties(UIElement);
+                //Event handlers------------------------------------------------------------------------
+                var eventHandlers = {
+                    diagramEvents: {
+                        OnElementAdded: function (UIElement) {
+                            var elemType = UIElement.GetTypeName();
+                            switch (elemType) {
+                                case "feature":
+                                    modelExplorer.AddFeatureToTree(UIElement);
+                                    break;
+                            }
+                        },
+                        OnElementSelected: function (UIElement) {
+                            propertiesComponent.LoadProperties(UIElement);
 
-                    var elemType = UIElement.GetTypeName();
-                    switch (elemType) {
-                        case "feature":
-                            modelExplorer.SelectFeatureInTree(UIElement);
-                            break;
-                    }
-                }));
-                diagramContext.OnElementEdited.Add(new EventHandler(function (UIElement) {
-                    propertiesComponent.LoadProperties(UIElement);
-                }));
-                diagramContext.OnElementDeselected.Add(new EventHandler(function (UIElement) {
-                    propertiesComponent.Clear();
-
-                    var elemType = UIElement.GetTypeName();
-                    switch (elemType) {
-                        case "feature":
+                            var elemType = UIElement.GetTypeName();
+                            switch (elemType) {
+                                case "feature":
+                                    modelExplorer.SelectFeatureInTree(UIElement);
+                                    break;
+                            }
+                        },
+                        OnElementUpdated: function (UIElement) {
+                            var elemType = UIElement.GetTypeName();
+                            switch (elemType) {
+                                case "feature":
+                                    modelExplorer.UpdateFeatureInTree(UIElement);
+                                    break;
+                            }
+                        },
+                        OnElementEdited: function (UIElement) {
+                            var elemType = UIElement.GetTypeName();
+                            switch (elemType) {
+                                case "feature":
+                                    modelExplorer.UpdateFeatureInTree(UIElement);
+                                    break;
+                            }
+                        },
+                        OnElementDeselected: function (UIElement) {
+                            propertiesComponent.Clear();
                             modelExplorer.DeselectAll();
-                            break;
+                        },
+                        OnAllElementsDeselected: function (UIElement) {
+                            propertiesComponent.Clear();
+                            modelExplorer.DeselectAll();
+                        },
+                        OnElementDeleted: function (UIElement) {
+                            modelExplorer.DeleteFeatureInTree(UIElement);
+                        }
                     }
-                }));
-                diagramContext.OnAllElementsDeselected.Add(new EventHandler(function () {
-                    propertiesComponent.Clear();
-                }));
+                }
+                //Set event handlers
+                for (var eventName in eventHandlers.diagramEvents) {
+                    var eventHandler = eventHandlers.diagramEvents[eventName];
+                    diagramContext[eventName].Add(new EventHandler(eventHandler));
+                }
+                //-------------------------------------------------------------------------------------
 
                 //
                 $("#ModelDiagramBox").unblock();
             });
         });
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     </script>
 }
 @section SubPageItem{

@@ -2,6 +2,21 @@
     //Global variables
     var internalNodeIDCounter = 0;
 
+    var treeDefaultSettings = {
+        nodeSystemTypes: {
+            parent: "parent",
+            leaf: "leaf"
+        },
+        nodeDisplayStates: {
+            expanded: "expanded",
+            collapsed: "collapsed"
+        },
+        nodeSelectedStates: {
+            selected: "selected",
+            unselected: "unselected"
+        }
+    }
+
     //JQuery constructor method
     $.fn.simpleTree = function (opts) {
 
@@ -35,42 +50,42 @@
             //Row
             var dataRow = opts.data[i];
             var hasChildren = (opts.data[i].children != undefined);
-            var row = createRow(dataRow, opts.types[dataRow.typeName], dataRow.typeName, hasChildren);
+            var row = createRow(dataRow, opts.types[dataRow.typeName], dataRow.typeName);
             row.appendTo(rootUl);
 
             //Create children
             if (hasChildren) {
-                var childrenUl = $("<ul class='childrenContainer level0'></ul>").appendTo(row);
                 for (var j = 0; j < opts.data[i].children.length; j++) {
-
-                    //Child row
                     var childDataRow = opts.data[i].children[j];
                     var childRow = createRow(childDataRow, opts.types[childDataRow.typeName], childDataRow.typeName);
-                    childRow.appendTo(childrenUl);
+                    appendChildRow(childRow, row);
                 }
             }
         }
     }
-    var createRow = function (dataObj, type, typeName, hasChildren) {
+    var createRow = function (dataObj, type, typeName) {
 
-        //Row and expander
-        var row = $("<li class='row' state='expanded'></li>");
+        //Row
+        var row = $("<li class='row'></li>");
         row.attr("id", "node-" + internalNodeIDCounter++);
         row.attr("dataID", dataObj[type.idField]);
-        var expander = $("<div class='expander'></div>").css("visibility", "hidden").appendTo(row);
-        if (hasChildren) {
-            expander.css("visibility", "visible");
-            expander.addClass("expanded");
-        }
 
-        //Node 
+        //Node and expander
         var node = $("<div class='node'></div>").addClass(typeName).appendTo(row);
-        var icon = $("<div class='icon'></div>").addClass(typeName).appendTo(node);
-        var nameNode = $("<div class='nameNode'>" + dataObj[type.labelField] + "</div>").appendTo(node);
+        var expander = $("<div class='expander'></div>").appendTo(node);
+
+        //InnerNode 
+        var innerNode = $("<div class='innerNode'></div>").appendTo(node);
+        var icon = $("<div class='icon'></div>").appendTo(innerNode);
+        var nameNode = $("<div class='name'>" + dataObj[type.labelField] + "</div>").appendTo(innerNode);
+
+        //Initialize
+        node.attr("nodeSystemType", treeDefaultSettings.nodeSystemTypes.leaf);
+        expander.css("visibility", "hidden");
 
         //Event handlers
         expander.bind("click", function () {
-            toggleNodeExpander(row);
+            toggleExpandCollapseState(node);
         });
         if (type.selectable) {
             node.bind("click", function () {
@@ -80,29 +95,56 @@
 
         return row;
     }
-    var addChildRow = function (row, destinationRow) {
+
+    var appendChildRow = function (childRow, destinationRow) {
 
         //Variables
-        var hasChildren = ($(destinationRow).find(".childrenContainer").length == 1);
+        var destinationNode = $(destinationRow).children(".node");
+        var destinationNodeSystemType = $(destinationNode).attr("nodeSystemType");
         var childrenContainer = null;
 
-        //
-        if (hasChildren) {
-            childrenContainer = $(destinationRow).children(".childrenContainer");
-            row.appendTo(childrenContainer);
-        } else {
-            childrenContainer = $("<ul class='childrenContainer level0'></ul>").appendTo(destinationRow);
-            row.appendTo(childrenContainer);
-            collapseRow(destinationRow);
+        //Add attribute to keep track of parent
+        $(childRow).attr("parentDataID", destinationRow.attr("dataID"));
+
+        //Reinitialize destinationRow
+        switch (destinationNodeSystemType) {
+            //Parent                               
+            case treeDefaultSettings.nodeSystemTypes.parent:
+                childrenContainer = $(destinationRow).children(".childrenContainer");
+
+                childRow.appendTo(childrenContainer);
+                break;
+            //Leaf                               
+            case treeDefaultSettings.nodeSystemTypes.leaf:
+                $(destinationNode).attr("nodeSystemType", treeDefaultSettings.nodeSystemTypes.parent);
+                $(destinationNode).attr("nodeDisplayState", treeDefaultSettings.nodeDisplayStates.collapsed);
+
+                childrenContainer = $("<ul class='childrenContainer level0'></ul>").appendTo(destinationRow);
+
+                //Show expander & collapse
+                var expander = $(destinationNode).children(".expander");
+                expander.css("visibility", "visible");
+                childrenContainer.hide();
+
+                childRow.appendTo(childrenContainer);
+                break;
         }
     }
+    var getParentNode = function (node) {
+        var row = $(node).parent();
+        var tree = $(node).parents(".simpleTree");
+        var parentNode = getNode(tree, row.attr("parentDataID"));
+        return parentNode;
+    }
+    var getNode = function (tree, dataId) {
+        return $(tree).find(".row[dataId='" + dataId + "']").children(".node");
+    }
+
     var expandRow = function (row) {
 
         //Set expanded state 
-        $(row).attr("state", "expanded");
-        var expander = $(row).children(".expander");
-        expander.css("visibility", "visible");
-        expander.removeClass("collapsed").addClass("expanded");
+        var node = $(row).children(".node");
+        node.attr("nodeDisplayState", "expanded");
 
         //Show children
         var childrenContainer = $(row).children(".childrenContainer");
@@ -111,22 +153,21 @@
     var collapseRow = function (row) {
 
         //Set collapsed state
-        $(row).attr("state", "collapsed");
-        var expander = $(row).children(".expander");
-        expander.css("visibility", "visible");
-        expander.removeClass("expanded").addClass("collapsed");
+        var node = $(row).children(".node");
+        node.attr("nodeDisplayState", "collapsed");
 
         //Hide children
         var childrenContainer = $(row).children(".childrenContainer");
         childrenContainer.hide();
     }
-    var toggleNodeExpander = function (row) {
-        var currentState = $(row).attr("state");
+    var toggleExpandCollapseState = function (node) {
+        var row = $(node).parent();
+        var currentState = $(node).attr("nodeDisplayState");
         switch (currentState) {
-            case "expanded":
+            case treeDefaultSettings.nodeDisplayStates.expanded:
                 collapseRow(row);
                 break;
-            case "collapsed":
+            case treeDefaultSettings.nodeDisplayStates.collapsed:
                 expandRow(row);
                 break;
         }
@@ -134,35 +175,68 @@
 
     var selectNode = function (node) {
         var tree = $(node).parents(".simpleTree");
-        var isSelected = $(node).hasClass("selectedNode");
+        var isSelected = $(node).attr("selected");
         if (!isSelected) {
             deselectAll(tree);
-            $(node).addClass("selectedNode");
+            $(node).attr("selected", "true");
         }
     }
     var deselectAll = function (tree) {
-        $(tree).find(".selectedNode").removeClass("selectedNode");
+        $(tree).find(".node[selected=true]").removeAttr("selected");
+    }
+
+    var updateNodeName = function (node, newName) {
+        $(node).children(".innerNode").children(".name").text(newName);
+    }
+    var deleteNode = function (node) {
+        //Variables
+        var row = $(node).parent();
+        var hasSiblings = ($(row).siblings().length > 0);
+        var childrenContainer = $(row).parent();
+        var parentNode = getParentNode(node);
+        var parentNodeExpander = parentNode.children(".expander");
+
+        //Delete the row containing the node
+        row.remove();
+
+        //Reset the parent if there were no other siblings left
+        if (!hasSiblings) {
+            $(parentNode).attr("nodeSystemType", treeDefaultSettings.nodeSystemTypes.leaf);
+            $(parentNode).removeAttr("nodeDisplayState");
+            childrenContainer.remove();
+            parentNodeExpander.css("visibility", "hidden");
+        }
     }
     //*********************************************************************************************************************************
     //Public functions*****************************************************************************************************************
     $.fn.getNode = function (dataId) {
-        return $(this).find(".row[dataId='" + dataId + "']");
+        var tree = $(this);
+        var node = getNode(tree, dataId);
+        return node;
     }
-    $.fn.addNode = function (dataRow) {
+    $.fn.addChildNode = function (dataRow) {
         //Variables
-        var parent = $(this);
-        var opts = $(parent).parents(".simpleTree").data("options");
+        var destinationRow = $(this).parent();
+        var opts = $(destinationRow).parents(".simpleTree").data("options");
 
         //
-        var newRow = createRow(dataRow, opts.types[dataRow.typeName], dataRow.typeName, false);
-        addChildRow(newRow, parent);
+        var newRow = createRow(dataRow, opts.types[dataRow.typeName], dataRow.typeName);
+        appendChildRow(newRow, destinationRow);
     }
     $.fn.selectNode = function () {
-        selectNode($(this).children(".node"));
+        selectNode($(this));
     }
     $.fn.deselectAll = function () {
         var tree = $(this);
         deselectAll(tree);
+    }
+    $.fn.updateNodeName = function (newName) {
+        var node = $(this);
+        updateNodeName(node, newName);
+    }
+    $.fn.deleteNode = function () {
+        var node = $(this);
+        deleteNode(node);
     }
     //*********************************************************************************************************************************
 })(jQuery);

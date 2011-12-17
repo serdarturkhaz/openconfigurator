@@ -206,7 +206,7 @@ var UIObjectStyles = {
                     connectors: {
                         endConnector: {
                             attr: {
-                                fill: "black",
+                                fill: "#fff7d7",
                                 opacity: 1
                             }
                         }
@@ -225,7 +225,8 @@ var UIObjectStyles = {
                     connectors: {
                         endConnector: {
                             attr: {
-                                fill: "#fff7d7",
+
+                                fill: "black",
                                 opacity: 1
                             }
                         }
@@ -290,8 +291,9 @@ var UIObjectStyles = {
                     connectors: {
                         startConnector: {
                             attr: {
-                                fill: "green",
-                                stroke: "green"
+                                fill: "red",
+                                stroke: "red",
+                                opacity:0
                             }
                         },
                         endConnector: {
@@ -314,7 +316,8 @@ var UIObjectStyles = {
                         startConnector: {
                             attr: {
                                 fill: "red",
-                                stroke: "red"
+                                stroke: "red",
+                                opacity:1
                             }
                         },
                         endConnector: {
@@ -1188,13 +1191,13 @@ var ModelExplorer = function (container) {
         var dataObj = UIFeature.GetDataObj();
 
         //Add a new feature to the tree
-        var newRow = {
+        var newDataRow = {
             ID: UIFeature.GUID,
             Name: dataObj.Name,
             typeName: "feature"
         };
         var featuresNode = $(_tree).getNode("featuresNode");
-        $(featuresNode).addNode(newRow);
+        $(featuresNode).addChildNode(newDataRow);
     }
     this.SelectFeatureInTree = function (UIFeature) {
         var node = $(_tree).getNode(UIFeature.GUID);
@@ -1202,6 +1205,16 @@ var ModelExplorer = function (container) {
     }
     this.DeselectAll = function () {
         $(_tree).deselectAll();
+    }
+    this.UpdateFeatureInTree = function (UIFeature) {
+        var dataObj = UIFeature.GetDataObj();
+
+        var node = $(_tree).getNode(UIFeature.GUID);
+        $(node).updateNodeName(dataObj.Name);
+    }
+    this.DeleteFeatureInTree = function (UIFeature) {
+        var node = $(_tree).getNode(UIFeature.GUID);
+        $(node).deleteNode();
     }
 }
 var DiagramContext = function (canvasContainer) {
@@ -2297,6 +2310,9 @@ var DiagramContext = function (canvasContainer) {
             var selElem = _selectedElements[i];
             deselectElement(selElem);
         }
+
+        //Raise events
+        _thisDiagramContext.OnAllElementsDeselected.RaiseEvent();
     }
     function deselectElement(UIElement) {
         //Remove from collection
@@ -2402,10 +2418,15 @@ var DiagramContext = function (canvasContainer) {
 
         //Raise event
         _thisDiagramContext.OnElementUpdated.RaiseEvent(UIElement);
+
     }
     this.DeleteElements = function () {
         for (var i = _selectedElements.length - 1; i >= 0; i--) {
+            var deletedElem = _selectedElements[i];
             deleteElement(_selectedElements[i]);
+
+            //Raise event
+            _thisDiagramContext.OnElementDeleted.RaiseEvent(deletedElem);
         }
     }
 
@@ -2414,6 +2435,7 @@ var DiagramContext = function (canvasContainer) {
     this.OnElementEdited = new Event();
     this.OnElementUpdated = new Event();
     this.OnElementSelected = new Event();
+    this.OnElementDeleted = new Event();
     this.OnElementDeselected = new Event();
     this.OnAllElementsDeselected = new Event();
 }
