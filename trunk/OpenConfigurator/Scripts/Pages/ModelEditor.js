@@ -293,7 +293,7 @@ var UIObjectStyles = {
                             attr: {
                                 fill: "red",
                                 stroke: "red",
-                                opacity:0
+                                opacity: 0
                             }
                         },
                         endConnector: {
@@ -305,7 +305,31 @@ var UIObjectStyles = {
                     }
                 }
             },
-            exclusion: {
+            mutualDependency: {
+                connection: {
+                    line: {
+                        attr: {
+                            stroke: "green"
+                        }
+                    },
+                    connectors: {
+                        startConnector: {
+                            attr: {
+                                fill: "green",
+                                stroke: "green",
+                                opacity: 1
+                            }
+                        },
+                        endConnector: {
+                            attr: {
+                                fill: "green",
+                                stroke: "green"
+                            }
+                        }
+                    }
+                }
+            },
+            mutualExclusion: {
                 connection: {
                     line: {
                         attr: {
@@ -317,7 +341,7 @@ var UIObjectStyles = {
                             attr: {
                                 fill: "red",
                                 stroke: "red",
-                                opacity:1
+                                opacity: 1
                             }
                         },
                         endConnector: {
@@ -451,10 +475,15 @@ var systemDefaults = {
                 label: "Dependency",
                 id: 1
             },
-            exclusion: {
-                name: "exclusion",
-                label: "Exclusion",
+            mutualDependency: {
+                name: "mutualDependency",
+                label: "Mutual Dependency",
                 id: 2
+            },
+            mutualExclusion: {
+                name: "mutualExclusion",
+                label: "Mutual Exclusion",
+                id: 3
             }
         }
     },
@@ -540,7 +569,163 @@ function paramsToString(collection) {
     return returnString;
 }
 
-var PropertiesComponent = function (container, diagramContext) {
+var ClientController = function (diagramContainer, propertiesContainer, explorerContainer) {
+
+    //Settings & defaults
+    var supportedTypes = {
+        diagramContext: ["relation", "groupRelation"]
+    }
+    var eventHandlers = {
+        diagramEvents: {
+            OnElementAdded: function (UIElement) {
+                var elemType = UIElement.GetTypeName();
+                switch (elemType) {
+                    case "feature":
+                        _modelExplorer.AddElementToTree(UIElement);
+                        break;
+                    case "compositionRule":
+                        _modelExplorer.AddElementToTree(UIElement);
+                        break;
+                }
+            },
+            OnElementSelected: function (UIElement) {
+                _propertiesComponent.LoadProperties(UIElement);
+                _modelExplorer.SelectNodeInTree(UIElement.GUID);
+            },
+            OnElementUpdated: function (UIElement) {
+                _modelExplorer.UpdateNodeInTree(UIElement.GUID, UIElement.GetDataObj().Name);
+            },
+            OnElementEdited: function (UIElement) {
+                _propertiesComponent.LoadProperties(UIElement);
+                _modelExplorer.UpdateNodeInTree(UIElement.GUID, UIElement.GetDataObj().Name);
+            },
+            OnElementDeselected: function (UIElement) {
+                _propertiesComponent.Clear();
+                _modelExplorer.DeselectAll();
+            },
+            OnAllElementsDeselected: function (UIElement) {
+                _propertiesComponent.Clear();
+                _modelExplorer.DeselectAll();
+            },
+            OnElementDeleted: function (UIElement) {
+                _modelExplorer.DeleteNodeInTree(UIElement.GUID);
+            },
+            OnFocus: function () {
+                if (_currentControlFocus != _diagramContext) {
+                    _currentControlFocus = _diagramContext;
+                }
+            }
+        },
+        explorerEvents: {
+            OnNodeSelected: function (guid, shift) {
+                var UIElement = _diagramContext.GetUIElement(guid);
+                if (UIElement != null) {
+                    _diagramContext.SelectElement(UIElement, shift);
+                    _propertiesComponent.LoadProperties(UIElement);
+                }
+            },
+            OnNodeDeleted: function (guid) {
+                var UIElement = _diagramContext.GetUIElement(guid);
+                if (UIElement != null) {
+                    _diagramContext.DeleteElement(UIElement);
+                }
+            },
+            OnFocus: function () {
+                if (_currentControlFocus != _modelExplorer) {
+                    _currentControlFocus = _modelExplorer;
+                }
+            }
+        },
+        propertiesEvents: {
+            OnDataChanged: function (UIElement, modifiedDataObj) {
+                _diagramContext.UpdateElement(UIElement, modifiedDataObj);
+            },
+            OnFocus: function () {
+                if (_currentControlFocus != _propertiesComponent) {
+                    _currentControlFocus = _propertiesComponent;
+                }
+            }
+        }
+    }
+
+    //Fields and variables
+    var _diagramContext, _propertiesComponent, _modelExplorer;
+    var _thisClientController = this;
+    var _currentControlFocus = null; //variable to keep track of where the user executed the last action (clicking)
+    var _currentSelection = [];
+
+    //Private methods
+    var getDefaultDataObj = function (type) {
+        var returnObj;
+        $.ajax({
+            url: "/ModelEditor/NewDefault" + type,
+            data: {},
+            async: false,
+            success: function (dataObj) {
+                returnObj = dataObj;
+            }
+        });
+        return returnObj;
+    }
+    var setEventHandlers = function (eventNamesCollection, eventsSource) {
+        for (var eventName in eventNamesCollection) {
+            var eventHandler = eventNamesCollection[eventName];
+            eventsSource[eventName].Add(new EventHandler(eventHandler));
+        }
+    }
+
+    //Constructor/Initalizers
+    this.Initialize = function () {
+
+        //Instantiate/Initialize controls
+        _diagramContext = new DiagramContext($("#SVGCanvas")[0]);
+        _diagramContext.Initialize();
+        _propertiesComponent = new PropertiesComponent($("#PropertiesBox"));
+        _propertiesComponent.Initialize();
+        _modelExplorer = new ModelExplorer($("#ModelExplorerTree"));
+        _modelExplorer.Initialize();
+
+        //Set event handlers
+        setEventHandlers(eventHandlers.diagramEvents, _diagramContext);
+        setEventHandlers(eventHandlers.propertiesEvents, _propertiesComponent);
+        setEventHandlers(eventHandlers.explorerEvents, _modelExplorer);
+    }
+
+    //Public methods
+    this.SaveData = function () {
+
+    }
+    this.CreateNewFeature = function () {
+        var featureObj = getDefaultDataObj("Feature");
+        _diagramContext.AddFeature(featureObj);
+    }
+    this.CreateNewRelation = function () {
+        var relationObj = getDefaultDataObj("Relation");
+        _diagramContext.AddRelation(relationObj);
+    }
+    this.CreateNewGroupRelation = function () {
+        var groupRelationObj = getDefaultDataObj("GroupRelation");
+        _diagramContext.AddGroupRelation(groupRelationObj);
+    }
+    this.CreateNewCompositionRule = function () {
+        var compositionRuleObj = getDefaultDataObj("CompositionRule");
+        _diagramContext.AddCompositionRule(compositionRuleObj);
+    }
+    this.CreateNewCustomRule = function () {
+
+    }
+    this.Delete = function () {
+        switch (_currentControlFocus) {
+            case _diagramContext:
+                _diagramContext.DeleteSelectedElements();
+                break;
+            case _modelExplorer:
+                _modelExplorer.DeleteSelectedElements();
+                break;
+        }
+    }
+}
+var PropertiesComponent = function (container) {
 
     //Defaults and settings
     var controlTypes = {
@@ -1022,12 +1207,19 @@ var PropertiesComponent = function (container, diagramContext) {
 
     //Fields and variables
     var _container = container;
-    var _diagramContext = diagramContext;
     var _currentUIElement = null, _currentDataObj = null, _currentElemType = null;
-
-    //Controls
+    var _thisPropertiesComponent = this;
     var _mainContainer = $(container).find("#MainContainer");
     var _headerLabel = $(container).find("#SetTypeLabel");
+
+    //Constructor/Initalizers
+    this.Initialize = function () {
+
+        //Handler for onFocus
+        $(_mainContainer).bind("click", function (e) {
+            _thisPropertiesComponent.OnFocus.RaiseEvent();
+        });
+    }
 
     //Helper methods
     var createControlTableRow = function (label, control) {
@@ -1112,7 +1304,7 @@ var PropertiesComponent = function (container, diagramContext) {
         $(_mainContainer).children(".AreaDiv:gt(0)").css("margin-top", "10px");
     }
     var onDataChanged = function () {
-        _diagramContext.UpdateElement(_currentUIElement, _currentDataObj);
+        _thisPropertiesComponent.OnDataChanged.RaiseEvent([_currentUIElement, _currentDataObj]);
     }
     var clearUI = function () {
         $(_mainContainer).html("");
@@ -1136,6 +1328,10 @@ var PropertiesComponent = function (container, diagramContext) {
 
         clearUI();
     }
+
+    //Events
+    this.OnDataChanged = new Event();
+    this.OnFocus = new Event();
 }
 var ModelExplorer = function (container) {
 
@@ -1143,9 +1339,15 @@ var ModelExplorer = function (container) {
     var _thisModelExplorer = this;
     var _tree = null;
 
-
     //Constructor/Initalizers
     this.Initialize = function () {
+
+        //Handler for onFocus
+        $(container).bind("click", function (e) {
+            _thisModelExplorer.OnFocus.RaiseEvent();
+        });
+
+        //Create simpleTree
         options = {
             data: [
                 {
@@ -1180,13 +1382,36 @@ var ModelExplorer = function (container) {
                     idField: "ID",
                     labelField: "Name",
                     selectable: true
+                },
+                compositionRule: {
+                    idField: "ID",
+                    labelField: "Name",
+                    selectable: true
                 }
+            },
+            onNodeSelected: function (node, shift) {
+                var guid = $(node).getNodeDataID();
+                _thisModelExplorer.OnNodeSelected.RaiseEvent([guid, shift]);
             }
         }
         _tree = $(container).simpleTree(options);
     }
 
-    //Public methods
+    //Public methods (raise events)
+    this.DeleteSelectedElements = function () {
+        var selectedNodes = $(_tree).getSelectedNodes();
+        if (selectedNodes != null) {
+            for (var i = selectedNodes.length - 1; i >= 0; i--) {
+                var nodeGuid = $(selectedNodes[i]).getNodeDataID();
+                $(selectedNodes[i]).deleteNode();
+
+                //Raise events
+                _thisModelExplorer.OnNodeDeleted.RaiseEvent(nodeGuid);
+            }
+        }
+    }
+
+    //Public methods - silent (do not raise events)
     this.AddFeatureToTree = function (UIFeature) {
         var dataObj = UIFeature.GetDataObj();
 
@@ -1199,23 +1424,43 @@ var ModelExplorer = function (container) {
         var featuresNode = $(_tree).getNode("featuresNode");
         $(featuresNode).addChildNode(newDataRow);
     }
-    this.SelectFeatureInTree = function (UIFeature) {
-        var node = $(_tree).getNode(UIFeature.GUID);
-        $(node).selectNode();
+    this.AddElementToTree = function (UIElement) {
+        var dataObj = UIElement.GetDataObj();
+        var type = UIElement.GetTypeName();
+
+        //Add a new feature to the tree
+        var newDataRow = {
+            ID: UIElement.GUID,
+            Name: dataObj.Name,
+            typeName: type
+        };
+        var parentNode = $(_tree).getNode(type + "sNode");
+        $(parentNode).addChildNode(newDataRow);
+    }
+
+    this.SelectNodeInTree = function (guid) {
+        var node = $(_tree).getNode(guid);
+        if (node != null)
+            $(node).selectNode();
     }
     this.DeselectAll = function () {
         $(_tree).deselectAll();
     }
-    this.UpdateFeatureInTree = function (UIFeature) {
-        var dataObj = UIFeature.GetDataObj();
+    this.UpdateNodeInTree = function (guid, newName) {
+        var node = $(_tree).getNode(guid);
+        if (node != null)
+            $(node).updateNodeName(newName);
+    }
+    this.DeleteNodeInTree = function (guid) {
+        var node = $(_tree).getNode(guid);
+        if (node != null)
+            $(node).deleteNode();
+    }
 
-        var node = $(_tree).getNode(UIFeature.GUID);
-        $(node).updateNodeName(dataObj.Name);
-    }
-    this.DeleteFeatureInTree = function (UIFeature) {
-        var node = $(_tree).getNode(UIFeature.GUID);
-        $(node).deleteNode();
-    }
+    //Events
+    this.OnNodeSelected = new Event();
+    this.OnNodeDeleted = new Event();
+    this.OnFocus = new Event();
 }
 var DiagramContext = function (canvasContainer) {
 
@@ -1224,6 +1469,7 @@ var DiagramContext = function (canvasContainer) {
     var _canvas = null, _canvasContainer = canvasContainer;
     var _selectedElements = new Array();
     var _createFeatureMode = false, _inlineEditMode = false;
+    var _UIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
     var _internalUIObjectIDCounter = 0;
 
     //UIObjects & Defaults/Settings
@@ -1559,7 +1805,7 @@ var DiagramContext = function (canvasContainer) {
 
         //Event handlers
         this.OnAdjacentFeatureDeleted = function (UIFeature) {
-            this.Delete();
+            deleteElement(_thisUIRelation);
         }
         this.OnAdjacentFeatureMoved = function (UIFeature) {
             refresh();
@@ -1799,7 +2045,7 @@ var DiagramContext = function (canvasContainer) {
 
             //ParentFeature deleted
             if (UIFeature === parentFeature) {
-                this.Delete();
+                deleteElement(_thisUIGroupRelation);
             }
             //ChildFeature deleted
             else {
@@ -1907,7 +2153,7 @@ var DiagramContext = function (canvasContainer) {
 
         //Event handlers
         this.OnAdjacentFeatureDeleted = function (UIFeature) {
-            this.Delete();
+            deleteElement(_thisUICompositionRule);
         }
         this.OnAdjacentFeatureMoved = function (UIFeature) {
             refresh();
@@ -1924,7 +2170,6 @@ var DiagramContext = function (canvasContainer) {
                 endConnector: null
             }
         };
-        var _diagramContext = diagramContext;
         var _glow = null, _handlers = null;
         var _currentState = systemDefaults.uiElementStates.unselected;
         var _outerElement = null;
@@ -2193,7 +2438,6 @@ var DiagramContext = function (canvasContainer) {
         var _innerElements = {
             raphaelElem: null
         };
-        var _diagramContext = diagramContext;
         var _connectionElement = parentConnection;
 
         //Properties
@@ -2233,7 +2477,6 @@ var DiagramContext = function (canvasContainer) {
             box: null,
             text: null
         };
-        var _diagramContext = diagramContext;
         var _outerElement = null;
         var _thisUICardinalityLabel = this;
 
@@ -2291,6 +2534,7 @@ var DiagramContext = function (canvasContainer) {
 
         //Handler for canvas click
         $(_canvasContainer).bind("click", function (e) {
+            _thisDiagramContext.OnFocus.RaiseEvent();
             if (e.target.nodeName == "svg" && e.shiftKey != true) {
                 deselectAll();
             }
@@ -2304,17 +2548,14 @@ var DiagramContext = function (canvasContainer) {
         });
     };
 
-    //Helper methods
-    function deselectAll() {
+    //Private methods
+    function deselectAll(suppressEvents) {
         for (var i = _selectedElements.length - 1; i >= 0; i--) {
             var selElem = _selectedElements[i];
-            deselectElement(selElem);
+            deselectElement(selElem, suppressEvents);
         }
-
-        //Raise events
-        _thisDiagramContext.OnAllElementsDeselected.RaiseEvent();
     }
-    function deselectElement(UIElement) {
+    function deselectElement(UIElement, suppressEvents) {
         //Remove from collection
         var index = $(_selectedElements).index(UIElement);
         _selectedElements.splice(index, 1);
@@ -2323,31 +2564,38 @@ var DiagramContext = function (canvasContainer) {
         UIElement.ChangeState(systemDefaults.uiElementStates.unselected);
 
         //Raise events
-        if (_selectedElements.length == 0) {
-            _thisDiagramContext.OnAllElementsDeselected.RaiseEvent();
+        if (suppressEvents != true) {
+            if (_selectedElements.length == 0) {
+                _thisDiagramContext.OnAllElementsDeselected.RaiseEvent();
+            }
+            _thisDiagramContext.OnElementDeselected.RaiseEvent(UIElement);
         }
-        _thisDiagramContext.OnElementDeselected.RaiseEvent(UIElement);
     }
-    function selectElement(UIElement, shift) {
+    function selectElement(UIElement, shift, suppressEvents) {
         if (shift == false) {
-            deselectAll();
+            deselectAll(suppressEvents);
         }
 
-        //Add to collection
+        //Add to collection and change state
         _selectedElements.push(UIElement);
-
-        //Select UIElement
         UIElement.ChangeState(systemDefaults.uiElementStates.selected);
 
         //Raise events
-        _thisDiagramContext.OnElementSelected.RaiseEvent(UIElement);
+        if (suppressEvents != true) {
+            _thisDiagramContext.OnElementSelected.RaiseEvent(UIElement);
+        }
     }
-    function deleteElement(UIElement) {
+    function deleteElement(UIElement, suppressEvents) {
         deselectElement(UIElement);
         UIElement.Delete();
+
+        //Raise events
+        if (suppressEvents != true) {
+            _thisDiagramContext.OnElementDeleted.RaiseEvent(UIElement);
+        }
     }
 
-    //Public methods
+    //Public methods (raise events)
     this.AddFeature = function (dataObj) {
         if (_createFeatureMode == false) {
             _createFeatureMode = true;
@@ -2381,8 +2629,9 @@ var DiagramContext = function (canvasContainer) {
                 $(_canvasContainer).css("cursor", "default");
                 wireframebox.remove();
 
-                //
+                //Raise events/etc
                 _createFeatureMode = false;
+                _UIElements[newUIFeature.GUID] = newUIFeature;
                 _thisDiagramContext.OnElementAdded.RaiseEvent(newUIFeature);
             };
             $(_canvasContainer).bind("click", clickHandler);
@@ -2395,6 +2644,10 @@ var DiagramContext = function (canvasContainer) {
             var childFeature = _selectedElements[1];
             var newUIRelation = new UIRelation(dataObj, parentFeature, childFeature);
             newUIRelation.CreateGraphicalRepresentation();
+
+            //Raise events/etc
+            _UIElements[newUIRelation.GUID] = newUIRelation;
+            _thisDiagramContext.OnElementAdded.RaiseEvent(newUIRelation);
         }
     }
     this.AddGroupRelation = function (dataObj) {
@@ -2403,6 +2656,10 @@ var DiagramContext = function (canvasContainer) {
             var childFeatures = _selectedElements.slice(1);
             var newUIGroupRelation = new UIGroupRelation(dataObj, parentFeature, childFeatures);
             newUIGroupRelation.CreateGraphicalRepresentation();
+
+            //Raise events/etc
+            _UIElements[newUIGroupRelation.GUID] = newUIGroupRelation;
+            _thisDiagramContext.OnElementAdded.RaiseEvent(newUIGroupRelation);
         }
     }
     this.AddCompositionRule = function (dataObj) {
@@ -2411,6 +2668,10 @@ var DiagramContext = function (canvasContainer) {
             var secondFeature = _selectedElements[1];
             var newUICompositionRule = new UICompositionRule(dataObj, firstFeature, secondFeature);
             newUICompositionRule.CreateGraphicalRepresentation();
+
+            //Raise events/etc
+            _UIElements[newUICompositionRule.GUID] = newUICompositionRule;
+            _thisDiagramContext.OnElementAdded.RaiseEvent(newUICompositionRule);
         }
     }
     this.UpdateElement = function (UIElement, updatedDataObj) {
@@ -2418,9 +2679,8 @@ var DiagramContext = function (canvasContainer) {
 
         //Raise event
         _thisDiagramContext.OnElementUpdated.RaiseEvent(UIElement);
-
     }
-    this.DeleteElements = function () {
+    this.DeleteSelectedElements = function () {
         for (var i = _selectedElements.length - 1; i >= 0; i--) {
             var deletedElem = _selectedElements[i];
             deleteElement(_selectedElements[i]);
@@ -2428,6 +2688,17 @@ var DiagramContext = function (canvasContainer) {
             //Raise event
             _thisDiagramContext.OnElementDeleted.RaiseEvent(deletedElem);
         }
+    }
+    this.SelectElement = function (UIElement, shift) {
+        selectElement(UIElement, shift, true);
+    }
+
+    //Public methods - silent (do not raise events)
+    this.GetUIElement = function (guid) {
+        return _UIElements[guid];
+    }
+    this.DeleteElement = function (UIElement) {
+        deleteElement(UIElement);
     }
 
     //Events
@@ -2438,8 +2709,8 @@ var DiagramContext = function (canvasContainer) {
     this.OnElementDeleted = new Event();
     this.OnElementDeselected = new Event();
     this.OnAllElementsDeselected = new Event();
+    this.OnFocus = new Event();
 }
-
 
 //Events
 var Event = function () {
@@ -2461,7 +2732,17 @@ var EventHandler = function (func) {
 
     //Methods
     this.NotifyEventRaised = function (args) {
-        func(args);
+
+        //Setup args
+        var argumentsArray = null;
+        if (isArray(args) == true) {
+            argumentsArray = args;
+        } else {
+            argumentsArray = [args];
+        }
+
+        //Call function
+        func.apply(this, argumentsArray);
     }
 }
 

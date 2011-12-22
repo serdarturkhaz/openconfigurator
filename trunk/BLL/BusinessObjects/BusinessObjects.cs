@@ -36,7 +36,8 @@ namespace BLL.BusinessObjects
     public enum CompositionRuleTypes
     {
         Dependency = 1,
-        Exclusion = 2
+        MutualDependency = 2,
+        MutualExclusion= 3
     }
 
     //Model
@@ -592,17 +593,6 @@ namespace BLL.BusinessObjects
                 _innerEntity.CompositionRuleTypeID = (int)value;
             }
         }
-        public Nullable<bool> Mutual
-        {
-            get
-            {
-                return _innerEntity.Mutual;
-            }
-            set
-            {
-                _innerEntity.Mutual = value;
-            }
-        }
         public string Name
         {
             get
@@ -642,7 +632,6 @@ namespace BLL.BusinessObjects
 
             //Set default fields
             compositionRule.CompositionRuleType = CompositionRuleTypes.Dependency;
-            compositionRule.Mutual = false;
             compositionRule.Name = "Default rule";
 
             //Return the object instance

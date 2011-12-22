@@ -7,9 +7,7 @@
     <script type="text/javascript">
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var modelId = '@(ViewBag.ModelId)';
-        var diagramContext = null;
-        var propertiesComponent = null;
-        var modelExplorer = null;
+        var clientController = null;
 
         function calcWidth() {
             //Set width for ModelsBox
@@ -69,42 +67,35 @@
                 saveData();
             });
             $("#NewFeatureButton").bind("click", function () {
-                var featureObj = getDefaultDataObj("Feature");
-                diagramContext.AddFeature(featureObj);
+                clientController.CreateNewFeature();
             });
             $("#NewRelationButton").bind("click", function () {
-                var relationObj = getDefaultDataObj("Relation");
-                diagramContext.AddRelation(relationObj);
+                clientController.CreateNewRelation();
             });
             $("#NewGroupRelationButton").bind("click", function () {
-                var groupRelationObj = getDefaultDataObj("GroupRelation");
-                diagramContext.AddGroupRelation(groupRelationObj);
+                clientController.CreateNewGroupRelation();
             });
             $("#NewCompositionRuleButton").bind("click", function () {
-                var compositionRuleObj = getDefaultDataObj("CompositionRule");
-                diagramContext.AddCompositionRule(compositionRuleObj);
+                clientController.CreateNewCompositionRule();
             });
 
             //Key handlers
             $(document).keydown(function (e) {
                 if (e.which == 46) { //del key
-                    diagramContext.DeleteElements();
+                    clientController.Delete();
                 }
                 $.ctrl('F', function () { //create Feature
-                    var featureObj = getDefaultDataObj("Feature");
-                    diagramContext.AddFeature(featureObj);
+                    clientController.CreateNewFeature();
                 });
                 $.ctrl('R', function () { //create Relation
-                    var relationObj = getDefaultDataObj("Relation");
-                    diagramContext.AddRelation(relationObj);
+                    clientController.CreateNewRelation();
+                    return false;
                 });
                 $.ctrl('G', function () { //create GroupRelation
-                    var groupRelationObj = getDefaultDataObj("GroupRelation");
-                    diagramContext.AddGroupRelation(groupRelationObj);
+                    clientController.CreateNewGroupRelation();
                 });
                 $.ctrl('M', function () { //create CompositionRule
-                    var compositionRuleObj = getDefaultDataObj("CompositionRule");
-                    diagramContext.AddCompositionRule(compositionRuleObj);
+                    clientController.CreateNewCompositionRule();
                     return false;
                 });
             });
@@ -123,68 +114,8 @@
             $.timer(300, function () {
 
                 //Instantiate/Initialize controls
-                diagramContext = new DiagramContext($("#SVGCanvas")[0]);
-                diagramContext.Initialize();
-                propertiesComponent = new PropertiesComponent($("#PropertiesBox"), diagramContext);
-                modelExplorer = new ModelExplorer($("#ModelExplorerTree"));
-                modelExplorer.Initialize();
-
-                //Event handlers------------------------------------------------------------------------
-                var eventHandlers = {
-                    diagramEvents: {
-                        OnElementAdded: function (UIElement) {
-                            var elemType = UIElement.GetTypeName();
-                            switch (elemType) {
-                                case "feature":
-                                    modelExplorer.AddFeatureToTree(UIElement);
-                                    break;
-                            }
-                        },
-                        OnElementSelected: function (UIElement) {
-                            propertiesComponent.LoadProperties(UIElement);
-
-                            var elemType = UIElement.GetTypeName();
-                            switch (elemType) {
-                                case "feature":
-                                    modelExplorer.SelectFeatureInTree(UIElement);
-                                    break;
-                            }
-                        },
-                        OnElementUpdated: function (UIElement) {
-                            var elemType = UIElement.GetTypeName();
-                            switch (elemType) {
-                                case "feature":
-                                    modelExplorer.UpdateFeatureInTree(UIElement);
-                                    break;
-                            }
-                        },
-                        OnElementEdited: function (UIElement) {
-                            var elemType = UIElement.GetTypeName();
-                            switch (elemType) {
-                                case "feature":
-                                    modelExplorer.UpdateFeatureInTree(UIElement);
-                                    break;
-                            }
-                        },
-                        OnElementDeselected: function (UIElement) {
-                            propertiesComponent.Clear();
-                            modelExplorer.DeselectAll();
-                        },
-                        OnAllElementsDeselected: function (UIElement) {
-                            propertiesComponent.Clear();
-                            modelExplorer.DeselectAll();
-                        },
-                        OnElementDeleted: function (UIElement) {
-                            modelExplorer.DeleteFeatureInTree(UIElement);
-                        }
-                    }
-                }
-                //Set event handlers
-                for (var eventName in eventHandlers.diagramEvents) {
-                    var eventHandler = eventHandlers.diagramEvents[eventName];
-                    diagramContext[eventName].Add(new EventHandler(eventHandler));
-                }
-                //-------------------------------------------------------------------------------------
+                clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"));
+                clientController.Initialize();
 
                 //
                 $("#ModelDiagramBox").unblock();

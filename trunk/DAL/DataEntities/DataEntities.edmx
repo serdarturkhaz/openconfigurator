@@ -889,7 +889,6 @@
           <Property Type="Int32" Name="CompositionRuleTypeID" Nullable="false" />
           <Property Type="Int32" Name="FirstFeatureID" Nullable="false" />
           <Property Type="Int32" Name="SecondFeatureID" Nullable="false" />
-          <Property Type="Boolean" Name="Mutual" />
           <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="CompositionRule_Types" Relationship="OpenConfigurator_Model.FK_CompositionRules_CompositionRule_Types" FromRole="CompositionRule" ToRole="CompositionRule_Types" />
@@ -1052,7 +1051,6 @@
               <MappingFragment StoreEntitySet="CompositionRules">
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Mutual" ColumnName="Mutual" />
                 <ScalarProperty Name="SecondFeatureID" ColumnName="SecondFeatureID" />
                 <ScalarProperty Name="FirstFeatureID" ColumnName="FirstFeatureID" />
                 <ScalarProperty Name="CompositionRuleTypeID" ColumnName="CompositionRuleTypeID" />
@@ -1160,10 +1158,10 @@
           <ConnectorPoint PointX="12.90625" PointY="10.25" />
         </AssociationConnector>
         <EntityTypeShape EntityType="OpenConfigurator_Model.CompositionRule_Type" Width="2" PointX="0.5" PointY="7.5" Height="1.5956835937500031" />
-        <EntityTypeShape EntityType="OpenConfigurator_Model.CompositionRule" Width="1.75" PointX="0.5" PointY="3.25" Height="2.9417936197916674" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.CompositionRule" Width="1.75" PointX="0.5" PointY="3.25" Height="2.7494921874999987" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_CompositionRules_CompositionRule_Types" >
           <ConnectorPoint PointX="1.375" PointY="7.5" />
-          <ConnectorPoint PointX="1.375" PointY="6.1917936197916674" />
+          <ConnectorPoint PointX="1.375" PointY="5.9994921874999987" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_CompositionRules_Models" >
           <ConnectorPoint PointX="3" PointY="4.1920475260416659" />
