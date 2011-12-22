@@ -110,38 +110,6 @@ namespace DAL.DataEntities
         }
         private User _user;
     
-        public virtual ICollection<Rule> Rules
-        {
-            get
-            {
-                if (_rules == null)
-                {
-                    var newCollection = new FixupCollection<Rule>();
-                    newCollection.CollectionChanged += FixupRules;
-                    _rules = newCollection;
-                }
-                return _rules;
-            }
-            set
-            {
-                if (!ReferenceEquals(_rules, value))
-                {
-                    var previousValue = _rules as FixupCollection<Rule>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupRules;
-                    }
-                    _rules = value;
-                    var newValue = value as FixupCollection<Rule>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupRules;
-                    }
-                }
-            }
-        }
-        private ICollection<Rule> _rules;
-    
         public virtual ICollection<Relation> Relations
         {
             get
@@ -237,6 +205,38 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<CompositionRule> _compositionRules;
+    
+        public virtual ICollection<CustomRule> CustomRules
+        {
+            get
+            {
+                if (_customRules == null)
+                {
+                    var newCollection = new FixupCollection<CustomRule>();
+                    newCollection.CollectionChanged += FixupCustomRules;
+                    _customRules = newCollection;
+                }
+                return _customRules;
+            }
+            set
+            {
+                if (!ReferenceEquals(_customRules, value))
+                {
+                    var previousValue = _customRules as FixupCollection<CustomRule>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupCustomRules;
+                    }
+                    _customRules = value;
+                    var newValue = value as FixupCollection<CustomRule>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupCustomRules;
+                    }
+                }
+            }
+        }
+        private ICollection<CustomRule> _customRules;
 
         #endregion
         #region Association Fixup
@@ -274,28 +274,6 @@ namespace DAL.DataEntities
             if (e.OldItems != null)
             {
                 foreach (Feature item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Model, this))
-                    {
-                        item.Model = null;
-                    }
-                }
-            }
-        }
-    
-        private void FixupRules(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (Rule item in e.NewItems)
-                {
-                    item.Model = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (Rule item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Model, this))
                     {
@@ -362,6 +340,28 @@ namespace DAL.DataEntities
             if (e.OldItems != null)
             {
                 foreach (CompositionRule item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Model, this))
+                    {
+                        item.Model = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupCustomRules(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (CustomRule item in e.NewItems)
+                {
+                    item.Model = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (CustomRule item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Model, this))
                     {

@@ -7,7 +7,7 @@
     <script type="text/javascript">
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var modelId = '@(ViewBag.ModelId)';
-        var clientController = null;
+        var diagramDataModel= null, clientController = null;
 
         function calcWidth() {
             //Set width for ModelsBox
@@ -114,7 +114,9 @@
             $.timer(300, function () {
 
                 //Instantiate/Initialize controls
-                clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"));
+                diagramDataModel = new DiagramDataModel();
+                diagramDataModel.Initialize();
+                clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"), diagramDataModel);
                 clientController.Initialize();
 
                 //

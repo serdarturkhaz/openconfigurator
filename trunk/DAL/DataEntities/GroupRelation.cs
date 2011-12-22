@@ -74,7 +74,7 @@ namespace DAL.DataEntities
         #endregion
         #region Navigation Properties
     
-        public virtual GroupRelation_Types GroupRelation_Type
+        public virtual GroupRelation_Type GroupRelation_Type
         {
             get { return _groupRelation_Type; }
             set
@@ -87,7 +87,7 @@ namespace DAL.DataEntities
                 }
             }
         }
-        private GroupRelation_Types _groupRelation_Type;
+        private GroupRelation_Type _groupRelation_Type;
     
         public virtual Model Model
         {
@@ -139,7 +139,7 @@ namespace DAL.DataEntities
         #endregion
         #region Association Fixup
     
-        private void FixupGroupRelation_Type(GroupRelation_Types previousValue)
+        private void FixupGroupRelation_Type(GroupRelation_Type previousValue)
         {
             if (previousValue != null && previousValue.GroupRelations.Contains(this))
             {

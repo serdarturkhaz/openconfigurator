@@ -59,6 +59,12 @@
     <Compile Include="DataEntities\CompositionRule_Type.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataEntities\CustomRule.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities\CustomRule_Type.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataEntities\DataEntities.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -83,7 +89,7 @@
     <Compile Include="DataEntities\GroupRelations_To_Features.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataEntities\GroupRelation_Types.cs">
+    <Compile Include="DataEntities\GroupRelation_Type.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\IDataEntity.cs" />
@@ -94,12 +100,6 @@
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\Relation_Type.cs">
-      <DependentUpon>DataEntities.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataEntities\Rule.cs">
-      <DependentUpon>DataEntities.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataEntities\Rule_Type.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\User.cs">

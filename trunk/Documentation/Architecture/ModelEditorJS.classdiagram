@@ -4,12 +4,6 @@
     <logicalClassDesignerModelHasTypes>
       <class Id="0bc6327a-357b-4b5c-a3a8-dc7d2bb4ee3c" name="DiagramContext" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="3641c537-04f7-4c29-8c36-82fc386644ea" />
-        <suppliersInternal>
-          <dependency Id="0b202578-d232-475f-9c3a-958bb96cb9f0">
-            <classMoniker Id="e36004df-34a4-4602-a137-c5e2747655c8" LastKnownName="UIElement" />
-            <elementDefinition Id="96178cc4-6068-45fb-9e4e-e253ae5836b2" />
-          </dependency>
-        </suppliersInternal>
         <ownedAttributesInternal>
           <property Id="cc903087-63ca-4564-8438-ce10f7abddf6" name="OnElementAdded" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="bbfc81e3-ac9f-4a69-96c8-a44dce234b18" />
@@ -64,12 +58,6 @@
     <logicalClassDesignerModelHasTypes>
       <class Id="946bef31-67c5-4b54-87f8-19f9e16c786a" name="ModelExplorer" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="46609ac4-a98a-406b-874c-008e65939804" />
-        <suppliersInternal>
-          <dependency Id="55194b5c-2b3a-4990-a419-5c3c62b9c4e9">
-            <classMoniker Id="e36004df-34a4-4602-a137-c5e2747655c8" LastKnownName="UIElement" />
-            <elementDefinition Id="66ed3d21-ac42-4240-8e45-42ed40ad448a" />
-          </dependency>
-        </suppliersInternal>
         <ownedAttributesInternal>
           <property Id="8ee89be1-4a75-4074-981b-421137d9d2b4" name="OnAllElementsDeselected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="61a70770-446e-4087-9c47-36b019172562" />
@@ -97,12 +85,6 @@
     <logicalClassDesignerModelHasTypes>
       <class Id="edeebc6c-2b72-4657-a5aa-6e27234f1635" name="PropertiesComponent" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="1692cc84-e11b-4dd7-b706-ce77bc2f7b50" />
-        <suppliersInternal>
-          <dependency Id="41de4f77-6a57-49a7-9459-5548bcb5606b">
-            <classMoniker Id="e36004df-34a4-4602-a137-c5e2747655c8" LastKnownName="UIElement" />
-            <elementDefinition Id="25300630-1373-45fb-ab94-ec6a9cb97608" />
-          </dependency>
-        </suppliersInternal>
         <ownedAttributesInternal>
           <property Id="3dd6efd9-341b-4482-a144-3f517dde4579" name="OnDataChanged" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="5b74404e-1ae3-4b45-aba8-98bc3c439b46" />
@@ -608,6 +590,45 @@
         </suppliersInternal>
       </package>
     </logicalClassDesignerModelHasPackages>
+    <packageHasNamedElement>
+      <referencedType Id="5ab21693-14c4-4f83-8d40-028a8d919780" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
+        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
+      </referencedType>
+    </packageHasNamedElement>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="85d7db16-8a27-4308-96bc-4383c0f2dc4c" name="DiagramDataModel" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1c0fd755-5819-40e2-8cea-ea2ce683e794" />
+        <ownedAttributesInternal>
+          <property Id="32aa3e4d-3f70-46ef-989e-fc4d0bb7d522" name="OnDataChanged" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="1b254052-726c-46f6-9f70-1877e7839e59" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="5ab21693-14c4-4f83-8d40-028a8d919780" LastKnownName="Event" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="65d81b58-870f-4b5f-85e0-b21963e64775" name="LoadProperties" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="72edad06-9835-4621-9a1a-1b4fd4d3bd08" />
+          </operation>
+          <operation Id="13cf8053-26b4-477d-996b-08582dec6630" name="Clear" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="cb42a5bf-3c31-4481-b257-7ab487f8659a" />
+          </operation>
+          <operation Id="e417038b-381b-4be4-9489-432fae3b55d9" name="Initialize" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="af307960-f77b-4be9-bc05-475bd3c1a755" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="1d95e75a-af26-4665-993c-e561e829f9c5" name="IView" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1855b340-94f7-4f42-8cd2-fbdbff08db2e" />
+        <ownedOperationsInternal>
+          <operation Id="df442740-a28a-44f4-9033-ced01470ce44" name="Initialize" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="469f947c-43fe-49a6-af91-11ae859c7706" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="5705e1b5-45f0-4201-ad0d-94691a6e38bd" name="Documentation">
     <elementDefinition Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747" />

@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace DAL.DataEntities
 {
-    public partial class GroupRelation_Types : IDataEntity
+    public partial class GroupRelation_Type : IDataEntity
     {
         #region Primitive Properties
     

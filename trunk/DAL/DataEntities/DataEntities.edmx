@@ -11,6 +11,8 @@
           <EntitySet Name="Attributes" EntityType="OpenConfigurator_Model.Store.Attributes" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CompositionRule_Types" EntityType="OpenConfigurator_Model.Store.CompositionRule_Types" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CompositionRules" EntityType="OpenConfigurator_Model.Store.CompositionRules" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CustomRule_Types" EntityType="OpenConfigurator_Model.Store.CustomRule_Types" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CustomRules" EntityType="OpenConfigurator_Model.Store.CustomRules" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Features" EntityType="OpenConfigurator_Model.Store.Features" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="GroupRelation_Types" EntityType="OpenConfigurator_Model.Store.GroupRelation_Types" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="GroupRelations" EntityType="OpenConfigurator_Model.Store.GroupRelations" store:Type="Tables" Schema="dbo" />
@@ -18,8 +20,6 @@
           <EntitySet Name="Models" EntityType="OpenConfigurator_Model.Store.Models" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Relation_Types" EntityType="OpenConfigurator_Model.Store.Relation_Types" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Relations" EntityType="OpenConfigurator_Model.Store.Relations" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Rule_Types" EntityType="OpenConfigurator_Model.Store.Rule_Types" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Rules" EntityType="OpenConfigurator_Model.Store.Rules" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Users" EntityType="OpenConfigurator_Model.Store.Users" store:Type="Tables" Schema="dbo" />
           <AssociationSet Name="FK_Attributes_Attribute_DataTypes" Association="OpenConfigurator_Model.Store.FK_Attributes_Attribute_DataTypes">
             <End Role="Attribute_DataTypes" EntitySet="Attribute_DataTypes" />
@@ -83,11 +83,11 @@
           </AssociationSet>
           <AssociationSet Name="FK_Rules_Models" Association="OpenConfigurator_Model.Store.FK_Rules_Models">
             <End Role="Models" EntitySet="Models" />
-            <End Role="Rules" EntitySet="Rules" />
+            <End Role="CustomRules" EntitySet="CustomRules" />
           </AssociationSet>
           <AssociationSet Name="FK_Rules_Rule_Types" Association="OpenConfigurator_Model.Store.FK_Rules_Rule_Types">
-            <End Role="Rule_Types" EntitySet="Rule_Types" />
-            <End Role="Rules" EntitySet="Rules" />
+            <End Role="CustomRule_Types" EntitySet="CustomRule_Types" />
+            <End Role="CustomRules" EntitySet="CustomRules" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Attribute_DataTypes">
@@ -131,8 +131,25 @@
           <Property Name="CompositionRuleTypeID" Type="int" Nullable="false" />
           <Property Name="FirstFeatureID" Type="int" Nullable="false" />
           <Property Name="SecondFeatureID" Type="int" Nullable="false" />
-          <Property Name="Mutual" Type="bit" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="CustomRule_Types">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="CustomRules">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ModelID" Type="int" Nullable="false" />
+          <Property Name="RuleTypeID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="Expression" Type="nvarchar(max)" />
           <Property Name="Description" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Features">
@@ -204,24 +221,6 @@
           <Property Name="ChildFeatureID" Type="int" Nullable="false" />
           <Property Name="LowerBound" Type="int" />
           <Property Name="UpperBound" Type="int" />
-        </EntityType>
-        <EntityType Name="Rule_Types">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="Rules">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="ModelID" Type="int" Nullable="false" />
-          <Property Name="RuleTypeID" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" />
-          <Property Name="Expression" Type="nvarchar(max)" />
-          <Property Name="Description" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -423,24 +422,24 @@
           <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Rules" Type="OpenConfigurator_Model.Store.Rules" Multiplicity="*" />
+          <End Role="CustomRules" Type="OpenConfigurator_Model.Store.CustomRules" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Models">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Rules">
+            <Dependent Role="CustomRules">
               <PropertyRef Name="ModelID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Rules_Rule_Types">
-          <End Role="Rule_Types" Type="OpenConfigurator_Model.Store.Rule_Types" Multiplicity="1" />
-          <End Role="Rules" Type="OpenConfigurator_Model.Store.Rules" Multiplicity="*" />
+          <End Role="CustomRule_Types" Type="OpenConfigurator_Model.Store.CustomRule_Types" Multiplicity="1" />
+          <End Role="CustomRules" Type="OpenConfigurator_Model.Store.CustomRules" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Rule_Types">
+            <Principal Role="CustomRule_Types">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Rules">
+            <Dependent Role="CustomRules">
               <PropertyRef Name="RuleTypeID" />
             </Dependent>
           </ReferentialConstraint>
@@ -471,16 +470,6 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="Models" EntitySet="Models" />
           </AssociationSet>
-          <EntitySet Name="Rule_Types" EntityType="OpenConfigurator_Model.Rule_Type" />
-          <EntitySet Name="Rules" EntityType="OpenConfigurator_Model.Rule" />
-          <AssociationSet Name="FK_Rules_Models" Association="OpenConfigurator_Model.FK_Rules_Models">
-            <End Role="Model" EntitySet="Models" />
-            <End Role="Rule" EntitySet="Rules" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Rules_Rule_Types" Association="OpenConfigurator_Model.FK_Rules_Rule_Types">
-            <End Role="Rule_Types" EntitySet="Rule_Types" />
-            <End Role="Rule" EntitySet="Rules" />
-          </AssociationSet>
           <EntitySet Name="Attribute_Types" EntityType="OpenConfigurator_Model.Attribute_Type" />
           <AssociationSet Name="FK_Attributes_Attribute_Types" Association="OpenConfigurator_Model.FK_Attributes_Attribute_Types">
             <End Role="Attribute_Types" EntitySet="Attribute_Types" />
@@ -504,7 +493,7 @@
             <End Role="Feature" EntitySet="Features" />
             <End Role="Relation" EntitySet="Relations" />
           </AssociationSet>
-          <EntitySet Name="GroupRelation_Types" EntityType="OpenConfigurator_Model.GroupRelation_Types" />
+          <EntitySet Name="GroupRelation_Types" EntityType="OpenConfigurator_Model.GroupRelation_Type" />
           <EntitySet Name="GroupRelations" EntityType="OpenConfigurator_Model.GroupRelation" />
           <EntitySet Name="GroupRelations_To_Features" EntityType="OpenConfigurator_Model.GroupRelations_To_Features" />
           <AssociationSet Name="FK_GroupRelations_To_Features_Features" Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features">
@@ -532,6 +521,16 @@
           <AssociationSet Name="FK_CompositionRules_Models" Association="OpenConfigurator_Model.FK_CompositionRules_Models">
             <End Role="Model" EntitySet="Models" />
             <End Role="CompositionRule" EntitySet="CompositionRules" />
+          </AssociationSet>
+          <EntitySet Name="CustomRule_Types" EntityType="OpenConfigurator_Model.CustomRule_Type" />
+          <EntitySet Name="CustomRules" EntityType="OpenConfigurator_Model.CustomRule" />
+          <AssociationSet Name="FK_Rules_Rule_Types1" Association="OpenConfigurator_Model.FK_Rules_Rule_Types1">
+            <End Role="CustomRule_Types" EntitySet="CustomRule_Types" />
+            <End Role="CustomRule" EntitySet="CustomRules" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rules_Models1" Association="OpenConfigurator_Model.FK_Rules_Models1">
+            <End Role="Model" EntitySet="Models" />
+            <End Role="CustomRule" EntitySet="CustomRules" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Attribute_DataType">
@@ -581,12 +580,12 @@
           <Property Name="Name" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Features" Relationship="OpenConfigurator_Model.FK_Features_Models" FromRole="Models" ToRole="Features" />
           <NavigationProperty Name="User" Relationship="OpenConfigurator_Model.FK_Models_Users" FromRole="Models" ToRole="Users" />
-          <NavigationProperty Name="Rules" Relationship="OpenConfigurator_Model.FK_Rules_Models" FromRole="Model" ToRole="Rule" />
           <Property Type="DateTime" Name="CreatedDate" />
           <Property Type="DateTime" Name="LastModifiedDate" />
           <NavigationProperty Name="Relations" Relationship="OpenConfigurator_Model.FK_Relations_Models" FromRole="Model" ToRole="Relation" />
           <NavigationProperty Name="GroupRelations" Relationship="OpenConfigurator_Model.FK_FeatureGroups_Models" FromRole="Model" ToRole="GroupRelation" />
           <NavigationProperty Name="CompositionRules" Relationship="OpenConfigurator_Model.FK_CompositionRules_Models" FromRole="Model" ToRole="CompositionRule" />
+          <NavigationProperty Name="CustomRules" Relationship="OpenConfigurator_Model.FK_Rules_Models1" FromRole="Model" ToRole="CustomRule" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -648,51 +647,6 @@
             </Principal>
             <Dependent Role="Models">
               <PropertyRef Name="UserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Rule_Type">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Rules" Relationship="OpenConfigurator_Model.FK_Rules_Rule_Types" FromRole="Rule_Types" ToRole="Rule" />
-        </EntityType>
-        <EntityType Name="Rule">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="Int32" Name="ModelID" Nullable="false" />
-          <Property Type="Int32" Name="RuleTypeID" Nullable="false" />
-          <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="Expression" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Model" Relationship="OpenConfigurator_Model.FK_Rules_Models" FromRole="Rule" ToRole="Model" />
-          <NavigationProperty Name="Rule_Type" Relationship="OpenConfigurator_Model.FK_Rules_Rule_Types" FromRole="Rule" ToRole="Rule_Types" />
-        </EntityType>
-        <Association Name="FK_Rules_Models">
-          <End Type="OpenConfigurator_Model.Model" Role="Model" Multiplicity="1" />
-          <End Type="OpenConfigurator_Model.Rule" Role="Rule" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Model">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Rule">
-              <PropertyRef Name="ModelID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Rules_Rule_Types">
-          <End Type="OpenConfigurator_Model.Rule_Type" Role="Rule_Types" Multiplicity="1" />
-          <End Type="OpenConfigurator_Model.Rule" Role="Rule" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Rule_Types">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Rule">
-              <PropertyRef Name="RuleTypeID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -790,7 +744,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="GroupRelation_Types">
+        <EntityType Name="GroupRelation_Type">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -837,7 +791,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GroupRelations_GroupRelation_Types">
-          <End Type="OpenConfigurator_Model.GroupRelation_Types" Role="GroupRelation_Types" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.GroupRelation_Type" Role="GroupRelation_Types" Multiplicity="1" />
           <End Type="OpenConfigurator_Model.GroupRelation" Role="GroupRelation" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="GroupRelation_Types">
@@ -918,6 +872,51 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="CustomRule_Type">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="CustomRules" Relationship="OpenConfigurator_Model.FK_Rules_Rule_Types1" FromRole="CustomRule_Types" ToRole="CustomRule" />
+        </EntityType>
+        <EntityType Name="CustomRule">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ModelID" Nullable="false" />
+          <Property Type="Int32" Name="RuleTypeID" Nullable="false" />
+          <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Expression" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="CustomRule_Type" Relationship="OpenConfigurator_Model.FK_Rules_Rule_Types1" FromRole="CustomRule" ToRole="CustomRule_Types" />
+          <NavigationProperty Name="Model" Relationship="OpenConfigurator_Model.FK_Rules_Models1" FromRole="CustomRule" ToRole="Model" />
+        </EntityType>
+        <Association Name="FK_Rules_Rule_Types1">
+          <End Type="OpenConfigurator_Model.CustomRule_Type" Role="CustomRule_Types" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.CustomRule" Role="CustomRule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CustomRule_Types">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CustomRule">
+              <PropertyRef Name="RuleTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rules_Models1">
+          <End Type="OpenConfigurator_Model.Model" Role="Model" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.CustomRule" Role="CustomRule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Model">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CustomRule">
+              <PropertyRef Name="ModelID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -956,26 +955,6 @@
             <ScalarProperty Name="Email" ColumnName="Email" />
             <ScalarProperty Name="Password" ColumnName="Password" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Rule_Types">
-            <EntityTypeMapping TypeName="OpenConfigurator_Model.Rule_Type">
-              <MappingFragment StoreEntitySet="Rule_Types">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Rules">
-            <EntityTypeMapping TypeName="OpenConfigurator_Model.Rule">
-              <MappingFragment StoreEntitySet="Rules">
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Expression" ColumnName="Expression" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="RuleTypeID" ColumnName="RuleTypeID" />
-                <ScalarProperty Name="ModelID" ColumnName="ModelID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Attribute_Types">
             <EntityTypeMapping TypeName="OpenConfigurator_Model.Attribute_Type">
               <MappingFragment StoreEntitySet="Attribute_Types">
@@ -1008,7 +987,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GroupRelation_Types">
-            <EntityTypeMapping TypeName="OpenConfigurator_Model.GroupRelation_Types">
+            <EntityTypeMapping TypeName="OpenConfigurator_Model.GroupRelation_Type">
               <MappingFragment StoreEntitySet="GroupRelation_Types">
                 <ScalarProperty Name="FixedUpperBound" ColumnName="FixedUpperBound" />
                 <ScalarProperty Name="FixedLowerBound" ColumnName="FixedLowerBound" />
@@ -1059,6 +1038,26 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="CustomRule_Types">
+            <EntityTypeMapping TypeName="OpenConfigurator_Model.CustomRule_Type">
+              <MappingFragment StoreEntitySet="CustomRule_Types">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomRules">
+            <EntityTypeMapping TypeName="OpenConfigurator_Model.CustomRule">
+              <MappingFragment StoreEntitySet="CustomRules">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Expression" ColumnName="Expression" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="RuleTypeID" ColumnName="RuleTypeID" />
+                <ScalarProperty Name="ModelID" ColumnName="ModelID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -1095,24 +1094,14 @@
           <ConnectorPoint PointX="7.875" PointY="6.68724609375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Features_Models" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="4.9393929036458317" />
-          <ConnectorPoint PointX="6.03125" PointY="4.9393929036458317" />
-          <ConnectorPoint PointX="6.03125" PointY="5.375" />
+          <ConnectorPoint PointX="4.5" PointY="4.4754519359394216" />
+          <ConnectorPoint PointX="6.3125" PointY="4.4754519359394216" />
+          <ConnectorPoint PointX="6.3125" PointY="5.375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Models_Users" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="1.2499995" />
-          <ConnectorPoint PointX="3.75" PointY="1.2499995" />
-          <ConnectorPoint PointX="3.75" PointY="2" />
-        </AssociationConnector>
-        <EntityTypeShape EntityType="OpenConfigurator_Model.Rule_Type" Width="1.5" PointX="9.25" PointY="2.75" Height="1.59568359375" IsExpanded="true" />
-        <EntityTypeShape EntityType="OpenConfigurator_Model.Rule" Width="1.5" PointX="6.875" PointY="2.125" Height="2.5571907552083326" IsExpanded="true" />
-        <AssociationConnector Association="OpenConfigurator_Model.FK_Rules_Models" >
-          <ConnectorPoint PointX="4.5" PointY="4.2182421875" />
-          <ConnectorPoint PointX="6.875" PointY="4.2182421875" />
-        </AssociationConnector>
-        <AssociationConnector Association="OpenConfigurator_Model.FK_Rules_Rule_Types" >
-          <ConnectorPoint PointX="9.25" PointY="3.547841796875" />
-          <ConnectorPoint PointX="8.375" PointY="3.547841796875" />
+          <ConnectorPoint PointX="2.25" PointY="1.1872558588229085" />
+          <ConnectorPoint PointX="3.7187475" PointY="1.1872558588229085" />
+          <ConnectorPoint PointX="3.7187475" PointY="2" />
         </AssociationConnector>
         <EntityTypeShape EntityType="OpenConfigurator_Model.Attribute_Type" Width="1.5" PointX="10.625" PointY="5.25" Height="1.5956835937500031" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_Attributes_Attribute_Types" >
@@ -1126,7 +1115,7 @@
           <ConnectorPoint PointX="3.75" PointY="10.009095052083332" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Relations_Models" >
-          <ConnectorPoint PointX="3.7187475" PointY="5.1340950520833326" />
+          <ConnectorPoint PointX="3.7187475" PointY="5.326396484375" />
           <ConnectorPoint PointX="3.7187475" PointY="6.875" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Relations_Features" >
@@ -1137,21 +1126,22 @@
           <ConnectorPoint PointX="5.25" PointY="7.2210237630208347" />
           <ConnectorPoint PointX="4.5" PointY="7.2210237630208347" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelation_Types" Width="1.875" PointX="14.625" PointY="1.125" Height="1.9802864583333353" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelation_Type" Width="1.875" PointX="14.625" PointY="1.125" Height="1.9802864583333353" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelation" Width="2.375" PointX="11.25" PointY="0.5" Height="2.5571907552083317" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelations_To_Features" Width="2.25" PointX="12.125" PointY="10.25" Height="2.172587890624996" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features" >
-          <ConnectorPoint PointX="6.3125" PointY="8.5090950520833335" />
-          <ConnectorPoint PointX="6.3125" PointY="11.336293945312498" />
-          <ConnectorPoint PointX="12.125" PointY="11.336293945312498" />
+          <ConnectorPoint PointX="6.21875" PointY="8.5090950520833335" />
+          <ConnectorPoint PointX="6.21875" PointY="10.90625" />
+          <ConnectorPoint PointX="12.125" PointY="10.90625" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_GroupRelation_Types" >
           <ConnectorPoint PointX="14.625" PointY="2.0910953776041659" />
           <ConnectorPoint PointX="13.625" PointY="2.0910953776041659" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_FeatureGroups_Models" >
-          <ConnectorPoint PointX="4.5" PointY="2.03125" />
-          <ConnectorPoint PointX="11.25" PointY="2.03125" />
+          <ConnectorPoint PointX="4.5" PointY="4.056964651765985" />
+          <ConnectorPoint PointX="12.0468725" PointY="4.056964651765985" />
+          <ConnectorPoint PointX="12.0468725" PointY="3.0571907552083317" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_GroupRelations" >
           <ConnectorPoint PointX="12.90625" PointY="3.0571907552083317" />
@@ -1164,8 +1154,18 @@
           <ConnectorPoint PointX="1.375" PointY="5.9994921874999987" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_CompositionRules_Models" >
-          <ConnectorPoint PointX="3" PointY="4.1920475260416659" />
-          <ConnectorPoint PointX="2.25" PointY="4.1920475260416659" />
+          <ConnectorPoint PointX="3" PointY="4.2881982421875" />
+          <ConnectorPoint PointX="2.25" PointY="4.2881982421875" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="OpenConfigurator_Model.CustomRule_Type" Width="2.25" PointX="7.875" PointY="1" Height="1.5956835937500031" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.CustomRule" Width="2" PointX="5.25" PointY="0.75" Height="2.5571907552083388" />
+        <AssociationConnector Association="OpenConfigurator_Model.FK_Rules_Rule_Types1" >
+          <ConnectorPoint PointX="7.875" PointY="1.7978417968750016" />
+          <ConnectorPoint PointX="7.25" PointY="1.7978417968750016" />
+        </AssociationConnector>
+        <AssociationConnector Association="OpenConfigurator_Model.FK_Rules_Models1" >
+          <ConnectorPoint PointX="4.5" PointY="2.6535953776041694" />
+          <ConnectorPoint PointX="5.25" PointY="2.6535953776041694" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>
