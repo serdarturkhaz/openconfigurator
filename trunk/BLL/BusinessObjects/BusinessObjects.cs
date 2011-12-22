@@ -266,14 +266,6 @@ namespace BLL.BusinessObjects
 
         #endregion
     }
-    public class AttributeDataType
-    {
-
-    }
-    public class AttributeType
-    {
-
-    }
 
     //Feature
     public class Feature : IBusinessObject
@@ -656,16 +648,12 @@ namespace BLL.BusinessObjects
 
         #endregion
     }
-
-    public class Rule
+    public class CustomRule : IBusinessObject
     {
 
     }
 
-    public class RuleType
-    {
-
-    }
+    //Users
     public class User : IBusinessObject
     {
         //Fields

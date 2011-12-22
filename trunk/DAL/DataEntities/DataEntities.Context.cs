@@ -72,18 +72,6 @@ namespace DAL.DataEntities
         }
         private ObjectSet<User> _users;
     
-        public ObjectSet<Rule_Type> Rule_Types
-        {
-            get { return _rule_Types  ?? (_rule_Types = CreateObjectSet<Rule_Type>("Rule_Types")); }
-        }
-        private ObjectSet<Rule_Type> _rule_Types;
-    
-        public ObjectSet<Rule> Rules
-        {
-            get { return _rules  ?? (_rules = CreateObjectSet<Rule>("Rules")); }
-        }
-        private ObjectSet<Rule> _rules;
-    
         public ObjectSet<Attribute_Type> Attribute_Types
         {
             get { return _attribute_Types  ?? (_attribute_Types = CreateObjectSet<Attribute_Type>("Attribute_Types")); }
@@ -102,11 +90,11 @@ namespace DAL.DataEntities
         }
         private ObjectSet<Relation> _relations;
     
-        public ObjectSet<GroupRelation_Types> GroupRelation_Types
+        public ObjectSet<GroupRelation_Type> GroupRelation_Types
         {
-            get { return _groupRelation_Types  ?? (_groupRelation_Types = CreateObjectSet<GroupRelation_Types>("GroupRelation_Types")); }
+            get { return _groupRelation_Types  ?? (_groupRelation_Types = CreateObjectSet<GroupRelation_Type>("GroupRelation_Types")); }
         }
-        private ObjectSet<GroupRelation_Types> _groupRelation_Types;
+        private ObjectSet<GroupRelation_Type> _groupRelation_Types;
     
         public ObjectSet<GroupRelation> GroupRelations
         {
@@ -131,6 +119,18 @@ namespace DAL.DataEntities
             get { return _compositionRules  ?? (_compositionRules = CreateObjectSet<CompositionRule>("CompositionRules")); }
         }
         private ObjectSet<CompositionRule> _compositionRules;
+    
+        public ObjectSet<CustomRule_Type> CustomRule_Types
+        {
+            get { return _customRule_Types  ?? (_customRule_Types = CreateObjectSet<CustomRule_Type>("CustomRule_Types")); }
+        }
+        private ObjectSet<CustomRule_Type> _customRule_Types;
+    
+        public ObjectSet<CustomRule> CustomRules
+        {
+            get { return _customRules  ?? (_customRules = CreateObjectSet<CustomRule>("CustomRules")); }
+        }
+        private ObjectSet<CustomRule> _customRules;
 
         #endregion
     }

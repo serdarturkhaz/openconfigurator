@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace DAL.DataEntities
 {
-    public partial class Rule : IDataEntity
+    public partial class CustomRule : IDataEntity
     {
         #region Primitive Properties
     
@@ -49,9 +49,9 @@ namespace DAL.DataEntities
             {
                 if (_ruleTypeID != value)
                 {
-                    if (Rule_Type != null && Rule_Type.ID != value)
+                    if (CustomRule_Type != null && CustomRule_Type.ID != value)
                     {
-                        Rule_Type = null;
+                        CustomRule_Type = null;
                     }
                     _ruleTypeID = value;
                 }
@@ -80,6 +80,21 @@ namespace DAL.DataEntities
         #endregion
         #region Navigation Properties
     
+        public virtual CustomRule_Type CustomRule_Type
+        {
+            get { return _customRule_Type; }
+            set
+            {
+                if (!ReferenceEquals(_customRule_Type, value))
+                {
+                    var previousValue = _customRule_Type;
+                    _customRule_Type = value;
+                    FixupCustomRule_Type(previousValue);
+                }
+            }
+        }
+        private CustomRule_Type _customRule_Type;
+    
         public virtual Model Model
         {
             get { return _model; }
@@ -94,61 +109,46 @@ namespace DAL.DataEntities
             }
         }
         private Model _model;
-    
-        public virtual Rule_Type Rule_Type
-        {
-            get { return _rule_Type; }
-            set
-            {
-                if (!ReferenceEquals(_rule_Type, value))
-                {
-                    var previousValue = _rule_Type;
-                    _rule_Type = value;
-                    FixupRule_Type(previousValue);
-                }
-            }
-        }
-        private Rule_Type _rule_Type;
 
         #endregion
         #region Association Fixup
     
-        private void FixupModel(Model previousValue)
+        private void FixupCustomRule_Type(CustomRule_Type previousValue)
         {
-            if (previousValue != null && previousValue.Rules.Contains(this))
+            if (previousValue != null && previousValue.CustomRules.Contains(this))
             {
-                previousValue.Rules.Remove(this);
+                previousValue.CustomRules.Remove(this);
             }
     
-            if (Model != null)
+            if (CustomRule_Type != null)
             {
-                if (!Model.Rules.Contains(this))
+                if (!CustomRule_Type.CustomRules.Contains(this))
                 {
-                    Model.Rules.Add(this);
+                    CustomRule_Type.CustomRules.Add(this);
                 }
-                if (ModelID != Model.ID)
+                if (RuleTypeID != CustomRule_Type.ID)
                 {
-                    ModelID = Model.ID;
+                    RuleTypeID = CustomRule_Type.ID;
                 }
             }
         }
     
-        private void FixupRule_Type(Rule_Type previousValue)
+        private void FixupModel(Model previousValue)
         {
-            if (previousValue != null && previousValue.Rules.Contains(this))
+            if (previousValue != null && previousValue.CustomRules.Contains(this))
             {
-                previousValue.Rules.Remove(this);
+                previousValue.CustomRules.Remove(this);
             }
     
-            if (Rule_Type != null)
+            if (Model != null)
             {
-                if (!Rule_Type.Rules.Contains(this))
+                if (!Model.CustomRules.Contains(this))
                 {
-                    Rule_Type.Rules.Add(this);
+                    Model.CustomRules.Add(this);
                 }
-                if (RuleTypeID != Rule_Type.ID)
+                if (ModelID != Model.ID)
                 {
-                    RuleTypeID = Rule_Type.ID;
+                    ModelID = Model.ID;
                 }
             }
         }

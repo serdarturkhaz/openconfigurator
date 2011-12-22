@@ -15,7 +15,7 @@ using System.Collections.Specialized;
 
 namespace DAL.DataEntities
 {
-    public partial class Rule_Type : IDataEntity
+    public partial class CustomRule_Type : IDataEntity
     {
         #region Primitive Properties
     
@@ -34,58 +34,58 @@ namespace DAL.DataEntities
         #endregion
         #region Navigation Properties
     
-        public virtual ICollection<Rule> Rules
+        public virtual ICollection<CustomRule> CustomRules
         {
             get
             {
-                if (_rules == null)
+                if (_customRules == null)
                 {
-                    var newCollection = new FixupCollection<Rule>();
-                    newCollection.CollectionChanged += FixupRules;
-                    _rules = newCollection;
+                    var newCollection = new FixupCollection<CustomRule>();
+                    newCollection.CollectionChanged += FixupCustomRules;
+                    _customRules = newCollection;
                 }
-                return _rules;
+                return _customRules;
             }
             set
             {
-                if (!ReferenceEquals(_rules, value))
+                if (!ReferenceEquals(_customRules, value))
                 {
-                    var previousValue = _rules as FixupCollection<Rule>;
+                    var previousValue = _customRules as FixupCollection<CustomRule>;
                     if (previousValue != null)
                     {
-                        previousValue.CollectionChanged -= FixupRules;
+                        previousValue.CollectionChanged -= FixupCustomRules;
                     }
-                    _rules = value;
-                    var newValue = value as FixupCollection<Rule>;
+                    _customRules = value;
+                    var newValue = value as FixupCollection<CustomRule>;
                     if (newValue != null)
                     {
-                        newValue.CollectionChanged += FixupRules;
+                        newValue.CollectionChanged += FixupCustomRules;
                     }
                 }
             }
         }
-        private ICollection<Rule> _rules;
+        private ICollection<CustomRule> _customRules;
 
         #endregion
         #region Association Fixup
     
-        private void FixupRules(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupCustomRules(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (Rule item in e.NewItems)
+                foreach (CustomRule item in e.NewItems)
                 {
-                    item.Rule_Type = this;
+                    item.CustomRule_Type = this;
                 }
             }
     
             if (e.OldItems != null)
             {
-                foreach (Rule item in e.OldItems)
+                foreach (CustomRule item in e.OldItems)
                 {
-                    if (ReferenceEquals(item.Rule_Type, this))
+                    if (ReferenceEquals(item.CustomRule_Type, this))
                     {
-                        item.Rule_Type = null;
+                        item.CustomRule_Type = null;
                     }
                 }
             }
