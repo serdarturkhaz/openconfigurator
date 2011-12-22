@@ -71,12 +71,6 @@ namespace DAL.DataEntities
             set;
         }
     
-        public virtual Nullable<bool> Mutual
-        {
-            get;
-            set;
-        }
-    
         public virtual string Name
         {
             get;
