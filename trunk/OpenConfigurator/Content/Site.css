@@ -486,6 +486,10 @@ html > body .ui-pnotify
 {
     background: url(themes/base/images/controls/simpletree/elementx.png) no-repeat left top;
 }
+.simpleTree li.row .customRule .innerNode div.icon
+{
+    background: url(themes/base/images/controls/simpletree/elementx.png) no-repeat left top;
+}
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/
 /*HTML and fonts********************************************************************************/
