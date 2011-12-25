@@ -619,16 +619,6 @@
         </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
-    <logicalClassDesignerModelHasTypes>
-      <class Id="1d95e75a-af26-4665-993c-e561e829f9c5" name="IView" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <elementDefinition Id="1855b340-94f7-4f42-8cd2-fbdbff08db2e" />
-        <ownedOperationsInternal>
-          <operation Id="df442740-a28a-44f4-9033-ced01470ce44" name="Initialize" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="469f947c-43fe-49a6-af91-11ae859c7706" />
-          </operation>
-        </ownedOperationsInternal>
-      </class>
-    </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="5705e1b5-45f0-4201-ad0d-94691a6e38bd" name="Documentation">
     <elementDefinition Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747" />

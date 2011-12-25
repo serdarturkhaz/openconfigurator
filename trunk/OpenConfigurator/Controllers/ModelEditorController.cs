@@ -92,7 +92,6 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
-
         [Authorize]
         public JsonNetResult NewDefaultCompositionRule()
         {
@@ -107,6 +106,21 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
+        [Authorize]
+        public JsonNetResult NewDefaultCustomRule()
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Get a new default CustomRule
+            CustomRuleService _customRuleService = new CustomRuleService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.CustomRule newCustomRule = (BLL.BusinessObjects.CustomRule)_customRuleService.CreateDefault();
+            result.Data = newCustomRule;
+
+            //
+            return result;
+        }
+    
         [Authorize]
         public JsonNetResult GetRelationTypes()
         {

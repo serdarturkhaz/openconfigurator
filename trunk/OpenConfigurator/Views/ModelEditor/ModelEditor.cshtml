@@ -78,6 +78,9 @@
             $("#NewCompositionRuleButton").bind("click", function () {
                 clientController.CreateNewCompositionRule();
             });
+            $("#NewCustomRuleButton").bind("click", function () {
+                clientController.CreateNewCustomRule();
+            });
 
             //Key handlers
             $(document).keydown(function (e) {
@@ -89,14 +92,15 @@
                 });
                 $.ctrl('R', function () { //create Relation
                     clientController.CreateNewRelation();
-                    return false;
                 });
                 $.ctrl('G', function () { //create GroupRelation
                     clientController.CreateNewGroupRelation();
                 });
                 $.ctrl('M', function () { //create CompositionRule
                     clientController.CreateNewCompositionRule();
-                    return false;
+                });
+                $.ctrl('U', function () { //create CustomRule
+                    clientController.CreateNewCustomRule();
                 });
             });
             //---------------------------------------------------------------------------------

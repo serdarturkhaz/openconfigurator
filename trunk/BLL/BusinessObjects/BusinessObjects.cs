@@ -37,7 +37,7 @@ namespace BLL.BusinessObjects
     {
         Dependency = 1,
         MutualDependency = 2,
-        MutualExclusion= 3
+        MutualExclusion = 3
     }
 
     //Model
@@ -338,7 +338,7 @@ namespace BLL.BusinessObjects
                 return _attributes;
             }
         }
-        
+
         //Conversion
         public static BLL.BusinessObjects.Feature FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
         {
@@ -618,7 +618,7 @@ namespace BLL.BusinessObjects
         //Factory
         public static BLL.BusinessObjects.CompositionRule CreateDefault()
         {
-            //Create a new Relation and InnerEntity
+            //Create a new CompositionRule and InnerEntity
             DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.CompositionRule();
             BLL.BusinessObjects.CompositionRule compositionRule = new CompositionRule((DAL.DataEntities.CompositionRule)innerEntity);
 
@@ -650,7 +650,98 @@ namespace BLL.BusinessObjects
     }
     public class CustomRule : IBusinessObject
     {
+        //Fields
+        private DAL.DataEntities.CustomRule _innerEntity;
 
+        //Constructor
+        internal CustomRule()
+        {
+        }
+        internal CustomRule(DAL.DataEntities.CustomRule innerEntity)
+        {
+            this._innerEntity = innerEntity;
+        }
+
+        //Properties
+        [ReadOnly(true)]
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return _innerEntity.Name;
+            }
+            set
+            {
+                _innerEntity.Name = value;
+            }
+        }
+        public string Description
+        {
+            get
+            {
+                return _innerEntity.Description;
+            }
+            set
+            {
+                _innerEntity.Description = value;
+            }
+        }
+        public string Expression
+        {
+            get
+            {
+                return _innerEntity.Expression;
+            }
+            set
+            {
+                _innerEntity.Expression = value;
+            }
+        }
+
+        //Conversion
+        public static BLL.BusinessObjects.CustomRule FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.CustomRule customRule = new BLL.BusinessObjects.CustomRule((DAL.DataEntities.CustomRule)innerEntity);
+            return customRule;
+        }
+        //Factory
+        public static BLL.BusinessObjects.CustomRule CreateDefault()
+        {
+            //Create a new CustomRule and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.CustomRule();
+            BLL.BusinessObjects.CustomRule customRule = new CustomRule((DAL.DataEntities.CustomRule)innerEntity);
+
+            //Set default fields
+            customRule.Name = "Default rule";
+
+            //Return the object instance
+            return customRule;
+        }
+
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.CustomRule)value;
+            }
+        }
+
+        #endregion
     }
 
     //Users
@@ -707,7 +798,7 @@ namespace BLL.BusinessObjects
             return user;
         }
         //Factory
-        
+
 
 
         //Interface members
