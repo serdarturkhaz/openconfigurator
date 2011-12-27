@@ -331,6 +331,20 @@ namespace BLL.BusinessObjects
                     return false;
             }
         }
+        public Nullable<int> XPos
+        {
+            get
+            {
+                return _innerEntity.XPos;
+            }
+        }
+        public Nullable<int> YPos
+        {
+            get
+            {
+                return _innerEntity.YPos;
+            }
+        }
         public List<BLL.BusinessObjects.Attribute> Attributes
         {
             get
