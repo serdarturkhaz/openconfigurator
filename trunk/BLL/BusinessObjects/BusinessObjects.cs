@@ -45,10 +45,12 @@ namespace BLL.BusinessObjects
     {
         //Fields
         private DAL.DataEntities.Model _innerEntity;
+        private ICollection<BLL.BusinessObjects.Feature> _features;
 
         //Constructor
         internal Model()
         {
+            
         }
         internal Model(DAL.DataEntities.Model innerEntity)
         {
@@ -113,7 +115,13 @@ namespace BLL.BusinessObjects
                 return LastModifiedDate.Value.ToShortDateString();
             }
         }
-
+        public ICollection<BLL.BusinessObjects.Feature> Features
+        {
+            get
+            {
+                return _features;
+            }
+        }
 
         //Conversion
         public static BLL.BusinessObjects.Model FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
@@ -275,8 +283,9 @@ namespace BLL.BusinessObjects
         private List<BLL.BusinessObjects.Attribute> _attributes = new List<Attribute>();
 
         //Constructor
-        internal Feature()
+        public Feature()
         {
+            this._innerEntity = new DAL.DataEntities.Feature();
         }
         internal Feature(DAL.DataEntities.Feature innerEntity)
         {
@@ -331,18 +340,26 @@ namespace BLL.BusinessObjects
                     return false;
             }
         }
-        public Nullable<int> XPos
+        public Nullable<double> XPos
         {
             get
             {
                 return _innerEntity.XPos;
             }
+            set
+            {
+                _innerEntity.XPos = value;
+            }
         }
-        public Nullable<int> YPos
+        public Nullable<double> YPos
         {
             get
             {
                 return _innerEntity.YPos;
+            }
+            set
+            {
+                _innerEntity.YPos = value;
             }
         }
         public List<BLL.BusinessObjects.Attribute> Attributes

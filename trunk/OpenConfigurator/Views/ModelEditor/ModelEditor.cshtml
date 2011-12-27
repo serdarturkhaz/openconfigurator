@@ -6,7 +6,7 @@
     <script type="text/javascript" src="../../Scripts/Pages/ModelEditor.js"></script>
     <script type="text/javascript">
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        var modelId = '@(ViewBag.ModelId)';
+        var modelId = '@(ViewBag.ModelId)', modelName = '@(ViewBag.ModelName)';
         var diagramDataModel= null, clientController = null;
 
         function calcWidth() {
@@ -17,33 +17,6 @@
             var propertiesBoxWidth = $("#PropertiesBox").width();
             var modelsBoxWidth = containerWidth - marginWidth * 2 - toolboxBoxWidth - propertiesBoxWidth;
             $('#ModelDiagramBox').css("width", modelsBoxWidth + "px");
-        }
-        function saveData() {
-            //Save ModelName
-            var name = $("#ModelNameTextbox").val();
-            $.ajax({
-                type: "POST",
-                url: "/ModelEditor/SaveModel",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({ modelId: modelId, name: name }),
-                success: function (reponse) {
-
-                    $.pnotify({
-                        pnotify_title: "Data saved",
-                        pnotify_text: "Model '" + name + "' saved successfully !",
-                        pnotify_type: "notice"
-                    });
-
-                },
-                error: function (req, status, error) {
-                    $.pnotify({
-                        pnotify_title: "Error!",
-                        pnotify_text: "Data could not be saved",
-                        pnotify_type: "error"
-                    });
-                }
-            });
         }
         function getDefaultDataObj(type) {
             var returnObj;
@@ -64,7 +37,7 @@
 
             //Button handlers
             $("#SaveButton").bind("click", function () {
-                saveData();
+                clientController.SaveData();
             });
             $("#NewFeatureButton").bind("click", function () {
                 clientController.CreateNewFeature();
@@ -118,9 +91,9 @@
             $.timer(300, function () {
 
                 //Instantiate/Initialize controls
-                diagramDataModel = new DiagramDataModel();
+                diagramDataModel = new DiagramDataModel(modelId, modelName);
                 diagramDataModel.Initialize();
-                clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"), diagramDataModel);
+                clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"),$("#ModelNameTextbox"), diagramDataModel);
                 clientController.Initialize();
 
                 //

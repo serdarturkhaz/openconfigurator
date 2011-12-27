@@ -158,12 +158,11 @@
           </Key>
           <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="ModelID" Type="int" Nullable="false" />
-          <Property Name="FeatureGroupID" Type="int" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="IsRoot" Type="bit" />
-          <Property Name="XPos" Type="int" />
-          <Property Name="YPos" Type="int" />
+          <Property Name="XPos" Type="float" />
+          <Property Name="YPos" Type="float" />
         </EntityType>
         <EntityType Name="GroupRelation_Types">
           <Key>
@@ -563,7 +562,6 @@
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ModelID" Type="Int32" Nullable="false" />
-          <Property Name="FeatureGroupID" Type="Int32" />
           <Property Name="Name" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Attributes" Relationship="OpenConfigurator_Model.FK_Attributes_Features" FromRole="Features" ToRole="Attributes" />
@@ -572,8 +570,8 @@
           <NavigationProperty Name="ChildRelations" Relationship="OpenConfigurator_Model.FK_Relations_Features" FromRole="Feature" ToRole="Relation" />
           <NavigationProperty Name="ParentRelations" Relationship="OpenConfigurator_Model.FK_Relations_ChildFeatures" FromRole="Feature" ToRole="Relation" />
           <NavigationProperty Name="GroupRelations_To_Features" Relationship="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features" FromRole="Feature" ToRole="GroupRelations_To_Features" />
-          <Property Type="Int32" Name="XPos" />
-          <Property Type="Int32" Name="YPos" />
+          <Property Type="Double" Name="XPos" />
+          <Property Type="Double" Name="YPos" />
         </EntityType>
         <EntityType Name="Model">
           <Key>
@@ -945,7 +943,6 @@
                 <ScalarProperty Name="IsRoot" ColumnName="IsRoot" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
             <ScalarProperty Name="ModelID" ColumnName="ModelID" />
-            <ScalarProperty Name="FeatureGroupID" ColumnName="FeatureGroupID" />
             <ScalarProperty Name="Name" ColumnName="Name" />
             <ScalarProperty Name="Description" ColumnName="Description" />
             </MappingFragment></EntityTypeMapping></EntitySetMapping>
@@ -1088,7 +1085,7 @@
       <Diagram Name="DataEntities" ZoomLevel="95">
         <EntityTypeShape EntityType="OpenConfigurator_Model.Attribute_DataType" Width="1.875" PointX="7.75" PointY="8.5" Height="1.5956835937499996" IsExpanded="true" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.Attribute" Width="1.75" PointX="7.875" PointY="5.25" Height="2.3648893229166656" IsExpanded="true" />
-        <EntityTypeShape EntityType="OpenConfigurator_Model.Feature" Width="2.125" PointX="5.25" PointY="5.375" Height="3.1340950520833335" IsExpanded="true" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.Feature" Width="2.125" PointX="5.25" PointY="5.375" Height="3.3263964843749978" IsExpanded="true" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.Model" Width="1.5" PointX="3" PointY="2" Height="2.3648893229166665" IsExpanded="true" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.User" Width="1.5" PointX="0.75" PointY="0.5" Height="1.787985026041667" IsExpanded="true" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_Attributes_Attribute_DataTypes" ManuallyRouted="false">
@@ -1100,9 +1097,9 @@
           <ConnectorPoint PointX="7.875" PointY="6.68724609375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Features_Models" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="4.4754519359394216" />
-          <ConnectorPoint PointX="6.3125" PointY="4.4754519359394216" />
-          <ConnectorPoint PointX="6.3125" PointY="5.375" />
+          <ConnectorPoint PointX="4.5" PointY="4.6173479338283556" />
+          <ConnectorPoint PointX="7.34375" PointY="4.6173479338283556" />
+          <ConnectorPoint PointX="7.34375" PointY="5.375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Models_Users" ManuallyRouted="false">
           <ConnectorPoint PointX="2.25" PointY="1.1872558588229085" />
@@ -1125,20 +1122,20 @@
           <ConnectorPoint PointX="3.7187475" PointY="6.875" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Relations_Features" >
-          <ConnectorPoint PointX="5.25" PointY="7.6920475260416676" />
-          <ConnectorPoint PointX="4.5" PointY="7.6920475260416676" />
+          <ConnectorPoint PointX="5.25" PointY="8.1306634521484362" />
+          <ConnectorPoint PointX="4.5" PointY="8.1306634521484362" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Relations_ChildFeatures" >
-          <ConnectorPoint PointX="5.25" PointY="7.2210237630208347" />
-          <ConnectorPoint PointX="4.5" PointY="7.2210237630208347" />
+          <ConnectorPoint PointX="5.25" PointY="7.4403317260742181" />
+          <ConnectorPoint PointX="4.5" PointY="7.4403317260742181" />
         </AssociationConnector>
         <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelation_Type" Width="1.875" PointX="14.625" PointY="1.125" Height="1.9802864583333353" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelation" Width="2.375" PointX="11.25" PointY="0.5" Height="2.5571907552083317" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelations_To_Features" Width="2.25" PointX="12.125" PointY="10.25" Height="2.172587890624996" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features" >
-          <ConnectorPoint PointX="6.21875" PointY="8.5090950520833335" />
-          <ConnectorPoint PointX="6.21875" PointY="10.90625" />
-          <ConnectorPoint PointX="12.125" PointY="10.90625" />
+          <ConnectorPoint PointX="6.3125" PointY="8.7013964843749978" />
+          <ConnectorPoint PointX="6.3125" PointY="11.336293945312498" />
+          <ConnectorPoint PointX="12.125" PointY="11.336293945312498" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_GroupRelation_Types" >
           <ConnectorPoint PointX="14.625" PointY="2.0910953776041659" />
