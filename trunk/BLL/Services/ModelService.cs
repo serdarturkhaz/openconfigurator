@@ -59,12 +59,10 @@ namespace BLL.Services
             //
             return new BLL.BusinessObjects.Model(model);
         }
-
         public IList<BusinessObjects.Model> GetAll()
         {
             throw new NotImplementedException();
         }
-
         public void Update(BusinessObjects.Model entity)
         {
             using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
@@ -75,7 +73,6 @@ namespace BLL.Services
                 _ModelRepository.SaveChanges();
             }
         }
-
         public void Delete(BusinessObjects.Model entity)
         {
             throw new NotImplementedException();
@@ -98,7 +95,6 @@ namespace BLL.Services
                 _ModelRepository.SaveChanges();
             }
         }
-
 
         #endregion
 

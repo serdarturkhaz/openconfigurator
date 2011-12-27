@@ -3,7 +3,7 @@ var settings = {
     diagramContext: {
         fixedOrientation: "vertical", //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
         drawCurves: true, //determines whether curves should be used for drawing relations - options: true / false
-        dynamicRefresh: false, //determines whether refresh (redraw) operations are executed real-time or after a move event is completed
+        dynamicRefresh: true, //determines whether refresh (redraw) operations are executed real-time or after a move event is completed
         displayCardinalities: "full" //determines how many cardinalities to display - options : none / partial(only cloneable and cardinal groups) / all (all relations and groupRelations)
     }
 };
@@ -569,10 +569,10 @@ function paramsToString(collection) {
     return returnString;
 }
 
-var DiagramDataModel = function () {
+var DiagramDataModel = function (modelID, modelName) {
 
     //Client data object
-    var ClientDataObject = function (businessDataObject, guid, type) {
+    var ClientDataObject = function (businessDataObject, guid, type, extraClientData) {
 
         //Variables
         var _guid = guid;
@@ -597,6 +597,9 @@ var DiagramDataModel = function () {
         this.SetPropertyValue = function (propertyName, value) {
             _businessDataObject[propertyName] = value;
         }
+
+        //Collections
+        this.ExtraClientData = (extraClientData != undefined ? extraClientData : null);
     }
 
     //Variables
@@ -607,9 +610,9 @@ var DiagramDataModel = function () {
         relations: {},
         groupRelations: {},
         compositionRules: {},
-        customRules: {},
         customRules: {}
     }
+    var _modelID = modelID, _modelName = modelName;
     var _thisDiagramDataModel = this;
 
     //Private methods
@@ -632,20 +635,53 @@ var DiagramDataModel = function () {
     }
 
     //Public methods
-    this.CreateNewClientDataObject = function (type) {
+    this.SaveModel = function (newName, onSuccess, onError) {
+        _modelName = newName;
 
-        //Wrap a new default BusinessDataObject into a ClientDataObject
+        //Stringify collection of Features
+        var featuresDataObjectCollection = {};
+        for (var guidKey in _dataClientObjects.features) {
+            var clientDataObject = _dataClientObjects.features[guidKey];
+            featuresDataObjectCollection[guidKey] = clientDataObject.GetBusinessDataObject();
+        }
+
+        //
+        $.ajax({
+            type: "POST",
+            url: "/ModelEditor/SaveModel",
+            data: JSON.stringify({ modelID: _modelID, modelName: _modelName, featuresString: JSON.stringify(featuresDataObjectCollection) }),
+            success: function (reponse) {
+                onSuccess();
+            },
+            error: function (req, status, error) {
+                onError();
+            }
+        });
+    }
+    this.CreateNewClientDataObject = function (type, initialFieldValues, extraClientData) {
+
+        //Variables
         var newBusinessDataObject = getDefaultDataObj(type);
         var guid = _dataClientObjectGUIDCounter++;
+
+        //Initial values
+        if (initialFieldValues != undefined && initialFieldValues != null) {
+            for (var fieldName in initialFieldValues) {
+                var fieldValue = initialFieldValues[fieldName];
+                newBusinessDataObject[fieldName] = fieldValue;
+            }
+        }
+
+        //Wrap a new default BusinessDataObject into a ClientDataObject
         var newClientDataObject = new ClientDataObject(newBusinessDataObject, guid, type);
 
         //Save references to it
         _dataClientObjects.all[newClientDataObject.GUID] = newClientDataObject;
         _dataClientObjects[type + "s"][newClientDataObject.GUID] = newClientDataObject;
 
+
         //Raise events
         _thisDiagramDataModel.ClientDataObjectCreated.RaiseEvent(guid);
-
 
         return newClientDataObject;
     }
@@ -674,17 +710,21 @@ var DiagramDataModel = function () {
         //Raise events
         _thisDiagramDataModel.ClientDataObjectUpdated.RaiseEvent(guid);
     }
+    this.GetClientDataObjectField = function (guid, fieldName) {
+        return _dataClientObjects.all[guid].GetPropertyValue(fieldName);
+    }
 
     //Events
     this.ClientDataObjectCreated = new Event();
     this.ClientDataObjectUpdated = new Event();
     this.ClientDataObjectDeleted = new Event();
 }
-var ClientController = function (diagramContainer, propertiesContainer, explorerContainer, diagramDataModelInstance) {
+var ClientController = function (diagramContainer, propertiesContainer, explorerContainer, modelNameTextbox, diagramDataModelInstance) {
 
     //Fields and variables
     var _diagramDataModel = diagramDataModelInstance;
     var _diagramContext, _propertiesComponent, _modelExplorer;
+    var _modelNameTextbox = modelNameTextbox;
     var _thisClientController = this;
     var _currentControlFocus = null; //variable to keep track of where the user executed the last action (clicking)
 
@@ -747,27 +787,39 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
             }
         }));
         //Properties eventhandlers
-        
+
         _modelExplorer.ElementSelectToggled.Add(new EventHandler(_propertiesComponent.OnRelatedViewElementSelectToggled));
         _diagramContext.SelectionCleared.Add(new EventHandler(_propertiesComponent.OnRelatedViewSelectionCleared));
-        
-        
-        
+
+
+
     }
 
     //Public methods
     this.SaveData = function () {
-
+        var newName = $(_modelNameTextbox).val();
+        _diagramDataModel.SaveModel(newName, function () {
+            $.pnotify({
+                pnotify_title: "Data saved",
+                pnotify_text: "Model '" + newName + "' saved successfully !",
+                pnotify_type: "notice"
+            });
+        }, function () {
+            $.pnotify({
+                pnotify_title: "Error!",
+                pnotify_text: "Data could not be saved",
+                pnotify_type: "error"
+            });
+        });
     }
     this.CreateNewFeature = function () {
-        var clientFeatureDataObject = _diagramDataModel.CreateNewClientDataObject("feature");
-        _diagramContext.AddFeature(clientFeatureDataObject.GUID);
+        _diagramContext.CreateNewElement("feature");
     }
     this.CreateNewRelation = function () {
-        var clientRelationDataObject = _diagramDataModel.CreateNewClientDataObject("relation");
+        _diagramContext.CreateNewElement("relation");
     }
     this.CreateNewGroupRelation = function () {
-        var clientGroupRelationDataObject = _diagramDataModel.CreateNewClientDataObject("groupRelation");
+        _diagramContext.CreateNewElement("groupRelation");
     }
     this.CreateNewCompositionRule = function () {
         var clientCompositionRuleDataObject = _diagramDataModel.CreateNewClientDataObject("compositionRule");
@@ -1402,9 +1454,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         $(_mainContainer).html("");
         $(_headerLabel).text("");
     }
-
-    //Public methods
-    this.LoadProperties = function (guid) {
+    var loadProperties = function (guid) {
 
         //Variables
         var clientDataObject = _diagramDataModel.GetClientDataObject(guid);
@@ -1417,7 +1467,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         loadUI();
         $(_headerLabel).text("(" + _currentClientDataObjectType + ")");
     }
-    this.Clear = function () {
+    clear = function () {
 
         //Reset variables
         _currentClientDataObjectGUID = null;
@@ -1433,17 +1483,17 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
     //Eventhandlers
     this.OnClientDataObjectUpdated = function (guid) {
-        _thisPropertiesComponent.LoadProperties(guid);
+        loadProperties(guid);
     }
     this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
         if (newState == systemDefaults.uiElementStates.selected && shift == false) {
-            _thisPropertiesComponent.LoadProperties(guid);
+            loadProperties(guid);
         } else {
-            _thisPropertiesComponent.Clear();
+            clear();
         }
     }
     this.OnRelatedViewSelectionCleared = function () {
-        _thisPropertiesComponent.Clear();
+        clear();
     }
 }
 var ModelExplorer = function (container, diagramDataModelInstance) {
@@ -1570,7 +1620,7 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
     }
 
     //Sync with dataModel methods
-    this.CreateElement = function (guid) {
+    var addElement = function (guid) {
 
         //Variables
         var clientDataObject = _diagramDataModel.GetClientDataObject(guid);
@@ -1586,7 +1636,7 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
         var parentNode = $(_tree).getNode(type + "sNode");
         $(parentNode).addChildNode(newDataRow);
     }
-    this.UpdateElement = function (guid) {
+    var updateElement = function (guid) {
         //Variables
         var clientDataObject = _diagramDataModel.GetClientDataObject(guid);
         var name = clientDataObject.GetPropertyValue("Name");
@@ -1596,7 +1646,7 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
         if (node != null)
             $(node).updateNodeName(name);
     }
-    this.DeleteElement = function (guid) {
+    var deleteElement = function (guid) {
         var node = $(_tree).getNode(guid);
         if (node != null)
             $(node).deleteNode();
@@ -1614,14 +1664,14 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
 
         //
         if (_supportedTypes[type] != undefined) {
-            _thisModelExplorer.CreateElement(guid);
+            addElement(guid);
         }
     }
     this.OnClientDataObjectUpdated = function (guid) {
-        _thisModelExplorer.UpdateElement(guid);
+        updateElement(guid);
     }
     this.OnClientDataObjectDeleted = function (guid) {
-        _thisModelExplorer.DeleteElement(guid);
+        deleteElement(guid);
     }
     this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
         var node = $(_tree).getNode(guid);
@@ -1660,7 +1710,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         };
         var _currentState = systemDefaults.uiElementStates.unselected;
         var _glow = null;
-        var _name = name;
+        var _name = name, _x = x, _y = y;
         var boxWidth = UIObjectStyles.feature.general.box.dimensions.width, boxHeight = UIObjectStyles.feature.general.box.dimensions.height;
         var _relatedCompositeElements = [];
         var _thisUIFeature = this;
@@ -1673,6 +1723,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         this.GetTypeName = function () {
             return "feature";
         }
+        this.GetPos = function () {
+            return { x: _x, y: _y };
+        }
+
         this.InnerElements = _innerElements;
         this.RelatedCompositeElements = _relatedCompositeElements;
 
@@ -1712,10 +1766,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 }
             };
             move = function (dx, dy) {
+                //Remove glow while dragging
                 if (_glow != null) {
                     _glow.remove();
                     _glow = null;
                 }
+                //Update x & y and move outerElement 
+                _x = _outerElement.originalx + dx;
+                _y = _outerElement.originaly + dy;
                 _outerElement.attr({ x: _outerElement.originalx + dx, y: _outerElement.originaly + dy });
 
                 //Move child elements
@@ -1733,8 +1791,11 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             };
             up = function () {
 
+                //Update X and Y variables
+                internalUIFeatureMoved.RaiseEvent(_thisUIFeature);
+
+                //Notify related CompositeElements
                 if (settings.diagramContext.dynamicRefresh == false) {
-                    //Notify related CompositeElements
                     for (var j = 0; j < _relatedCompositeElements.length; j++) {
                         _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
                     }
@@ -2718,6 +2779,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //Set internal eventhandlers
         internalUIElementCascadedDelete.Add(new EventHandler(onInternalUIElementCascadeDeleted));
+        internalUIFeatureMoved.Add(new EventHandler(onInternalUIFeatureMoved));
     };
 
     //Private methods
@@ -2768,64 +2830,32 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         UIElement.Delete();
         _UIElements[UIElement.ClientDataObjectGUID] = null;
     }
+
     var addFeature = function (guid) {
-        if (_createFeatureMode == false) {
-            _createFeatureMode = true;
+        var posx = _diagramDataModel.GetClientDataObjectField(guid, "XPos");
+        var posy = _diagramDataModel.GetClientDataObjectField(guid, "YPos");
+        var name = _diagramDataModel.GetClientDataObjectField(guid, "Name");
+        var newUIFeature = new UIFeature(guid, name, posx, posy);
+        newUIFeature.CreateGraphicalRepresentation();
 
-            //Create wireframe
-            $(_canvasContainer).css("cursor", "crosshair");
-            var boxWidth = UIObjectStyles.feature.general.box.dimensions.width, boxHeight = UIObjectStyles.feature.general.box.dimensions.height;
-            var wireframebox = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states.wireframe.box.attr);
-            var mousemoveHandler = function (e) {
-                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2;
-                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2;
-                if (wireframebox == null) {
-                    wireframebox = _canvas.rect(posx, posy, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
-                }
-                else {
-                    wireframebox.attr({ x: posx, y: posy });
-                }
-            };
-            $(_canvasContainer).bind("mousemove", mousemoveHandler);
-
-            //Create actual Feature on click
-            var clickHandler = function (e) {
-                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2;
-                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2;
-                var name = _diagramDataModel.GetClientDataObject(guid).GetPropertyValue("Name");
-                var newUIFeature = new UIFeature(guid, name, posx, posy);
-                newUIFeature.CreateGraphicalRepresentation();
-
-                //
-                $(_canvasContainer).unbind("click", clickHandler);
-                $(_canvasContainer).unbind("mousemove", mousemoveHandler);
-                $(_canvasContainer).css("cursor", "default");
-                wireframebox.remove();
-
-                //Raise events/etc
-                _createFeatureMode = false;
-                _UIElements[guid] = newUIFeature;
-            };
-            $(_canvasContainer).bind("click", clickHandler);
-        }
+        //
+        _UIElements[guid] = newUIFeature;
     }
     var addRelation = function (guid) {
-        if (_selectedElements.length == 2) {
 
-            //Variables
-            var parentFeature = _selectedElements[0];
-            var childFeature = _selectedElements[1];
-            var relationType = _diagramDataModel.GetClientDataObject(guid).GetPropertyValue("RelationType");
-            var lowerBound = _diagramDataModel.GetClientDataObject(guid).GetPropertyValue("LowerBound");
-            var upperBound = _diagramDataModel.GetClientDataObject(guid).GetPropertyValue("UpperBound");
+        //Variables
+        var parentFeature = _selectedElements[0];
+        var childFeature = _selectedElements[1];
+        var relationType = _diagramDataModel.GetClientDataObject(guid).GetPropertyValue("RelationType");
+        var lowerBound = _diagramDataModel.GetClientDataObject(guid).GetPropertyValue("LowerBound");
+        var upperBound = _diagramDataModel.GetClientDataObject(guid).GetPropertyValue("UpperBound");
 
-            //Create a new UIRelation
-            var newUIRelation = new UIRelation(guid, relationType, lowerBound, upperBound, parentFeature, childFeature);
-            newUIRelation.CreateGraphicalRepresentation();
+        //Create a new UIRelation
+        var newUIRelation = new UIRelation(guid, relationType, lowerBound, upperBound, parentFeature, childFeature);
+        newUIRelation.CreateGraphicalRepresentation();
 
-            //Raise events/etc
-            _UIElements[guid] = newUIRelation;
-        }
+        //Add to collection
+        _UIElements[guid] = newUIRelation;
     }
     var addGroupRelation = function (guid) {
         if (_selectedElements.length > 2) {
@@ -2861,18 +2891,101 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
     }
 
+    var createFeature = function () {
+        if (_createFeatureMode == false) {
+            _createFeatureMode = true;
+
+            //Create wireframe
+            $(_canvasContainer).css("cursor", "crosshair");
+            var boxWidth = UIObjectStyles.feature.general.box.dimensions.width, boxHeight = UIObjectStyles.feature.general.box.dimensions.height;
+            var wireframebox = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states.wireframe.box.attr);
+            var mousemoveHandler = function (e) {
+                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2;
+                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2;
+                if (wireframebox == null) {
+                    wireframebox = _canvas.rect(posx, posy, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
+                }
+                else {
+                    wireframebox.attr({ x: posx, y: posy });
+                }
+            };
+            $(_canvasContainer).bind("mousemove", mousemoveHandler);
+
+            //Create actual Feature on click
+            var clickHandler = function (e) {
+
+                //Get the position
+                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2;
+                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2;
+
+                //Remove wireframe
+                $(_canvasContainer).unbind("click", clickHandler);
+                $(_canvasContainer).unbind("mousemove", mousemoveHandler);
+                $(_canvasContainer).css("cursor", "default");
+                wireframebox.remove();
+
+                //Create a new clientDataObject in the diagramDataModel
+                var initialValues = {
+                    XPos: posx,
+                    YPos: posy
+                }
+                var clientFeatureDataObject = _diagramDataModel.CreateNewClientDataObject("feature", initialValues);
+
+                //
+                _createFeatureMode = false;
+            };
+            $(_canvasContainer).bind("click", clickHandler);
+        }
+    }
+    var createRelation = function () {
+        if (_selectedElements.length == 2) {
+
+            //Create a new clientDataObject in the diagramDataModel
+            var parentFeatureGUID = _selectedElements[0].ClientDataObjectGUID;
+            var childFeatureGUID = _selectedElements[1].ClientDataObjectGUID;
+            var adjFeaturesGUIDs = {
+                parentFeatureGUID : parentFeatureGUID,
+                childFeatureGUID : childFeatureGUID
+            }
+            var clientRelationDataObject = _diagramDataModel.CreateNewClientDataObject("relation", null, adjFeaturesGUIDs);
+        }
+    }
+    var createGroupRelation = function () {
+        if (_selectedElements.length > 2) {
+
+            //Create a new clientDataObject in the diagramDataModel
+            var parentFeatureGUID = _selectedElements[0].ClientDataObjectGUID;
+            var childFeaturesGUID = _selectedElements.slice(1);
+            var clientGroupRelationDataObject = _diagramDataModel.CreateNewClientDataObject("groupRelation");
+        }
+    }
+
     //Public methods (triggered by ModelController)
     this.DeleteSelectedElements = function () {
         for (var i = _selectedElements.length - 1; i >= 0; i--) {
             _diagramDataModel.DeleteClientDataObject(_selectedElements[i].ClientDataObjectGUID);
         }
     }
-    this.AddFeature = function (guid) {
-        addFeature(guid);
+    this.CreateNewElement = function (type) {
+
+        switch (type) {
+            case "feature":
+                createFeature();
+                break;
+            case "relation":
+                createRelation();
+                break;
+            case "groupRelation":
+                createGroupRelation();
+                break;
+            case "compositionRule":
+                createCompositionRule();
+                break;
+        }
     }
 
     //Sync with dataModel methods
-    this.CreateElement = function (guid) {
+    addElement = function (guid) {
 
         //Variables
         var clientDataObject = _diagramDataModel.GetClientDataObject(guid);
@@ -2894,8 +3007,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 break;
         }
     }
-    this.UpdateElement = function (guid) {
-
+    updateElement = function (guid) {
         //Variables
         var UIElement = _UIElements[guid];
         var clientDataObject = _diagramDataModel.GetClientDataObject(guid);
@@ -2916,7 +3028,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 UIElement.Update(clientDataObject.GetPropertyValue("CompositionRuleType"));
                 break;
         }
-
     }
 
     //Events
@@ -2924,6 +3035,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     this.SelectionCleared = new Event();
     this.Focus = new Event();
     var internalUIElementCascadedDelete = new Event();
+    var internalUIFeatureMoved = new Event();
 
     //Eventhandlers
     this.OnClientDataObjectCreated = function (guid) {
@@ -2931,13 +3043,13 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var type = clientDataObject.GetTypeName();
 
         if (_supportedTypes[type] != undefined) {
-            _thisDiagramContext.CreateElement(guid);
+            addElement(guid);
         }
     }
     this.OnClientDataObjectUpdated = function (guid) {
         var UIElement = _UIElements[guid];
         if (UIElement != undefined) {
-            _thisDiagramContext.UpdateElement(guid);
+            updateElement(guid);
         }
     }
     this.OnClientDataObjectDeleted = function (guid) {
@@ -2961,6 +3073,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
     var onInternalUIElementCascadeDeleted = function (UIElement) {
         _diagramDataModel.DeleteClientDataObject(UIElement.ClientDataObjectGUID);
+    }
+    var onInternalUIFeatureMoved = function (UIFeature) {
+        _diagramDataModel.UpdateClientDataObjectField(UIFeature.ClientDataObjectGUID, "XPos", UIFeature.GetPos().x);
+        _diagramDataModel.UpdateClientDataObjectField(UIFeature.ClientDataObjectGUID, "YPos", UIFeature.GetPos().y);
     }
 }
 

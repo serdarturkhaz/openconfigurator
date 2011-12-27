@@ -26,12 +26,25 @@ namespace PresentationLayer.Controllers
         }
 
         [Authorize]
-        public void SaveModel(int modelId, string name)
+        public void SaveModel(int modelID, string modelName, string featuresString)
         {
-            //Set the Name
+            //Create services
             ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
-            SessionData.SessionModels[modelId].Name = name;
-            _modelService.Update(SessionData.SessionModels[modelId]);
+            FeatureService _featureService = new FeatureService(SessionData.LoggedInUser.ID);
+
+            //Save changes to Model
+            BLL.BusinessObjects.Model model = SessionData.SessionModels[modelID];
+            model.Name = modelName;
+            _modelService.Update(SessionData.SessionModels[modelID]);
+
+            //Add/Update/Delete Features
+            Dictionary<int, BLL.BusinessObjects.Feature> features = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.Feature>>(featuresString);
+            foreach (int guid in features.Keys)
+            {
+                BLL.BusinessObjects.Feature feature = features[guid];
+                ((DAL.DataEntities.Feature)feature.InnerEntity).ModelID = modelID;
+                _featureService.Add(feature);
+            }
         }
 
 

@@ -42,12 +42,6 @@ namespace DAL.DataEntities
         }
         private int _modelID;
     
-        public virtual Nullable<int> FeatureGroupID
-        {
-            get;
-            set;
-        }
-    
         public virtual string Name
         {
             get;
@@ -66,13 +60,13 @@ namespace DAL.DataEntities
             set;
         }
     
-        public virtual Nullable<int> XPos
+        public virtual Nullable<double> XPos
         {
             get;
             set;
         }
     
-        public virtual Nullable<int> YPos
+        public virtual Nullable<double> YPos
         {
             get;
             set;
