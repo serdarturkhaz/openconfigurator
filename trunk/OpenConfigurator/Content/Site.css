@@ -480,7 +480,7 @@ html > body .ui-pnotify
 }
 .simpleTree li.row .feature .innerNode div.icon
 {
-    background: url(themes/base/images/controls/simpletree/elementx.png) no-repeat left top;
+    background: url(themes/base/images/controls/simpletree/feature.png) no-repeat left top;
 }
 .simpleTree li.row .compositionRule .innerNode div.icon
 {
@@ -783,6 +783,12 @@ a:hover
     width: 100%;
     min-width: 150px;
     box-sizing: border-box;
+}
+#PropertiesBox .Textarea
+{
+    height:auto;
+    overflow:hidden;
+    min-height:100px;
 }
 #PropertiesBox .AreaDiv
 {

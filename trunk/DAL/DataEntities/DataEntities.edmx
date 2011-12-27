@@ -162,6 +162,8 @@
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="IsRoot" Type="bit" />
+          <Property Name="XPos" Type="int" />
+          <Property Name="YPos" Type="int" />
         </EntityType>
         <EntityType Name="GroupRelation_Types">
           <Key>
@@ -570,6 +572,8 @@
           <NavigationProperty Name="ChildRelations" Relationship="OpenConfigurator_Model.FK_Relations_Features" FromRole="Feature" ToRole="Relation" />
           <NavigationProperty Name="ParentRelations" Relationship="OpenConfigurator_Model.FK_Relations_ChildFeatures" FromRole="Feature" ToRole="Relation" />
           <NavigationProperty Name="GroupRelations_To_Features" Relationship="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features" FromRole="Feature" ToRole="GroupRelations_To_Features" />
+          <Property Type="Int32" Name="XPos" />
+          <Property Type="Int32" Name="YPos" />
         </EntityType>
         <EntityType Name="Model">
           <Key>
@@ -936,7 +940,9 @@
             <ScalarProperty Name="Description" ColumnName="Description" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Features"><EntityTypeMapping TypeName="OpenConfigurator_Model.Feature"><MappingFragment StoreEntitySet="Features">
-            <ScalarProperty Name="IsRoot" ColumnName="IsRoot" />
+            <ScalarProperty Name="YPos" ColumnName="YPos" />
+                <ScalarProperty Name="XPos" ColumnName="XPos" />
+                <ScalarProperty Name="IsRoot" ColumnName="IsRoot" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
             <ScalarProperty Name="ModelID" ColumnName="ModelID" />
             <ScalarProperty Name="FeatureGroupID" ColumnName="FeatureGroupID" />

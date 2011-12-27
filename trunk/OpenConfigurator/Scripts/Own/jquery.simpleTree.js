@@ -37,7 +37,7 @@
     $.fn.simpleTree.defaults = {
         data: null,
         types: null,
-        onNodeSelected: function (node, shift) {
+        onNodeClicked: function (node, shift) {
         }
     };
 
@@ -52,20 +52,20 @@
             //Row
             var dataRow = opts.data[i];
             var hasChildren = (opts.data[i].children != undefined);
-            var row = createRow(dataRow, opts.types[dataRow.typeName], dataRow.typeName, opts.onNodeSelected);
+            var row = createRow(dataRow, opts.types[dataRow.typeName], dataRow.typeName, opts.onNodeClicked);
             row.appendTo(rootUl);
 
             //Create children
             if (hasChildren) {
                 for (var j = 0; j < opts.data[i].children.length; j++) {
                     var childDataRow = opts.data[i].children[j];
-                    var childRow = createRow(childDataRow, opts.types[childDataRow.typeName], childDataRow.typeName, opts.onNodeSelected);
+                    var childRow = createRow(childDataRow, opts.types[childDataRow.typeName], childDataRow.typeName, opts.onNodeClicked);
                     appendChildRow(childRow, row);
                 }
             }
         }
     }
-    var createRow = function (dataObj, type, typeName, onSelected) {
+    var createRow = function (dataObj, type, typeName, onNodeClicked) {
 
         //Row
         var row = $("<li class='row'></li>");
@@ -91,11 +91,11 @@
         });
         if (type.selectable) {
             node.bind("click", function (e) {
-                selectNode(node, e.shiftKey);
-                onSelected.call({}, node, e.shiftKey);
+                onNodeClicked.call({}, node, e.shiftKey);
             });
         }
-        //Disable
+
+        //Disable browser shift selection
         $(node).disableSelection();
 
         return row;
@@ -113,23 +113,23 @@
 
         //Reinitialize destinationRow
         switch (destinationNodeSystemType) {
-            //Parent                                                
+            //Old type = Parent                                                       
             case treeDefaultSettings.nodeSystemTypes.parent:
                 childrenContainer = $(destinationRow).children(".childrenContainer");
 
                 childRow.appendTo(childrenContainer);
                 break;
-            //Leaf                                                
+            //Old type = Leaf                                                       
             case treeDefaultSettings.nodeSystemTypes.leaf:
                 $(destinationNode).attr("nodeSystemType", treeDefaultSettings.nodeSystemTypes.parent);
-                $(destinationNode).attr("nodeDisplayState", treeDefaultSettings.nodeDisplayStates.collapsed);
+                $(destinationNode).attr("nodeDisplayState", treeDefaultSettings.nodeDisplayStates.expanded);
 
                 childrenContainer = $("<ul class='childrenContainer level0'></ul>").appendTo(destinationRow);
 
                 //Show expander & collapse
                 var expander = $(destinationNode).children(".expander");
                 expander.css("visibility", "visible");
-                childrenContainer.hide();
+                //childrenContainer.hide();
 
                 childRow.appendTo(childrenContainer);
                 break;
@@ -184,15 +184,18 @@
         }
     }
 
-    var selectNode = function (node, shift) {
-        var tree = $(node).parents(".simpleTree");
+    var setSelected = function (node) {
         var isSelected = $(node).attr("selected");
         if (!isSelected) {
-            if (shift == false)
-                deselectAll(tree);
             $(node).attr("selected", "true");
         }
-
+    }
+    var setUnselected = function (node) {
+        $(node).removeAttr("selected");
+    }
+    var nodeIsSelected = function (node) {
+        var isSelected = $(node).attr("selected");
+        return isSelected;
     }
     var deselectAll = function (tree) {
         $(tree).find(".node[selected=true]").removeAttr("selected");
@@ -233,16 +236,36 @@
         var opts = $(destinationRow).parents(".simpleTree").data("options");
 
         //
-        var newRow = createRow(dataRow, opts.types[dataRow.typeName], dataRow.typeName, opts.onNodeSelected);
+        var newRow = createRow(dataRow, opts.types[dataRow.typeName], dataRow.typeName, opts.onNodeClicked);
         appendChildRow(newRow, destinationRow);
     }
-    $.fn.selectNode = function (shift) {
-        selectNode($(this), shift);
+
+    $.fn.setNodeSelected = function () {
+        var node = $(this);
+        setSelected(node);
+    }
+    $.fn.setNodeUnselected = function () {
+        var node = $(this);
+        setUnselected(node);
+    }
+    $.fn.isNodeSelected = function () {
+        var node = $(this);
+        return nodeIsSelected(node);
     }
     $.fn.deselectAll = function () {
         var tree = $(this);
         deselectAll(tree);
     }
+    $.fn.getSelectedNodes = function () {
+        var tree = $(this);
+        var selectedNodes = $(tree).find(".node[selected=true]");
+        if (selectedNodes.length > 0)
+            return selectedNodes;
+        else
+            return null;
+
+    }
+
     $.fn.updateNodeName = function (newName) {
         var node = $(this);
         updateNodeName(node, newName);
@@ -255,14 +278,6 @@
         var node = $(this);
         return getDataID(node);
     }
-    $.fn.getSelectedNodes = function () {
-        var tree = $(this);
-        var selectedNodes = $(tree).find(".node[selected=true]");
-        if (selectedNodes.length > 0)
-            return selectedNodes;
-        else
-            return null;
-
-    }
+    
     //*********************************************************************************************************************************
 })(jQuery);

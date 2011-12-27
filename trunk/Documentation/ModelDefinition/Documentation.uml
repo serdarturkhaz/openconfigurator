@@ -4062,80 +4062,8 @@ User Input
         isActiveClass="false">
         <ownedAttributesInternal>
           <property
-            Id="bbfc81e3-ac9f-4a69-96c8-a44dce234b18"
-            name="OnElementAdded"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false">
-            <type_NamedElement>
-              <undefinedTypeMoniker
-                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
-                LastKnownName="Event"
-                LastKnownLocation="Documentation.uml" />
-            </type_NamedElement>
-          </property>
-          <property
-            Id="d8a15c44-5fcd-410c-a46d-3f14ac0e3417"
-            name="OnElementEdited"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false">
-            <type_NamedElement>
-              <undefinedTypeMoniker
-                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
-                LastKnownName="Event"
-                LastKnownLocation="Documentation.uml" />
-            </type_NamedElement>
-          </property>
-          <property
-            Id="bbaf1dcd-4d1f-4120-aef0-0df9b6cdd976"
-            name="OnElementDeleted"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false">
-            <type_NamedElement>
-              <undefinedTypeMoniker
-                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
-                LastKnownName="Event"
-                LastKnownLocation="Documentation.uml" />
-            </type_NamedElement>
-          </property>
-          <property
             Id="45fb5725-6390-44a4-85b0-4de61ca5c110"
-            name="OnElementSelected"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false">
-            <type_NamedElement>
-              <undefinedTypeMoniker
-                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
-                LastKnownName="Event"
-                LastKnownLocation="Documentation.uml" />
-            </type_NamedElement>
-          </property>
-          <property
-            Id="be81c5fd-287c-48ec-9cf8-a1baf94ade74"
-            name="OnElementUpdated"
+            name="ElementSelected"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -4153,7 +4081,7 @@ User Input
           </property>
           <property
             Id="ae627ea4-0abe-4051-a92f-7abe863fb373"
-            name="OnElementDeselected"
+            name="ElementDeselected"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -4171,7 +4099,25 @@ User Input
           </property>
           <property
             Id="c60741c1-5d35-4c05-99e5-bd7e6a431268"
-            name="OnAllElementsDeselected"
+            name="AllElementsDeselected"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
+                LastKnownName="Event"
+                LastKnownLocation="Documentation.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="3563994c-5c18-481d-afcb-fb3344d0d591"
+            name="Focus"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -4210,7 +4156,7 @@ User Input
         <ownedAttributesInternal>
           <property
             Id="61a70770-446e-4087-9c47-36b019172562"
-            name="OnAllElementsDeselected"
+            name="AllElementsDeselected"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -4227,8 +4173,8 @@ User Input
             </type_NamedElement>
           </property>
           <property
-            Id="2f884502-09cc-45e0-ae22-46da55fc03ea"
-            name="_featureTreeNode"
+            Id="dc231678-088a-42c2-9ef7-9a2cd8a6eb8c"
+            name="Focus"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -4236,29 +4182,14 @@ User Input
             isDerived="false"
             isDerivedUnion="false"
             aggregation="None"
-            isComposite="false" />
-          <property
-            Id="32ac9153-d229-45c8-835e-5db560f26f4c"
-            name="_compositeRulesTreeNode"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="bd72c5e0-e056-4969-aa0d-753bc86927f7"
-            name="_customRulesTreeNode"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
+                LastKnownName="Event"
+                LastKnownLocation="Documentation.uml" />
+            </type_NamedElement>
+          </property>
         </ownedAttributesInternal>
         <ownedOperationsInternal>
           <operation
@@ -4282,7 +4213,7 @@ User Input
         <ownedAttributesInternal>
           <property
             Id="5b74404e-1ae3-4b45-aba8-98bc3c439b46"
-            name="OnDataChanged"
+            name="Focus"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -4478,7 +4409,7 @@ User Input
     <packageHasNamedElement>
       <packageMoniker
         Id="92e5f81c-3dba-49cd-bff3-42116cce1d17"
-        LastKnownName="UIElements"
+        LastKnownName="DiagramContext inner objects"
         LastKnownLocation="Package_1236.uml" />
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -4513,7 +4444,43 @@ User Input
         <ownedAttributesInternal>
           <property
             Id="1b254052-726c-46f6-9f70-1877e7839e59"
-            name="OnDataChanged"
+            name="ClientDataObjectCreated"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
+                LastKnownName="Event"
+                LastKnownLocation="Documentation.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="58786732-ee1e-4255-9e0e-907146472e7e"
+            name="ClientDataObjectUpdated"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
+                LastKnownName="Event"
+                LastKnownLocation="Documentation.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="a5da72a3-004b-4bcd-926c-9c766b90c83a"
+            name="ClientDataObjectDeleted"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"

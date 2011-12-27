@@ -5,46 +5,28 @@
       <class Id="0bc6327a-357b-4b5c-a3a8-dc7d2bb4ee3c" name="DiagramContext" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="3641c537-04f7-4c29-8c36-82fc386644ea" />
         <ownedAttributesInternal>
-          <property Id="cc903087-63ca-4564-8438-ce10f7abddf6" name="OnElementAdded" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="bbfc81e3-ac9f-4a69-96c8-a44dce234b18" />
-            <type_NamedElement>
-              <referencedTypeMoniker Id="5396c55e-2625-422d-89f4-7bcb9a1b6661" LastKnownName="Event" />
-            </type_NamedElement>
-          </property>
-          <property Id="5723826f-2e6f-4961-90f3-b05a74121432" name="OnElementEdited" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="d8a15c44-5fcd-410c-a46d-3f14ac0e3417" />
-            <type_NamedElement>
-              <referencedTypeMoniker Id="27259819-1d27-4bf0-9b45-c34c0db19e8d" LastKnownName="Event" />
-            </type_NamedElement>
-          </property>
-          <property Id="f267b2ba-7534-4695-a612-7005f123d5f8" name="OnElementDeleted" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="bbaf1dcd-4d1f-4120-aef0-0df9b6cdd976" />
-            <type_NamedElement>
-              <referencedTypeMoniker Id="5bc25f00-7768-4969-824c-fa96eeb7ba08" LastKnownName="Event" />
-            </type_NamedElement>
-          </property>
-          <property Id="421cdd6c-6134-444f-9c17-f532d78a5841" name="OnElementSelected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+          <property Id="421cdd6c-6134-444f-9c17-f532d78a5841" name="ElementSelected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="45fb5725-6390-44a4-85b0-4de61ca5c110" />
             <type_NamedElement>
               <referencedTypeMoniker Id="4a2cc5b3-e5d4-47dc-bf6c-a2c10c829142" LastKnownName="Event" />
             </type_NamedElement>
           </property>
-          <property Id="97dd9ab1-9862-4ea9-9d71-6fa1f891d43e" name="OnElementUpdated" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="be81c5fd-287c-48ec-9cf8-a1baf94ade74" />
-            <type_NamedElement>
-              <referencedTypeMoniker Id="930f3a9b-1b65-4d4b-8098-b7bb7a793c04" LastKnownName="Event" />
-            </type_NamedElement>
-          </property>
-          <property Id="729ba3e0-9688-48f0-bb35-56e41eb68175" name="OnElementDeselected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+          <property Id="729ba3e0-9688-48f0-bb35-56e41eb68175" name="ElementDeselected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="ae627ea4-0abe-4051-a92f-7abe863fb373" />
             <type_NamedElement>
               <referencedTypeMoniker Id="206c7c44-eb60-41fd-8cd5-b0099317b1f4" LastKnownName="Event" />
             </type_NamedElement>
           </property>
-          <property Id="efb33398-e27d-4c34-b0e6-9206f7e8f387" name="OnAllElementsDeselected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+          <property Id="efb33398-e27d-4c34-b0e6-9206f7e8f387" name="AllElementsDeselected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="c60741c1-5d35-4c05-99e5-bd7e6a431268" />
             <type_NamedElement>
               <referencedTypeMoniker Id="f0b630d6-6a65-44c7-bf05-cda44efbebe2" LastKnownName="Event" />
+            </type_NamedElement>
+          </property>
+          <property Id="fbb579e8-c977-4f48-bec7-f7c366fa7e58" name="Focus" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="3563994c-5c18-481d-afcb-fb3344d0d591" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="b5862335-ca93-490a-90a3-c2d62751ea98" LastKnownName="Event" />
             </type_NamedElement>
           </property>
         </ownedAttributesInternal>
@@ -59,20 +41,17 @@
       <class Id="946bef31-67c5-4b54-87f8-19f9e16c786a" name="ModelExplorer" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="46609ac4-a98a-406b-874c-008e65939804" />
         <ownedAttributesInternal>
-          <property Id="8ee89be1-4a75-4074-981b-421137d9d2b4" name="OnAllElementsDeselected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+          <property Id="8ee89be1-4a75-4074-981b-421137d9d2b4" name="AllElementsDeselected" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="61a70770-446e-4087-9c47-36b019172562" />
             <type_NamedElement>
               <referencedTypeMoniker Id="6e6c4ce8-f679-4925-9f52-2a55172f8d28" LastKnownName="Event" />
             </type_NamedElement>
           </property>
-          <property Id="43ba7a49-0b02-44c8-8382-50a011f095fa" name="_featureTreeNode" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="2f884502-09cc-45e0-ae22-46da55fc03ea" />
-          </property>
-          <property Id="fe8de6ee-23ff-4e6f-b420-c03c0649ae9a" name="_compositeRulesTreeNode" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="32ac9153-d229-45c8-835e-5db560f26f4c" />
-          </property>
-          <property Id="f4862276-7521-4137-a82b-374ac1d0941a" name="_customRulesTreeNode" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="bd72c5e0-e056-4969-aa0d-753bc86927f7" />
+          <property Id="8227f791-3d50-41ca-9399-42d0b4a21f49" name="Focus" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="dc231678-088a-42c2-9ef7-9a2cd8a6eb8c" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="fa4ad936-88a7-4a22-aa1a-37a5e7295c77" LastKnownName="Event" />
+            </type_NamedElement>
           </property>
         </ownedAttributesInternal>
         <ownedOperationsInternal>
@@ -86,10 +65,10 @@
       <class Id="edeebc6c-2b72-4657-a5aa-6e27234f1635" name="PropertiesComponent" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="1692cc84-e11b-4dd7-b706-ce77bc2f7b50" />
         <ownedAttributesInternal>
-          <property Id="3dd6efd9-341b-4482-a144-3f517dde4579" name="OnDataChanged" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+          <property Id="3dd6efd9-341b-4482-a144-3f517dde4579" name="Focus" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="5b74404e-1ae3-4b45-aba8-98bc3c439b46" />
             <type_NamedElement>
-              <referencedTypeMoniker Id="864b200e-9dbb-4613-9375-30768d2bf3ca" LastKnownName="Event" />
+              <referencedTypeMoniker Id="81fa0f15-4f43-49bf-a4db-653152a1b5ce" LastKnownName="Event" />
             </type_NamedElement>
           </property>
         </ownedAttributesInternal>
@@ -166,13 +145,8 @@
         </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
-    <packageHasNamedElement>
-      <referencedType Id="864b200e-9dbb-4613-9375-30768d2bf3ca" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
-        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
-      </referencedType>
-    </packageHasNamedElement>
     <logicalClassDesignerModelHasPackages>
-      <package Id="6e965c0c-2d29-407b-86a0-e82a7fa673f8" name="UIElements">
+      <package Id="6e965c0c-2d29-407b-86a0-e82a7fa673f8" name="DiagramContext inner objects">
         <elementDefinition Id="92e5f81c-3dba-49cd-bff3-42116cce1d17" />
         <packagedElements>
           <packageHasNamedElement>
@@ -540,26 +514,6 @@
       </package>
     </logicalClassDesignerModelHasPackages>
     <packageHasNamedElement>
-      <referencedType Id="5396c55e-2625-422d-89f4-7bcb9a1b6661" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
-        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
-      </referencedType>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <referencedType Id="5bc25f00-7768-4969-824c-fa96eeb7ba08" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
-        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
-      </referencedType>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <referencedType Id="27259819-1d27-4bf0-9b45-c34c0db19e8d" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
-        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
-      </referencedType>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <referencedType Id="930f3a9b-1b65-4d4b-8098-b7bb7a793c04" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
-        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
-      </referencedType>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
       <referencedType Id="4a2cc5b3-e5d4-47dc-bf6c-a2c10c829142" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
         <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
       </referencedType>
@@ -599,10 +553,22 @@
       <class Id="85d7db16-8a27-4308-96bc-4383c0f2dc4c" name="DiagramDataModel" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="1c0fd755-5819-40e2-8cea-ea2ce683e794" />
         <ownedAttributesInternal>
-          <property Id="32aa3e4d-3f70-46ef-989e-fc4d0bb7d522" name="OnDataChanged" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+          <property Id="32aa3e4d-3f70-46ef-989e-fc4d0bb7d522" name="ClientDataObjectCreated" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="1b254052-726c-46f6-9f70-1877e7839e59" />
             <type_NamedElement>
               <referencedTypeMoniker Id="5ab21693-14c4-4f83-8d40-028a8d919780" LastKnownName="Event" />
+            </type_NamedElement>
+          </property>
+          <property Id="8595c982-e8e2-4cfc-9df4-257212dec4a2" name="ClientDataObjectUpdated" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="58786732-ee1e-4255-9e0e-907146472e7e" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="bc053034-653c-4e6f-9862-15c9a3b075c0" LastKnownName="Event" />
+            </type_NamedElement>
+          </property>
+          <property Id="f80767d8-321f-4f1f-b708-b8980ec75ca0" name="ClientDataObjectDeleted" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="a5da72a3-004b-4bcd-926c-9c766b90c83a" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="f80f834a-4c70-448c-92b7-2858082fb3f2" LastKnownName="Event" />
             </type_NamedElement>
           </property>
         </ownedAttributesInternal>
@@ -619,6 +585,31 @@
         </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
+    <packageHasNamedElement>
+      <referencedType Id="81fa0f15-4f43-49bf-a4db-653152a1b5ce" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
+        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="b5862335-ca93-490a-90a3-c2d62751ea98" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
+        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="fa4ad936-88a7-4a22-aa1a-37a5e7295c77" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
+        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="bc053034-653c-4e6f-9862-15c9a3b075c0" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
+        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="f80f834a-4c70-448c-92b7-2858082fb3f2" name="Event" isAbstract="false" isLeaf="false" cachedFullName="Event">
+        <elementDefinition Id="11203fa0-cc6f-4682-b1e3-68d892e45b22" />
+      </referencedType>
+    </packageHasNamedElement>
   </packagedElements>
   <package Id="5705e1b5-45f0-4201-ad0d-94691a6e38bd" name="Documentation">
     <elementDefinition Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747" />

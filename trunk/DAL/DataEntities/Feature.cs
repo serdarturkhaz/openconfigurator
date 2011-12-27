@@ -65,6 +65,18 @@ namespace DAL.DataEntities
             get;
             set;
         }
+    
+        public virtual Nullable<int> XPos
+        {
+            get;
+            set;
+        }
+    
+        public virtual Nullable<int> YPos
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Navigation Properties
