@@ -25,7 +25,7 @@ namespace PresentationLayer.Controllers
 
             //Retreive Models belonging to the current User
             ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
-            IList<BLL.BusinessObjects.Model> models = _modelService.GetByUserID(SessionData.LoggedInUser.ID);
+            List<BLL.BusinessObjects.Model> models = _modelService.GetByUserID(SessionData.LoggedInUser.ID);
             result.Data = models;
 
             //

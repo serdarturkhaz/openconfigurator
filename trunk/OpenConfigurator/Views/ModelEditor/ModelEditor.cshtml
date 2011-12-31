@@ -87,7 +87,6 @@
             });
 
             //Load data
-            $("#ModelDiagramBox").block({ message: "Loading diagram...", fadeIn: 300 });
             $.timer(300, function () {
 
                 //Instantiate/Initialize controls
@@ -95,9 +94,6 @@
                 diagramDataModel.Initialize();
                 clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"),$("#ModelNameTextbox"), diagramDataModel);
                 clientController.Initialize();
-
-                //
-                $("#ModelDiagramBox").unblock();
             });
         });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

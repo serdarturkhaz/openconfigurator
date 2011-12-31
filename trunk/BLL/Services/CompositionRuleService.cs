@@ -20,6 +20,24 @@ namespace BLL.Services
         }
 
         //Methods
+        public List<BLL.BusinessObjects.CompositionRule> GetByModelID(int ModelID)
+        {
+            //
+            List<BLL.BusinessObjects.CompositionRule> BLLCompositionRules;
+            using (_CompositionRuleRepository = new GenericRepository<DAL.DataEntities.CompositionRule>())
+            {
+                IEnumerable<DAL.DataEntities.CompositionRule> DALCompositionRules = _CompositionRuleRepository.Find(m => m.ModelID == ModelID);
+
+                //Create Business objects for each DAL object
+                BLLCompositionRules = new List<BusinessObjects.CompositionRule>();
+                foreach (DAL.DataEntities.CompositionRule DALCompositionRule in DALCompositionRules)
+                {
+                    BLLCompositionRules.Add((BLL.BusinessObjects.CompositionRule)BLL.BusinessObjects.CompositionRule.FromDataEntity(DALCompositionRule));
+                }
+            }
+            return BLLCompositionRules;
+        }
+
         public IBusinessObject CreateDefault()
         {
             BLL.BusinessObjects.CompositionRule defaultCompositionRule = BLL.BusinessObjects.CompositionRule.CreateDefault();
@@ -59,7 +77,7 @@ namespace BLL.Services
 
         public void Delete(BusinessObjects.CompositionRule entity)
         {
-            throw new NotImplementedException();
+            Delete(entity.ID);
         }
         public void Delete(int id)
         {
@@ -79,7 +97,6 @@ namespace BLL.Services
                 _CompositionRuleRepository.SaveChanges();
             }
         }
-
 
         #endregion
 

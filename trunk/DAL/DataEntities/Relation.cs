@@ -44,37 +44,15 @@ namespace DAL.DataEntities
     
         public virtual int ParentFeatureID
         {
-            get { return _parentFeatureID; }
-            set
-            {
-                if (_parentFeatureID != value)
-                {
-                    if (ParentFeature != null && ParentFeature.ID != value)
-                    {
-                        ParentFeature = null;
-                    }
-                    _parentFeatureID = value;
-                }
-            }
+            get;
+            set;
         }
-        private int _parentFeatureID;
     
         public virtual int ChildFeatureID
         {
-            get { return _childFeatureID; }
-            set
-            {
-                if (_childFeatureID != value)
-                {
-                    if (ChildFeature != null && ChildFeature.ID != value)
-                    {
-                        ChildFeature = null;
-                    }
-                    _childFeatureID = value;
-                }
-            }
+            get;
+            set;
         }
-        private int _childFeatureID;
     
         public virtual int ModelID
         {
@@ -137,36 +115,6 @@ namespace DAL.DataEntities
             }
         }
         private Model _model;
-    
-        public virtual Feature ParentFeature
-        {
-            get { return _parentFeature; }
-            set
-            {
-                if (!ReferenceEquals(_parentFeature, value))
-                {
-                    var previousValue = _parentFeature;
-                    _parentFeature = value;
-                    FixupParentFeature(previousValue);
-                }
-            }
-        }
-        private Feature _parentFeature;
-    
-        public virtual Feature ChildFeature
-        {
-            get { return _childFeature; }
-            set
-            {
-                if (!ReferenceEquals(_childFeature, value))
-                {
-                    var previousValue = _childFeature;
-                    _childFeature = value;
-                    FixupChildFeature(previousValue);
-                }
-            }
-        }
-        private Feature _childFeature;
 
         #endregion
         #region Association Fixup
@@ -207,46 +155,6 @@ namespace DAL.DataEntities
                 if (ModelID != Model.ID)
                 {
                     ModelID = Model.ID;
-                }
-            }
-        }
-    
-        private void FixupParentFeature(Feature previousValue)
-        {
-            if (previousValue != null && previousValue.ChildRelations.Contains(this))
-            {
-                previousValue.ChildRelations.Remove(this);
-            }
-    
-            if (ParentFeature != null)
-            {
-                if (!ParentFeature.ChildRelations.Contains(this))
-                {
-                    ParentFeature.ChildRelations.Add(this);
-                }
-                if (ParentFeatureID != ParentFeature.ID)
-                {
-                    ParentFeatureID = ParentFeature.ID;
-                }
-            }
-        }
-    
-        private void FixupChildFeature(Feature previousValue)
-        {
-            if (previousValue != null && previousValue.ParentRelations.Contains(this))
-            {
-                previousValue.ParentRelations.Remove(this);
-            }
-    
-            if (ChildFeature != null)
-            {
-                if (!ChildFeature.ParentRelations.Contains(this))
-                {
-                    ChildFeature.ParentRelations.Add(this);
-                }
-                if (ChildFeatureID != ChildFeature.ID)
-                {
-                    ChildFeatureID = ChildFeature.ID;
                 }
             }
         }

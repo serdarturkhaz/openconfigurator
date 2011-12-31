@@ -62,9 +62,6 @@
     <Compile Include="DataEntities\CustomRule.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataEntities\CustomRule_Type.cs">
-      <DependentUpon>DataEntities.tt</DependentUpon>
-    </Compile>
     <Compile Include="DataEntities\DataEntities.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -86,7 +83,7 @@
     <Compile Include="DataEntities\GroupRelation.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataEntities\GroupRelations_To_Features.cs">
+    <Compile Include="DataEntities\GroupRelation_To_Feature.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\GroupRelation_Type.cs">

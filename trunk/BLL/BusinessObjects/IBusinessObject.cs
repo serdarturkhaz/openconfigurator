@@ -12,5 +12,11 @@ namespace BLL.BusinessObjects
             get;
             set;
         }
+
+        bool ToBeDeleted
+        {
+            get;
+            set;
+        }
     }
 }
