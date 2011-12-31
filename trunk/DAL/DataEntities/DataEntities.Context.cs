@@ -102,11 +102,11 @@ namespace DAL.DataEntities
         }
         private ObjectSet<GroupRelation> _groupRelations;
     
-        public ObjectSet<GroupRelations_To_Features> GroupRelations_To_Features
+        public ObjectSet<GroupRelation_To_Feature> GroupRelation_To_Feature
         {
-            get { return _groupRelations_To_Features  ?? (_groupRelations_To_Features = CreateObjectSet<GroupRelations_To_Features>("GroupRelations_To_Features")); }
+            get { return _groupRelation_To_Feature  ?? (_groupRelation_To_Feature = CreateObjectSet<GroupRelation_To_Feature>("GroupRelation_To_Feature")); }
         }
-        private ObjectSet<GroupRelations_To_Features> _groupRelations_To_Features;
+        private ObjectSet<GroupRelation_To_Feature> _groupRelation_To_Feature;
     
         public ObjectSet<CompositionRule_Type> CompositionRule_Types
         {
@@ -119,12 +119,6 @@ namespace DAL.DataEntities
             get { return _compositionRules  ?? (_compositionRules = CreateObjectSet<CompositionRule>("CompositionRules")); }
         }
         private ObjectSet<CompositionRule> _compositionRules;
-    
-        public ObjectSet<CustomRule_Type> CustomRule_Types
-        {
-            get { return _customRule_Types  ?? (_customRule_Types = CreateObjectSet<CustomRule_Type>("CustomRule_Types")); }
-        }
-        private ObjectSet<CustomRule_Type> _customRule_Types;
     
         public ObjectSet<CustomRule> CustomRules
         {

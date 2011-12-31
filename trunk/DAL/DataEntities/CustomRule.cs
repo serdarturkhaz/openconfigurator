@@ -42,23 +42,6 @@ namespace DAL.DataEntities
         }
         private int _modelID;
     
-        public virtual int RuleTypeID
-        {
-            get { return _ruleTypeID; }
-            set
-            {
-                if (_ruleTypeID != value)
-                {
-                    if (CustomRule_Type != null && CustomRule_Type.ID != value)
-                    {
-                        CustomRule_Type = null;
-                    }
-                    _ruleTypeID = value;
-                }
-            }
-        }
-        private int _ruleTypeID;
-    
         public virtual string Name
         {
             get;
@@ -80,21 +63,6 @@ namespace DAL.DataEntities
         #endregion
         #region Navigation Properties
     
-        public virtual CustomRule_Type CustomRule_Type
-        {
-            get { return _customRule_Type; }
-            set
-            {
-                if (!ReferenceEquals(_customRule_Type, value))
-                {
-                    var previousValue = _customRule_Type;
-                    _customRule_Type = value;
-                    FixupCustomRule_Type(previousValue);
-                }
-            }
-        }
-        private CustomRule_Type _customRule_Type;
-    
         public virtual Model Model
         {
             get { return _model; }
@@ -112,26 +80,6 @@ namespace DAL.DataEntities
 
         #endregion
         #region Association Fixup
-    
-        private void FixupCustomRule_Type(CustomRule_Type previousValue)
-        {
-            if (previousValue != null && previousValue.CustomRules.Contains(this))
-            {
-                previousValue.CustomRules.Remove(this);
-            }
-    
-            if (CustomRule_Type != null)
-            {
-                if (!CustomRule_Type.CustomRules.Contains(this))
-                {
-                    CustomRule_Type.CustomRules.Add(this);
-                }
-                if (RuleTypeID != CustomRule_Type.ID)
-                {
-                    RuleTypeID = CustomRule_Type.ID;
-                }
-            }
-        }
     
         private void FixupModel(Model previousValue)
         {

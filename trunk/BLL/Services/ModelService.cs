@@ -21,7 +21,7 @@ namespace BLL.Services
         }
 
         //Methods
-        public IList<BLL.BusinessObjects.Model> GetByUserID(int userid)
+        public List<BLL.BusinessObjects.Model> GetByUserID(int userid)
         {
             //
             List<BLL.BusinessObjects.Model> BModels;
@@ -44,7 +44,6 @@ namespace BLL.Services
             BLL.BusinessObjects.Model defaultModel = (BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.CreateDefault(_LoggedInUserID);
             return defaultModel;
         }
-
 
         //Interface members
         #region IService<Model> Members
@@ -97,7 +96,5 @@ namespace BLL.Services
         }
 
         #endregion
-
-
     }
 }

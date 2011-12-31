@@ -104,13 +104,13 @@ namespace DAL.DataEntities
         }
         private Model _model;
     
-        public virtual ICollection<GroupRelations_To_Features> GroupRelations_To_Features
+        public virtual ICollection<GroupRelation_To_Feature> GroupRelations_To_Features
         {
             get
             {
                 if (_groupRelations_To_Features == null)
                 {
-                    var newCollection = new FixupCollection<GroupRelations_To_Features>();
+                    var newCollection = new FixupCollection<GroupRelation_To_Feature>();
                     newCollection.CollectionChanged += FixupGroupRelations_To_Features;
                     _groupRelations_To_Features = newCollection;
                 }
@@ -120,13 +120,13 @@ namespace DAL.DataEntities
             {
                 if (!ReferenceEquals(_groupRelations_To_Features, value))
                 {
-                    var previousValue = _groupRelations_To_Features as FixupCollection<GroupRelations_To_Features>;
+                    var previousValue = _groupRelations_To_Features as FixupCollection<GroupRelation_To_Feature>;
                     if (previousValue != null)
                     {
                         previousValue.CollectionChanged -= FixupGroupRelations_To_Features;
                     }
                     _groupRelations_To_Features = value;
-                    var newValue = value as FixupCollection<GroupRelations_To_Features>;
+                    var newValue = value as FixupCollection<GroupRelation_To_Feature>;
                     if (newValue != null)
                     {
                         newValue.CollectionChanged += FixupGroupRelations_To_Features;
@@ -134,7 +134,7 @@ namespace DAL.DataEntities
                 }
             }
         }
-        private ICollection<GroupRelations_To_Features> _groupRelations_To_Features;
+        private ICollection<GroupRelation_To_Feature> _groupRelations_To_Features;
 
         #endregion
         #region Association Fixup
@@ -183,7 +183,7 @@ namespace DAL.DataEntities
         {
             if (e.NewItems != null)
             {
-                foreach (GroupRelations_To_Features item in e.NewItems)
+                foreach (GroupRelation_To_Feature item in e.NewItems)
                 {
                     item.GroupRelation = this;
                 }
@@ -191,7 +191,7 @@ namespace DAL.DataEntities
     
             if (e.OldItems != null)
             {
-                foreach (GroupRelations_To_Features item in e.OldItems)
+                foreach (GroupRelation_To_Feature item in e.OldItems)
                 {
                     if (ReferenceEquals(item.GroupRelation, this))
                     {

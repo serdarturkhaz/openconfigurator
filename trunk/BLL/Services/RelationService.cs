@@ -21,6 +21,24 @@ namespace BLL.Services
         }
 
         //Methods
+        public List<BLL.BusinessObjects.Relation> GetByModelID(int ModelID)
+        {
+            //
+            List<BLL.BusinessObjects.Relation> BRelations;
+            using (_RelationRepository = new GenericRepository<DAL.DataEntities.Relation>())
+            {
+                IEnumerable<DAL.DataEntities.Relation> relations = _RelationRepository.Find(m =>
+                    m.ModelID == ModelID);
+
+                //Create Business objects for each DAL object
+                BRelations = new List<BusinessObjects.Relation>();
+                foreach (DAL.DataEntities.Relation relation in relations)
+                {
+                    BRelations.Add((BLL.BusinessObjects.Relation)BLL.BusinessObjects.Relation.FromDataEntity(relation));
+                }
+            }
+            return BRelations;
+        }
         public IBusinessObject CreateDefault()
         {
             BLL.BusinessObjects.Relation defaultRelation = (BLL.BusinessObjects.Relation)BLL.BusinessObjects.Relation.CreateDefault();
@@ -49,12 +67,10 @@ namespace BLL.Services
             //
             return new BLL.BusinessObjects.Relation(relation);
         }
-
         public IList<BusinessObjects.Relation> GetAll()
         {
             throw new NotImplementedException();
         }
-
         public void Update(BusinessObjects.Relation entity)
         {
             using (_RelationRepository = new GenericRepository<DAL.DataEntities.Relation>())
@@ -64,10 +80,9 @@ namespace BLL.Services
                 _RelationRepository.SaveChanges();
             }
         }
-
         public void Delete(BusinessObjects.Relation entity)
         {
-            throw new NotImplementedException();
+            Delete(entity.ID);
         }
         public void Delete(int id)
         {
@@ -88,9 +103,6 @@ namespace BLL.Services
             }
         }
 
-
         #endregion
-
-
     }
 }
