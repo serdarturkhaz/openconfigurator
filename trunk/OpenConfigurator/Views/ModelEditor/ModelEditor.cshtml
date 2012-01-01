@@ -6,7 +6,7 @@
     <script type="text/javascript" src="../../Scripts/Pages/ModelEditor.js"></script>
     <script type="text/javascript">
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        var modelId = '@(ViewBag.ModelId)', modelName = '@(ViewBag.ModelName)';
+        var modelId = '@(ViewBag.ModelId)';
         var diagramDataModel= null, clientController = null;
 
         function calcWidth() {
@@ -17,18 +17,6 @@
             var propertiesBoxWidth = $("#PropertiesBox").width();
             var modelsBoxWidth = containerWidth - marginWidth * 2 - toolboxBoxWidth - propertiesBoxWidth;
             $('#ModelDiagramBox').css("width", modelsBoxWidth + "px");
-        }
-        function getDefaultDataObj(type) {
-            var returnObj;
-            $.ajax({
-                url: "/ModelEditor/NewDefault" + type,
-                data: {},
-                async: false,
-                success: function (dataObj) {
-                    returnObj = dataObj;
-                }
-            });
-            return returnObj;
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,7 +78,7 @@
             $.timer(300, function () {
 
                 //Instantiate/Initialize controls
-                diagramDataModel = new DiagramDataModel(modelId, modelName);
+                diagramDataModel = new DiagramDataModel(modelId);
                 diagramDataModel.Initialize();
                 clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"),$("#ModelNameTextbox"), diagramDataModel);
                 clientController.Initialize();

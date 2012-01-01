@@ -45,26 +45,40 @@ namespace BLL.BusinessObjects
     {
         //Fields
         private DAL.DataEntities.Model _innerEntity;
-        private ICollection<BLL.BusinessObjects.Feature> _features;
+        private List<BLL.BusinessObjects.Feature> _features = new List<Feature>();
+        private List<BLL.BusinessObjects.Relation> _relations = new List<Relation>();
+        private List<BLL.BusinessObjects.GroupRelation> _groupRelations = new List<GroupRelation>();
+        private List<BLL.BusinessObjects.CompositionRule> _compositionRules = new List<CompositionRule>();
+        private List<BLL.BusinessObjects.CustomRule> _customRules = new List<CustomRule>();
         private bool _toBeDeleted = false;
 
         //Constructor
-        internal Model()
+        public Model()
         {
-            
+            _innerEntity = new DAL.DataEntities.Model();
         }
         internal Model(DAL.DataEntities.Model innerEntity)
         {
             this._innerEntity = innerEntity;
+
+            //Create BLL collections
+            _innerEntity.Features.ToList().ForEach(DALentity => Features.Add(BLL.BusinessObjects.Feature.FromDataEntity(DALentity)));
+            _innerEntity.Relations.ToList().ForEach(DALentity => Relations.Add(BLL.BusinessObjects.Relation.FromDataEntity(DALentity)));
+            _innerEntity.GroupRelations.ToList().ForEach(DALentity => GroupRelations.Add(BLL.BusinessObjects.GroupRelation.FromDataEntity(DALentity)));
+            _innerEntity.CompositionRules.ToList().ForEach(DALentity => CompositionRules.Add(BLL.BusinessObjects.CompositionRule.FromDataEntity(DALentity)));
+            _innerEntity.CustomRules.ToList().ForEach(DALentity => CustomRules.Add(BLL.BusinessObjects.CustomRule.FromDataEntity(DALentity))); 
         }
 
         //Properties
-        [ReadOnly(true)]
         public int ID
         {
             get
             {
                 return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
             }
         }
         public string Name
@@ -116,11 +130,60 @@ namespace BLL.BusinessObjects
                 return LastModifiedDate.Value.ToShortDateString();
             }
         }
-        public ICollection<BLL.BusinessObjects.Feature> Features
+        
+        public List<BLL.BusinessObjects.Feature> Features
         {
             get
             {
                 return _features;
+            }
+            set
+            {
+                _features = value;
+            }
+        }
+        public List<BLL.BusinessObjects.Relation> Relations
+        {
+            get
+            {
+                return _relations;
+            }
+            set
+            {
+                _relations = value;
+            }
+        }
+        public List<BLL.BusinessObjects.GroupRelation> GroupRelations
+        {
+            get
+            {
+                return _groupRelations;
+            }
+            set
+            {
+                _groupRelations = value;
+            }
+        }
+        public List<BLL.BusinessObjects.CompositionRule> CompositionRules
+        {
+            get
+            {
+                return _compositionRules;
+            }
+            set
+            {
+                _compositionRules = value;
+            }
+        }
+        public List<BLL.BusinessObjects.CustomRule> CustomRules
+        {
+            get
+            {
+                return _customRules;
+            }
+            set
+            {
+                _customRules = value;
             }
         }
 
@@ -176,7 +239,7 @@ namespace BLL.BusinessObjects
         }
 
 
-        
+
         #endregion
     }
 
@@ -207,6 +270,17 @@ namespace BLL.BusinessObjects
             set
             {
                 _innerEntity.ID = value;
+            }
+        }
+        public int FeatureID
+        {
+            get
+            {
+                return _innerEntity.FeatureID;
+            }
+            set
+            {
+                _innerEntity.FeatureID = value;
             }
         }
         public string Name
@@ -321,12 +395,8 @@ namespace BLL.BusinessObjects
         {
             this._innerEntity = innerEntity;
 
-            //Create BLL attributes from each DAL attribute
-            foreach (DAL.DataEntities.Attribute dataAttr in _innerEntity.Attributes)
-            {
-                BLL.BusinessObjects.Attribute BLLattr = BLL.BusinessObjects.Attribute.FromDataEntity(dataAttr);
-                _attributes.Add(BLLattr);
-            }
+            //Create BLL collections
+            _innerEntity.Attributes.ToList().ForEach(DALentity => Attributes.Add(BLL.BusinessObjects.Attribute.FromDataEntity(DALentity)));
         }
 
         //Properties
@@ -400,6 +470,10 @@ namespace BLL.BusinessObjects
             get
             {
                 return _attributes;
+            }
+            set
+            {
+                _attributes = value;
             }
         }
 
@@ -594,6 +668,14 @@ namespace BLL.BusinessObjects
         {
             this._innerEntity = innerEntity;
             _childFeatureIDs = new List<int>();
+
+            //Get ParentFeatureID and ChildFeatureID's from GroupRelations_To_Features
+            foreach (DAL.DataEntities.GroupRelation_To_Feature DALgroupRelationToFeature in innerEntity.GroupRelations_To_Features)
+            {
+                ParentFeatureID = DALgroupRelationToFeature.ParentFeatureID;
+                ChildFeatureIDs.Add(DALgroupRelationToFeature.ChildFeatureID);
+
+            }
         }
 
         //Properties
@@ -639,7 +721,7 @@ namespace BLL.BusinessObjects
             set
             {
                 _childFeatureIDs = value;
-                
+
             }
         }
 
