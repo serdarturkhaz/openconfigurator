@@ -72,6 +72,7 @@ namespace DAL.Repositories
             _objectSet.Attach(entity);
             _context.ObjectStateManager.ChangeObjectState((object)entity, System.Data.EntityState.Modified);
         }
+
         public void SaveChanges()
         {
             _context.SaveChanges();

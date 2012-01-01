@@ -14,14 +14,8 @@ namespace PresentationLayer.Controllers
         [Authorize]
         public ActionResult ModelEditor(int modelId)
         {
-            //Load the Model into the Session
-            ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
-            BLL.BusinessObjects.Model model = _modelService.GetByID(modelId);
-            SessionData.SessionModels[modelId] = model;
-
-            //Load simple fields into ViewBag
-            ViewBag.ModelName = model.Name;
-            ViewBag.ModelId = model.ID;
+            //Load the ModelID
+            ViewBag.ModelId = modelId;
 
             return View();
         }
@@ -31,40 +25,12 @@ namespace PresentationLayer.Controllers
         public JsonNetResult LoadModel(int modelID)
         {   
             //Data return wrapper
-            object[] innerJObj = new object[5];
-            JsonNetResult result = new JsonNetResult() { Data = innerJObj };
-
-            //Create services
-            ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
-            FeatureService _featureService = new FeatureService(SessionData.LoggedInUser.ID);
-            RelationService _relationService = new RelationService(SessionData.LoggedInUser.ID);
-            GroupRelationService _groupRelationService = new GroupRelationService(SessionData.LoggedInUser.ID);
-            CompositionRuleService _compositionRuleService = new CompositionRuleService(SessionData.LoggedInUser.ID);
-            CustomRuleService _customRuleService = new CustomRuleService(SessionData.LoggedInUser.ID);
+            JsonNetResult result = new JsonNetResult();
 
             //Model
-            BLL.BusinessObjects.Model model = SessionData.SessionModels[modelID];
-
-            //Features
-            List<BLL.BusinessObjects.Feature> features = _featureService.GetByModelID(modelID);
-            innerJObj[0] = features;
-
-            //Relations
-            List<BLL.BusinessObjects.Relation> relations = _relationService.GetByModelID(modelID);
-            innerJObj[1] = relations;
-
-            //GroupRelations
-            List<BLL.BusinessObjects.GroupRelation> groupRelations = _groupRelationService.GetByModelID(modelID);
-            innerJObj[2] = groupRelations;
-
-            //CompositionRules
-            List<BLL.BusinessObjects.CompositionRule> compositionRules = _compositionRuleService.GetByModelID(modelID);
-            innerJObj[3] = compositionRules;
-
-            //CustomRules
-            List<BLL.BusinessObjects.CustomRule> customRules = _customRuleService.GetByModelID(modelID);
-            innerJObj[4] = customRules;
-
+            ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Model model = _modelService.GetByID(modelID);
+            result.Data = model;
 
             return result;
         }
@@ -85,9 +51,7 @@ namespace PresentationLayer.Controllers
             CustomRuleService _customRuleService = new CustomRuleService(SessionData.LoggedInUser.ID);
 
             //Save changes to Model
-            BLL.BusinessObjects.Model model = SessionData.SessionModels[modelID];
-            model.Name = modelName;
-            _modelService.Update(SessionData.SessionModels[modelID]);
+            _modelService.UpdateName(modelID, modelName);
 
 
             //Changes to Features********************************************************************************************************************************************************

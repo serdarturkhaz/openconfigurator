@@ -63,7 +63,7 @@ Explicit consequence rules
       <annotatedElements>
         <useCaseMoniker
           Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c"
-          LastKnownName="Configure product "
+          LastKnownName="Manage configurations (CREDO)"
           LastKnownLocation="Documentation.uml" />
       </annotatedElements>
     </comment>
@@ -1213,6 +1213,45 @@ User Input
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="ee8b5d9d-536b-4411-82e0-d5e6819ffe2e"
+            isDerived="false"
+            sourceEndRoleName="Tech user"
+            targetEndRoleName="Manage configurations (CREDO)"
+            isLeaf="false"
+            isAbstract="false">
+            <useCaseMoniker
+              Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c"
+              LastKnownName="Manage configurations (CREDO)"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9cbcdd83-aeb6-4982-ad3d-b466740bcf10"
+                  name="Tech user"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="5c8716ad-03fa-4848-a00b-3bf489dda4bf"
+                  name="Manage configurations (CREDO)"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
       </actor>
     </packageHasNamedElement>
@@ -1392,20 +1431,20 @@ User Input
         isLeaf="false">
         <targetEnds>
           <association
-            Id="7b4b7acf-2318-4433-9f65-079320d0de14"
+            Id="b8a88bba-14f7-46fe-85e8-a79a171912b2"
             isDerived="false"
             sourceEndRoleName="Customer"
-            targetEndRoleName="Configure product "
+            targetEndRoleName="Create/Edit Configuration instance"
             isLeaf="false"
             isAbstract="false">
             <useCaseMoniker
-              Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c"
-              LastKnownName="Configure product "
+              Id="b3818ff1-d175-4194-97b4-7c10cd427d62"
+              LastKnownName="Create/Edit Configuration instance"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="df637bdf-723c-426c-82fb-689a99c6ce86"
+                  Id="cdcc4e4d-3f0d-4311-97a6-acdf28b57ddd"
                   name="Customer"
                   isLeaf="false"
                   isStatic="false"
@@ -1418,8 +1457,8 @@ User Input
               </associationHasOwnedEnds>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="75957ed7-3512-4321-8159-debb82ab3d57"
-                  name="Configure product "
+                  Id="883220ab-76a2-44f5-a457-ace0b3c9abd8"
+                  name="Create/Edit Configuration instance"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -2497,7 +2536,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c"
-        name="Configure product "
+        name="Manage configurations (CREDO)"
         isAbstract="false"
         isLeaf="false">
         <additions>
@@ -2505,7 +2544,7 @@ User Input
             Id="6546547b-c5b6-464e-aef1-3b3c479723cb">
             <useCaseMoniker
               Id="b3818ff1-d175-4194-97b4-7c10cd427d62"
-              LastKnownName="Choose features"
+              LastKnownName="Create/Edit Configuration instance"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -2852,9 +2891,25 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="b3818ff1-d175-4194-97b4-7c10cd427d62"
-        name="Choose features"
+        name="Create/Edit Configuration instance"
         isAbstract="false"
         isLeaf="false">
+        <additions>
+          <include
+            Id="4d7ac794-a613-4972-8753-1bf94f1ee4f2">
+            <useCaseMoniker
+              Id="ce974fd5-18e7-448d-b41b-e005a77a5ce2"
+              LastKnownName="Enter Attribute values"
+              LastKnownLocation="Documentation.uml" />
+          </include>
+          <include
+            Id="5e5a00cc-f9de-4fc6-bf3d-7cfb5eb7c551">
+            <useCaseMoniker
+              Id="f9b796ae-b02a-45f9-ad8c-efedccb6aad9"
+              LastKnownName="Select/Unselect Feature"
+              LastKnownLocation="Documentation.uml" />
+          </include>
+        </additions>
         <subjects>
           <subsystemMoniker
             Id="5079c949-412d-4716-8274-b6f587b4d3eb"
@@ -4661,6 +4716,169 @@ User Input
             LastKnownName="Product modeler"
             LastKnownLocation="Documentation.uml" />
         </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <actor
+        Id="d0763a74-6bf7-4f1b-9e78-fa000edd4d20"
+        name="Logical  Truth Maintenance System"
+        isAbstract="false"
+        isLeaf="false">
+        <targetEnds>
+          <association
+            Id="4625cf22-9329-427a-b9da-cdb43b9e79ca"
+            isDerived="false"
+            sourceEndRoleName="Logical  Truth Maintenance System"
+            targetEndRoleName="Provide feedback"
+            isLeaf="false"
+            isAbstract="false">
+            <useCaseMoniker
+              Id="7cbd6dbe-50c7-4be8-9468-8a25ee31dec8"
+              LastKnownName="Provide feedback/Consequences"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="e6995159-dc90-4b89-9344-a1ce847e8ec9"
+                  name="Logical  Truth Maintenance System"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="47e2dc1c-d696-472a-8214-ec22be510eb1"
+                  name="Provide feedback"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="90075d75-5197-4b51-9d67-7ac83099142b"
+            isDerived="false"
+            sourceEndRoleName="Logical  Truth Maintenance System"
+            targetEndRoleName="Execute calculations/Rules"
+            isLeaf="false"
+            isAbstract="false">
+            <useCaseMoniker
+              Id="2932b955-c487-4402-8cb1-40da5391f361"
+              LastKnownName="Execute calculations/Rules"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="da19c00e-bc79-4a9b-ae8c-42dc9c127c49"
+                  name="Logical  Truth Maintenance System"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="3d641306-d27c-48c2-9f59-03fb3f425076"
+                  name="Execute calculations/Rules"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </actor>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="f9b796ae-b02a-45f9-ad8c-efedccb6aad9"
+        name="Select/Unselect Feature"
+        isAbstract="false"
+        isLeaf="false">
+        <subjects>
+          <subsystemMoniker
+            Id="5079c949-412d-4716-8274-b6f587b4d3eb"
+            LastKnownName="Configurator"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="ce974fd5-18e7-448d-b41b-e005a77a5ce2"
+        name="Enter Attribute values"
+        isAbstract="false"
+        isLeaf="false">
+        <subjects>
+          <subsystemMoniker
+            Id="5079c949-412d-4716-8274-b6f587b4d3eb"
+            LastKnownName="Configurator"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="7cbd6dbe-50c7-4be8-9468-8a25ee31dec8"
+        name="Provide feedback/Consequences"
+        isAbstract="false"
+        isLeaf="false">
+        <extendedCases>
+          <extend
+            Id="260b79f9-b5d9-40cd-8359-d9b100d1d5d0">
+            <useCaseMoniker
+              Id="f9b796ae-b02a-45f9-ad8c-efedccb6aad9"
+              LastKnownName="Select/Unselect Feature"
+              LastKnownLocation="Documentation.uml" />
+          </extend>
+          <extend
+            Id="e04867b7-5fe6-4a83-9f90-e46e959a2736">
+            <useCaseMoniker
+              Id="ce974fd5-18e7-448d-b41b-e005a77a5ce2"
+              LastKnownName="Enter Attribute values"
+              LastKnownLocation="Documentation.uml" />
+          </extend>
+        </extendedCases>
+        <subjects>
+          <subsystemMoniker
+            Id="5079c949-412d-4716-8274-b6f587b4d3eb"
+            LastKnownName="Configurator"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="2932b955-c487-4402-8cb1-40da5391f361"
+        name="Execute calculations/Rules"
+        isAbstract="false"
+        isLeaf="false">
+        <extendedCases>
+          <extend
+            Id="17748db5-89a2-48e3-bd23-98020b481799">
+            <useCaseMoniker
+              Id="ce974fd5-18e7-448d-b41b-e005a77a5ce2"
+              LastKnownName="Enter Attribute values"
+              LastKnownLocation="Documentation.uml" />
+          </extend>
+        </extendedCases>
       </useCase>
     </packageHasNamedElement>
   </packagedElements>

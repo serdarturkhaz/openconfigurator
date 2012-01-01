@@ -38,19 +38,6 @@ namespace BLL.Services
                     //Business object
                     BLL.BusinessObjects.GroupRelation BLLGroupRelation = (BLL.BusinessObjects.GroupRelation)BLL.BusinessObjects.GroupRelation.FromDataEntity(DALgroupRelation);
                     BLLGroupRelations.Add(BLLGroupRelation);
-
-                    //Get and set GroupRelation_To_Features
-                    using (_GroupRelationsToFeaturesRepository = new GenericRepository<DAL.DataEntities.GroupRelation_To_Feature>())
-                    {
-                        List<DAL.DataEntities.GroupRelation_To_Feature> DALgroupRelationsToFeatures = _GroupRelationsToFeaturesRepository.Find(m => m.GroupRelationID == BLLGroupRelation.ID).ToList<DAL.DataEntities.GroupRelation_To_Feature>();
-                        BLLGroupRelation.ParentFeatureID = DALgroupRelationsToFeatures[0].ParentFeatureID;
-
-                        foreach (DAL.DataEntities.GroupRelation_To_Feature DALgroupRelationToFeature in DALgroupRelationsToFeatures)
-                        {
-                            BLLGroupRelation.ChildFeatureIDs.Add(DALgroupRelationToFeature.ChildFeatureID);
-
-                        }
-                    }
                 }
             }
             return BLLGroupRelations;
