@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class FeatureService : IService<BLL.BusinessObjects.Feature>
+    public class FeatureService
     {
         //Fields
         private IRepository<DAL.DataEntities.Feature> _FeatureRepository;

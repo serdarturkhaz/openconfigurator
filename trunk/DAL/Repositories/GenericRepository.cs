@@ -33,6 +33,10 @@ namespace DAL.Repositories
         {
             return _objectSet;
         }
+        public ObjectContext GetContext()
+        {
+            return _context;
+        }
         public IEnumerable<TEntity> GetAll()
         {
             return GetQuery().AsEnumerable();

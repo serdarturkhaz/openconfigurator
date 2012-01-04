@@ -973,6 +973,11 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
                     _currentControlFocus = _modelExplorer;
                 }
             }));
+            _propertiesComponent.Focus.Add(new EventHandler(function () {
+                if (_currentControlFocus != _propertiesComponent) {
+                    _currentControlFocus = _propertiesComponent;
+                }
+            }));
 
             //Load the model
             _diagramDataModel.LoadModel(function (model) {
@@ -3192,8 +3197,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
     //Public methods (triggered by ModelController)
     this.DeleteSelectedElements = function () {
-        for (var i = _selectedElements.length - 1; i >= 0; i--) {
-            _diagramDataModel.DeleteClientDataObject(_selectedElements[i].ClientDataObjectGUID);
+        if (_inlineEditMode != true) {
+            for (var i = _selectedElements.length - 1; i >= 0; i--) {
+                _diagramDataModel.DeleteClientDataObject(_selectedElements[i].ClientDataObjectGUID);
+            }
         }
     }
     this.CreateNewElement = function (type) {

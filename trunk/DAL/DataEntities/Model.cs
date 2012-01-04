@@ -237,6 +237,38 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<CustomRule> _customRules;
+    
+        public virtual ICollection<Configuration> Configurations
+        {
+            get
+            {
+                if (_configurations == null)
+                {
+                    var newCollection = new FixupCollection<Configuration>();
+                    newCollection.CollectionChanged += FixupConfigurations;
+                    _configurations = newCollection;
+                }
+                return _configurations;
+            }
+            set
+            {
+                if (!ReferenceEquals(_configurations, value))
+                {
+                    var previousValue = _configurations as FixupCollection<Configuration>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupConfigurations;
+                    }
+                    _configurations = value;
+                    var newValue = value as FixupCollection<Configuration>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupConfigurations;
+                    }
+                }
+            }
+        }
+        private ICollection<Configuration> _configurations;
 
         #endregion
         #region Association Fixup
@@ -362,6 +394,28 @@ namespace DAL.DataEntities
             if (e.OldItems != null)
             {
                 foreach (CustomRule item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Model, this))
+                    {
+                        item.Model = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupConfigurations(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Configuration item in e.NewItems)
+                {
+                    item.Model = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Configuration item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Model, this))
                     {

@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class ModelService : IService<BLL.BusinessObjects.Model>
+    public class ModelService 
     {
         //Fields
         private IRepository<DAL.DataEntities.Model> _ModelRepository;

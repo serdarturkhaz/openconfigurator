@@ -7,7 +7,7 @@ using DAL.Repositories;
 
 namespace BLL.Services
 {
-    public class UserService : IService<BLL.BusinessObjects.User>
+    public class UserService
     {
         //Fields
         private IRepository<DAL.DataEntities.User> _UserRepository;

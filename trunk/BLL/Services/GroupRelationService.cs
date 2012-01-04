@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class GroupRelationService : IService<BLL.BusinessObjects.GroupRelation>
+    public class GroupRelationService 
     {
         //Fields
         private IRepository<DAL.DataEntities.GroupRelation> _GroupRelationRepository;

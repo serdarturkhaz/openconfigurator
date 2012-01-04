@@ -135,6 +135,38 @@ namespace DAL.DataEntities
             }
         }
         private Attribute_Type _attribute_Type;
+    
+        public virtual ICollection<AttributeValue> AttributeValues
+        {
+            get
+            {
+                if (_attributeValues == null)
+                {
+                    var newCollection = new FixupCollection<AttributeValue>();
+                    newCollection.CollectionChanged += FixupAttributeValues;
+                    _attributeValues = newCollection;
+                }
+                return _attributeValues;
+            }
+            set
+            {
+                if (!ReferenceEquals(_attributeValues, value))
+                {
+                    var previousValue = _attributeValues as FixupCollection<AttributeValue>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupAttributeValues;
+                    }
+                    _attributeValues = value;
+                    var newValue = value as FixupCollection<AttributeValue>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupAttributeValues;
+                    }
+                }
+            }
+        }
+        private ICollection<AttributeValue> _attributeValues;
 
         #endregion
         #region Association Fixup
@@ -195,6 +227,28 @@ namespace DAL.DataEntities
                 if (AttributeTypeID != Attribute_Type.ID)
                 {
                     AttributeTypeID = Attribute_Type.ID;
+                }
+            }
+        }
+    
+        private void FixupAttributeValues(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (AttributeValue item in e.NewItems)
+                {
+                    item.Attribute = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (AttributeValue item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Attribute, this))
+                    {
+                        item.Attribute = null;
+                    }
                 }
             }
         }

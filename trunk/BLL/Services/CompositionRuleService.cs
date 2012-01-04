@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class CompositionRuleService : IService<BLL.BusinessObjects.CompositionRule>
+    public class CompositionRuleService 
     {
         //Fields
         private IRepository<DAL.DataEntities.CompositionRule> _CompositionRuleRepository;

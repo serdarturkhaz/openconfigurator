@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class CustomRuleService : IService<BLL.BusinessObjects.CustomRule>
+    public class CustomRuleService 
     {
         //Fields
         private IRepository<DAL.DataEntities.CustomRule> _CustomRuleRepository;

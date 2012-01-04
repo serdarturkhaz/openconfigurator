@@ -153,6 +153,38 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<GroupRelation_To_Feature> _groupRelations_To_Features;
+    
+        public virtual ICollection<FeatureSelection> FeatureSelections
+        {
+            get
+            {
+                if (_featureSelections == null)
+                {
+                    var newCollection = new FixupCollection<FeatureSelection>();
+                    newCollection.CollectionChanged += FixupFeatureSelections;
+                    _featureSelections = newCollection;
+                }
+                return _featureSelections;
+            }
+            set
+            {
+                if (!ReferenceEquals(_featureSelections, value))
+                {
+                    var previousValue = _featureSelections as FixupCollection<FeatureSelection>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupFeatureSelections;
+                    }
+                    _featureSelections = value;
+                    var newValue = value as FixupCollection<FeatureSelection>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupFeatureSelections;
+                    }
+                }
+            }
+        }
+        private ICollection<FeatureSelection> _featureSelections;
 
         #endregion
         #region Association Fixup
@@ -216,6 +248,28 @@ namespace DAL.DataEntities
                     if (ReferenceEquals(item.ParentFeature, this))
                     {
                         item.ParentFeature = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupFeatureSelections(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (FeatureSelection item in e.NewItems)
+                {
+                    item.Feature = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (FeatureSelection item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Feature, this))
+                    {
+                        item.Feature = null;
                     }
                 }
             }
