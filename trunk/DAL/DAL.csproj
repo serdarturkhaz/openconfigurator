@@ -47,6 +47,9 @@
     <Compile Include="DataEntities\Attribute.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataEntities\AttributeValue.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataEntities\Attribute_DataType.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
@@ -57,6 +60,9 @@
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\CompositionRule_Type.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities\Configuration.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\CustomRule.cs">
@@ -80,6 +86,9 @@
     <Compile Include="DataEntities\Feature.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataEntities\FeatureSelection.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataEntities\GroupRelation.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
@@ -97,6 +106,9 @@
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\Relation_Type.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataEntities\SelectionState.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\User.cs">

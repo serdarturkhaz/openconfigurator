@@ -10,6 +10,7 @@ namespace DAL.Repositories
     public interface IRepository<TEntity> : IDisposable where TEntity : class
     {
         IQueryable<TEntity> GetQuery();
+        ObjectContext GetContext();
         IEnumerable<TEntity> GetAll();
         IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
         TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate);

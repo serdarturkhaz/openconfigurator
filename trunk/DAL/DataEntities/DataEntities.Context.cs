@@ -125,6 +125,30 @@ namespace DAL.DataEntities
             get { return _customRules  ?? (_customRules = CreateObjectSet<CustomRule>("CustomRules")); }
         }
         private ObjectSet<CustomRule> _customRules;
+    
+        public ObjectSet<AttributeValue> AttributeValues
+        {
+            get { return _attributeValues  ?? (_attributeValues = CreateObjectSet<AttributeValue>("AttributeValues")); }
+        }
+        private ObjectSet<AttributeValue> _attributeValues;
+    
+        public ObjectSet<Configuration> Configurations
+        {
+            get { return _configurations  ?? (_configurations = CreateObjectSet<Configuration>("Configurations")); }
+        }
+        private ObjectSet<Configuration> _configurations;
+    
+        public ObjectSet<FeatureSelection> FeatureSelections
+        {
+            get { return _featureSelections  ?? (_featureSelections = CreateObjectSet<FeatureSelection>("FeatureSelections")); }
+        }
+        private ObjectSet<FeatureSelection> _featureSelections;
+    
+        public ObjectSet<SelectionState> SelectionStates
+        {
+            get { return _selectionStates  ?? (_selectionStates = CreateObjectSet<SelectionState>("SelectionStates")); }
+        }
+        private ObjectSet<SelectionState> _selectionStates;
 
         #endregion
     }

@@ -39,8 +39,14 @@ namespace BLL.BusinessObjects
         MutualDependency = 2,
         MutualExclusion = 3
     }
+    public enum FeatureSelectionStates
+    {
+        Selected = 1,
+        Deselected = 2,
+        Unselected = 3
+    }
 
-    //Model
+    //Model stuff
     public class Model : IBusinessObject
     {
         //Fields
@@ -242,8 +248,6 @@ namespace BLL.BusinessObjects
 
         #endregion
     }
-
-    //Attributes
     public class Attribute : IBusinessObject
     {
         //Fields
@@ -377,8 +381,6 @@ namespace BLL.BusinessObjects
         }
         #endregion
     }
-
-    //Feature
     public class Feature : IBusinessObject
     {
         //Fields
@@ -525,8 +527,6 @@ namespace BLL.BusinessObjects
 
         #endregion
     }
-
-    //Relations & GroupRelations
     public class Relation : IBusinessObject
     {
         //Fields
@@ -790,8 +790,6 @@ namespace BLL.BusinessObjects
         #endregion
 
     }
-
-    //Rules
     public class CompositionRule : IBusinessObject
     {
         //Fields
@@ -1125,4 +1123,340 @@ namespace BLL.BusinessObjects
 
         #endregion
     }
+
+    //Configuration stuff
+    public class Configuration : IBusinessObject
+    {
+        //Fields
+        private DAL.DataEntities.Configuration _innerEntity;
+        private bool _toBeDeleted = false;
+
+        //Constructor
+        public Configuration()
+        {
+            _innerEntity = new DAL.DataEntities.Configuration();
+        }
+        internal Configuration(DAL.DataEntities.Configuration innerEntity)
+        {
+            this._innerEntity = innerEntity;
+
+        }
+
+        //Properties
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return _innerEntity.Name;
+            }
+            set
+            {
+                _innerEntity.Name = value;
+            }
+        }
+        public string ModelName
+        {
+            get
+            {
+                return _innerEntity.Model.Name;
+            }
+        }
+        [JsonIgnore]
+        public Nullable<System.DateTime> CreatedDate
+        {
+            get
+            {
+                return _innerEntity.CreatedDate;
+            }
+            set
+            {
+                _innerEntity.CreatedDate = value;
+            }
+        }
+        [JsonIgnore]
+        public Nullable<System.DateTime> LastModifiedDate
+        {
+            get
+            {
+                return _innerEntity.LastModifiedDate;
+            }
+            set
+            {
+                _innerEntity.LastModifiedDate = value;
+            }
+        }
+        public string CreatedDateFormatted
+        {
+            get
+            {
+                return CreatedDate.Value.ToShortDateString();
+            }
+        }
+        public string LastModifiedDateFormatted
+        {
+            get
+            {
+                return LastModifiedDate.Value.ToShortDateString();
+            }
+        }
+
+        //Conversion
+        public static BLL.BusinessObjects.Configuration FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.Configuration configuration = new BLL.BusinessObjects.Configuration((DAL.DataEntities.Configuration)innerEntity);
+            return configuration;
+        }
+        //Factory
+        public static BLL.BusinessObjects.Configuration CreateDefault()
+        {
+            //Create a new Model and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Configuration();
+            BLL.BusinessObjects.Configuration configuration = new Configuration((DAL.DataEntities.Configuration)innerEntity);
+
+            //Set default fields
+            configuration.CreatedDate = DateTime.Now;
+            configuration.LastModifiedDate = DateTime.Now;
+            configuration.Name = "Default Configuration";
+
+            //Return the object instance
+            return configuration;
+        }
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.Configuration)value;
+            }
+        }
+        public bool ToBeDeleted
+        {
+            get
+            {
+                return this._toBeDeleted;
+            }
+            set
+            {
+                this._toBeDeleted = value;
+            }
+        }
+
+
+
+        #endregion
+    }
+    public class FeatureSelection: IBusinessObject
+    {
+        //Fields
+        private DAL.DataEntities.FeatureSelection _innerEntity;
+        private bool _toBeDeleted = false;
+
+        //Constructor
+        public FeatureSelection()
+        {
+            this._innerEntity = new DAL.DataEntities.FeatureSelection();
+        }
+        internal FeatureSelection(DAL.DataEntities.FeatureSelection innerEntity)
+        {
+            this._innerEntity = innerEntity;
+        }
+
+        //Properties
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
+            }
+        }
+        public FeatureSelectionStates SelectionState
+        {
+            get
+            {
+                return (FeatureSelectionStates)Enum.Parse(typeof(FeatureSelectionStates), _innerEntity.SelectionStateID.ToString());
+            }
+            set
+            {
+                _innerEntity.SelectionStateID = (int)value;
+            }
+        }
+        public bool? Disabled
+        {
+            get
+            {
+                if (_innerEntity.Disabled != null)
+                    return _innerEntity.Disabled;
+                else
+                    return false;
+            }
+            set
+            {
+                _innerEntity.Disabled = value;
+            }
+        }
+
+        //Conversion
+        public static BLL.BusinessObjects.FeatureSelection FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.FeatureSelection featureSelection = new BLL.BusinessObjects.FeatureSelection((DAL.DataEntities.FeatureSelection)innerEntity);
+            return featureSelection;
+        }
+        //Factory
+        public static BLL.BusinessObjects.FeatureSelection CreateDefault()
+        {
+            //Create a new Feature and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Feature();
+            BLL.BusinessObjects.FeatureSelection featureSelection = new FeatureSelection((DAL.DataEntities.FeatureSelection)innerEntity);
+
+
+            //Return the object instance
+            return featureSelection;
+        }
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.FeatureSelection)value;
+            }
+        }
+        public bool ToBeDeleted
+        {
+            get
+            {
+                return this._toBeDeleted;
+            }
+            set
+            {
+                this._toBeDeleted = value;
+            }
+        }
+
+        #endregion
+    }
+    public class AttributeValue : IBusinessObject
+    {
+        //Fields
+        private DAL.DataEntities.AttributeValue _innerEntity;
+        private bool _toBeDeleted = false;
+
+        //Constructor
+        public AttributeValue()
+        {
+            _innerEntity = new DAL.DataEntities.AttributeValue();
+        }
+        internal AttributeValue(DAL.DataEntities.AttributeValue innerEntity)
+        {
+            this._innerEntity = innerEntity;
+        }
+
+        //Properties
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
+            }
+        }
+        public int AttributeID
+        {
+            get
+            {
+                return _innerEntity.AttributeID;
+            }
+            set
+            {
+                _innerEntity.AttributeID = value;
+            }
+        }
+        public string Value
+        {
+            get
+            {
+                return _innerEntity.Value;
+            }
+            set
+            {
+                _innerEntity.Value = value;
+            }
+        }
+
+        //Conversion
+        public static BLL.BusinessObjects.AttributeValue FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.AttributeValue attributeValue = new BLL.BusinessObjects.AttributeValue((DAL.DataEntities.AttributeValue)innerEntity);
+            return attributeValue;
+        }
+        //Factory
+        public static BLL.BusinessObjects.AttributeValue CreateDefault()
+        {
+            //Create a new Feature and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Attribute();
+            BLL.BusinessObjects.AttributeValue attributeValue = new BLL.BusinessObjects.AttributeValue((DAL.DataEntities.AttributeValue)innerEntity);
+
+            //Return the object instance
+            return attributeValue;
+        }
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.AttributeValue)value;
+            }
+        }
+        public bool ToBeDeleted
+        {
+            get
+            {
+                return this._toBeDeleted;
+            }
+            set
+            {
+                this._toBeDeleted = value;
+            }
+        }
+        #endregion
+    }
+
 }
