@@ -49,28 +49,33 @@ body
 {
     height: 40px;
     float: left;
-    margin-right: 5px;
-    width: 184px;
+    
 }
 .OuterMenuArea .InnerMenuArea .MenuItem a
 {
     box-sizing: border-box;
-    background-color: #6c7275;
     display: block;
     width: 100%;
     height: 40px;
-    padding: 10px 5px 10px 5px;
+    padding: 10px 15px 10px 15px;
     float: left;
-    color: #FFCC00;
-    font-size: 17px;
+    color: #CFCEC7;
+    font-size: 14px;
     font-family: Arial;
     letter-spacing: 1.8px;
     text-align: center;
+}
+.OuterMenuArea .InnerMenuArea .MenuItem[selected] a
+{
+    background-color: #6c7275;
+    font-size: 16px;
+    color: #FFCC00;
 }
 .OuterMenuArea .InnerMenuArea .MenuItem a:hover
 {
     background-color: #82868A;
     text-decoration: none;
+    color: #FFCC00;
 }
 .OuterContentArea
 {
@@ -719,12 +724,25 @@ a:hover
 }
 /*------------------------------------------------------------------------------*/
 /*Models------------------------------------------------------------------------*/
-#ActionsBox
+#ModelsActionsBox
 {
     float: left;
     margin-top: 30px;
 }
 #ModelsBox
+{
+    float: right;
+    margin-top: 30px;
+    width: 80%;
+}
+/*------------------------------------------------------------------------------*/
+/*Configurations----------------------------------------------------------------*/
+#ConfigurationsActionsBox
+{
+    float: left;
+    margin-top: 30px;
+}
+#ConfigurationsBox
 {
     float: right;
     margin-top: 30px;
@@ -910,7 +928,7 @@ a:hover
     font-family: Arial;
     letter-spacing: 0.8px;
     height: 30px;
-    padding-top: 10px;
+    padding-top: 12px;
     text-align: center;
     width: 29px;
     padding-right: 1px;
@@ -918,16 +936,23 @@ a:hover
 .OuterMenuArea .InnerMenuArea #ModelMenuBar
 {
     height: 40px;
-    float: left;
+    float: right;
+    margin-right:328px;
+    border-left: 1px solid #707070;
+    border-right: 1px solid #707070;
+    padding-left:15px;
 }
 .OuterMenuArea .InnerMenuArea #ModelMenuBar #ModelNameTextbox
 {
+    background-color: #EFEFEF;
     margin: 7px 20px 0 0;
     float: left;
-    width: 200px;
-    border: none !important;
+    width: 300px;
+    border: 1px solid gray;
     padding-left: 10px;
+    
 }
+
 .OuterMenuArea .InnerMenuArea #ModelMenuBar .Button-Toolbar
 {
     border-left: 1px solid #707070;

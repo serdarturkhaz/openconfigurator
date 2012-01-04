@@ -1,10 +1,10 @@
 ﻿@{
-    ViewBag.Title = "Models";
+    ViewBag.Title = "Configurations";
     Layout = "~/Views/Master/_LoggedInLayout.cshtml";
 }
+
 @section headerscripts{
     <script type="text/javascript">
-
         //Grid functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         function createRow(headerColumns, tbody, dataObj) {
             var tr = $("<tr></tr>").attr("objectid", dataObj.ID);
@@ -12,7 +12,7 @@
             //Create TD's for each HeaderColumn
             for (var j = 0; j < headerColumns.length - 1; j++) {
                 var field = $(headerColumns[j]).children("span[columnname]").attr("columnname");
-                var td = $("<td></td>").attr("style", $(headerColumns[j]).attr("style"));                
+                var td = $("<td></td>").attr("style", $(headerColumns[j]).attr("style"));
                 var innerElem = $("<span>" + dataObj[field] + "</span>");
 
                 //Special if first Column
@@ -55,31 +55,9 @@
             //Set width for ModelsBox
             var containerWidth = $(".OuterContentArea .InnerContentArea").width();
             var marginWidth = 30;
-            var actionsBoxWidth = $("#ModelsActionsBox").width();
+            var actionsBoxWidth = $("#ConfigurationsActionsBox").width();
             var modelsBoxWidth = containerWidth - marginWidth - actionsBoxWidth;
-            $('#ModelsBox').css("width", modelsBoxWidth + "px");
-        }
-        function addNewModel() {
-            //Create new Model in DB
-            $.ajax({
-                type: "POST",
-                url: "/Models/AddNewModel",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: {},
-                success: function (modelObj) {
-                    //
-                    var modelsTable = $("#ModelsTable");
-                    var headerColumns = $(modelsTable).find("th");
-                    var tbody = $(modelsTable).children("tbody");
-
-                    var tr = createRow(headerColumns, tbody, modelObj);
-                    $(tr).children("td").effect("highlight", { color: "yellow" }, 1000);
-                },
-                error: function (req, status, error) {
-                    alert('error');
-                }
-            });
+            $('#ConfigurationsBox').css("width", modelsBoxWidth + "px");
         }
         function deleteModel(modelID) {
             var tbody = $("#ModelsTable").children("tbody");
@@ -98,63 +76,56 @@
                     alert('error');
                 }
             });
-           
+
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
-
-            //Event handlers-------------------------------------------------------------------
-            $("#NewModelButton").bind("click", function () {
-                addNewModel();
-            });
-            //---------------------------------------------------------------------------------
 
             //Initialize
             calcWidth();
             $(window).resize(function () {
                 calcWidth();
             });
-            $("#ModelsMenuItem").attr("selected", "selected");
+            $("#ConfigurationsMenuItem").attr("selected", "selected");
 
-            //Load Models
-            $.ajax({
-                type: "POST",
-                url: "/Models/GetModels",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: {},
-                beforeSend: function () {
-                    $("#ModelsBox").block({ message: "Loading data...", fadeIn: 300 });
-                },
-                success: function (models) {
-                    $.timer(300, function () {
-                        var modelsTable = $("#ModelsTable");
-                        var headerColumns = $(modelsTable).find("th");
-                        var tbody = $(modelsTable).children("tbody");
+            //Load Configurations
+//            $.ajax({
+//                type: "POST",
+//                url: "/Models/GetModels",
+//                contentType: "application/json; charset=utf-8",
+//                dataType: "json",
+//                data: {},
+//                beforeSend: function () {
+//                    $("#ModelsBox").block({ message: "Loading data...", fadeIn: 300 });
+//                },
+//                success: function (models) {
+//                    $.timer(300, function () {
+//                        var modelsTable = $("#ModelsTable");
+//                        var headerColumns = $(modelsTable).find("th");
+//                        var tbody = $(modelsTable).children("tbody");
 
-                        //Create a TR for each row 
-                        for (var i = 0; i < models.length; i++) {
-                            createRow(headerColumns, tbody, models[i]);
-                        }
+//                        //Create a TR for each row 
+//                        for (var i = 0; i < models.length; i++) {
+//                            createRow(headerColumns, tbody, models[i]);
+//                        }
 
-                        $("#ModelsBox").unblock();
-                    });
-                    //
+//                        $("#ModelsBox").unblock();
+//                    });
+//                    //
 
-                },
-                error: function (req, status, error) {
-                    alert('error');
-                }
-            });
+//                },
+//                error: function (req, status, error) {
+//                    alert('error');
+//                }
+//            });
 
         });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     </script>
 }
 
-
-<div id="ModelsActionsBox" class="RoundedBox">
+<div id="ConfigurationsActionsBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
             <span class="HeaderLabel">Actions</span>
@@ -162,9 +133,6 @@
     </div>
     <div class="BoxContent">
         <ul class="ActionList">
-            <li class="Button-Normal" id="NewModelButton">
-                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
-                <span>New Model</span> </li>
             <li class="Button-Normal" disabled="disabled">
                 <img src="../../Content/themes/base/images/Icons/NewModel.png" />
                 <span>Import Model</span> </li>
@@ -175,7 +143,7 @@
         </div>
     </div>
 </div>
-<div id="ModelsBox" class="RoundedBox">
+<div id="ConfigurationsBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">
             <span class="HeaderLabel">Models</span>
