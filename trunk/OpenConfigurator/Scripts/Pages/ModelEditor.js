@@ -2169,7 +2169,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     break;
                 case "partial":
                     //only show for cloneable
-                    if (_dataObj.RelationType == systemDefaults.enums.relationTypes.cloneable.id) {
+                    if (_relationType == systemDefaults.enums.relationTypes.cloneable.id) {
                         if (_innerElements.cardinalityElement == null) {
                             _innerElements.cardinalityElement = new UICardinalityLabel(_lowerBound, _upperBound, getCardinalityElemPosition);
                             _innerElements.cardinalityElement.CreateGraphicalRepresentation();
@@ -2368,7 +2368,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     break;
                 case "partial":
                     //only show for cardinal
-                    if (_dataObj.GroupRelationType == systemDefaults.enums.groupRelationTypes.cardinal.id) {
+                    if (_groupRelationType == systemDefaults.enums.groupRelationTypes.cardinal.id) {
                         if (_innerElements.cardinalityElement == null) {
                             _innerElements.cardinalityElement = new UICardinalityLabel(_lowerBound, _upperBound, getCardinalityElemPosition);
                             _innerElements.cardinalityElement.CreateGraphicalRepresentation();
