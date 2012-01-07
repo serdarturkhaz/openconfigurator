@@ -12,10 +12,10 @@ namespace PresentationLayer.Controllers
     public class ModelEditorController : Controller
     {
         [Authorize]
-        public ActionResult ModelEditor(int modelId)
+        public ActionResult ModelEditor(int modelID)
         {
             //Load the ModelID
-            ViewBag.ModelId = modelId;
+            ViewBag.ModelId = modelID;
 
             return View();
         }

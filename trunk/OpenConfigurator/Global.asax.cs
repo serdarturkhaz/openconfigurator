@@ -7,8 +7,6 @@ using System.Web.Routing;
 
 namespace PresentationLayer
 {
-    // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
-    // visit http://go.microsoft.com/?LinkId=9394801
 
     public class MvcApplication : System.Web.HttpApplication
     {
@@ -28,11 +26,18 @@ namespace PresentationLayer
             );
 
             routes.MapRoute(
-                "ModelEditor", // Route name
-                "{controller}/{action}/{modelId}", // URL with parameters
-                new { controller = "ModelEditor", action = "ModelEditor", modelId = "" } // Parameter defaults
+                "ConfigurationEditor", // Route name
+                "ConfigurationEditor/{action}/{configurationID}", // URL with parameters
+                new { controller = "ConfigurationEditor", action = "ConfigurationEditor", configurationID = "" } // Parameter defaults
             );
 
+            routes.MapRoute(
+                "ModelEditor", // Route name
+                "ModelEditor/{action}/{modelID}", // URL with parameters
+                new { controller = "ModelEditor", action = "ModelEditor", modelID = "" } // Parameter defaults
+            );
+
+            
         }
 
         protected void Application_Start()

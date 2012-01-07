@@ -42,7 +42,6 @@ namespace PresentationLayer.Controllers
             ModelService modelService = new ModelService(SessionData.LoggedInUser.ID);
             BLL.BusinessObjects.Model newModel = (BLL.BusinessObjects.Model) modelService.CreateDefault();
             modelService.Add(newModel);
-            
 
             //
             result.Data = newModel;
@@ -55,6 +54,22 @@ namespace PresentationLayer.Controllers
             //Delete the Model
             ModelService modelService = new ModelService(SessionData.LoggedInUser.ID);
             modelService.Delete(ID);
+        }
+
+        [Authorize]
+        public JsonNetResult AddNewConfiguration(int modelID)
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Add a new Configuration
+            ConfigurationService configurationService = new ConfigurationService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Configuration newConfiguration = (BLL.BusinessObjects.Configuration)configurationService.CreateDefault(modelID);
+            configurationService.Add(newConfiguration);
+
+            //Return its ID
+            result.Data = newConfiguration.ID;
+            return result;
         }
     }
 }

@@ -68,6 +68,7 @@
     <Compile Include="Common\SessionData.cs" />
     <Compile Include="Common\WebSecurity.cs" />
     <Compile Include="Controllers\ConfigurationsController.cs" />
+    <Compile Include="Controllers\ConfigurationEditorController.cs" />
     <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Controllers\ModelEditorController.cs" />
     <Compile Include="Controllers\ModelsController.cs" />
@@ -107,6 +108,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\Own\json2.js" />
     <Content Include="Scripts\Own\raphael-min.js" />
+    <Content Include="Scripts\Pages\ConfigurationEditor.js" />
     <Content Include="Scripts\Pages\ModelEditor.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -159,6 +161,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Configurations\Configurations.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ConfigurationEditor\ConfigurationEditor.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

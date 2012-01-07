@@ -28,12 +28,17 @@
 
             //Add Actions TD
             var actionstd = $("<td class='ActionsTD'></td>");
-            var wrapper = $("<div class='Wrapper'></div>").appendTo(actionstd);
+            var wrapper = $("<div class='MultiWrapper'></div>").appendTo(actionstd);
             var deleteButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").append("<span>Delete</span>").appendTo(wrapper);
             deleteButton.bind("click", function () {
-                deleteModel(dataObj.ID, tbody);
+                deleteModel(dataObj.ID);
             });
-            //var openButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/OpenModel.png' />").append("<span>Open</span>").appendTo(wrapper);
+            var newConfigurationButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/configure.png' />").append("<span>Config</span>").appendTo(wrapper);
+            newConfigurationButton.bind("click", function () {
+                var newConfigID = addNewConfiguration(dataObj.ID);
+                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + id;
+            });
+            
             actionstd.attr("style", $(headerColumns[headerColumns.length - 1]).attr("style"));
 
             $(tr).append(actionstd);
@@ -62,10 +67,7 @@
         function addNewModel() {
             //Create new Model in DB
             $.ajax({
-                type: "POST",
                 url: "/Models/AddNewModel",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
                 data: {},
                 success: function (modelObj) {
                     //
@@ -75,11 +77,22 @@
 
                     var tr = createRow(headerColumns, tbody, modelObj);
                     $(tr).children("td").effect("highlight", { color: "yellow" }, 1000);
-                },
-                error: function (req, status, error) {
-                    alert('error');
                 }
             });
+        }
+        function addNewConfiguration(modelID) {
+            //Create new Configuration in DB
+            var id = null;
+            $.ajax({
+                url: "/Models/AddNewConfiguration",
+                data: JSON.stringify({ modelID: modelID }),
+                async: false,
+                success: function (configurationID) {
+                    //Redirect to the new Configuration
+                    id = configurationID;
+                }
+            });
+            return id;
         }
         function deleteModel(modelID) {
             var tbody = $("#ModelsTable").children("tbody");
@@ -153,7 +166,9 @@
     </script>
 }
 
-
+@section RootBreadCrumb {
+    Overview
+}
 <div id="ModelsActionsBox" class="RoundedBox">
     <div class="BoxHeader">
         <div class="BoxInnerHeader">

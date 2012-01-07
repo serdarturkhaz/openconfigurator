@@ -1130,6 +1130,7 @@ namespace BLL.BusinessObjects
         //Fields
         private DAL.DataEntities.Configuration _innerEntity;
         private bool _toBeDeleted = false;
+        private string _modelName;
 
         //Constructor
         public Configuration()
@@ -1139,7 +1140,6 @@ namespace BLL.BusinessObjects
         internal Configuration(DAL.DataEntities.Configuration innerEntity)
         {
             this._innerEntity = innerEntity;
-
         }
 
         //Properties
@@ -1152,6 +1152,17 @@ namespace BLL.BusinessObjects
             set
             {
                 _innerEntity.ID = value;
+            }
+        }
+        public int ModelID
+        {
+            get
+            {
+                return _innerEntity.ModelID;
+            }
+            set
+            {
+                _innerEntity.ModelID = value;
             }
         }
         public string Name
@@ -1169,7 +1180,7 @@ namespace BLL.BusinessObjects
         {
             get
             {
-                return _innerEntity.Model.Name;
+                return _modelName;
             }
         }
         [JsonIgnore]
@@ -1215,16 +1226,21 @@ namespace BLL.BusinessObjects
         public static BLL.BusinessObjects.Configuration FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
         {
             BLL.BusinessObjects.Configuration configuration = new BLL.BusinessObjects.Configuration((DAL.DataEntities.Configuration)innerEntity);
+            
+            //Set fields
+            configuration._modelName = ((DAL.DataEntities.Configuration)innerEntity).Model.Name;
+
             return configuration;
         }
         //Factory
-        public static BLL.BusinessObjects.Configuration CreateDefault()
+        public static BLL.BusinessObjects.Configuration CreateDefault(int modelID)
         {
             //Create a new Model and InnerEntity
             DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Configuration();
             BLL.BusinessObjects.Configuration configuration = new Configuration((DAL.DataEntities.Configuration)innerEntity);
 
             //Set default fields
+            ((DAL.DataEntities.Configuration)configuration.InnerEntity).ModelID = modelID;
             configuration.CreatedDate = DateTime.Now;
             configuration.LastModifiedDate = DateTime.Now;
             configuration.Name = "Default Configuration";
