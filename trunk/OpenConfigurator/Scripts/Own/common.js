@@ -28,8 +28,59 @@ $(document).ready(function () {
     });
 });
 
+//Events
+var Event = function () {
+
+    //Fields
+    var _Handlers = new Array();
+
+    //Methods
+    this.Add = function (handler) {
+        _Handlers.push(handler);
+    }
+    this.RaiseEvent = function (args) {
+        for (var i = 0; i < _Handlers.length; i++) {
+            _Handlers[i].NotifyEventRaised(args);
+        }
+    }
+}
+var EventHandler = function (func) {
+
+    //Methods
+    this.NotifyEventRaised = function (args) {
+
+        //Setup args
+        var argumentsArray = null;
+        if (isArray(args) == true) {
+            argumentsArray = args;
+        } else {
+            argumentsArray = [args];
+        }
+
+        //Call function
+        func.apply(this, argumentsArray);
+    }
+}
+
 
 //Helper methods/small plugins***********************************************************************************
+function getEnumEntryByID(collection, id) {
+    for (var key in collection) {
+        var enumEntry = collection[key];
+        if (enumEntry.id == id) {
+            return enumEntry;
+        }
+    }
+}
+function paramsToString(collection) {
+    var returnString = "";
+    for (var key in collection) {
+        var collectionEntry = collection[key];
+        returnString += "," + collectionEntry;
+    }
+    return returnString;
+}
+
 var readyToPress = true;
 $.ctrl = function (key, callback, args) {
     $(document).keydown(function (e) {

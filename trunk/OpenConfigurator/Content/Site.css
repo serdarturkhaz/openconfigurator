@@ -12,14 +12,18 @@ body
 .OuterHeaderArea
 {
     width: 100%;
-    background: url(themes/base/images/layout/header-bar.png) repeat-x left top;
-    height: 77px;
+    background: #42494c url(themes/base/images/layout/header-bar.png) repeat-x left top;
+    height: 87px;
 }
 .OuterHeaderArea .InnerHeaderArea #LogoElement
 {
     display: block;
     float: left;
-    margin-top: 20px;
+    margin-top: 8px;
+    font-family: Tahoma;
+    font-size: 22px;
+    color: #E6E6E6;
+    letter-spacing: 1.3px;
 }
 .OuterHeaderArea .InnerHeaderArea #SettingsArea
 {
@@ -39,51 +43,71 @@ body
     font-size: 13px;
 }
 
-.OuterMenuArea
+.TopMenuBar
+{
+    width: 100%;
+    float: left;
+    margin-top: 25px;
+}
+.TopMenuBar .TopMenuItem
+{
+    float: left;
+}
+.TopMenuBar .TopMenuItem a
+{
+    color: #818181;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    padding: 8px 12px 9px 12px;
+    border: solid 1px transparent;
+    text-transform: uppercase;
+}
+.TopMenuBar .TopMenuItem[selected] a
+{
+    color: #FFCC00;
+    border: 1px solid 595959;
+    border-bottom: 1px solid #595959;
+    background-color: #50585b;
+}
+.TopMenuBar .TopMenuItem a:hover
+{
+    text-decoration: none;
+    color: #FFCC00;
+    border: solid 1px #595959;
+    background-color: #52595c;
+}
+
+.OuterLowerMenuArea
 {
     width: 100%;
     background: url(themes/base/images/layout/menu-bar.png) repeat-x left top;
-    height: 40px;
+    height: 30px;
 }
-.OuterMenuArea .InnerMenuArea .MenuItem
+
+.OuterLowerMenuArea .InnerLowerMenuArea .BreadCrumbRoot
 {
-    height: 40px;
+    height: 30px;
     float: left;
-    
-}
-.OuterMenuArea .InnerMenuArea .MenuItem a
-{
     box-sizing: border-box;
     display: block;
-    width: 100%;
-    height: 40px;
-    padding: 10px 15px 10px 15px;
+    padding: 6px 15px 10px 15px;
     float: left;
-    color: #CFCEC7;
-    font-size: 14px;
-    font-family: Arial;
-    letter-spacing: 1.8px;
-    text-align: center;
-}
-.OuterMenuArea .InnerMenuArea .MenuItem[selected] a
-{
     background-color: #6c7275;
-    font-size: 16px;
-    color: #FFCC00;
+    font-size: 13px;
+    color: #FFEFAE;
+    font-family: Arial;
+    letter-spacing: 2.5px;
+    text-align: center;
+    width: 184px;
 }
-.OuterMenuArea .InnerMenuArea .MenuItem a:hover
-{
-    background-color: #82868A;
-    text-decoration: none;
-    color: #FFCC00;
-}
+
 .OuterContentArea
 {
     width: 100%;
     background: #e8e8dd url(themes/base/images/layout/content-bg.png) repeat-x left top;
     min-height: 700px;
 }
-
 .OuterHeaderArea .InnerHeaderArea
 {
     width: 95%;
@@ -91,7 +115,7 @@ body
     margin: 0 auto;
     color: White;
 }
-.OuterMenuArea .InnerMenuArea
+.OuterLowerMenuArea .InnerLowerMenuArea
 {
     width: 95%;
     height: 40px;
@@ -217,16 +241,25 @@ body
 .grid tbody tr:hover td
 {
 }
-.grid tbody td.ActionsTD .Wrapper
+.grid tbody td.ActionsTD .SingleWrapper
 {
     margin-left: auto;
     margin-right: auto;
-    height: 38px;
-    width: 50px;
+    height: 40px;
+    width: 40px;
+}
+.grid tbody td.ActionsTD .MultiWrapper
+{
+    margin-left: auto;
+    margin-right: auto;
+    height: 40px;
+    width: 100px;
 }
 .grid tbody td.ActionsTD .Wrapper .IconButton-Normal
 {
+    display: inline-block;
     margin-left: 5px;
+    float: left;
 }
 /*------------------------------------------------------------------------------*/
 /*BlockUI-----------------------------------------------------------------------*/
@@ -373,12 +406,12 @@ html > body .ui-pnotify
 /*SimpleTree--------------------------------------------------------------------*/
 .simpleTree
 {
-    background:#f7f7f7;
+    background: #f7f7f7;
 }
 .simpleTree ul
 {
-    padding:0;
-    margin:0;
+    padding: 0;
+    margin: 0;
     box-sizing: border-box;
     width: 100%;
 }
@@ -388,44 +421,44 @@ html > body .ui-pnotify
 }
 .simpleTree ul.level0
 {
-    padding-left:12px;
+    padding-left: 12px;
 }
 .simpleTree li.row
 {
-    list-style-type:none;
+    list-style-type: none;
 }
 
-.simpleTree li.row .node 
+.simpleTree li.row .node
 {
-    width:100%;
-    float:left;
+    width: 100%;
+    float: left;
 }
 
 .simpleTree li.row .node div.expander
 {
     width: 12px;
     height: 20px;
-    float:left;
+    float: left;
 }
-.simpleTree li.row .node[nodeDisplayState=expanded]  div.expander
+.simpleTree li.row .node[nodeDisplayState=expanded] div.expander
 {
     background: url(themes/base/images/controls/simpletree/minus.png) no-repeat center center;
-    cursor:pointer;
+    cursor: pointer;
 }
 .simpleTree li.row .node[nodeDisplayState=collapsed] div.expander
 {
     background: url(themes/base/images/controls/simpletree/plus.png) no-repeat center center;
-    cursor:pointer;
+    cursor: pointer;
 }
 
-.simpleTree li.row .node .innerNode 
+.simpleTree li.row .node .innerNode
 {
-    width:auto;
-    float:left;
+    width: auto;
+    float: left;
     height: 16px;
-    cursor:default;
-    padding:2px 2px 2px 2px;
-    border:solid 1px transparent;
+    cursor: default;
+    padding: 2px 2px 2px 2px;
+    border: solid 1px transparent;
 }
 .simpleTree li.row .node .innerNode:hover
 {
@@ -440,22 +473,21 @@ html > body .ui-pnotify
 
 .simpleTree li.row .node .innerNode div.icon
 {
-    float:left;
+    float: left;
     width: 16px;
-    height:16px;
-    display:inline-block;
-    
-    cursor:default;
+    height: 16px;
+    display: inline-block;
+    cursor: default;
 }
 .simpleTree li.row .node .innerNode div.name
 {
-    float:left;
-    margin-top:2px;
-    margin-left:3px;
-    height:16px;
-    vertical-align:middle;
+    float: left;
+    margin-top: 2px;
+    margin-left: 3px;
+    height: 16px;
+    vertical-align: middle;
     display: inline-block;
-    cursor:default;
+    cursor: default;
 }
 
 /*Font styles*/
@@ -466,7 +498,7 @@ html > body .ui-pnotify
     font-size: 12px;
     color: #2F3335;
 }
-.simpleTree ul.level0 li.row .node .innerNode  div.name
+.simpleTree ul.level0 li.row .node .innerNode div.name
 {
     font-family: Arial;
     letter-spacing: 0.3px;
@@ -537,17 +569,10 @@ html > body .ui-pnotify
 }
 .HeaderLabel
 {
-    color: #F0F0F0;
+    color: #E0E0E0;
     font-size: 13px;
     font-family: Arial;
     letter-spacing: 0.9px;
-}
-.LogoText
-{
-    font-family: Tahoma;
-    font-size: 25px;
-    color: #E6E6E6;
-    letter-spacing: 0.3px;
 }
 a
 {
@@ -576,6 +601,7 @@ a:hover
     background: #FFCC00;
     border: 1px solid #E1B500;
 }
+
 /*Buttons*/
 .Button-Normal
 {
@@ -749,22 +775,93 @@ a:hover
     width: 80%;
 }
 /*------------------------------------------------------------------------------*/
-/*ModelEditor-------------------------------------------------------------------*/
-
+/*Editors common stuff----------------------------------------------------------*/
 .LeftColumn
 {
     float: left;
 }
-
 .CenterColumn
 {
     float: right;
 }
-
 .RightColumn
 {
     float: right;
 }
+
+/*Overriden stuff*/
+.OuterLowerMenuArea .InnerLowerMenuArea .MenuItemSeparator
+{
+    float: left;
+    color: #E8E9EA;
+    font-size: 17px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    height: 20px;
+    text-align: center;
+    width: 33px;
+    padding-top: 6px;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea .SubMenuSpecialBar
+{
+    height: 20px;
+    float: left;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea .SubMenuSpecialBar .Textbox
+{
+    background-color: transparent;
+    float: left;
+    width: 250px;
+    padding-left: 9px !important;
+    height: 17px !important;
+    margin-top: 1px;
+    border: none;
+    font-size: 14px;
+    color: #E8E9EA;
+    font-family: Arial;
+    letter-spacing: 2.3px;
+    border-right: 1px solid #707070;
+    border-left: 1px solid #707070;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea .SubMenuSpecialBar .Textbox:focus
+{
+    background-color: white;
+    color: Black;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea .SubMenuSpecialBar .Button-Toolbar
+{
+    border-right: 1px solid #707070;
+    padding: 5px 12px 0 12px;
+    cursor: pointer;
+    float: left;
+    height: 23px;
+    vertical-align: middle;
+}
+.Button-Toolbar:hover
+{
+    background: #4B5254;
+}
+
+.Button-Toolbar span
+{
+    display: block;
+    margin-top: 3px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #E8E9EA;
+    float: right;
+}
+.Button-Toolbar img
+{
+    float: left;
+    margin-top: -2px;
+    margin-right: 3px;
+    vertical-align: middle;
+}
+/*------------------------------------------------------------------------------*/
+/*ModelEditor-------------------------------------------------------------------*/
 
 /*ToolBox*/
 #ToolBox
@@ -804,9 +901,9 @@ a:hover
 }
 #PropertiesBox .Textarea
 {
-    height:auto;
-    overflow:hidden;
-    min-height:100px;
+    height: auto;
+    overflow: hidden;
+    min-height: 100px;
 }
 #PropertiesBox .AreaDiv
 {
@@ -901,7 +998,6 @@ a:hover
     text-align: center;
 }
 
-
 /*ExplorerBox*/
 #ModelExplorerBox
 {
@@ -916,73 +1012,18 @@ a:hover
     box-sizing: border-box;
     background-color: #F7F7F7;
     padding: 5px 0px 5px 2px;
-    height:100%;
-    overflow:auto;
+    height: 100%;
+    overflow: auto;
 }
-/*Overriden stuff*/
-.OuterMenuArea .InnerMenuArea .MenuItemSeparator
-{
-    float: left;
-    color: #FFCC00;
-    font-size: 17px;
-    font-family: Arial;
-    letter-spacing: 0.8px;
-    height: 30px;
-    padding-top: 12px;
-    text-align: center;
-    width: 29px;
-    padding-right: 1px;
-}
-.OuterMenuArea .InnerMenuArea #ModelMenuBar
-{
-    height: 40px;
-    float: right;
-    margin-right:328px;
-    border-left: 1px solid #707070;
-    border-right: 1px solid #707070;
-    padding-left:15px;
-}
-.OuterMenuArea .InnerMenuArea #ModelMenuBar #ModelNameTextbox
-{
-    background-color: #EFEFEF;
-    margin: 7px 20px 0 0;
-    float: left;
-    width: 300px;
-    border: 1px solid gray;
-    padding-left: 10px;
-    
-}
+/*------------------------------------------------------------------------------*/
+/*ConfigurationEditor-----------------------------------------------------------*/
 
-.OuterMenuArea .InnerMenuArea #ModelMenuBar .Button-Toolbar
-{
-    border-left: 1px solid #707070;
-    padding: 9px 12px 0 12px;
-    cursor: pointer;
-    float: left;
-    height: 31px;
-    vertical-align: middle;
-}
-.Button-Toolbar:hover
-{
-    background: #4B5254;
-}
-.Button-Toolbar span
-{
-    display: block;
-    margin-top: 3px;
-    font-family: Arial;
-    letter-spacing: 0.8px;
-    font-size: 11px;
-    font-weight: bold;
-    color: white;
-    float: right;
-}
-.Button-Toolbar img
+/*StandardViewBox*/
+#StandardViewBox
 {
     float: left;
-    margin-top: 2px;
-    margin-right: 3px;
-    vertical-align: middle;
+    margin-top: 15px;
+    width: 100%;
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/

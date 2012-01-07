@@ -54,9 +54,9 @@ namespace BLL.Services
                 _ConfigurationRepository.SaveChanges();
             }
         }
-        public IBusinessObject CreateDefault()
+        public IBusinessObject CreateDefault(int modelID)
         {
-            BLL.BusinessObjects.Configuration defaultConfiguration = (BLL.BusinessObjects.Configuration)BLL.BusinessObjects.Configuration.CreateDefault();
+            BLL.BusinessObjects.Configuration defaultConfiguration = (BLL.BusinessObjects.Configuration)BLL.BusinessObjects.Configuration.CreateDefault(modelID);
             return defaultConfiguration;
         }
         public BusinessObjects.Configuration GetByID(int id)
@@ -102,6 +102,5 @@ namespace BLL.Services
                 _ConfigurationRepository.SaveChanges();
             }
         }
-
     }
 }

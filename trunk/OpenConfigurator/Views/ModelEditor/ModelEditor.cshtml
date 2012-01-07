@@ -88,20 +88,24 @@
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     </script>
 }
-@section SubPageItem{
-    
-    <div id="ModelMenuBar">
+
+@section RootBreadCrumb {
+    Edit Model 
+}
+@section SubMenuSpecialBar{
+    <div class="MenuItemSeparator">></div>
+    <div class="SubMenuSpecialBar">
         
-        <input id="ModelNameTextbox" class="Textbox" type="text" value="@ViewBag.ModelName" />
+        <input id="ModelNameTextbox" class="Textbox" type="text" value="Please wait..." />
 
         <div class="Button-Toolbar" id="SaveButton">
-            <img src="../../Content/themes/base/images/Icons/save-toolbar.png" />
+            <img src="../../Content/themes/base/images/Icons/save.png" />
             <span>Save</span>
         </div>
-        <div class="Button-Toolbar" id="UndoButton">
+        @*<div class="Button-Toolbar" id="UndoButton">
             <img src="../../Content/themes/base/images/Icons/undo-toolbar.png" />
             <span>Undo</span>
-        </div>
+        </div>*@
        
     </div>
 }
