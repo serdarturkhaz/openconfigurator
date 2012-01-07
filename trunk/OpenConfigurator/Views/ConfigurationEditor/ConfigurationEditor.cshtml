@@ -8,11 +8,25 @@
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var configurationID = '@(ViewBag.ConfigurationId)';
         var configurationDataModel = null, clientController = null;
+
+        function calcWidth() {
+            var containerWidth = $(".OuterContentArea .InnerContentArea").width();
+            var marginWidth = 31;
+            var toolboxBoxWidth = $("#ToolBox").width();
+            var standardViewBoxWidth = containerWidth - marginWidth * 2 - toolboxBoxWidth;
+            $('#StandardViewBox').css("width", standardViewBoxWidth + "px");
+        }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
 
             //Initialize
+            calcWidth();
+            calcWidth();
+            $(window).resize(function () {
+                calcWidth();
+                calcWidth();
+            });
             $("#ConfigurationsMenuItem").attr("selected", "selected");
 
             //Load data
