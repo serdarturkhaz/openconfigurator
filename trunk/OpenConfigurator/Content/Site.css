@@ -66,15 +66,16 @@ body
 .TopMenuBar .TopMenuItem[selected] a
 {
     color: #FFCC00;
-    border: 1px solid 595959;
-    border-bottom: 1px solid #595959;
+    border: solid 1px #616161;
+    border-bottom:solid 1px transparent;
     background-color: #50585b;
 }
 .TopMenuBar .TopMenuItem a:hover
 {
     text-decoration: none;
     color: #FFCC00;
-    border: solid 1px #595959;
+    border: solid 1px #616161;
+    border-bottom:solid 1px transparent;
     background-color: #52595c;
 }
 
@@ -811,7 +812,7 @@ a:hover
 {
     background-color: transparent;
     float: left;
-    width: 250px;
+    width: 150px;
     padding-left: 9px !important;
     height: 17px !important;
     margin-top: 1px;
@@ -1018,12 +1019,19 @@ a:hover
 /*------------------------------------------------------------------------------*/
 /*ConfigurationEditor-----------------------------------------------------------*/
 
+/*ConfigurationExplorer*/
+#ConfigurationExplorerBox 
+{
+    float: left;
+    margin-top: 30px;
+    width: 185px;
+}
 /*StandardViewBox*/
 #StandardViewBox
 {
     float: left;
-    margin-top: 15px;
-    width: 100%;
+    margin-top: 30px;
+    width: 80%;
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/

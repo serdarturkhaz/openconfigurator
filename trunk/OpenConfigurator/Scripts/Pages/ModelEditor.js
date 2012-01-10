@@ -3,7 +3,7 @@ var settings = {
     diagramContext: {
         fixedOrientation: "vertical", //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
         drawCurves: true, //determines whether curves should be used for drawing relations - options: true / false
-        dynamicRefresh: false, //determines whether refresh (redraw) operations are executed real-time or after a move event is completed
+        dynamicRefresh: true, //determines whether refresh (redraw) operations are executed real-time or after a move event is completed
         displayCardinalities: "full" //determines how many cardinalities to display - options : none / partial(only cloneable and cardinal groups) / all (all relations and groupRelations)
     }
 };
@@ -960,6 +960,11 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
                     _currentControlFocus = _propertiesComponent;
                 }
             }));
+            $(_modelNameTextbox).bind("focus", function () {
+                if (_currentControlFocus != _modelNameTextbox) {
+                    _currentControlFocus = _modelNameTextbox;
+                }
+            });
 
             //Load the model
             _diagramDataModel.LoadModel(function (model) {
