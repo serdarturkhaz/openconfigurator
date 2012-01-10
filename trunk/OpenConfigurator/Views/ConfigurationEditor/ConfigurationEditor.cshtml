@@ -12,8 +12,8 @@
         function calcWidth() {
             var containerWidth = $(".OuterContentArea .InnerContentArea").width();
             var marginWidth = 31;
-            var toolboxBoxWidth = $("#ToolBox").width();
-            var standardViewBoxWidth = containerWidth - marginWidth * 2 - toolboxBoxWidth;
+            var explorerBoxWidth = $("#ConfigurationExplorerBox").width();
+            var standardViewBoxWidth = containerWidth - marginWidth - explorerBoxWidth;
             $('#StandardViewBox').css("width", standardViewBoxWidth + "px");
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,11 +44,10 @@
     </script>
 }
 @section SubMenuSpecialBar{
-    <div class="MenuItemSeparator">></div>
+    <div class="MenuItemSeparator">
+        ></div>
     <div class="SubMenuSpecialBar">
-        
         <input id="ConfigurationNameTextbox" class="Textbox" type="text" value="Please wait..." />
-
         <div class="Button-Toolbar" id="SaveButton">
             <img src="../../Content/themes/base/images/Icons/save.png" />
             <span>Save</span>
@@ -57,27 +56,46 @@
             <img src="../../Content/themes/base/images/Icons/undo-toolbar.png" />
             <span>Undo</span>
         </div>*@
-       
     </div>
 }
-
 @section RootBreadCrumb {
-    Edit Configuration
+Edit Configuration
 }
-
-@*StandardView*@
-<div id="StandardViewBox" class="RoundedBox">
-    <div class="BoxHeader">
-        <div class="BoxInnerHeader">
-            <span class="HeaderLabel">Configure Model</span>
+<div class="LeftColumn">
+    @*ConfigurationExplorerBox*@
+    <div id="ConfigurationExplorerBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Configuration Explorer</span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div class="TreeArea">
+                <div id="ConfigurationExplorerTree">
+                </div>
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
         </div>
     </div>
-    <div class="BoxContent">
-        <div id="InnerViewArea">
+</div>
+<div class="RightColumn">
+    @*StandardView*@
+    <div id="StandardViewBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Configure Model</span>
+            </div>
         </div>
-    </div>
-    <div class="BoxFooter">
-        <div class="BoxInnerFooter">
+        <div class="BoxContent">
+            <div id="InnerViewArea">
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
         </div>
     </div>
 </div>

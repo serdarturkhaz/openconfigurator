@@ -36,7 +36,7 @@
             var newConfigurationButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/configure.png' />").append("<span>Config</span>").appendTo(wrapper);
             newConfigurationButton.bind("click", function () {
                 var newConfigID = addNewConfiguration(dataObj.ID);
-                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + id;
+                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
             });
             
             actionstd.attr("style", $(headerColumns[headerColumns.length - 1]).attr("style"));

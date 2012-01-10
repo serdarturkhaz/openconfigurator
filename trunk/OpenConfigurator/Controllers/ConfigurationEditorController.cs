@@ -21,22 +21,8 @@ namespace PresentationLayer.Controllers
         }
 
         [Authorize]
-        public JsonNetResult LoadModel(int modelID)
-        {
-            //Data return wrapper
-            JsonNetResult result = new JsonNetResult();
-
-            //Model
-            //ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
-            //BLL.BusinessObjects.Model model = _modelService.GetByID(modelID);
-            //result.Data = model;
-
-            return result;
-        }
-
-        [Authorize]
         public JsonNetResult LoadConfiguration(int configurationID)
-        {   
+        {
             //Data return wrapper
             JsonNetResult result = new JsonNetResult();
 
@@ -46,5 +32,21 @@ namespace PresentationLayer.Controllers
 
             return result;
         }
+
+        [Authorize]
+        public JsonNetResult LoadModel(int modelID)
+        {
+            //Data return wrapper
+            JsonNetResult result = new JsonNetResult();
+
+            //Model
+            ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Model model = _modelService.GetByID(modelID);
+            result.Data = model;
+
+            return result;
+        }
+
+        
     }
 }
