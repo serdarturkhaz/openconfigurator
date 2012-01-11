@@ -1,4 +1,43 @@
-﻿var ConfigurationDataModel = function (configurationID, configurationName) {
+﻿var systemDefaults = {
+    enums: {
+        featureSelectionStates: {
+            selected: {
+                name: "selected",
+                label: "Selected",
+                id: 1
+            },
+            deselected: {
+                name: "deselected",
+                label: "Deselected",
+                id: 2
+            },
+            unselected: {
+                name: "unselected",
+                label: "Unselected",
+                id: 3
+            }
+        },
+        relationTypes: {
+            mandatory: {
+                name: "mandatory",
+                label: "Mandatory",
+                id: 1
+            },
+            optional: {
+                name: "optional",
+                label: "Optional",
+                id: 2
+            },
+            cloneable: {
+                name: "cloneable",
+                label: "Cloneable",
+                id: 3
+            }
+        }
+    }
+}
+
+var ConfigurationDataModel = function (configurationID, configurationName) {
 
     //Client data object
     var ClientDataObject = function (businessDataObject, guid, type, extraClientData) {
@@ -77,7 +116,7 @@
 
     }
     this.LoadData = function (onFinished) {
-        
+
         $.ajax({
             url: "/ConfigurationEditor/LoadConfiguration",
             data: JSON.stringify({ configurationID: _configurationID }),
@@ -92,6 +131,11 @@
             async: false,
             success: function (response) {
                 _model = response;
+
+                //Load Features
+                for (var i = 0; i < _model.Features.length; i++) {
+                    _thisConfigurationDataModel.AddClientDataObject("feature", _model.Features[i]);
+                }
             }
         });
 
@@ -119,12 +163,11 @@
         _dataClientObjects[type + "s"][newClientDataObject.GUID] = newClientDataObject;
 
         //Raise events
-        _thisDiagramDataModel.ClientDataObjectCreated.RaiseEvent(guid);
+        _thisConfigurationDataModel.ClientDataObjectCreated.RaiseEvent(guid);
 
         return newClientDataObject;
     }
     this.AddClientDataObject = function (type, businessDataObject, extraClientData) {
-
         //Variables
         var guid = _dataClientObjectGUIDCounter++;
 
@@ -136,7 +179,7 @@
         _dataClientObjects[type + "s"][newClientDataObject.GUID] = newClientDataObject;
 
         //Raise events
-        _thisDiagramDataModel.ClientDataObjectCreated.RaiseEvent(guid);
+        _thisConfigurationDataModel.ClientDataObjectCreated.RaiseEvent(guid);
     }
     this.DeleteClientDataObject = function (guid) {
 
@@ -144,7 +187,7 @@
         _dataClientObjects.all[guid].SetDeleted();
 
         //Raise events
-        _thisDiagramDataModel.ClientDataObjectDeleted.RaiseEvent(guid);
+        _thisConfigurationDataModel.ClientDataObjectDeleted.RaiseEvent(guid);
     }
     this.GetClientDataObject = function (guid) {
         return _dataClientObjects.all[guid];
@@ -163,13 +206,13 @@
         _dataClientObjects.all[guid].UpdateBusinessDataObject(modifiedBusinessDataObject);
 
         //Raise events
-        _thisDiagramDataModel.ClientDataObjectUpdated.RaiseEvent(guid);
+        _thisConfigurationDataModel.ClientDataObjectUpdated.RaiseEvent(guid);
     }
     this.UpdateClientDataObjectField = function (guid, fieldName, value) {
         _dataClientObjects.all[guid].SetPropertyValue(fieldName, value);
 
         //Raise events
-        _thisDiagramDataModel.ClientDataObjectUpdated.RaiseEvent(guid);
+        _thisConfigurationDataModel.ClientDataObjectUpdated.RaiseEvent(guid);
     }
     this.GetClientDataObjectField = function (guid, fieldName) {
         return _dataClientObjects.all[guid].GetPropertyValue(fieldName);
@@ -181,8 +224,9 @@
     //Events
     this.ModelLoaded = new Event();
     this.ConfigurationLoaded = new Event();
+    this.ClientDataObjectCreated = new Event();
 }
-var ClientController = function (standardViewContainer,configurationNameTextbox, configurationDataModelInstance) {
+var ClientController = function (standardViewContainer, configurationNameTextbox, configurationDataModelInstance) {
 
     //Fields and variables
     var _configurationDataModel = configurationDataModelInstance;
@@ -195,7 +239,15 @@ var ClientController = function (standardViewContainer,configurationNameTextbox,
 
         $("#StandardViewBox").block({ message: "Loading diagram...", fadeIn: 300 });
         $.timer(300, function () {
-            //Load the model
+
+            //Instantiate/Initialize controls
+            _standardView = new StandardView($(standardViewContainer)[0], _configurationDataModel);
+            _standardView.Initialize();
+
+            //Eventhandlers for StandardView
+            _configurationDataModel.ClientDataObjectCreated.Add(new EventHandler(_standardView.OnClientDataObjectCreated));
+
+            //Load the data
             _configurationDataModel.LoadData(function (configuration) {
                 $(_configurationNameTextbox).val(configuration.Name);
                 $("#StandardViewBox").unblock();
@@ -205,28 +257,33 @@ var ClientController = function (standardViewContainer,configurationNameTextbox,
 
     //Public methods
     this.SaveData = function () {
-     
+
     }
-   
+
 }
 var StandardView = function (container, configurationDataModelInstance) {
 
     //Fields
     var _configurationDataModel = configurationDataModelInstance;
     var _container = container;
-    var _UIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
+    var _innerContainer = null;
+    var _ConfigurationUIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
     var _thisStandardView = this;
+    var _supportedTypes = {
+        feature: true
+    }
 
     //UIObjects & Defaults/Settings
-    var UIConfigurationFeature = function (clientDataObjectGUID, parentFeature, name) {
+    var UIConfigurationFeature = function (clientDataObjectGUID, type, subtype, parentContainer, name) {
 
         //Fields
         var _outerElement = null;
         var _innerElements = {
-            nameTextbox: null,
-            text: null
+            nameTextbox: null
         };
-        var _name = name, _parentFeature= parentFeature;
+        var _currentState = systemDefaults.enums.featureSelectionStates.unselected.name;
+        var _type = type; // SingularFeature / GroupFeature
+        var _subtype = subtype; // SingularFeature -> Mandatory, Optional, Cloneable / GroupFeature -> OR, XOR, Cardinal
         var _thisUIConfigurationFeature = this;
 
         //Properties
@@ -239,56 +296,22 @@ var StandardView = function (container, configurationDataModelInstance) {
         }
         this.InnerElements = _innerElements;
 
-        //Private methods
-        var makeSelectable = function () {
-
-            //Selectable
-            _outerElement.click(function (e) {
-                toggleElementSelect(_thisUIFeature, e.shiftKey, true);
-
-            });
-
-            //Hoverable
-            _outerElement.mouseover(function (e) {
-                if (_glow == null) {
-                    _innerElements.box.getBBox(); //hack fix for weird RaphaelJS bug
-                    _glow = _innerElements.box.glow(commonStyles.glow.attr);
-                }
-            }).mouseout(function (e) {
-                if (_glow != null) {
-                    _glow.remove();
-                    _glow = null;
-                }
-            });
-        }
-
         //Public methods
         this.CreateGraphicalRepresentation = function () {
-            //Variables
-            var box = null, text = null;
-            x = x == undefined ? 40.5 : x;
-            y = y == undefined ? 40.5 : y;
-
-            //Create inner elements            
-            _innerElements.box = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states[_currentState].box.attr);
-            _innerElements.text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
 
             //Create the main outer element
-            _outerElement = _canvas.rect(x, y, boxWidth, boxHeight).attr(systemDefaults.common.outerElement.attr);
+            _outerElement = $("<div class='FeatureControl'></div>").appendTo(parentContainer);
 
-            //Setup 
-            makeSelectable();
-            makeDraggable();
-            makeEditable();
+            //Create inner elements            
         }
         this.ChangeState = function (state) {
             _currentState = state;
-            _innerElements.box.attr(UIObjectStyles.feature.states[state].box.attr);
+            //_innerElements.box.attr(UIObjectStyles.feature.states[state].box.attr);
         }
         this.Update = function (newName) {
             //Set text
             _name = newName;
-            _innerElements.text.attr({ text: newName });
+            //_innerElements.text.attr({ text: newName });
         }
         this.Delete = function () {
             if (!_inlineEditMode) {
@@ -310,27 +333,38 @@ var StandardView = function (container, configurationDataModelInstance) {
 
     //Constructor/Initalizers
     this.Initialize = function () {
+        _innerContainer = $("<div class='InnerContainer'></div>").prependTo(container);
     };
 
     //Sync with dataModel methods
-    createModelUI = function (model) {
+    var addElement = function (guid) {
 
+        //Variables
+        var clientDataObject = _configurationDataModel.GetClientDataObject(guid);
+        var clientDataObjectType = clientDataObject.GetTypeName();
+
+        //Perform update according to type
+        switch (clientDataObjectType) {
+            case "feature":
+                addFeature(guid);
+                break;
+        }
+    }
+    var addFeature = function (guid) {
+
+        var name = _configurationDataModel.GetClientDataObjectField(guid, "Name");
+        var feature = new UIConfigurationFeature(guid, "", "", _innerContainer, name);
+        feature.CreateGraphicalRepresentation();
     }
 
-    //Events
-    this.ElementSelectToggled = new Event();
-
     //Eventhandlers
-    this.OnModelLoaded = function (guid) {
-        var clientDataObject = _diagramDataModel.GetClientDataObject(guid);
+    this.OnClientDataObjectCreated = function (guid) {
+        var clientDataObject = _configurationDataModel.GetClientDataObject(guid);
         var type = clientDataObject.GetTypeName();
 
         if (_supportedTypes[type] != undefined) {
             addElement(guid);
         }
-    }
-    this.OnConfigurationLoaded = function (guid) {
-        
     }
 }
 

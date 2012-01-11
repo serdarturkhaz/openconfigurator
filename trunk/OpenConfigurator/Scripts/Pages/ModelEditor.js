@@ -914,6 +914,7 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
 
         $("#ModelDiagramBox").block({ message: "Loading diagram...", fadeIn: 300 });
         $.timer(300, function () {
+
             //Instantiate/Initialize controls
             _diagramContext = new DiagramContext($("#SVGCanvas")[0], _diagramDataModel);
             _diagramContext.Initialize();
