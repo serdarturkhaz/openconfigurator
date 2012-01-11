@@ -4,8 +4,9 @@ body
     background: #e8e8dd;
     font-family: "Trebuchet MS" , Verdana, Helvetica, Sans-Serif;
     margin: 0;
-    margin-bottom: 30px;
     padding: 0;
+    padding-bottom: 40px;
+    
 }
 
 /*OuterLayout-------------------------------------------------------------------*/
@@ -1029,9 +1030,27 @@ a:hover
 /*StandardViewBox*/
 #StandardViewBox
 {
-    float: left;
+    float: right;
     margin-top: 30px;
+
     width: 80%;
+}
+
+#StandardViewBox #InnerViewArea
+{
+ height: 700px;   
+ overflow:scroll;
+}
+#StandardViewBox .FeatureControl
+{
+    
+    float: left;
+    width:250px;
+    height:100px;
+    background:#E1E9FF;
+    border:solid 1px #CECECE;
+    clear:both;
+    margin-bottom:5px;
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/
