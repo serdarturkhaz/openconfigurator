@@ -132,9 +132,46 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             success: function (response) {
                 _model = response;
 
+                //Load Relations
+                var featuresToParentRelations = {};
+                for (var i = 0; i < _model.Relations.length; i++) {
+
+                    //Create a new ClientDataObject
+                    var relationClientDataObject = _thisConfigurationDataModel.AddClientDataObject("relation", _model.Relations[i]);
+
+                    //Store the relation using its ChildFeatureID as a key
+                    var childFeatureID = relationClientDataObject.GetPropertyValue("ChildFeatureID");
+                    featuresToParentRelations[childFeatureID] = relationClientDataObject.GUID;
+                }
+
+                //Load GroupRelations
+                var featuresToParentGroupRelations = {};
+                for (var i = 0; i < _model.GroupRelations.length; i++) {
+
+                    //Create a new ClientDataObject
+                    var groupRelationClientDataObject = _thisConfigurationDataModel.AddClientDataObject("groupRelation", _model.GroupRelations[i]);
+
+                    //Store the groupRelation using its ChildFeatureID as a key
+                    var childFeatureIDs = groupRelationClientDataObject.GetPropertyValue("ChildFeatureIDs");
+                    for (var j = 0; j < childFeatureIDs.length; j++) {
+                        featuresToParentGroupRelations[childFeatureIDs[j]] = groupRelationClientDataObject.GUID;
+                    }
+                }
+
                 //Load Features
                 for (var i = 0; i < _model.Features.length; i++) {
-                    _thisConfigurationDataModel.AddClientDataObject("feature", _model.Features[i]);
+
+                    //Retreive the Relation of which the feature is a child
+                    var featureID = _model.Features[i].ID;
+                    var parentRelationGUID = (featuresToParentRelations[featureID] != undefined) ? featuresToParentRelations[featureID] : null;
+                    var parentGroupRelationGUID = (featuresToParentGroupRelations[featureID] != undefined) ? featuresToParentGroupRelations[featureID] : null;
+                    var extraClientData = {
+                        ParentRelationGUID: parentRelationGUID,
+                        ParentGroupRelationGUID: parentGroupRelationGUID
+                    }
+
+                    //Create a new ClientDataObject
+                    var featureClientDataObject = _thisConfigurationDataModel.AddClientDataObject("feature", _model.Features[i], extraClientData);
                 }
             }
         });
@@ -165,6 +202,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         //Raise events
         _thisConfigurationDataModel.ClientDataObjectCreated.RaiseEvent(guid);
 
+
         return newClientDataObject;
     }
     this.AddClientDataObject = function (type, businessDataObject, extraClientData) {
@@ -180,6 +218,9 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
 
         //Raise events
         _thisConfigurationDataModel.ClientDataObjectCreated.RaiseEvent(guid);
+
+        //
+        return newClientDataObject;
     }
     this.DeleteClientDataObject = function (guid) {
 
@@ -192,9 +233,9 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
     this.GetClientDataObject = function (guid) {
         return _dataClientObjects.all[guid];
     }
-    this.GetGUIDByID = function (ID) {
-        for (var guidKey in _dataClientObjects.all) {
-            var clientDataObject = _dataClientObjects.all[guidKey];
+    this.GetGUIDByID = function (ID, type) {
+        for (var guidKey in _dataClientObjects[type + "s"]) {
+            var clientDataObject = _dataClientObjects[type + "s"][guidKey];
             if (ID == clientDataObject.GetPropertyValue("ID")) {
                 return clientDataObject.GUID;
             }
@@ -222,8 +263,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
     }
 
     //Events
-    this.ModelLoaded = new Event();
-    this.ConfigurationLoaded = new Event();
     this.ClientDataObjectCreated = new Event();
 }
 var ClientController = function (standardViewContainer, configurationNameTextbox, configurationDataModelInstance) {
@@ -267,22 +306,31 @@ var StandardView = function (container, configurationDataModelInstance) {
     var _configurationDataModel = configurationDataModelInstance;
     var _container = container;
     var _innerContainer = null;
-    var _ConfigurationUIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
+    var _ConfigurationUIElements = {}; //dictionary to hold all UIElements (GUID, UIElement)
+    var _PendingUIElements = {};
     var _thisStandardView = this;
     var _supportedTypes = {
         feature: true
     }
 
     //UIObjects & Defaults/Settings
-    var UIConfigurationFeature = function (clientDataObjectGUID, type, subtype, parentContainer, name) {
+    var UIConfigurationFeature = function (clientDataObjectGUID, isRoot, subtype, parentContainer, name) {
 
         //Fields
         var _outerElement = null;
         var _innerElements = {
-            nameTextbox: null
+            entry: null,
+            connector: null,
+            innerFeatureArea: null,
+            headerDiv: null,
+            nameLabel: null,
+            checkbox: null,
+            childFeaturesArea: null
         };
         var _currentState = systemDefaults.enums.featureSelectionStates.unselected.name;
-        var _type = type; // SingularFeature / GroupFeature
+        var _childrenFeatures = [];
+        var _name = name, _isRoot = isRoot;
+        //var _type = type; // SingularFeature / GroupFeature
         var _subtype = subtype; // SingularFeature -> Mandatory, Optional, Cloneable / GroupFeature -> OR, XOR, Cardinal
         var _thisUIConfigurationFeature = this;
 
@@ -296,17 +344,56 @@ var StandardView = function (container, configurationDataModelInstance) {
         }
         this.InnerElements = _innerElements;
 
+        //Private methods
+        function makeSelectable() {
+            _innerElements.innerFeatureArea.bind("click", function () {
+                switch (_currentState) {
+                    //Unselected        
+                    case systemDefaults.enums.featureSelectionStates.unselected.name:
+                        _thisUIConfigurationFeature.ChangeState(systemDefaults.enums.featureSelectionStates.selected.name);
+                        break;
+                    //Selected         
+                    case systemDefaults.enums.featureSelectionStates.selected.name:
+                        _thisUIConfigurationFeature.ChangeState(systemDefaults.enums.featureSelectionStates.deselected.name);
+                        break;
+                    //Deselected          
+                    case systemDefaults.enums.featureSelectionStates.deselected.name:
+                        _thisUIConfigurationFeature.ChangeState(systemDefaults.enums.featureSelectionStates.unselected.name);
+                        break;
+                }
+            });
+        }
+
         //Public methods
         this.CreateGraphicalRepresentation = function () {
-
             //Create the main outer element
-            _outerElement = $("<div class='FeatureControl'></div>").appendTo(parentContainer);
+            _innerElements.entry = $("<div class='Entry'></div>").attr("featureSelectionState", _currentState).appendTo(parentContainer);
+            if (isRoot)
+                _innerElements.entry.attr("root", "");
+            _innerElements.connector = $("<div class='Connector'></div>").appendTo(_innerElements.entry);
+            _outerElement = $("<div class='FeatureControl'></div>").appendTo(_innerElements.entry);
 
-            //Create inner elements            
+            //Create inner elements   
+            _innerElements.innerFeatureArea = $("<div class='InnerFeatureArea' ></div>").appendTo(_outerElement);
+            _innerElements.headerDiv = $("<div class='HeaderDiv'></div>").appendTo(_innerElements.innerFeatureArea);
+            _innerElements.nameLabel = $("<div class='NameLabel'>" + _name + "</div>").appendTo(_innerElements.headerDiv);
+            _innerElements.checkbox = $("<div class='Checkbox' ></div>").appendTo(_innerElements.headerDiv);
+            _innerElements.childFeaturesArea = $("<div class='ChildFeaturesArea'></div>").appendTo(_outerElement);
+
+            //Setup 
+            makeSelectable();
+        }
+        this.RefreshGraphicalRepresentation = function () {
+            _innerElements.childFeaturesArea.children(".Entry").removeAttr("last");
+            _innerElements.childFeaturesArea.children(".Entry:last").attr("last", "last");
+        }
+        this.GetChildrenContainer = function () {
+            return _innerElements.childFeaturesArea;
         }
         this.ChangeState = function (state) {
             _currentState = state;
-            //_innerElements.box.attr(UIObjectStyles.feature.states[state].box.attr);
+            _innerElements.entry.attr("featureSelectionState", _currentState);
+
         }
         this.Update = function (newName) {
             //Set text
@@ -344,17 +431,68 @@ var StandardView = function (container, configurationDataModelInstance) {
         var clientDataObjectType = clientDataObject.GetTypeName();
 
         //Perform update according to type
+        var elementAdded = false;
         switch (clientDataObjectType) {
             case "feature":
-                addFeature(guid);
+                elementAdded = addFeature(guid);
                 break;
         }
+
+        //
+        return elementAdded;
     }
     var addFeature = function (guid) {
 
-        var name = _configurationDataModel.GetClientDataObjectField(guid, "Name");
-        var feature = new UIConfigurationFeature(guid, "", "", _innerContainer, name);
+        //Variables
+        var featureClientDataObject = _configurationDataModel.GetClientDataObject(guid);
+        var name = featureClientDataObject.GetPropertyValue("Name");
+        var isRoot = false;
+
+        //Try to find the parent ----------------------------------------------------
+        var parentContainer = _innerContainer;
+        var parentRelationGUID = featureClientDataObject.ExtraClientData.ParentRelationGUID;
+        var parentGroupRelationGUID = featureClientDataObject.ExtraClientData.ParentGroupRelationGUID;
+
+        //Check if it is part of a Relation
+        var relClientDataObject = null;
+        if (parentRelationGUID != null) {
+            relClientDataObject = _configurationDataModel.GetClientDataObject(parentRelationGUID);
+        }
+        //Check instead if it is part of a RelationGroup
+        else if (parentGroupRelationGUID != null) {
+            relClientDataObject = _configurationDataModel.GetClientDataObject(parentGroupRelationGUID);
+        }
+
+        //A valid relation or groupRelation exists
+        if (relClientDataObject != null) {
+            var parentFeatureID = relClientDataObject.GetPropertyValue("ParentFeatureID");
+            var parentFeatureGUID = _configurationDataModel.GetGUIDByID(parentFeatureID, "feature");
+            var parentUIFeature = _ConfigurationUIElements[parentFeatureGUID];
+
+            //Get the container
+            if (parentUIFeature != undefined) {
+                parentContainer = parentUIFeature.GetChildrenContainer();
+            }
+            //Problem with childFeature which comes before its parent
+            else {
+                _PendingUIElements[guid] = featureClientDataObject;
+                return false;
+            }
+        }
+        else {
+            isRoot = true;
+        }
+        //---------------------------------------------------------------------------
+
+        //Create the Feature
+        var feature = new UIConfigurationFeature(guid, isRoot, "", parentContainer, name);
         feature.CreateGraphicalRepresentation();
+        if (parentUIFeature != null)
+            parentUIFeature.RefreshGraphicalRepresentation();
+
+        //
+        _ConfigurationUIElements[guid] = feature;
+        return true;
     }
 
     //Eventhandlers
@@ -364,6 +502,20 @@ var StandardView = function (container, configurationDataModelInstance) {
 
         if (_supportedTypes[type] != undefined) {
             addElement(guid);
+        }
+
+        //Try to clean up Pending elements
+        if (Object.size(_PendingUIElements) > 0) {
+            if (guid == 47) {
+                debugger;
+            }
+            for (var guidkey in _PendingUIElements) {
+                if (guidkey != guid) {
+                    var elementAdded = addElement(guidkey);
+                    if (elementAdded)
+                        delete _PendingUIElements[guidkey];
+                }
+            }
         }
     }
 }

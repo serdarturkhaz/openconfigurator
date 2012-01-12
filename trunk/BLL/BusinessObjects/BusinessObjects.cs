@@ -760,7 +760,6 @@ namespace BLL.BusinessObjects
             return groupRelation;
         }
 
-
         //Interface members
         #region IBusinessObject Members
         [JsonIgnore]
@@ -788,7 +787,6 @@ namespace BLL.BusinessObjects
         }
 
         #endregion
-
     }
     public class CompositionRule : IBusinessObject
     {
