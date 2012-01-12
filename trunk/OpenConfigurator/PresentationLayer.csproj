@@ -79,8 +79,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\themes\base\images\Controls\folder.png" />
+    <Content Include="Content\themes\base\images\Controls\checkbox-checked.png" />
+    <Content Include="Content\themes\base\images\Controls\checkbox-unchecked.png" />
     <Content Include="Content\themes\base\images\Controls\progress.gif" />
+    <Content Include="Content\themes\base\images\Controls\simpleTree\elementx.png" />
+    <Content Include="Content\themes\base\images\Controls\simpleTree\feature.png" />
+    <Content Include="Content\themes\base\images\Controls\simpleTree\folder-closed.png" />
+    <Content Include="Content\themes\base\images\Controls\simpleTree\folder-open.png" />
+    <Content Include="Content\themes\base\images\Controls\simpleTree\minus.png" />
+    <Content Include="Content\themes\base\images\Controls\simpleTree\plus.png" />
     <Content Include="Content\themes\base\images\Controls\textbox-bg.png" />
     <Content Include="Content\themes\base\images\Icons\Login.png" />
     <Content Include="Content\themes\base\images\Layout\content-bg.png" />

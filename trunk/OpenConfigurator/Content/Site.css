@@ -6,7 +6,6 @@ body
     margin: 0;
     padding: 0;
     padding-bottom: 40px;
-    
 }
 
 /*OuterLayout-------------------------------------------------------------------*/
@@ -68,7 +67,7 @@ body
 {
     color: #FFCC00;
     border: solid 1px #616161;
-    border-bottom:solid 1px transparent;
+    border-bottom: solid 1px transparent;
     background-color: #50585b;
 }
 .TopMenuBar .TopMenuItem a:hover
@@ -76,7 +75,7 @@ body
     text-decoration: none;
     color: #FFCC00;
     border: solid 1px #616161;
-    border-bottom:solid 1px transparent;
+    border-bottom: solid 1px transparent;
     background-color: #52595c;
 }
 
@@ -1021,36 +1020,182 @@ a:hover
 /*ConfigurationEditor-----------------------------------------------------------*/
 
 /*ConfigurationExplorer*/
-#ConfigurationExplorerBox 
+#ConfigurationExplorerBox
 {
     float: left;
     margin-top: 30px;
     width: 185px;
 }
+
 /*StandardViewBox*/
 #StandardViewBox
 {
     float: right;
     margin-top: 30px;
-
     width: 80%;
 }
-
 #StandardViewBox #InnerViewArea
 {
- height: 700px;   
- overflow:scroll;
+    height: 670px;
+    overflow: scroll;
+    padding:15px;
 }
-#StandardViewBox .FeatureControl
+
+#StandardViewBox .Entry
 {
-    
-    float: left;
-    width:250px;
-    height:100px;
-    background:#E1E9FF;
-    border:solid 1px #CECECE;
+    float:left;
     clear:both;
-    margin-bottom:5px;
+    padding-top:11px;
+    background: url(themes/base/images/Controls/featureSelectionConnector-verticalline.png) repeat-y left -20px;
+}
+#StandardViewBox .Entry > .Connector
+{
+    width:90px;
+    height:30px;
+    float:left;
+    background: url(themes/base/images/Controls/featureSelectionConnector-standard.png) no-repeat left -20px;
+}
+
+#StandardViewBox .Entry[last]
+{
+    background: url(themes/base/images/Controls/featureSelectionConnector-last.png) no-repeat left -5px;
+}
+#StandardViewBox .Entry[last] > .Connector
+{
+    background:none;
+}
+
+#StandardViewBox .Entry[root]
+{
+    background:none;
+}
+#StandardViewBox .Entry[root] > .Connector
+{
+    display:none;
+}
+
+/*FeatureControl*/
+#StandardViewBox .Entry > .FeatureControl
+{
+    float: right;
+}
+#StandardViewBox .Entry > .FeatureControl .InnerFeatureArea
+{
+    float: left;
+    clear: both;
+    border: solid 1px #CECECE;
+    padding-left:6px;
+    padding-right:6px;
+    width: 180px;
+    background: #E1E9FF;
+    cursor:default;
+}
+#StandardViewBox .Entry > .FeatureControl .InnerFeatureArea:hover
+{
+    background: #D7E1FF !important;
+    border: solid 1px #CAD9FF !important;
+    
+}
+#StandardViewBox .Entry> .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    width:16px;
+    height:16px;
+    margin-top:8px;
+    padding:0;
+    float:right;
+}
+
+/*Selected*/
+#StandardViewBox .Entry[featureSelectionState='selected'] > .FeatureControl > .InnerFeatureArea
+{
+    border: 1px solid #D5E0FF;
+    background: #E1E9FF;
+}
+#StandardViewBox .Entry[featureSelectionState='selected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-selected.png) no-repeat center center;
+    
+}
+#StandardViewBox .Entry[featureSelectionState='selected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel 
+{
+    color: black;
+}
+/*Unselected*/
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .InnerFeatureArea
+{
+    background: #F4F4F4;
+    border: 1px solid #EAEAEA;
+}
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-unselected.png) no-repeat center center;
+}
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel
+{
+    color: #808080;
+}
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl  .ChildFeaturesArea
+{
+    display:none;
+}
+/*Deselected*/
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea
+{
+    background: #FFF0EA;
+    border: 1px solid #EAEAEA;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-deselected.png) no-repeat center center;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel
+{
+    color: #808080;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl  .ChildFeaturesArea
+{
+    display:none;
+}
+
+/*Selected-Disabled*/
+#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea
+{
+     background: #F4F4F4;
+    border: 1px solid #EAEAEA;
+}
+#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea : hover
+{
+    background: #F4F4F4;
+    border: 1px solid #EAEAEA;
+}
+#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-selected-disabled.png) no-repeat center center;
+}
+#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel 
+{
+    color: black;
+}
+
+
+#StandardViewBox .Entry .FeatureControl .HeaderDiv 
+{
+}
+#StandardViewBox .Entry .FeatureControl .HeaderDiv .NameLabel
+{
+    line-height: 32px;
+    height: 32px;
+    float: left;
+    
+    font-size: 11px;
+    font-family: Arial;
+    letter-spacing: 0.9px;
+}
+#StandardViewBox .Entry .FeatureControl .ChildFeaturesArea
+{
+    float:left;
+    width:auto;
+    clear: both;
 }
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/

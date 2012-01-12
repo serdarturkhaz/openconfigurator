@@ -769,8 +769,8 @@ var DiagramDataModel = function (modelID, modelName) {
                 //Load Relations
                 for (var i = 0; i < model.Relations.length; i++) {
                     var extraClientData = {
-                        parentFeatureGUID: _thisDiagramDataModel.GetGUIDByID(model.Relations[i].ParentFeatureID),
-                        childFeatureGUID: _thisDiagramDataModel.GetGUIDByID(model.Relations[i].ChildFeatureID)
+                        parentFeatureGUID: _thisDiagramDataModel.GetGUIDByID(model.Relations[i].ParentFeatureID, "feature"),
+                        childFeatureGUID: _thisDiagramDataModel.GetGUIDByID(model.Relations[i].ChildFeatureID, "feature")
                     }
                     _thisDiagramDataModel.AddClientDataObject("relation", model.Relations[i], extraClientData);
                 }
@@ -778,9 +778,9 @@ var DiagramDataModel = function (modelID, modelName) {
                 //Load GroupRelations
                 for (var i = 0; i < model.GroupRelations.length; i++) {
                     var childFeatureGUIDs = [];
-                    var parentFeatureGUID = _thisDiagramDataModel.GetGUIDByID(model.GroupRelations[i].ParentFeatureID);
+                    var parentFeatureGUID = _thisDiagramDataModel.GetGUIDByID(model.GroupRelations[i].ParentFeatureID, "feature");
                     for (var j = 0; j < model.GroupRelations[i].ChildFeatureIDs.length; j++) {
-                        childFeatureGUIDs.push(_thisDiagramDataModel.GetGUIDByID(model.GroupRelations[i].ChildFeatureIDs[j]));
+                        childFeatureGUIDs.push(_thisDiagramDataModel.GetGUIDByID(model.GroupRelations[i].ChildFeatureIDs[j],"feature"));
                     }
                     var extraClientData = {
                         parentFeatureGUID: parentFeatureGUID,
@@ -793,8 +793,8 @@ var DiagramDataModel = function (modelID, modelName) {
                 //Load CompositionRules
                 for (var i = 0; i < model.CompositionRules.length; i++) {
                     var extraClientData = {
-                        firstFeatureGUID: _thisDiagramDataModel.GetGUIDByID(model.CompositionRules[i].FirstFeatureID),
-                        secondFeatureGUID: _thisDiagramDataModel.GetGUIDByID(model.CompositionRules[i].SecondFeatureID)
+                        firstFeatureGUID: _thisDiagramDataModel.GetGUIDByID(model.CompositionRules[i].FirstFeatureID, "feature"),
+                        secondFeatureGUID: _thisDiagramDataModel.GetGUIDByID(model.CompositionRules[i].SecondFeatureID, "feature")
                     }
                     _thisDiagramDataModel.AddClientDataObject("compositionRule", model.CompositionRules[i], extraClientData);
                 }
@@ -866,9 +866,9 @@ var DiagramDataModel = function (modelID, modelName) {
     this.GetClientDataObject = function (guid) {
         return _dataClientObjects.all[guid];
     }
-    this.GetGUIDByID = function (ID) {
-        for (var guidKey in _dataClientObjects.all) {
-            var clientDataObject = _dataClientObjects.all[guidKey];
+    this.GetGUIDByID = function (ID, type) {
+        for (var guidKey in _dataClientObjects[type + "s"]) {
+            var clientDataObject = _dataClientObjects[type + "s"][guidKey];
             if (ID == clientDataObject.GetPropertyValue("ID")) {
                 return clientDataObject.GUID;
             }
