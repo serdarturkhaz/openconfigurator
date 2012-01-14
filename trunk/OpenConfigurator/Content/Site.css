@@ -1053,12 +1053,12 @@ a:hover
     width:90px;
     height:30px;
     float:left;
-    background: url(themes/base/images/Controls/featureSelectionConnector-standard.png) no-repeat left -20px;
+    background: url(themes/base/images/Controls/featureSelectionConnector-standard.png) no-repeat left -23px;
 }
 
 #StandardViewBox .Entry[last]
 {
-    background: url(themes/base/images/Controls/featureSelectionConnector-last.png) no-repeat left -5px;
+    background: url(themes/base/images/Controls/featureSelectionConnector-last.png) no-repeat left -13px;
 }
 #StandardViewBox .Entry[last] > .Connector
 {
@@ -1103,6 +1103,25 @@ a:hover
     margin-top:8px;
     padding:0;
     float:right;
+}
+
+/*GroupControl*/
+#StandardViewBox .Entry > .GroupControl
+{
+    float: right;
+    border:dashed 2px #cecece;
+    padding:5px;
+    padding-top:0px;
+    background:white;
+}
+#StandardViewBox .Entry > .GroupControl > .ChildFeaturesArea > .Entry > .Connector
+{
+    display:none;
+}
+#StandardViewBox .Entry > .GroupControl > .ChildFeaturesArea > .Entry 
+{
+    background:none;
+    padding-top:5px;
 }
 
 /*Selected*/

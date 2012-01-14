@@ -1878,7 +1878,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var _diagramDataModel = diagramDataModelInstance;
     var _canvas = null, _canvasContainer = canvasContainer;
     var _selectedElements = new Array();
-    var _createFeatureMode = false, _inlineEditMode = false;
+    var _createFeatureMode = false, _inlineEditMode = false, _draggingMode = false;
     var _UIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
     var _thisDiagramContext = this;
     var _supportedTypes = {
@@ -1930,20 +1930,25 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Hoverable
             _outerElement.mouseover(function (e) {
-                if (_glow == null) {
-                    _innerElements.box.getBBox(); //hack fix for weird RaphaelJS bug
-                    _glow = _innerElements.box.glow(commonStyles.glow.attr);
+                if (!_draggingMode) {
+                    if (_glow == null) {
+                        _innerElements.box.getBBox(); //hack fix for weird RaphaelJS bug
+                        _glow = _innerElements.box.glow(commonStyles.glow.attr);
+                    }
                 }
             }).mouseout(function (e) {
-                if (_glow != null) {
-                    _glow.remove();
-                    _glow = null;
+                if (!_draggingMode) {
+                    if (_glow != null) {
+                        _glow.remove();
+                        _glow = null;
+                    }
                 }
             });
         }
         var makeDraggable = function () {
 
             var wasMoved = false;
+
             //Drag and droppable
             var start = function () {
 
@@ -1957,12 +1962,16 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 }
             };
             move = function (dx, dy) {
+                //Variables
                 wasMoved = true;
+                _draggingMode = true;
+
                 //Remove glow while dragging
                 if (_glow != null) {
                     _glow.remove();
                     _glow = null;
                 }
+
                 //Update x & y and move outerElement 
                 _x = _outerElement.originalx + dx;
                 _y = _outerElement.originaly + dy;
@@ -1983,6 +1992,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             };
             up = function () {
                 if (wasMoved == true) {
+                    //Variables
+                    _draggingMode = false;
+
                     //Update X and Y variables
                     internalUIFeatureMoved.RaiseEvent(_thisUIFeature);
 
@@ -2124,10 +2136,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     toggleElementSelect(_thisUIRelation, e.shiftKey, true);
                 },
                 onMouseOver: function (e) {
-                    _innerElements.connection.ShowGlow();
+                    if (!_draggingMode) {
+                        _innerElements.connection.ShowGlow();
+                    }
                 },
                 onMouseOut: function (e) {
-                    _innerElements.connection.HideGlow();
+                    if (!_draggingMode) {
+                        _innerElements.connection.HideGlow();
+                    }
                 }
             }
             _innerElements.connection.MakeSelectable(handlers);
@@ -2278,13 +2294,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     toggleElementSelect(_thisUIGroupRelation, e.shiftKey, true);
                 },
                 onMouseOver: function (e) {
-                    for (var i = 0; i < _innerElements.connections.length; i++) {
-                        _innerElements.connections[i].ShowGlow();
+                    if (!_draggingMode) {
+                        for (var i = 0; i < _innerElements.connections.length; i++) {
+                            _innerElements.connections[i].ShowGlow();
+                        }
                     }
                 },
                 onMouseOut: function (e) {
-                    for (var i = 0; i < _innerElements.connections.length; i++) {
-                        _innerElements.connections[i].HideGlow();
+                    if (!_draggingMode) {
+                        for (var i = 0; i < _innerElements.connections.length; i++) {
+                            _innerElements.connections[i].HideGlow();
+                        }
                     }
                 }
             }
@@ -2532,10 +2552,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     toggleElementSelect(_thisUICompositionRule, e.shiftKey, true);
                 },
                 onMouseOver: function (e) {
-                    _innerElements.connection.ShowGlow();
+                    if (!_draggingMode) {
+                        _innerElements.connection.ShowGlow();
+                    }
                 },
                 onMouseOut: function (e) {
-                    _innerElements.connection.HideGlow();
+                    if (!_draggingMode) {
+                        _innerElements.connection.HideGlow();
+                    }
                 }
             }
             _innerElements.connection.MakeSelectable(handlers);
