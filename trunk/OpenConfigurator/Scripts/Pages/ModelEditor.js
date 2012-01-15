@@ -1669,7 +1669,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
     //Eventhandlers
     this.OnClientDataObjectUpdated = function (guid) {
-        loadProperties(guid);
+        //loadProperties(guid);
     }
     this.OnClientDataObjectDeleted = function (guid) {
         clear();
