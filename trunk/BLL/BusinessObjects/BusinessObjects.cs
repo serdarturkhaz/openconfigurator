@@ -1127,6 +1127,7 @@ namespace BLL.BusinessObjects
     {
         //Fields
         private DAL.DataEntities.Configuration _innerEntity;
+        private List<BLL.BusinessObjects.FeatureSelection> _featureSelections = new List<FeatureSelection>();
         private bool _toBeDeleted = false;
         private string _modelName;
 
@@ -1138,6 +1139,9 @@ namespace BLL.BusinessObjects
         internal Configuration(DAL.DataEntities.Configuration innerEntity)
         {
             this._innerEntity = innerEntity;
+
+            //Create BLL collections
+            _innerEntity.FeatureSelections.ToList().ForEach(DALentity => FeatureSelections.Add(BLL.BusinessObjects.FeatureSelection.FromDataEntity(DALentity)));
         }
 
         //Properties
@@ -1220,6 +1224,19 @@ namespace BLL.BusinessObjects
             }
         }
 
+        public List<BLL.BusinessObjects.FeatureSelection> FeatureSelections
+        {
+            get
+            {
+                return _featureSelections;
+            }
+            set
+            {
+                _featureSelections = value;
+            }
+        }
+
+
         //Conversion
         public static BLL.BusinessObjects.Configuration FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
         {
@@ -1241,7 +1258,7 @@ namespace BLL.BusinessObjects
             ((DAL.DataEntities.Configuration)configuration.InnerEntity).ModelID = modelID;
             configuration.CreatedDate = DateTime.Now;
             configuration.LastModifiedDate = DateTime.Now;
-            configuration.Name = "Default Configuration";
+            configuration.Name = "Configuration00";
 
             //Return the object instance
             return configuration;

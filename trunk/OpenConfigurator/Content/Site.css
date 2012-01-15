@@ -23,7 +23,7 @@ body
     font-family: Tahoma;
     font-size: 22px;
     color: #E6E6E6;
-    letter-spacing: 1.3px;
+    letter-spacing: 1.9px;
 }
 .OuterHeaderArea .InnerHeaderArea #SettingsArea
 {
@@ -96,6 +96,7 @@ body
     float: left;
     background-color: #6c7275;
     font-size: 13px;
+   
     color: #FFEFAE;
     font-family: Arial;
     letter-spacing: 2.5px;
@@ -1045,20 +1046,20 @@ a:hover
 {
     float:left;
     clear:both;
-    padding-top:11px;
-    background: url(themes/base/images/Controls/featureSelectionConnector-verticalline.png) repeat-y left -20px;
+    padding-top:15px;
+    background: url(themes/base/images/Controls/featureSelectionConnector-verticalline.png) repeat-y 75px -20px;
 }
 #StandardViewBox .Entry > .Connector
 {
-    width:90px;
+    width:130px;
     height:30px;
     float:left;
-    background: url(themes/base/images/Controls/featureSelectionConnector-standard.png) no-repeat left -23px;
+    background: url(themes/base/images/Controls/featureSelectionConnector-standard.png) no-repeat 75px -23px;
 }
 
 #StandardViewBox .Entry[last]
 {
-    background: url(themes/base/images/Controls/featureSelectionConnector-last.png) no-repeat left -13px;
+    background: url(themes/base/images/Controls/featureSelectionConnector-last.png) no-repeat 75px 0;
 }
 #StandardViewBox .Entry[last] > .Connector
 {
@@ -1093,7 +1094,6 @@ a:hover
 #StandardViewBox .Entry > .FeatureControl .InnerFeatureArea:hover
 {
     background: #D7E1FF !important;
-    border: solid 1px #CAD9FF !important;
     
 }
 #StandardViewBox .Entry> .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
@@ -1104,15 +1104,75 @@ a:hover
     padding:0;
     float:right;
 }
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea
+{
+    float: left;
+    clear: both;
+    border: solid 1px #D7D7D7;
+    border-top: none;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: 180px;
+    cursor: default;
+    background: #FFFFD5;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute
+{
+    line-height: 36px;
+    height: 36px;
+    float: left;
+    clear: both;
+    font-size: 9px;
+    font-family: Arial;
+    letter-spacing: 0.9px;
+    color: Gray;
+    width: 100%;
+    border-bottom: 1px solid #EEEEEE;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute:last-child
+{
+    border-bottom: none;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute .Textbox
+{
+    width:100px;
+    height:10px;  
+    margin-top:7px; 
+    font-size: 10px;
+    font-family: Arial;
+    letter-spacing: 0.9px;
+    float:right;
+     border: 1px solid #D7D7D7;
+}
+#StandardViewBox .Entry .FeatureControl .HeaderDiv 
+{
+}
+#StandardViewBox .Entry .FeatureControl .HeaderDiv .NameLabel
+{
+    line-height: 32px;
+    height: 32px;
+    float: left;
+    
+    font-size: 12px;
+    font-family: Arial;
+    letter-spacing: 1.3px;
+}
+#StandardViewBox .Entry .FeatureControl .ChildFeaturesArea
+{
+    float:left;
+    width:auto;
+    clear: both;
+}
+
 
 /*GroupControl*/
 #StandardViewBox .Entry > .GroupControl
 {
     float: right;
-    border:dashed 2px #cecece;
-    padding:5px;
-    padding-top:0px;
-    background:white;
+    border: 1px solid #D8D8D8;
+    padding: 5px;
+    padding-top: 0px;
+    background: #F9F9F9;
 }
 #StandardViewBox .Entry > .GroupControl > .ChildFeaturesArea > .Entry > .Connector
 {
@@ -1127,8 +1187,8 @@ a:hover
 /*Selected*/
 #StandardViewBox .Entry[featureSelectionState='selected'] > .FeatureControl > .InnerFeatureArea
 {
-    border: 1px solid #D5E0FF;
-    background: #E1E9FF;
+    border: 1px solid #909090;
+    background: #CEDBFF;
 }
 #StandardViewBox .Entry[featureSelectionState='selected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
 {
@@ -1143,7 +1203,7 @@ a:hover
 #StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .InnerFeatureArea
 {
     background: #F4F4F4;
-    border: 1px solid #EAEAEA;
+    border: 1px solid #D7D7D7;
 }
 #StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
 {
@@ -1153,6 +1213,10 @@ a:hover
 {
     color: #808080;
 }
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .AttributesArea 
+{
+    display:none;
+}
 #StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl  .ChildFeaturesArea
 {
     display:none;
@@ -1160,8 +1224,8 @@ a:hover
 /*Deselected*/
 #StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea
 {
-    background: #FFF0EA;
-    border: 1px solid #EAEAEA;
+    background: #FFE1D7;
+    border: 1px solid #D7D7D7;
 }
 #StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
 {
@@ -1170,6 +1234,10 @@ a:hover
 #StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel
 {
     color: #808080;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .AttributesArea 
+{
+    display:none;
 }
 #StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl  .ChildFeaturesArea
 {
@@ -1197,24 +1265,5 @@ a:hover
 }
 
 
-#StandardViewBox .Entry .FeatureControl .HeaderDiv 
-{
-}
-#StandardViewBox .Entry .FeatureControl .HeaderDiv .NameLabel
-{
-    line-height: 32px;
-    height: 32px;
-    float: left;
-    
-    font-size: 11px;
-    font-family: Arial;
-    letter-spacing: 0.9px;
-}
-#StandardViewBox .Entry .FeatureControl .ChildFeaturesArea
-{
-    float:left;
-    width:auto;
-    clear: both;
-}
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/
