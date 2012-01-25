@@ -1144,6 +1144,20 @@ a:hover
     float:right;
      border: 1px solid #D7D7D7;
 }
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute .InnerCheckbox
+{
+    margin-top:7px; 
+    float:right;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute .Textbox[disabled]
+{
+    margin-top:8px; 
+    
+    border:none;
+    background:transparent;
+    color:Black !important;
+}
+
 #StandardViewBox .Entry .FeatureControl .HeaderDiv 
 {
 }
@@ -1217,6 +1231,10 @@ a:hover
 {
     display:none;
 }
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .AttributesArea .Attribute
+{
+    display:none;
+}
 #StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl  .ChildFeaturesArea
 {
     display:none;
@@ -1236,6 +1254,10 @@ a:hover
     color: #808080;
 }
 #StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .AttributesArea 
+{
+    display:none;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .AttributesArea .Attribute
 {
     display:none;
 }

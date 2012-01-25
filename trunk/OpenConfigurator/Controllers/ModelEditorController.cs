@@ -217,7 +217,21 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
+        [Authorize]
+        public JsonNetResult AddNewConfiguration(int modelID)
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
 
+            //Add a new Configuration
+            ConfigurationService configurationService = new ConfigurationService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Configuration newConfiguration = (BLL.BusinessObjects.Configuration)configurationService.CreateDefault(modelID);
+            configurationService.Add(newConfiguration);
+
+            //Return its ID
+            result.Data = newConfiguration.ID;
+            return result;
+        }
 
         //Methods for default Entities
         [Authorize]

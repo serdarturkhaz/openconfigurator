@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Z3, Version=2.0.40217.6, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferedDLLs\Microsoft.Z3.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\OpenConfigurator\bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -50,6 +54,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CompositionRuleService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\SolverService.cs" />
+    <Compile Include="Services\FeatureSelectionService.cs" />
     <Compile Include="Services\CustomRuleService.cs" />
     <Compile Include="Services\GroupRelationService.cs" />
     <Compile Include="Services\RelationService.cs" />

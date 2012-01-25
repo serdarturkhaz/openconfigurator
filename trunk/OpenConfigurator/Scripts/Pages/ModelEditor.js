@@ -4,7 +4,7 @@ var settings = {
         fixedOrientation: "vertical", //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
         drawCurves: true, //determines whether curves should be used for drawing relations - options: true / false
         dynamicRefresh: true, //determines whether refresh (redraw) operations are executed real-time or after a move event is completed
-        displayCardinalities: "full" //determines how many cardinalities to display - options : none / partial(only cloneable and cardinal groups) / all (all relations and groupRelations)
+        displayCardinalities: "partial" //determines how many cardinalities to display - options : none / partial (only cloneable and cardinal groups) / all (all relations and groupRelations)
     }
 };
 var commonStyles = {
@@ -411,7 +411,7 @@ var systemDefaults = {
                 label: "OR",
                 id: 1,
                 bounds: {
-                    lowerBound: 0,
+                    lowerBound: 1,
                     upperBound: 1
                 }
             },
@@ -601,7 +601,7 @@ var DiagramDataModel = function (modelID, modelName) {
         customRules: {}
     }
     var _modelID = modelID;
-    var _model = null;
+    var _model = null, _modelName = modelName;
     var _thisDiagramDataModel = this;
 
     //Private methods

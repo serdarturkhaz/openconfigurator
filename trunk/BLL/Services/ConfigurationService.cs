@@ -17,10 +17,14 @@ namespace BLL.Services
         public ConfigurationService(int loggedInUserID)
         {
             _LoggedInUserID = loggedInUserID;
-
         }
 
         //Methods
+        public IBusinessObject CreateDefault(int modelID)
+        {
+            BLL.BusinessObjects.Configuration defaultConfiguration = (BLL.BusinessObjects.Configuration)BLL.BusinessObjects.Configuration.CreateDefault(modelID);
+            return defaultConfiguration;
+        }
         public List<BLL.BusinessObjects.Configuration> GetByModelID(int modelID)
         {
             //
@@ -53,11 +57,6 @@ namespace BLL.Services
 
                 _ConfigurationRepository.SaveChanges();
             }
-        }
-        public IBusinessObject CreateDefault(int modelID)
-        {
-            BLL.BusinessObjects.Configuration defaultConfiguration = (BLL.BusinessObjects.Configuration)BLL.BusinessObjects.Configuration.CreateDefault(modelID);
-            return defaultConfiguration;
         }
         public BusinessObjects.Configuration GetByID(int id)
         {
