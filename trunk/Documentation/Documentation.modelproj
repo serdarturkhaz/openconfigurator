@@ -17,6 +17,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\ArchitectureTools\Microsoft.VisualStudio.TeamArchitect.ModelingProject.targets" />
   <ItemGroup>
+    <Content Include="Architecture\ConfigurationEditor.classdiagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Architecture\ConfigurationEditor.classdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Architecture\ConfigurationEditor.classdiagram</DependentUpon>
+    </Content>
     <Content Include="Architecture\ModelEditorJS.classdiagram">
       <SubType>Content</SubType>
     </Content>
@@ -30,6 +37,15 @@
     <Content Include="Database\DBDiagram.classdiagram.layout">
       <SubType>Content</SubType>
       <DependentUpon>Database\DBDiagram.classdiagram</DependentUpon>
+    </Content>
+    <Content Include="ModelDefinition\Package1_0139.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_0135.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_0139.uml">
+      <SubType>Content</SubType>
     </Content>
     <Content Include="ModelDefinition\Package_1236.uml">
       <SubType>Content</SubType>

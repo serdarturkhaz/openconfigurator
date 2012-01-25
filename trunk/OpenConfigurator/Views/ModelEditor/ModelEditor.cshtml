@@ -18,6 +18,20 @@
             var modelsBoxWidth = containerWidth - marginWidth * 2 - toolboxBoxWidth - propertiesBoxWidth;
             $('#ModelDiagramBox').css("width", modelsBoxWidth + "px");
         }
+        function addNewConfiguration(modelID) {
+            //Create new Configuration in DB
+            var id = null;
+            $.ajax({
+                url: "/Models/AddNewConfiguration",
+                data: JSON.stringify({ modelID: modelID }),
+                async: false,
+                success: function (configurationID) {
+                    //Redirect to the new Configuration
+                    id = configurationID;
+                }
+            });
+            return id;
+        }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
@@ -26,6 +40,10 @@
             //Button handlers
             $("#SaveButton").bind("click", function () {
                 clientController.SaveData();
+            });
+            $("#ConfigureButton").bind("click", function () {
+                var newConfigID = addNewConfiguration(modelId);
+                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
             });
             $("#NewFeatureButton").bind("click", function () {
                 clientController.CreateNewFeature();
@@ -102,10 +120,10 @@
             <img src="../../Content/themes/base/images/Icons/save.png" />
             <span>Save</span>
         </div>
-        @*<div class="Button-Toolbar" id="UndoButton">
-            <img src="../../Content/themes/base/images/Icons/undo-toolbar.png" />
-            <span>Undo</span>
-        </div>*@
+        <div class="Button-Toolbar" id="ConfigureButton">
+            <img src="../../Content/themes/base/images/Icons/configure-toolbar.png" />
+            <span>Configure</span>
+        </div>
        
     </div>
 }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -4230,6 +4230,93 @@ User Input
             isComposite="false" />
         </ownedAttributesInternal>
       </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="de26485e-9701-4689-b9e4-c6b04de3b86e"
+        name="ConfigurationDataModel"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="82ac28be-c7e3-4c8a-91bc-8e2b9576c660">
+            <packageMoniker
+              Id="e5ffc7da-4817-4134-a1a0-a97c70f28a3e"
+              LastKnownName="ClientObjects"
+              LastKnownLocation="Package1_0139.uml" />
+          </dependency>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7e971449-6033-4bc8-a5cf-fe87b6539e8d"
+        name="StandardView"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="ec25370d-e803-4492-9776-dc234ca40675">
+            <classMoniker
+              Id="de26485e-9701-4689-b9e4-c6b04de3b86e"
+              LastKnownName="ConfigurationDataModel"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="05829428-ef0c-4810-8017-a4abeb627539">
+            <packageMoniker
+              Id="9e510daf-a497-472e-a66f-d0e20c4a9dd1"
+              LastKnownName="UIElements"
+              LastKnownLocation="Package_0135.uml" />
+          </dependency>
+          <dependency
+            Id="f7ed1216-3da9-4d35-99d1-ff23b92334e9">
+            <packageMoniker
+              Id="e5ffc7da-4817-4134-a1a0-a97c70f28a3e"
+              LastKnownName="ClientObjects"
+              LastKnownLocation="Package1_0139.uml" />
+          </dependency>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="348d5e52-39d0-4e5f-8ae8-8a67537fea03"
+        name="ClientController"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="54588c8d-60ff-44f3-a8e5-2bd340f19230">
+            <classMoniker
+              Id="de26485e-9701-4689-b9e4-c6b04de3b86e"
+              LastKnownName="ConfigurationDataModel"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="9f5615f9-2989-4452-b2e5-45ca92c2e9c7">
+            <classMoniker
+              Id="7e971449-6033-4bc8-a5cf-fe87b6539e8d"
+              LastKnownName="StandardView"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="9e510daf-a497-472e-a66f-d0e20c4a9dd1"
+        LastKnownName="UIElements"
+        LastKnownLocation="Package_0135.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="e5ffc7da-4817-4134-a1a0-a97c70f28a3e"
+        LastKnownName="ClientObjects"
+        LastKnownLocation="Package1_0139.uml" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

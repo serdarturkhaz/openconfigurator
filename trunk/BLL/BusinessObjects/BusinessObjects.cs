@@ -752,8 +752,8 @@ namespace BLL.BusinessObjects
             BLL.BusinessObjects.GroupRelation groupRelation = new GroupRelation((DAL.DataEntities.GroupRelation)innerEntity);
 
             //Set default fields
-            groupRelation.GroupRelationType = GroupRelationTypes.OR;
-            groupRelation.LowerBound = 0;
+            groupRelation.GroupRelationType = GroupRelationTypes.XOR;
+            groupRelation.LowerBound = 1;
             groupRelation.UpperBound = 1;
 
             //Return the object instance
@@ -1298,6 +1298,7 @@ namespace BLL.BusinessObjects
     {
         //Fields
         private DAL.DataEntities.FeatureSelection _innerEntity;
+        private List<BLL.BusinessObjects.AttributeValue> _attributeValues = new List<AttributeValue>();
         private bool _toBeDeleted = false;
 
         //Constructor
@@ -1308,6 +1309,9 @@ namespace BLL.BusinessObjects
         internal FeatureSelection(DAL.DataEntities.FeatureSelection innerEntity)
         {
             this._innerEntity = innerEntity;
+
+            //Create BLL collections
+            _innerEntity.AttributeValues.ToList().ForEach(DALentity => AttributeValues.Add(BLL.BusinessObjects.AttributeValue.FromDataEntity(DALentity)));
         }
 
         //Properties
@@ -1320,6 +1324,17 @@ namespace BLL.BusinessObjects
             set
             {
                 _innerEntity.ID = value;
+            }
+        }
+        public int FeatureID
+        {
+            get
+            {
+                return _innerEntity.FeatureID;
+            }
+            set
+            {
+                _innerEntity.FeatureID = value;
             }
         }
         public FeatureSelectionStates SelectionState
@@ -1347,6 +1362,17 @@ namespace BLL.BusinessObjects
                 _innerEntity.Disabled = value;
             }
         }
+        public List<BLL.BusinessObjects.AttributeValue> AttributeValues
+        {
+            get
+            {
+                return _attributeValues;
+            }
+            set
+            {
+                _attributeValues = value;
+            }
+        }
 
         //Conversion
         public static BLL.BusinessObjects.FeatureSelection FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
@@ -1358,9 +1384,11 @@ namespace BLL.BusinessObjects
         public static BLL.BusinessObjects.FeatureSelection CreateDefault()
         {
             //Create a new Feature and InnerEntity
-            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Feature();
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.FeatureSelection();
             BLL.BusinessObjects.FeatureSelection featureSelection = new FeatureSelection((DAL.DataEntities.FeatureSelection)innerEntity);
 
+            //
+            featureSelection.SelectionState = FeatureSelectionStates.Unselected;
 
             //Return the object instance
             return featureSelection;
@@ -1489,5 +1517,4 @@ namespace BLL.BusinessObjects
         }
         #endregion
     }
-
 }

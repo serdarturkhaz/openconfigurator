@@ -28,6 +28,10 @@ namespace PresentationLayer.Controllers
             List<BLL.BusinessObjects.Model> models = _modelService.GetByUserID(SessionData.LoggedInUser.ID);
             result.Data = models;
 
+            //Z3
+            SolverService ss = new SolverService(1);
+            ss.TestMethod();
+
             //
             return result;
         }
