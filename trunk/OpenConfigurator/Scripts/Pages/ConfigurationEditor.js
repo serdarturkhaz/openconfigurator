@@ -38,17 +38,20 @@
             integer: {
                 name: "integer",
                 label: "Integer",
-                id: 1
+                id: 1,
+                defaultValue : 0
             },
             boolean: {
                 name: "boolean",
                 label: "Boolean",
-                id: 2
+                id: 2,
+                defaultValue: false
             },
             string: {
                 name: "string",
                 label: "String",
-                id: 3
+                id: 3,
+                defaultValue: ""
             }
         }
     }
@@ -68,7 +71,7 @@ ClientObjects.Feature = function (businessObject) {
     //Fields
     var _guid = null;
     var _businessObject = businessObject;
-    var _featureSelection = {}, _childFeatures = [], _childGroups = [], _parent = {};
+    var _featureSelection = {}, _childFeatures = [], _childGroups = [], _parent = {}, _attributes = [];
 
     //Properties
     this.GUID = _guid;
@@ -78,6 +81,7 @@ ClientObjects.Feature = function (businessObject) {
     this.FeatureSelection = _featureSelection;
     this.ChildFeatures = _childFeatures;
     this.ChildGroups = _childGroups;
+    this.Attributes = _attributes;
     this.Parent = _parent;
 
     //Methods
@@ -130,7 +134,7 @@ ClientObjects.FeatureSelection = function (businessObject) {
     //Fields
     var _guid = null;
     var _businessObject = businessObject;
-    var _feature = {};
+    var _feature = {}, _attributeValues = [];
 
     //Properties
     this.GUID = _guid;
@@ -138,6 +142,67 @@ ClientObjects.FeatureSelection = function (businessObject) {
         return "featureSelection";
     }
     this.Feature = _feature;
+    this.AttributeValues = _attributeValues;
+
+    //Methods
+    this.GetBusinessObjectCopy = function () {
+        var copy = jQuery.extend(true, {}, _businessObject);
+        return copy;
+    }
+    this.UpdateBusinessObject = function (modifiedBusinessObject) {
+        _businessObject = modifiedBusinessObject;
+    }
+    this.GetField = function (fieldName) {
+        return _businessObject[fieldName];
+    }
+    this.SetField = function (fieldName, value) {
+        _businessObject[fieldName] = value;
+    }
+}
+ClientObjects.Attribute = function (businessObject) {
+
+    //Fields
+    var _guid = null;
+    var _businessObject = businessObject;
+    var _feature = {}, _attributeValue = {};
+
+    //Properties
+    this.GUID = _guid;
+    this.GetType = function () {
+        return "attribute";
+    }
+    this.Feature = _feature;
+    this.AttributeValue = _attributeValue;
+
+    //Methods
+    this.GetBusinessObjectCopy = function () {
+        var copy = jQuery.extend(true, {}, _businessObject);
+        return copy;
+    }
+    this.UpdateBusinessObject = function (modifiedBusinessObject) {
+        _businessObject = modifiedBusinessObject;
+    }
+    this.GetField = function (fieldName) {
+        return _businessObject[fieldName];
+    }
+    this.SetField = function (fieldName, value) {
+        _businessObject[fieldName] = value;
+    }
+}
+ClientObjects.AttributeValue = function (businessObject) {
+
+    //Fields
+    var _guid = null;
+    var _businessObject = businessObject;
+    var _featureSelection = {}, _attribute = {};
+
+    //Properties
+    this.GUID = _guid;
+    this.GetType = function () {
+        return "attributeValue";
+    }
+    this.FeatureSelection = _featureSelection;
+    this.Attribute = _attribute;
 
     //Methods
     this.GetBusinessObjectCopy = function () {
@@ -164,7 +229,9 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         all: {},
         features: {},
         groups: {},
-        featureSelections: {}
+        featureSelections: {},
+        attributes: {},
+        attributeValues: {}
     }
     var _configurationID = configurationID;
     var _configuration = null, _model = null, _rootFeatureGUID = null, _configurationName = configurationName;
@@ -196,11 +263,9 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
     this.LoadData = function (onFinished) {
 
         //Lookup tables
-        var featureIDsToFeatureSelections = {};
-        var featureIDsToChildRelations = {}, featureIDsToParentRelations = {};
-        var featureIDsToChildGroupRelations = {}, featureIDsToParentGroupRelations = {};
+        var featureIDsToFeatureSelections = {}, attributeIDsToAttributeValues = {};
 
-        //
+        //Load Configuration data
         $.ajax({
             url: "/ConfigurationEditor/LoadConfiguration",
             data: JSON.stringify({ configurationID: _configurationID }),
@@ -212,17 +277,34 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                 for (var i = 0; i < _configuration.FeatureSelections.length; i++) {
 
                     //Create a new ClientDataObject
-                    var featureSelectionClientObject = new ClientObjects.FeatureSelection(_configuration.FeatureSelections[i]);
+                    var featureSelection = _configuration.FeatureSelections[i];
+                    var featureSelectionClientObject = new ClientObjects.FeatureSelection(featureSelection);
                     _thisConfigurationDataModel.RegisterClientObject(featureSelectionClientObject);
 
                     //Place the featureSelection in a lookup table, with its FeatureID as key
                     var featureID = featureSelectionClientObject.GetField("FeatureID");
                     featureIDsToFeatureSelections[featureID] = featureSelectionClientObject.GUID;
+
+                    //Load AttributeValues-----------------------------------------------------------------------
+                    for (var j = 0; j < featureSelection.AttributeValues.length; j++) {
+                        var attributeValue = featureSelection.AttributeValues[j];
+                        var attributeValueClientObject = new ClientObjects.AttributeValue(attributeValue);
+                        _thisConfigurationDataModel.RegisterClientObject(attributeValueClientObject);
+
+                        //Set references
+                        featureSelectionClientObject.AttributeValues.push(attributeValueClientObject);
+                        attributeValueClientObject.FeatureSelection = featureSelectionClientObject;
+
+                        //Place the attributeValue in a lookup table, with its AttributeID as key
+                        var attributeID = attributeValueClientObject.GetField("AttributeID");
+                        attributeIDsToAttributeValues[attributeID] = attributeValueClientObject.GUID;
+                    }
+                    //-------------------------------------------------------------------------------------------
                 }
             }
         });
 
-        //
+        //Load Model data
         $.ajax({
             url: "/ConfigurationEditor/LoadModel",
             data: JSON.stringify({ modelID: _configuration.ModelID }),
@@ -234,28 +316,58 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                 for (var i = 0; i < _model.Features.length; i++) {
 
                     //Variables
-                    var featureID = _model.Features[i].ID;
+                    var feature = _model.Features[i];
                     var childRelationsGUIDs, childGroupRelationsGUIDs;
                     var parentRelationsGUIDs, parentGroupRelationsGUIDs;
 
                     //Create a new ClientDataObject
-                    var featureClientObject = new ClientObjects.Feature(_model.Features[i]);
+                    var featureClientObject = new ClientObjects.Feature(feature);
                     _thisConfigurationDataModel.RegisterClientObject(featureClientObject);
 
                     //Set references-----------------------------------------------------------------------------------------
                     var featureSelectionClientObject = null;
-                    var featureSelectionGUID = featureIDsToFeatureSelections[featureID];
+                    var featureSelectionGUID = featureIDsToFeatureSelections[feature.ID];
                     if (featureSelectionGUID != undefined) {
                         featureSelectionClientObject = _thisConfigurationDataModel.GetByGUID(featureSelectionGUID);
                     } else {
                         //If a featureSelection doesn't already exist, create one
-                        featureSelectionClientObject = _thisConfigurationDataModel.CreateDefaultClientObject("featureSelection", { FeatureID: featureID });
+                        featureSelectionClientObject = _thisConfigurationDataModel.CreateDefaultClientObject("featureSelection", { FeatureID: feature.ID });
                         _thisConfigurationDataModel.RegisterClientObject(featureSelectionClientObject);
                     }
 
                     //Set Feature and FeatureSelection references
                     featureClientObject.FeatureSelection = featureSelectionClientObject;
                     featureSelectionClientObject.Feature = featureClientObject;
+                    //-------------------------------------------------------------------------------------------------------
+
+                    //Load Attributes----------------------------------------------------------------------------------------
+                    for (var j = 0; j < feature.Attributes.length; j++) {
+                        var attribute = feature.Attributes[j];
+                        var attributeClientObject = new ClientObjects.Attribute(attribute);
+                        _thisConfigurationDataModel.RegisterClientObject(attributeClientObject);
+
+                        //Get the related AttributeValue
+                        var attributeValueClientObject = null;
+                        var attributeValueGUID = attributeIDsToAttributeValues[attribute.ID];
+                        if (attributeValueGUID != undefined) {
+                            attributeValueClientObject = _thisConfigurationDataModel.GetByGUID(attributeValueGUID);
+                        } else {
+                            //If an AttributeValue doesn't already exist, create one
+                            var defaultVal = getEnumEntryByID(systemDefaults.enums.attributeDataTypes, attributeClientObject.GetField("AttributeDataType")).defaultValue;
+                            attributeValueClientObject = _thisConfigurationDataModel.CreateDefaultClientObject("attributeValue", { AttributeID: attribute.ID, Value: defaultVal });
+
+                            _thisConfigurationDataModel.RegisterClientObject(attributeValueClientObject);
+                            featureSelectionClientObject.AttributeValues.push(attributeValueClientObject);
+
+
+                        }
+
+                        //Set references
+                        featureClientObject.Attributes.push(attributeClientObject);
+                        attributeClientObject.Feature = featureClientObject;
+                        attributeValueClientObject.Attribute = attributeClientObject;
+                        attributeClientObject.AttributeValue = attributeValueClientObject;
+                    }
                     //-------------------------------------------------------------------------------------------------------
                 }
 
@@ -272,10 +384,10 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                     //-------------------------------------------------------------------------------------------------------
 
                 }
-                
+
                 //Load GroupRelations
                 for (var i = 0; i < _model.GroupRelations.length; i++) {
-                    
+
                     //
                     var groupRelation = _model.GroupRelations[i];
 
@@ -300,7 +412,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                     }
                     //-------------------------------------------------------------------------------------------------------
                 }
-                
+
                 //Find the root Feature
                 for (var guidKey in _clientObjects.features) {
                     var featureClientObject = _clientObjects.features[guidKey];
@@ -376,14 +488,11 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         //Wrap a new default BusinessDataObject into a ClientDataObject
         var newClientObject = null;
         switch (type) {
-            case "feature":
-                newClientObject = new ClientObjects.Feature(newBusinessObject);
-                break;
-            case "group":
-                newClientObject = new ClientObjects.Group(newBusinessObject);
-                break;
             case "featureSelection":
                 newClientObject = new ClientObjects.FeatureSelection(newBusinessObject);
+                break;
+            case "attributeValue":
+                newClientObject = new ClientObjects.AttributeValue(newBusinessObject);
                 break;
         }
 
@@ -500,7 +609,7 @@ var StandardView = function (container, configurationDataModelInstance) {
     var _thisStandardView = this;
 
     //UIObjects & Defaults/Settings
-    var UIFeature = function (clientObjectGUID, isRoot, initialState, name, attributes, attributeValues) {
+    var UIFeature = function (clientObjectGUID, isRoot, initialState, name) {
 
         //Fields
         var _outerElement = null;
@@ -515,7 +624,7 @@ var StandardView = function (container, configurationDataModelInstance) {
             childFeaturesArea: null
         };
         var _currentState = initialState;
-        var _parent = null, _children = [], _attributes = attributes, _attributeValues = attributeValues;
+        var _parent = null, _children = [], _UIAttributes = [];
         var _name = name, _isRoot = isRoot;
         var _thisUIConfigurationFeature = this;
 
@@ -526,6 +635,9 @@ var StandardView = function (container, configurationDataModelInstance) {
         }
         this.GetChildrenContainer = function () {
             return _innerElements.childFeaturesArea;
+        }
+        this.GetAttributesContainer = function () {
+            return _innerElements.attributesArea;
         }
         this.InnerElements = _innerElements;
 
@@ -552,19 +664,19 @@ var StandardView = function (container, configurationDataModelInstance) {
                 case systemDefaults.enums.attributeDataTypes.integer.name:
                     innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(outerControl);
                     if (attributeValue != null) {
-                        $(innerControl).val(attributeValue.Value);
+                        $(innerControl).val(attributeValue.GetField("Value"));
                     }
                     break;
                 case systemDefaults.enums.attributeDataTypes.boolean.name:
                     innerControl = $("<input type='checkbox' class='InnerCheckbox' />").appendTo(outerControl);
                     if (attributeValue != null) {
-                        $(innerControl).val(attributeValue.Value);
+                        $(innerControl).val(attributeValue.GetField("Value"));
                     }
                     break;
                 case systemDefaults.enums.attributeDataTypes.string.name:
                     innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(outerControl);
                     if (attributeValue != null) {
-                        $(innerControl).val(attributeValue.Value);
+                        $(innerControl).val(attributeValue.GetField("Value"));
                     }
                     break;
             }
@@ -610,16 +722,8 @@ var StandardView = function (container, configurationDataModelInstance) {
             _innerElements.nameLabel = $("<div class='NameLabel'>" + _name + "</div>").appendTo(_innerElements.headerDiv);
             _innerElements.checkbox = $("<div class='Checkbox' ></div>").appendTo(_innerElements.headerDiv);
 
-            //Create attributes
-            if (_attributes.length > 0)
-                _innerElements.attributesArea = $("<div class='AttributesArea' ></div>").appendTo(_outerElement);
-            for (var i = 0; i < _attributes.length; i++) {
-                var dataAttr = _attributes[i];
-                var attributeVal = null;
-                if (attributeValues != null && i < attributeValues.length)
-                    attributeVal = attributeValues[i];
-                var attrHTML = createAttributeHTML(dataAttr, attributeVal).appendTo(_innerElements.attributesArea);
-            }
+            //AttributesArea
+            _innerElements.attributesArea = $("<div class='AttributesArea'></div>").appendTo(_outerElement);
 
             //ChildFeaturesArea
             _innerElements.childFeaturesArea = $("<div class='ChildFeaturesArea'></div>").appendTo(_outerElement);
@@ -641,8 +745,69 @@ var StandardView = function (container, configurationDataModelInstance) {
             UIConfigurationElement.SetParent(_thisUIConfigurationFeature);
 
         }
+        this.AddAttribute = function (UIConfigurationElement) {
+            _UIAttributes.push(UIConfigurationElement);
+            UIConfigurationElement.SetParentUIFeature(_thisUIConfigurationFeature);
+        }
         this.SetParent = function (parentUIConfigurationElement) {
             _parent = parentUIConfigurationElement;
+        }
+    }
+    var UIAttribute = function (clientObjectGUID, attributeType, attributeDataType, name, value) {
+
+        //Fields
+        var _outerElement = null;
+        var _innerElements = {
+            innerControl: null
+        }
+        var _parentUIFeature = null, _name = name, _attributeType = attributeType, _attributeDataType = attributeDataType;
+
+        //Properties
+        this.ClientObjectGUID = clientObjectGUID;
+
+        //Public methods
+        this.CreateGraphicalRepresentation = function () {
+
+            //Variables
+            var parentContainer = _parentUIFeature.GetAttributesContainer();
+            var attributeTypeName = getEnumEntryByID(systemDefaults.enums.attributeTypes, attributeType).name;
+            var dataTypeName = getEnumEntryByID(systemDefaults.enums.attributeDataTypes, _attributeDataType).name;
+
+            //Create HTML
+            _outerElement = $("<div class='Attribute'>" + _name + "</div>").appendTo(parentContainer);
+            switch (dataTypeName) {
+                case systemDefaults.enums.attributeDataTypes.integer.name:
+                    _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
+                    $(_innerElements.innerControl).val(value);
+                    break;
+                case systemDefaults.enums.attributeDataTypes.boolean.name:
+                    _innerElements.innerControl = $("<input type='checkbox' class='InnerCheckbox' />").appendTo(_outerElement);
+                    $(_innerElements.innerControl).attr("checked", value);
+                    break;
+                case systemDefaults.enums.attributeDataTypes.string.name:
+                    _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
+                    $(_innerElements.innerControl).val(value);
+                    break;
+            }
+
+            //Make the control editable/disabled
+            switch (attributeTypeName) {
+                case systemDefaults.enums.attributeTypes.constant.name:
+                    _innerElements.innerControl.attr("disabled", true);
+                    break;
+                case systemDefaults.enums.attributeTypes.dynamic.name:
+                    _innerElements.innerControl.attr("disabled", true);
+                    break;
+                case systemDefaults.enums.attributeTypes.userInput.name:
+
+                    break;
+            }
+        }
+        this.Update = function (newSelectionState) {
+            changeState(newSelectionState);
+        }
+        this.SetParentUIFeature = function (parentUIConfigurationElement) {
+            _parentUIFeature = parentUIConfigurationElement;
         }
     }
     var UIGroup = function (clientObjectGUID) {
@@ -702,7 +867,7 @@ var StandardView = function (container, configurationDataModelInstance) {
         _innerContainer = $("<div class='InnerContainer'></div>").prependTo(container);
     };
 
-    //Sync with data model
+    //Private methods
     var toggleFeatureSelection = function (UIFeature) {
 
         //Get the related FeatureSelection
@@ -712,20 +877,22 @@ var StandardView = function (container, configurationDataModelInstance) {
         //Set its SelectionState field
         var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
         switch (currentSelectionState) {
-            //Unselected                                                                                                                             
+            //Unselected                                                                                                                                                   
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
-            //Selected                                                                                                                              
+            //Selected                                                                                                                                                    
             case systemDefaults.enums.featureSelectionStates.selected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.deselected.id);
                 break;
-            //Deselected                                                                                                                               
+            //Deselected                                                                                                                                                     
             case systemDefaults.enums.featureSelectionStates.deselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
                 break;
         }
     }
+
+    //Sync with data model
     updateElement = function (guid) {
 
         //Variables
@@ -742,8 +909,6 @@ var StandardView = function (container, configurationDataModelInstance) {
                 break;
         }
     }
-
-    //Sync with dataModel methods
     var createFeature = function (clientObject, parentUIConfigurationElement) {
 
         //Determine if it is the root
@@ -752,15 +917,29 @@ var StandardView = function (container, configurationDataModelInstance) {
         //Get the associated FeatureSelection object
         var featureSelectionClientObject = _configurationDataModel.GetByGUID(clientObject.FeatureSelection.GUID);
         var selectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
-        var attributeValues = featureSelectionClientObject.GetField("AttributeValues");
+        var attributeValues = featureSelectionClientObject.AttributeValues;
+        var attributes = clientObject.Attributes;
 
-        //Create the Feature 
+        //Create the Feature --------------------------------------------------------------------------
         var UIfeature = new UIFeature(clientObject.GUID, isRoot, selectionState, clientObject.GetField("Name"), clientObject.GetField("Attributes"), attributeValues);
         if (!isRoot) {
             parentUIConfigurationElement.AddChild(UIfeature); //add to parent if it has one
         }
         UIfeature.CreateGraphicalRepresentation();
         _UIElements[clientObject.GUID] = UIfeature;
+
+        //Create its Attributes
+        if (attributes > 0) {
+            _innerElements.attributesArea = $("<div class='AttributesArea' ></div>").appendTo(_outerElement);
+        }
+        for (var i = 0; i < attributes.length; i++) {
+            var attributeType = attributes[i].GetField("AttributeType"), attributeDataType = attributes[i].GetField("AttributeDataType"), name = attributes[i].GetField("Name");
+            var value = attributes[i].AttributeValue.GetField("Value");
+            var UIattribute = new UIAttribute(attributes[i].GUID, attributeType, attributeDataType, name, value);
+            UIfeature.AddAttribute(UIattribute);
+            UIattribute.CreateGraphicalRepresentation();
+        }
+        //---------------------------------------------------------------------------------------------
 
         //Create child Features
         for (var i = 0; i < clientObject.ChildFeatures.length; i++) {
@@ -786,6 +965,9 @@ var StandardView = function (container, configurationDataModelInstance) {
         }
     }
 
+    //Events
+    var onInternalAttributeValueChanged = new Event();
+
     //Eventhandlers
     this.OnClientObjectsLoaded = function () {
 
@@ -795,6 +977,9 @@ var StandardView = function (container, configurationDataModelInstance) {
     }
     this.OnClientObjectUpdated = function (guid) {
         updateElement(guid);
+    }
+    var onInternalAttributeValueChanged = function (attributeGUID, newValue) {
+
     }
 }
 

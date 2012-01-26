@@ -5,6 +5,7 @@
 @section headerscripts{
     <script type="text/javascript" src="../../Scripts/Pages/ConfigurationEditor.js"></script>
     <script type="text/javascript">
+        
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var configurationID = '@(ViewBag.ConfigurationId)';
         var configurationDataModel = null, clientController = null;
@@ -20,7 +21,7 @@
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
             //Event handlers-------------------------------------------------------------------
-
+            
             //Button handlers
             $("#SaveButton").bind("click", function () {
                 clientController.SaveData();
