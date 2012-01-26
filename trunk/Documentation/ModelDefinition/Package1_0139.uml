@@ -155,6 +155,58 @@
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="c4301925-b9f1-4a6b-9f3c-13dc9dab1ced"
+            isDerived="false"
+            sourceEndRoleName="Feature"
+            targetEndRoleName="Attributes"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="6a97027e-53b9-4444-8ad7-cff1866003f6"
+              LastKnownName="Attribute"
+              LastKnownLocation="Package1_0139.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="18e9d3db-85c7-4c0b-a6e6-6ed2137105a5"
+                  name="Feature"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="eaba6d0e-7d03-4993-929e-9b28e858bd06"
+                  name="Attributes"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="4a07c307-fb8a-4db2-b1a6-53ffd36f340c"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="f56891f5-5968-4c6c-bdfa-b9d6537c0947"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
       </class>
     </packageHasNamedElement>
@@ -164,7 +216,49 @@
         name="FeatureSelection"
         isAbstract="false"
         isLeaf="false"
-        isActiveClass="false" />
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="b08a08a9-703a-4eaf-a37a-edf098d6fb2b"
+            isDerived="false"
+            sourceEndRoleName="FeatureSelection"
+            targetEndRoleName="AttributeValues"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="7e29f063-e66d-4155-90a3-0014a7bf6809"
+              LastKnownName="AttributeValue"
+              LastKnownLocation="Package1_0139.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="44066ff3-d43b-4ab5-a22e-6596da285268"
+                  name="FeatureSelection"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="d56b0007-1f3c-4f06-8230-48f84061d487"
+                  name="AttributeValues"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
@@ -228,6 +322,64 @@
           </association>
         </targetEnds>
       </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="6a97027e-53b9-4444-8ad7-cff1866003f6"
+        name="Attribute"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="27f9c67b-7d1f-4050-bcb9-275dd61f80da"
+            isDerived="false"
+            sourceEndRoleName="Attribute"
+            targetEndRoleName="AttributeValue"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="7e29f063-e66d-4155-90a3-0014a7bf6809"
+              LastKnownName="AttributeValue"
+              LastKnownLocation="Package1_0139.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="b109fe83-6d88-4bc3-9c36-abd29d3de60b"
+                  name="Attribute"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="c69222c7-0e66-4975-bbca-fdaf9be10b9c"
+                  name="AttributeValue"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="7e29f063-e66d-4155-90a3-0014a7bf6809"
+        name="AttributeValue"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
     </packageHasNamedElement>
   </packagedElements>
 </package>

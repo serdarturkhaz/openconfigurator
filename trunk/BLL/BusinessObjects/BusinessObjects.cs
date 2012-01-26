@@ -1483,7 +1483,7 @@ namespace BLL.BusinessObjects
         public static BLL.BusinessObjects.AttributeValue CreateDefault()
         {
             //Create a new Feature and InnerEntity
-            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Attribute();
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.AttributeValue();
             BLL.BusinessObjects.AttributeValue attributeValue = new BLL.BusinessObjects.AttributeValue((DAL.DataEntities.AttributeValue)innerEntity);
 
             //Return the object instance
