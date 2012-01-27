@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using BLL.BusinessObjects;
 using System.Data.Objects;
+using Microsoft.Z3;
 
 namespace PresentationLayer.Common
 {
@@ -24,30 +25,19 @@ namespace PresentationLayer.Common
         }
 
         //SessionModels
-        public static Dictionary<int,BLL.BusinessObjects.Model> SessionModels
+        public static Dictionary<int, Context> SolverContexts //One SolverContext per ModelID
         {
             get
             {
-                if (HttpContext.Current.Session["SessionModels"] == null)
-                    HttpContext.Current.Session["SessionModels"] = new Dictionary<int,BLL.BusinessObjects.Model>();
+                if (HttpContext.Current.Session["SolverContexts"] == null)
+                    HttpContext.Current.Session["SolverContexts"] = new Dictionary<int, Context>();
 
-                return (Dictionary<int, BLL.BusinessObjects.Model>)HttpContext.Current.Session["SessionModels"];
+                return (Dictionary<int, Context>)HttpContext.Current.Session["SolverContexts"];
 
             }
 
         }
 
-        //DataContexts
-        public static List<ObjectContext> DataContexts
-        {
-            get
-            {
-                if (HttpContext.Current.Session["DataContexts"] == null)
-                    HttpContext.Current.Session["DataContexts"] = new List<ObjectContext>();
 
-                return (List<ObjectContext>)HttpContext.Current.Session["DataContexts"];
-
-            }
-        }
     }
 }

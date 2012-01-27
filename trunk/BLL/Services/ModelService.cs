@@ -55,10 +55,6 @@ namespace BLL.Services
             BLL.BusinessObjects.Model defaultModel = (BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.CreateDefault(_LoggedInUserID);
             return defaultModel;
         }
-
-        //Interface members
-        #region IService<Model> Members
-
         public BusinessObjects.Model GetByID(int id)
         {
             BLL.BusinessObjects.Model BLLmodel;
@@ -106,7 +102,5 @@ namespace BLL.Services
                 _ModelRepository.SaveChanges();
             }
         }
-
-        #endregion
     }
 }

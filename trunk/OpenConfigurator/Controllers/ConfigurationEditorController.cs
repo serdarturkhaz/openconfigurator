@@ -87,6 +87,16 @@ namespace PresentationLayer.Controllers
             return result;
         }
 
+
+        public JsonNetResult LoadConfigurationData()
+        {
+
+            //Z3
+            SolverService ss = new SolverService(1);
+            ss.TestMethod();
+
+            return null;
+        }
         //Methods for default Entities
         [Authorize]
         public JsonNetResult NewDefaultFeatureSelection()
