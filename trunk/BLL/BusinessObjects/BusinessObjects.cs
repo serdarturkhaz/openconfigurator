@@ -1450,6 +1450,17 @@ namespace BLL.BusinessObjects
                 _innerEntity.ID = value;
             }
         }
+        public int FeatureSelectionID
+        {
+            get
+            {
+                return _innerEntity.FeatureSelectionID;
+            }
+            set
+            {
+                _innerEntity.FeatureSelectionID = value;
+            }
+        }
         public int AttributeID
         {
             get
@@ -1461,6 +1472,7 @@ namespace BLL.BusinessObjects
                 _innerEntity.AttributeID = value;
             }
         }
+
         public string Value
         {
             get

@@ -11,15 +11,20 @@ namespace BLL.Services
     public class SolverService 
     {
         //Fields
-        private int _LoggedInUserID;
-        
+        private Context _context;
+
         //Constructors
-        public SolverService(int loggedInUserID)
+        public SolverService()
         {
-            _LoggedInUserID = loggedInUserID;
         }
 
         //Methods
+        public Context InitializeContext(int modelID)
+        {
+
+            return null;
+        }
+        
         public void TestMethod()
         {
             using (Config config = new Config())

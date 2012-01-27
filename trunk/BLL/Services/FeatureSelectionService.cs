@@ -11,6 +11,7 @@ namespace BLL.Services
     {
         //Fields
         private IRepository<DAL.DataEntities.FeatureSelection> _FeatureSelectionRepository;
+        private IRepository<DAL.DataEntities.AttributeValue> _AttributeValuesRepository;
         private int _LoggedInUserID;
 
         //Constructors
@@ -37,6 +38,29 @@ namespace BLL.Services
                 //Update the FeatureSelection
                 _FeatureSelectionRepository.Attach((DAL.DataEntities.FeatureSelection)entity.InnerEntity);
                 _FeatureSelectionRepository.SaveChanges();
+
+                //Update AttributeValues
+                using (_AttributeValuesRepository = new GenericRepository<DAL.DataEntities.AttributeValue>())
+                {
+                    for (int i = entity.AttributeValues.Count - 1; i >= 0; i--)
+                    {
+                        BLL.BusinessObjects.AttributeValue BLLAttributeValue = entity.AttributeValues[i];
+                        BLLAttributeValue.FeatureSelectionID = entity.ID;
+
+                        //Add
+                        if (BLLAttributeValue.ToBeDeleted == false && BLLAttributeValue.ID == 0)
+                        {
+                            _AttributeValuesRepository.Add((DAL.DataEntities.AttributeValue)BLLAttributeValue.InnerEntity);
+                        }
+                        //Update
+                        else if (BLLAttributeValue.ToBeDeleted == false && BLLAttributeValue.ID != 0)
+                        {
+                            _AttributeValuesRepository.Attach((DAL.DataEntities.AttributeValue)BLLAttributeValue.InnerEntity);
+                        }
+                        
+                    }
+                    _AttributeValuesRepository.SaveChanges();
+                }
             }
         }
         public void Delete(int id)
@@ -57,6 +81,22 @@ namespace BLL.Services
                 _FeatureSelectionRepository.Add((DAL.DataEntities.FeatureSelection)entity.InnerEntity);
                 _FeatureSelectionRepository.SaveChanges();
 
+                //Add AttributeValues
+                using (_AttributeValuesRepository = new GenericRepository<DAL.DataEntities.AttributeValue>())
+                {
+                    for (int i = entity.AttributeValues.Count - 1; i >= 0; i--)
+                    {
+                        BLL.BusinessObjects.AttributeValue BLLAttributeValue = entity.AttributeValues[i];
+                        BLLAttributeValue.FeatureSelectionID = entity.ID;
+
+                        //Add
+                        if (BLLAttributeValue.ToBeDeleted == false && BLLAttributeValue.ID == 0)
+                        {
+                            _AttributeValuesRepository.Add((DAL.DataEntities.AttributeValue)BLLAttributeValue.InnerEntity);
+                        }
+                    }
+                    _AttributeValuesRepository.SaveChanges();
+                }
             }
         }
 
