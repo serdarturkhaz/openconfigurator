@@ -198,7 +198,7 @@ var UIObjectStyles = {
             or: {
                 rootArc: {
                     attr: {
-                        fill: "#ffffff",
+                        fill: "Black",
                         opacity: 1
                     }
                 },
@@ -206,7 +206,7 @@ var UIObjectStyles = {
                     connectors: {
                         endConnector: {
                             attr: {
-                                fill: "#fff7d7",
+                                fill: "black",
                                 opacity: 1
                             }
                         }
@@ -217,7 +217,7 @@ var UIObjectStyles = {
             xor: {
                 rootArc: {
                     attr: {
-                        fill: "Black",
+                        fill: "#ffffff",
                         opacity: 1
                     }
                 },
@@ -226,7 +226,7 @@ var UIObjectStyles = {
                         endConnector: {
                             attr: {
 
-                                fill: "black",
+                                fill: "#fff7d7",
                                 opacity: 1
                             }
                         }

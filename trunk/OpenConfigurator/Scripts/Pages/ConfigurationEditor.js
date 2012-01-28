@@ -423,6 +423,16 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             }
         });
 
+        //Load initial FeedBack
+        $.ajax({
+            url: "/ConfigurationEditor/SolverFeedback",
+            data: JSON.stringify({ modelID: _configuration.ModelID }),
+            async: false,
+            success: function (response) {
+
+            }
+        });
+
         //Raise events
         _thisConfigurationDataModel.ClientObjectsLoaded.RaiseEvent();
 
@@ -543,6 +553,9 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             }
         }
     }
+    this.GetModelID = function () {
+        return _model.ID;
+    }
     this.UpdateClientObject = function (guid, modifiedBusinessDataObject) {
 
         //Update the whole businessDataObject
@@ -573,6 +586,20 @@ var ClientController = function (standardViewContainer, configurationNameTextbox
     //Constructor/Initalizers
     this.Initialize = function () {
 
+
+        //Clear the ISolverContext residing in the Session when the Page is unloaded
+        $(window).unload(function () {
+            $.ajax({
+                url: "/ConfigurationEditor/ClearSessionContext",
+                data: JSON.stringify({ modelID: _configurationDataModel.GetModelID() }),
+                async: false,
+                success: function (response) {
+
+                }
+            });
+        });
+
+        //Load stuff
         $("#StandardViewBox").block({ message: "Loading diagram...", fadeIn: 300 });
         $.timer(300, function () {
 

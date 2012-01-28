@@ -62,6 +62,8 @@
     <Compile Include="Services\ModelService.cs" />
     <Compile Include="Services\FeatureService.cs" />
     <Compile Include="Services\UserService.cs" />
+    <Compile Include="SolverEngines\SolverEngine.cs" />
+    <Compile Include="SolverEngines\Z3Engine.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">

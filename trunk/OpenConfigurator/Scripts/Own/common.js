@@ -22,7 +22,6 @@ $(document).ready(function () {
         dataType: "json",
         cache: false,
         error: function (response) {
-
             alert('error');
         }
     });
