@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using BLL.Services;
 using PresentationLayer.Common;
 using Newtonsoft.Json.Linq;
+using BLL.SolverEngines;
 
 namespace PresentationLayer.Controllers
 {
@@ -48,6 +49,7 @@ namespace PresentationLayer.Controllers
             return result;
         }
 
+        [Authorize]
         public JsonNetResult SaveConfiguration(int configurationID, string configurationName, string featureSelectionsString)
         {
             //Data return wrapper
@@ -87,16 +89,43 @@ namespace PresentationLayer.Controllers
             return result;
         }
 
-
-        public JsonNetResult LoadConfigurationData()
+        [Authorize]
+        public JsonNetResult SolverFeedback(int modelID)
         {
+            //Data return wrapper
+            object[] innerJObj = new object[2];
+            JsonNetResult result = new JsonNetResult() { Data = innerJObj };
 
-            //Z3
-            SolverService ss = new SolverService(1);
-            ss.TestMethod();
+            //Load Model
+            ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Model model = _modelService.GetByID(modelID);
+
+            //Solver
+            ISolverContext context = null;
+            SolverService solverService;
+            if (SessionData.SolverContexts.ContainsKey(modelID))
+            {
+                context = SessionData.SolverContexts[modelID];
+                solverService = new SolverService(context);
+            }
+            else
+            {
+                solverService = new SolverService(model);
+                SessionData.SolverContexts[modelID] = solverService.Context;
+            }
+
+            //Get the solution
+            //List<BLL.BusinessObjects.FeatureSelection> selections = solverService.GetInitialSelections();
 
             return null;
         }
+
+        [Authorize]
+        public void ClearSessionContext(int modelID)
+        {
+            SessionData.SolverContexts.Remove(modelID);
+        }
+
         //Methods for default Entities
         [Authorize]
         public JsonNetResult NewDefaultFeatureSelection()

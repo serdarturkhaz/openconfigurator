@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="12b0dcc7-cdd7-438d-9362-0cf491461d0e"
+  name="Microsoft.Z3" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <packagedElements>
+    <packageHasNamedElement>
+      <class
+        Id="3166e033-27f6-4b59-b0fb-32b25f9c4497"
+        name="Config"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="532903b5-95d9-4e9c-8165-f32f2b9c6467"
+        name="Context"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="ff2b2afe-7175-45fb-aad6-ecb3e5c24317">
+            <classMoniker
+              Id="3166e033-27f6-4b59-b0fb-32b25f9c4497"
+              LastKnownName="Config"
+              LastKnownLocation="Package1_0113.uml" />
+          </dependency>
+          <dependency
+            Id="34d91551-05f8-481d-9bd0-c3f761f0ebd5">
+            <classMoniker
+              Id="702d4304-310c-4256-95a9-15984b302800"
+              LastKnownName="Term"
+              LastKnownLocation="Package1_0113.uml" />
+          </dependency>
+          <dependency
+            Id="efe84845-dc2d-48f4-b483-2a0eef5f1981">
+            <classMoniker
+              Id="204f0b5a-9fe4-4d12-b112-74fba0af05a7"
+              LastKnownName="Model"
+              LastKnownLocation="Package1_0113.uml" />
+          </dependency>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="204f0b5a-9fe4-4d12-b112-74fba0af05a7"
+        name="Model"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="702d4304-310c-4256-95a9-15984b302800"
+        name="Term"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+  </packagedElements>
+</package>
