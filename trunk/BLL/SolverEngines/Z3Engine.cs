@@ -10,37 +10,36 @@ namespace BLL.SolverEngines
 {
     public class Z3Engine : ISolverEngine
     {
-        //Fields
-        ISolverContext _context;
-
         //Constructors
         public Z3Engine()
         {
         }
-        public Z3Engine(ISolverContext context)
-        {
-            _context = context;
-        }
-
-        //Properties
-        public ISolverContext Context
-        {
-            get
-            {
-                return _context;
-            }
-        }
 
         //Methods
         #region ISolverEngine Members
-        public ISolverSolution GetSolution()
+        public ISolverSolution GetSolution(ISolverContext context)
         {
-            return ((Z3Context)_context).GetSolution();
+            return ((Z3Context)context).GetSolution();
         }
-        public ISolverContext InitNewContext()
+        public bool CheckSolutionExists(ISolverContext context, string varID, bool valueToTest)
         {
-            _context = new Z3Context();
-            return _context;
+            //Add a new assumption to test for the "valueToTest" value
+            bool returnVal = false;
+            context.AssumeBoolVarValue(varID, valueToTest, AssumptionTypes.Solver);
+
+            //If the context is still satisfiable
+            if (((Z3Context)context).GetSolution() != null)
+            {
+                returnVal = true;
+            }
+
+            //Clean up and return the value
+            context.RemoveLastAssumption(varID);
+            return returnVal;
+        }
+        public ISolverContext CreateBlankContext()
+        {
+            return new Z3Context();
         }
         #endregion
     }
@@ -50,8 +49,9 @@ namespace BLL.SolverEngines
         Config _config;
         Context _context;
         Dictionary<string, Term> _variables = new Dictionary<string, Term>();
-        List<List<Term>> _constraints = new List<List<Term>>();
-        Dictionary<string, Term> _valueAssumptions = new Dictionary<string, Term>();
+        List<ISolverStatement[]> _constraints = new List<ISolverStatement[]>();
+        Dictionary<string, Term> _userValueAssumptions = new Dictionary<string, Term>();
+        Dictionary<string, Term> _solverValueAssumptions = new Dictionary<string, Term>();
 
         //Constructor
         internal Z3Context()
@@ -82,14 +82,150 @@ namespace BLL.SolverEngines
             }
         }
         #region ISolverContext Members
-
         public void AddBoolVariable(string varID, string varName)
         {
             Term variable = _context.MkConst(varName, _context.MkBoolSort());
             _variables[varID] = variable;
         }
-        public void AssumeBoolVarValue(string varID, bool value)
+        public void AddConstraint(params ISolverStatement[] statements)
         {
+            foreach (ISolverStatement statement in statements)
+            {
+                _context.AssertCnstr(((Z3Statement)statement).Term);
+            }
+
+            //Keep track of the constraint added
+            _constraints.Add(statements);
+        }
+        public ISolverStatement CreateStatement(StatementTypes type, params string[] varIDs)
+        {
+            //Get the Terms corresponding to the varIDs
+            List<Term> terms = new List<Term>();
+            foreach (string varID in varIDs)
+            {
+                Term variable = _variables[varID];
+                terms.Add(variable);
+            }
+
+            //Create a new Statement
+            ISolverStatement statement = null;
+            switch (type)
+            {
+                case StatementTypes.And:
+                    statement = new Z3Statement(_context.MkAnd(terms.ToArray()));
+                    break;
+                case StatementTypes.Or:
+                    statement = new Z3Statement(_context.MkOr(terms.ToArray()));
+                    break;
+                case StatementTypes.Xor:
+                    List<Term> xorTerms = new List<Term>();
+                    for (int i = 0; i < terms.Count - 1; i++)
+                    {
+                        xorTerms.Add(_context.MkXor(terms[i], terms[i + 1]));
+                    }
+                    statement = new Z3Statement(_context.MkAnd(xorTerms.ToArray()));
+                    break;
+                case StatementTypes.Implies:
+                    statement = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
+                    break;
+                case StatementTypes.Excludes:
+                    statement = new Z3Statement(_context.MkNot(_context.MkAnd(terms[0], terms[1])));
+                    break;
+                case StatementTypes.Equivalence:
+                    Z3Statement substatement1 = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
+                    Z3Statement substatement2 = new Z3Statement(_context.MkImplies(terms[1], terms[0]));
+                    statement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
+                    break;
+
+            }
+
+            return statement;
+        }
+        public ISolverStatement CreateStatement(StatementTypes type, params ISolverStatement[] innerStatements)
+        {
+            //Get the Terms corresponding to the innerStatements
+            List<Term> terms = new List<Term>();
+            foreach (ISolverStatement innerStatement in innerStatements)
+            {
+                terms.Add(((Z3Statement)innerStatement).Term);
+            }
+
+            //Create a new statement
+            ISolverStatement statement = null;
+            switch (type)
+            {
+
+                case StatementTypes.And:
+                    statement = new Z3Statement(_context.MkAnd(terms.ToArray()));
+                    break;
+                case StatementTypes.Or:
+                    statement = new Z3Statement(_context.MkOr(terms.ToArray()));
+                    break;
+                case StatementTypes.Xor:
+                    List<Term> xorTerms = new List<Term>();
+                    for (int i = 0; i < terms.Count - 1; i++)
+                    {
+                        xorTerms.Add(_context.MkXor(terms[i], terms[i + 1]));
+                    }
+                    statement = new Z3Statement(_context.MkAnd(xorTerms.ToArray()));
+                    break;
+                case StatementTypes.Not:
+                    statement = new Z3Statement(_context.MkNot(terms[0]));
+                    break;
+                case StatementTypes.Implies:
+                    statement = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
+                    break;
+                case StatementTypes.Excludes:
+                    statement = new Z3Statement(_context.MkNot(_context.MkAnd(terms[0], terms[1])));
+                    break;
+                case StatementTypes.Equivalence:
+                    statement = new Z3Statement(_context.MkEq(terms[0], terms[1]));
+                    break;
+            }
+
+            return statement;
+        }
+        public ISolverStatement CreateStatement(StatementTypes type, string varID, ISolverStatement rightStatement)
+        {
+            //Get the terms 
+            Term varTerm = _variables[varID];
+            Term rightStatementTerm = ((Z3Statement)rightStatement).Term;
+
+            //Create a new Statement
+            ISolverStatement statement = null;
+            switch (type)
+            {
+                case StatementTypes.And:
+                    statement = new Z3Statement(_context.MkAnd(varTerm, rightStatementTerm));
+                    break;
+                case StatementTypes.Or:
+                    statement = new Z3Statement(_context.MkOr(varTerm, rightStatementTerm));
+                    break;
+                case StatementTypes.Xor:
+                    statement = new Z3Statement(_context.MkXor(varTerm, rightStatementTerm));
+                    break;
+                case StatementTypes.Implies:
+                    statement = new Z3Statement(_context.MkImplies(varTerm, rightStatementTerm));
+                    break;
+                case StatementTypes.Excludes:
+                    statement = new Z3Statement(_context.MkNot(_context.MkAnd(varTerm, rightStatementTerm)));
+                    break;
+                case StatementTypes.Equivalence:
+                    Z3Statement substatement1 = new Z3Statement(_context.MkImplies(varTerm, rightStatementTerm));
+                    Z3Statement substatement2 = new Z3Statement(_context.MkImplies(rightStatementTerm, varTerm));
+                    statement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
+                    break;
+
+            }
+
+            return statement;
+        }
+        public void AssumeBoolVarValue(string varID, bool value, AssumptionTypes madeBy)
+        {
+            //Create a backtracking point
+            _context.Push();
+
+            //Get the variable and a representation of the desired Bool value
             Term variable = _variables[varID];
             Term newValue = null;
             switch (value)
@@ -102,51 +238,34 @@ namespace BLL.SolverEngines
                     break;
             }
 
-            //
+            //Assert
             Term statement = _context.MkEq(variable, newValue);
             _context.AssertCnstr(statement);
 
-            //
-            _valueAssumptions.Add(varID, statement);
+            //Add to the corresponding list
+            switch (madeBy)
+            {
+                case AssumptionTypes.Solver:
+                    _userValueAssumptions.Add(varID, statement);
+                    break;
+                case AssumptionTypes.User:
+                    _solverValueAssumptions.Add(varID, statement);
+                    break;
+            }
+
         }
-        public void AddConstraint(ConstraintTypes type, params string[] varIDs)
+        public void RemoveLastAssumption(string varID)
         {
-            //Get the Terms corresponding to the varIDs
-            List<Term> terms = new List<Term>();
-            foreach (string varID in varIDs)
+            if (_userValueAssumptions.ContainsKey(varID))
             {
-                Term variable = _variables[varID];
-                terms.Add(variable);
+                _userValueAssumptions.Remove(varID);
             }
-
-            //Create a new Constraint
-            List<Term> statements = new List<Term>();
-            switch (type)
+            else if (_solverValueAssumptions.ContainsKey(varID))
             {
-                case ConstraintTypes.And:
-                    statements.Add(_context.MkAnd(terms[0], terms[1]));
-                    break;
-                case ConstraintTypes.Implies:
-                    statements.Add(_context.MkImplies(terms[0], terms[1]));
-                    break;
-
-                case ConstraintTypes.MutualImplication:
-                    statements.Add(_context.MkImplies(terms[0], terms[1]));
-                    statements.Add(_context.MkImplies(terms[1], terms[0]));
-                    break;
+                _solverValueAssumptions.Remove(varID);
             }
-
-            //Assert statements
-            foreach (Term statement in statements)
-            {
-                _context.AssertCnstr(statement);
-
-            }
-
-            //Keep track of the constraint added
-            _constraints.Add(statements);
+            _context.Pop();
         }
-
         #endregion
     }
     public class Z3Solution : ISolverSolution
@@ -205,5 +324,25 @@ namespace BLL.SolverEngines
             return _variableValues;
         }
         #endregion
+    }
+    public class Z3Statement : ISolverStatement
+    {
+        //Fields
+        Term _term;
+
+
+        //Properties
+        public Term Term
+        {
+            get { return _term; }
+            set { _term = value; }
+        }
+
+
+        //Constructor
+        public Z3Statement(Term term)
+        {
+            _term = term;
+        }
     }
 }

@@ -199,6 +199,7 @@
           <Property Name="FeatureID" Type="int" Nullable="false" />
           <Property Name="SelectionStateID" Type="int" Nullable="false" />
           <Property Name="Disabled" Type="bit" />
+          <Property Name="ToggledByUser" Type="bit" />
         </EntityType>
         <EntityType Name="GroupRelation_Types">
           <Key>
@@ -377,7 +378,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_FeatureGroups_Models">
-          <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1" />
+          <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="GroupRelations" Type="OpenConfigurator_Model.Store.GroupRelations" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Models">
@@ -1010,6 +1013,7 @@
           <NavigationProperty Name="Configuration" Relationship="OpenConfigurator_Model.FK_FeatureSelections_Configurations" FromRole="FeatureSelection" ToRole="Configuration" />
           <NavigationProperty Name="SelectionState" Relationship="OpenConfigurator_Model.FK_FeatureSelections_SelectionStates" FromRole="FeatureSelection" ToRole="SelectionState" />
           <NavigationProperty Name="Feature" Relationship="OpenConfigurator_Model.FK_FeatureSelections_Features" FromRole="FeatureSelection" ToRole="Feature" />
+          <Property Type="Boolean" Name="ToggledByUser" />
         </EntityType>
         <EntityType Name="SelectionState">
           <Key>
@@ -1248,6 +1252,7 @@
           <EntitySetMapping Name="FeatureSelections">
             <EntityTypeMapping TypeName="OpenConfigurator_Model.FeatureSelection">
               <MappingFragment StoreEntitySet="FeatureSelections">
+                <ScalarProperty Name="ToggledByUser" ColumnName="ToggledByUser" />
                 <ScalarProperty Name="Disabled" ColumnName="Disabled" />
                 <ScalarProperty Name="SelectionStateID" ColumnName="SelectionStateID" />
                 <ScalarProperty Name="FeatureID" ColumnName="FeatureID" />

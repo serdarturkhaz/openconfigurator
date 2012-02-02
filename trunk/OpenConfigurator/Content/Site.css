@@ -1094,7 +1094,6 @@ a:hover
 #StandardViewBox .Entry > .FeatureControl .InnerFeatureArea:hover
 {
     background: #D7E1FF !important;
-    
 }
 #StandardViewBox .Entry> .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
 {
@@ -1269,13 +1268,13 @@ a:hover
 /*Selected-Disabled*/
 #StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea
 {
-     background: #F4F4F4;
-    border: 1px solid #EAEAEA;
+    background: #DFE8FF;
+    border: solid 1px #D7D7D7 !important;
 }
-#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea : hover
+#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea:hover
 {
-    background: #F4F4F4;
-    border: 1px solid #EAEAEA;
+    background: #DFE8FF !important;
+    border: solid 1px #CECECE !important;
 }
 #StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
 {
@@ -1286,6 +1285,24 @@ a:hover
     color: black;
 }
 
-
+/*Deselected-Disabled*/
+#StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea
+{
+     background: #F4F4F4;
+     border: solid 1px #D7D7D7 !important;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea:hover
+{
+    background: #F4F4F4 !important;
+    border: solid 1px #CECECE !important;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-deselected-disabled.png) no-repeat center center;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel 
+{
+    color: black;
+}
 /*------------------------------------------------------------------------------*/
 /***********************************************************************************************/

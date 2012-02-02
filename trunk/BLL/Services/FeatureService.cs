@@ -11,6 +11,7 @@ namespace BLL.Services
     {
         //Fields
         private IRepository<DAL.DataEntities.Feature> _FeatureRepository;
+        private IRepository<DAL.DataEntities.FeatureSelection> _FeatureSelectionRepository;
         private IRepository<DAL.DataEntities.Attribute> _AttributeRepository;
         private int _LoggedInUserID;
 
@@ -117,6 +118,20 @@ namespace BLL.Services
             using (_FeatureRepository = new GenericRepository<DAL.DataEntities.Feature>())
             {
                 feature = _FeatureRepository.SingleOrDefault(m => m.ID == id);
+
+                //Cascade delete on all related FeatureSelections
+                using (_FeatureSelectionRepository = new GenericRepository<DAL.DataEntities.FeatureSelection>())
+                {
+                    IEnumerable<DAL.DataEntities.FeatureSelection> featureSelections = _FeatureSelectionRepository.Find(k => k.FeatureID == feature.ID);
+                    foreach (DAL.DataEntities.FeatureSelection featureSelection in featureSelections)
+                    {
+                        _FeatureSelectionRepository.Delete(featureSelection);
+                    }
+
+                    _FeatureSelectionRepository.SaveChanges();
+                }
+
+                //
                 _FeatureRepository.Delete(feature);
                 _FeatureRepository.SaveChanges();
             }
