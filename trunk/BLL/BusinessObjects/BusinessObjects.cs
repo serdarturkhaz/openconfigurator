@@ -1362,6 +1362,20 @@ namespace BLL.BusinessObjects
                 _innerEntity.Disabled = value;
             }
         }
+        public bool? ToggledByUser
+        {
+            get
+            {
+                if (_innerEntity.ToggledByUser != null)
+                    return _innerEntity.ToggledByUser;
+                else
+                    return false;
+            }
+            set
+            {
+                _innerEntity.ToggledByUser = value;
+            }
+        }
         public List<BLL.BusinessObjects.AttributeValue> AttributeValues
         {
             get
@@ -1389,6 +1403,8 @@ namespace BLL.BusinessObjects
 
             //
             featureSelection.SelectionState = FeatureSelectionStates.Unselected;
+            featureSelection.Disabled = false;
+            featureSelection.ToggledByUser = false;
 
             //Return the object instance
             return featureSelection;

@@ -81,6 +81,12 @@ namespace DAL.DataEntities
             get;
             set;
         }
+    
+        public virtual Nullable<bool> ToggledByUser
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Navigation Properties

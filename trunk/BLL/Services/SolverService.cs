@@ -13,116 +13,168 @@ namespace BLL.Services
     {
         //Fields
         ISolverEngine _engine;
-        ISolverContext _context;
 
         //Constructors
-        public SolverService(BLL.BusinessObjects.Model model)
+        public SolverService()
         {
             //Create a new SolverEngine
             _engine = new Z3Engine();
-            _context = _engine.InitNewContext();
+        }
 
+        //Private methods
+        private ISolverContext InitializeContextFromModel(BusinessObjects.Model model, ref ISolverContext context)
+        {
             //Loop through Features
             foreach (BLL.BusinessObjects.Feature feature in model.Features)
             {
-                _context.AddBoolVariable(feature.ID.ToString(), feature.Name);
+                context.AddBoolVariable(feature.ID.ToString(), feature.Name);
             }
 
             //Loop through Relations
+            List<ISolverStatement> statementsList = new List<ISolverStatement>();
             foreach (BLL.BusinessObjects.Relation relation in model.Relations)
             {
                 switch (relation.RelationType)
                 {
                     case BusinessObjects.RelationTypes.Mandatory:
-                        _context.AddConstraint(ConstraintTypes.MutualImplication, relation.ParentFeatureID.ToString(), relation.ChildFeatureID.ToString());
+                        ISolverStatement equivalence1 = context.CreateStatement(StatementTypes.Equivalence, relation.ParentFeatureID.ToString(), relation.ChildFeatureID.ToString());
+                        context.AddConstraint(equivalence1);
                         break;
                     case BusinessObjects.RelationTypes.Optional:
-                        _context.AddConstraint(ConstraintTypes.Implies, relation.ChildFeatureID.ToString(), relation.ParentFeatureID.ToString());
+                        ISolverStatement implication1 = context.CreateStatement(StatementTypes.Implies, relation.ChildFeatureID.ToString(), relation.ParentFeatureID.ToString());
+                        context.AddConstraint(implication1);
+                        break;
+                }
+            }
+
+            //Loop through GroupRelations
+            foreach (BLL.BusinessObjects.GroupRelation groupRelation in model.GroupRelations)
+            {
+                switch (groupRelation.GroupRelationType)
+                {
+                    case BusinessObjects.GroupRelationTypes.OR:
+                        ISolverStatement innerOr1 = context.CreateStatement(StatementTypes.Or, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                        ISolverStatement equivalence1 = context.CreateStatement(StatementTypes.Equivalence, groupRelation.ParentFeatureID.ToString(), innerOr1);
+                        context.AddConstraint(equivalence1);
+                        break;
+                    case BusinessObjects.GroupRelationTypes.XOR:
+                        ISolverStatement xor1 = context.CreateStatement(StatementTypes.Xor, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                        ISolverStatement implication1 = context.CreateStatement(StatementTypes.Implies, groupRelation.ParentFeatureID.ToString(), xor1);
+                        context.AddConstraint(implication1);
+                        break;
+                }
+            }
+
+            //Loop through CompositionRules
+            foreach (BLL.BusinessObjects.CompositionRule compositionRule in model.CompositionRules)
+            {
+                switch (compositionRule.CompositionRuleType)
+                {
+                    case BusinessObjects.CompositionRuleTypes.Dependency:
+                        ISolverStatement implication1 = context.CreateStatement(StatementTypes.Implies, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+                        context.AddConstraint(implication1);
+                        break;
+                    case BusinessObjects.CompositionRuleTypes.MutualDependency:
+                        ISolverStatement equivalence1 = context.CreateStatement(StatementTypes.Equivalence, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+                        context.AddConstraint(equivalence1);
+                        break;
+                    case BusinessObjects.CompositionRuleTypes.MutualExclusion:
+                        ISolverStatement exclusion1 = context.CreateStatement(StatementTypes.Excludes, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+                        context.AddConstraint(exclusion1);
                         break;
                 }
             }
 
             //The root feature must always be selected as default
-            _context.AssumeBoolVarValue(model.Features[0].ID.ToString(), true);
+            context.AssumeBoolVarValue(model.Features[0].ID.ToString(), true, AssumptionTypes.User);
 
-            ISolverSolution solution = _engine.GetSolution();
-            Dictionary<string, bool?> dict = solution.GetAllVariableValues();
-        }
-        public SolverService(ISolverContext context)
-        {
-            _context = context;
-            _engine = new Z3Engine(_context);
+            return context;
         }
 
-        //Properties
-        public ISolverContext Context
+        //Public methods  
+        public ISolverContext CreateNewContext(BusinessObjects.Model model)
         {
-            get
+            ISolverContext context = _engine.CreateBlankContext();
+            InitializeContextFromModel(model,ref context);
+
+            return context;
+        }
+        public void GetInitialSelections(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+        {
+            //Loop through all FeatureSelections
+            foreach (BLL.BusinessObjects.FeatureSelection featureSelection in featureSelections)
             {
-                return _context;
+                //For those which the user has not set
+                if (featureSelection.ToggledByUser == false)
+                {
+                    bool CanBeTrue = _engine.CheckSolutionExists(context, featureSelection.FeatureID.ToString(), true);
+                    bool CanBeFalse = _engine.CheckSolutionExists(context, featureSelection.FeatureID.ToString(), false);
+
+                    //Cannot be true nor false
+                    if (!CanBeFalse && !CanBeTrue)
+                    {
+                        throw new Exception("Unsatisafiable assumption!");
+                    }
+                    //Cannot be true
+                    else if (!CanBeTrue)
+                    {
+                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Deselected;
+                        featureSelection.Disabled = true;
+                    }
+                    //Cannot be false
+                    else if (!CanBeFalse)
+                    {
+                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
+                        featureSelection.Disabled = true;
+                    }
+                    //Can be true or false
+                    else if (CanBeFalse && CanBeTrue)
+                    {
+                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
+                        featureSelection.Disabled = false;
+                    }
+                }
             }
         }
-
-        //Methods
-        public List<BLL.BusinessObjects.FeatureSelection> GetInitialSelections()
+        public void GetValidSelections(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
-            ISolverSolution solution = _engine.GetSolution();
-
-            return null;
-        }
-        public List<BLL.BusinessObjects.FeatureSelection> GetConsequences(int modelID, BLL.BusinessObjects.FeatureSelection featureSelection)
-        {
-
-            return null;
-        }
-        
-       /* public void TestMethod()
-        {
-            using (Config config = new Config())
+            //Loop through all FeatureSelections
+            foreach (BLL.BusinessObjects.FeatureSelection featureSelection in featureSelections)
             {
-                config.SetParamValue("MODEL", "true"); // corresponds to /m switch 
-
-                using (Context context = new Context(config))
+                //For those which the user has not set
+                if (featureSelection.ToggledByUser == false)
                 {
-                    Term root = context.MkConst("root", context.MkBoolSort());
-                    Term b = context.MkConst("b", context.MkBoolSort());
-                    Term c = context.MkConst("c", context.MkBoolSort());
+                    bool CanBeTrue = _engine.CheckSolutionExists(context, featureSelection.FeatureID.ToString(), true);
+                    bool CanBeFalse = _engine.CheckSolutionExists(context, featureSelection.FeatureID.ToString(), false);
 
-                    //Term xor = context.MkOr(a, b);
-                    Term Relation1 = context.MkAnd(root, b);
-                    Term Relation2 = context.MkImplies(b, c);
-
-                    //
-                    context.AssertCnstr(Relation1);
-                    context.AssertCnstr(Relation2);
-
-                    //Assert a = true
-                    //Term aTrue = context.MkEq(a, context.MkTrue());
-                    context.AssertCnstr(Relation2);
-
-                    Model model = null;
-                    LBool result = context.CheckAndGetModel(out model);
-                    Console.WriteLine(result);
-
-
-                    if (model != null)
+                    //Cannot be true nor false
+                    if (!CanBeFalse && !CanBeTrue)
                     {
-                        using (model)
-                        {
-                            Term r2 = model.Eval(b);
-                            Term r3 = model.Eval(c);
-
-                            //bool aVal = model.GetBoolValueBool(model.Eval(a));
-                            //bool bVal = model.GetBoolValueBool(model.Eval(b));
-                            //Console.WriteLine("a = {0}, b = {1}", aVal, bVal);
-                        }
+                        throw new Exception("Unsatisfiable assumption!");
+                    }
+                    //Cannot be true
+                    else if (!CanBeTrue)
+                    {
+                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Deselected;
+                        featureSelection.Disabled = true;
+                    }
+                    //Cannot be false
+                    else if (!CanBeFalse)
+                    {
+                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
+                        featureSelection.Disabled = true;
+                    }
+                    //Can be true or false
+                    else if (CanBeFalse && CanBeTrue)
+                    {
+                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
+                        featureSelection.Disabled = false;
                     }
                 }
             }
 
-
         }
-        */
+
     }
 
 

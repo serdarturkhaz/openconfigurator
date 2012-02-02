@@ -262,16 +262,17 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
     //Public methods
     this.LoadData = function (onFinished) {
 
-        //Lookup tables
-        var featureIDsToFeatureSelections = {}, attributeIDsToAttributeValues = {};
-
-        //Load Configuration data
+        //Load data
         $.ajax({
-            url: "/ConfigurationEditor/LoadConfiguration",
+            url: "/ConfigurationEditor/LoadData",
             data: JSON.stringify({ configurationID: _configurationID }),
             async: false,
             success: function (response) {
-                _configuration = response;
+                _configuration = response[0];
+                _model = response[1];
+
+                //Lookup tables
+                var featureIDsToFeatureSelections = {}, attributeIDsToAttributeValues = {};
 
                 //Load FeatureSelections
                 for (var i = 0; i < _configuration.FeatureSelections.length; i++) {
@@ -301,16 +302,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                     }
                     //-------------------------------------------------------------------------------------------
                 }
-            }
-        });
-
-        //Load Model data
-        $.ajax({
-            url: "/ConfigurationEditor/LoadModel",
-            data: JSON.stringify({ modelID: _configuration.ModelID }),
-            async: false,
-            success: function (response) {
-                _model = response;
 
                 //Load Features
                 for (var i = 0; i < _model.Features.length; i++) {
@@ -327,13 +318,15 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                     //Set references-----------------------------------------------------------------------------------------
                     var featureSelectionClientObject = null;
                     var featureSelectionGUID = featureIDsToFeatureSelections[feature.ID];
-                    if (featureSelectionGUID != undefined) {
-                        featureSelectionClientObject = _thisConfigurationDataModel.GetByGUID(featureSelectionGUID);
-                    } else {
-                        //If a featureSelection doesn't already exist, create one
-                        featureSelectionClientObject = _thisConfigurationDataModel.CreateDefaultClientObject("featureSelection", { FeatureID: feature.ID });
-                        _thisConfigurationDataModel.RegisterClientObject(featureSelectionClientObject);
-                    }
+                    featureSelectionClientObject = _thisConfigurationDataModel.GetByGUID(featureSelectionGUID);
+                    //                    if (featureSelectionGUID != undefined) {
+                    //                        featureSelectionClientObject = _thisConfigurationDataModel.GetByGUID(featureSelectionGUID);
+                    //                    } 
+                    //                    else {
+                    //                        //If a FeatureSelection doesn't already exist, create one
+                    //                        featureSelectionClientObject = _thisConfigurationDataModel.CreateDefaultClientObject("featureSelection", { FeatureID: feature.ID });
+                    //                        _thisConfigurationDataModel.RegisterClientObject(featureSelectionClientObject);
+                    //                    }
 
                     //Set Feature and FeatureSelection references
                     featureClientObject.FeatureSelection = featureSelectionClientObject;
@@ -420,16 +413,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                         break;
                     }
                 }
-            }
-        });
-
-        //Load initial FeedBack
-        $.ajax({
-            url: "/ConfigurationEditor/SolverFeedback",
-            data: JSON.stringify({ modelID: _configuration.ModelID }),
-            async: false,
-            success: function (response) {
-
             }
         });
 
@@ -652,7 +635,7 @@ var StandardView = function (container, configurationDataModelInstance) {
     var _thisStandardView = this;
 
     //UIObjects & Defaults/Settings
-    var UIFeature = function (clientObjectGUID, isRoot, initialState, name, description) {
+    var UIFeature = function (clientObjectGUID, isRoot, initialState, name, description, disabled) {
 
         //Fields
         var _outerElement = null;
@@ -667,6 +650,7 @@ var StandardView = function (container, configurationDataModelInstance) {
             childFeaturesArea: null
         };
         var _currentState = initialState;
+        var _disabled = disabled;
         var _parent = null, _children = [], _UIAttributes = [];
         var _name = name, _description = description == null ? "" : description, _isRoot = isRoot;
         var _thisUIConfigurationFeature = this;
@@ -690,9 +674,23 @@ var StandardView = function (container, configurationDataModelInstance) {
                 toggleFeatureSelection(_thisUIConfigurationFeature);
             });
         }
+        function makeUnToggleable() {
+            _innerElements.innerFeatureArea.unbind("click");
+        }
         function changeState(state) {
             _currentState = state;
             _innerElements.entry.attr("featureSelectionState", _currentState);
+        }
+        function setDisabled(disabledBool) {
+            if (disabledBool == true) { //Disable
+                makeUnToggleable();
+                _innerElements.entry.attr("isdisabled", true);
+            } else if (disabledBool == false && _disabled == true) { //Enable
+                makeToggleable();
+                innerElements.entry.removeAttr("isdisabled");
+            }
+
+            _disabled = disabledBool;
         }
         function createAttributeHTML(attribute, attributeValue) {
 
@@ -775,13 +773,17 @@ var StandardView = function (container, configurationDataModelInstance) {
             if (_parent != null)
                 _parent.RefreshGraphicalRepresentation();
             makeToggleable();
+            if (_disabled == true) {
+                setDisabled(true);
+            }
         }
         this.RefreshGraphicalRepresentation = function () {
             _innerElements.childFeaturesArea.children(".Entry").removeAttr("last");
             _innerElements.childFeaturesArea.children(".Entry:last").attr("last", "last");
         }
-        this.Update = function (newSelectionState) {
+        this.Update = function (newSelectionState, newDisabledState) {
             changeState(newSelectionState);
+            setDisabled(newDisabledState);
         }
         this.AddChild = function (UIConfigurationElement) {
             _children.push(UIConfigurationElement);
@@ -935,20 +937,24 @@ var StandardView = function (container, configurationDataModelInstance) {
         var featureClientObject = _configurationDataModel.GetByGUID(UIFeature.ClientObjectGUID);
         var featureSelectionClientObject = featureClientObject.FeatureSelection;
 
-        //Set its SelectionState field
+        //Set its SelectionState and ToggledByUser fields
+        _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "ToggledByUser", true);
         var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
         switch (currentSelectionState) {
-            //Unselected                                                                                                                                                                             
+
+            //Unselected -> Selected                                                                                                                                                                                       
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
-            //Selected                                                                                                                                                                              
+
+            //Selected -> Unselected                  
             case systemDefaults.enums.featureSelectionStates.selected.name:
-                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.deselected.id);
-                break;
-            //Deselected                                                                                                                                                                               
-            case systemDefaults.enums.featureSelectionStates.deselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
+                break;
+
+            //Deselected -> Selected                  
+            case systemDefaults.enums.featureSelectionStates.deselected.name:
+                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
         }
     }
@@ -984,7 +990,7 @@ var StandardView = function (container, configurationDataModelInstance) {
         var attributes = clientObject.Attributes;
 
         //Create the Feature --------------------------------------------------------------------------
-        var UIfeature = new UIFeature(clientObject.GUID, isRoot, selectionState, clientObject.GetField("Name"), clientObject.GetField("Description"), clientObject.GetField("Attributes"), attributeValues);
+        var UIfeature = new UIFeature(clientObject.GUID, isRoot, selectionState, clientObject.GetField("Name"), clientObject.GetField("Description"), featureSelectionClientObject.GetField("Disabled"));
         if (!isRoot) {
             parentUIConfigurationElement.AddChild(UIfeature); //add to parent if it has one
         }
@@ -992,7 +998,7 @@ var StandardView = function (container, configurationDataModelInstance) {
         _UIElements[clientObject.GUID] = UIfeature;
 
         //Create its Attributes
-        if (attributes > 0) {
+        if (attributes.length > 0) {
             _innerElements.attributesArea = $("<div class='AttributesArea' ></div>").appendTo(_outerElement);
         }
         for (var i = 0; i < attributes.length; i++) {
