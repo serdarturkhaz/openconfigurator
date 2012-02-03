@@ -1236,7 +1236,7 @@ a:hover
 }
 #StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl  .ChildFeaturesArea
 {
-    display:none;
+    /*display:none;*/
 }
 /*Deselected*/
 #StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea
@@ -1262,7 +1262,7 @@ a:hover
 }
 #StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl  .ChildFeaturesArea
 {
-    display:none;
+    /*display:none;*/
 }
 
 /*Selected-Disabled*/

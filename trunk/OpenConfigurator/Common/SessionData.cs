@@ -24,8 +24,8 @@ namespace PresentationLayer.Common
             }
         }
 
-        //SessionModels
-        public static Dictionary<int, ISolverContext> SolverContexts //One SolverContext per ModelID
+        //SolverContexts
+        public static Dictionary<int, ISolverContext> SolverContexts //One SolverContext per ConfigurationID
         {
             get
             {
@@ -33,11 +33,19 @@ namespace PresentationLayer.Common
                     HttpContext.Current.Session["SolverContexts"] = new Dictionary<int, ISolverContext>();
 
                 return (Dictionary<int, ISolverContext>)HttpContext.Current.Session["SolverContexts"];
-
             }
-
         }
 
+        //FeatureSelection collections
+        public static Dictionary<int, List<BLL.BusinessObjects.FeatureSelection>> FeatureSelections //One FeatureSelection list per ConfigurationID
+        {
+            get
+            {
+                if (HttpContext.Current.Session["FeatureSelections"] == null)
+                    HttpContext.Current.Session["FeatureSelections"] = new Dictionary<int, List<BLL.BusinessObjects.FeatureSelection>>();
 
+                return (Dictionary<int, List<BLL.BusinessObjects.FeatureSelection>>)HttpContext.Current.Session["FeatureSelections"];
+            }
+        }
     }
 }
