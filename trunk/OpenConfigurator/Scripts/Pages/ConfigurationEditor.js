@@ -233,6 +233,10 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         attributes: {},
         attributeValues: {}
     }
+    var _lookupTables = {
+        featureIDsToFeatureSelections: {},
+        attributeIDsToAttributeValues: {}
+    }
     var _configurationID = configurationID;
     var _configuration = null, _model = null, _rootFeatureGUID = null, _configurationName = configurationName;
     var _thisConfigurationDataModel = this;
@@ -253,7 +257,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
 
     //Constructor/Initalizers
     this.Initialize = function () {
-
+        internalFeatureSelectionToggled.Add(new EventHandler(onInternalFeatureSelectionToggled));
     }
     this.GetRootGUID = function () {
         return _rootFeatureGUID;
@@ -271,9 +275,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                 _configuration = response[0];
                 _model = response[1];
 
-                //Lookup tables
-                var featureIDsToFeatureSelections = {}, attributeIDsToAttributeValues = {};
-
                 //Load FeatureSelections
                 for (var i = 0; i < _configuration.FeatureSelections.length; i++) {
 
@@ -284,7 +285,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
 
                     //Place the featureSelection in a lookup table, with its FeatureID as key
                     var featureID = featureSelectionClientObject.GetField("FeatureID");
-                    featureIDsToFeatureSelections[featureID] = featureSelectionClientObject.GUID;
+                    _lookupTables.featureIDsToFeatureSelections[featureID] = featureSelectionClientObject.GUID;
 
                     //Load AttributeValues-----------------------------------------------------------------------
                     for (var j = 0; j < featureSelection.AttributeValues.length; j++) {
@@ -298,7 +299,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
 
                         //Place the attributeValue in a lookup table, with its AttributeID as key
                         var attributeID = attributeValueClientObject.GetField("AttributeID");
-                        attributeIDsToAttributeValues[attributeID] = attributeValueClientObject.GUID;
+                        _lookupTables.attributeIDsToAttributeValues[attributeID] = attributeValueClientObject.GUID;
                     }
                     //-------------------------------------------------------------------------------------------
                 }
@@ -317,7 +318,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
 
                     //Set references-----------------------------------------------------------------------------------------
                     var featureSelectionClientObject = null;
-                    var featureSelectionGUID = featureIDsToFeatureSelections[feature.ID];
+                    var featureSelectionGUID = _lookupTables.featureIDsToFeatureSelections[feature.ID];
                     featureSelectionClientObject = _thisConfigurationDataModel.GetByGUID(featureSelectionGUID);
                     //                    if (featureSelectionGUID != undefined) {
                     //                        featureSelectionClientObject = _thisConfigurationDataModel.GetByGUID(featureSelectionGUID);
@@ -341,7 +342,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
 
                         //Get the related AttributeValue
                         var attributeValueClientObject = null;
-                        var attributeValueGUID = attributeIDsToAttributeValues[attribute.ID];
+                        var attributeValueGUID = _lookupTables.attributeIDsToAttributeValues[attribute.ID];
                         if (attributeValueGUID != undefined) {
                             attributeValueClientObject = _thisConfigurationDataModel.GetByGUID(attributeValueGUID);
                         } else {
@@ -539,24 +540,58 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
     this.GetModelID = function () {
         return _model.ID;
     }
-    this.UpdateClientObject = function (guid, modifiedBusinessDataObject) {
+    this.GetConfigurationID = function () {
+        return _configuration.ID;
+    }
+    this.UpdateClientObject = function (guid, modifiedBusinessObject) {
 
         //Update the whole businessDataObject
-        _dataClientObjects.all[guid].UpdateBusinessDataObject(modifiedBusinessDataObject);
+        _clientObjects.all[guid].UpdateBusinessObject(modifiedBusinessObject);
 
         //Raise events
         _thisConfigurationDataModel.ClientObjectUpdated.RaiseEvent(guid);
     }
     this.UpdateClientObjectField = function (guid, fieldName, value) {
-        _clientObjects.all[guid].SetField(fieldName, value);
 
         //Raise events
-        _thisConfigurationDataModel.ClientObjectUpdated.RaiseEvent(guid);
+        var clientObject = _clientObjects.all[guid];
+        var type = clientObject.GetType();
+        if (type == "featureSelection" && fieldName == "SelectionState") {
+            //Event when a FeatureSelection was toggled
+            var featureID = _clientObjects.all[guid].GetField("FeatureID");
+            internalFeatureSelectionToggled.RaiseEvent([guid, featureID, value]);
+        }
+        else {
+            //Normal event
+            _clientObjects.all[guid].SetField(fieldName, value);
+            _thisConfigurationDataModel.ClientObjectUpdated.RaiseEvent(guid);
+        }
     }
 
     //Events
     this.ClientObjectsLoaded = new Event();
     this.ClientObjectUpdated = new Event();
+    var internalFeatureSelectionToggled = new Event();
+
+    //Eventhandlers
+    var onInternalFeatureSelectionToggled = function (featureSelectionGUID, featureID, selectionState) {
+        $.ajax({
+            url: "/ConfigurationEditor/ToggleFeature",
+            data: JSON.stringify({ configurationID: _configuration.ID, FeatureID: featureID, newState: selectionState }),
+            async: false,
+            success: function (response) {
+                var featureSelections = response;
+                if (featureSelections != false) {
+                    for (var guidkey in featureSelections) {
+                        var updatedFeatureSelectionBusinessObj = featureSelections[guidkey];
+
+                        var existingClientFeatureSelectionGUID = _lookupTables.featureIDsToFeatureSelections[updatedFeatureSelectionBusinessObj.FeatureID];
+                        _thisConfigurationDataModel.UpdateClientObject(existingClientFeatureSelectionGUID, updatedFeatureSelectionBusinessObj);
+                    }
+                }
+            }
+        });
+    }
 }
 var ClientController = function (standardViewContainer, configurationNameTextbox, configurationDataModelInstance) {
 
@@ -574,7 +609,7 @@ var ClientController = function (standardViewContainer, configurationNameTextbox
         $(window).unload(function () {
             $.ajax({
                 url: "/ConfigurationEditor/ClearSessionContext",
-                data: JSON.stringify({ modelID: _configurationDataModel.GetModelID() }),
+                data: JSON.stringify({ configurationID: _configurationDataModel.GetConfigurationID() }),
                 async: false,
                 success: function (response) {
 
@@ -942,17 +977,17 @@ var StandardView = function (container, configurationDataModelInstance) {
         var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
         switch (currentSelectionState) {
 
-            //Unselected -> Selected                                                                                                                                                                                       
+            //Unselected -> Selected                                                                                                                                                                                            
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
 
-            //Selected -> Unselected                  
+            //Selected -> Unselected                       
             case systemDefaults.enums.featureSelectionStates.selected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
                 break;
 
-            //Deselected -> Selected                  
+            //Deselected -> Selected                       
             case systemDefaults.enums.featureSelectionStates.deselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
@@ -972,7 +1007,9 @@ var StandardView = function (container, configurationDataModelInstance) {
                 var featureGUID = clientObject.Feature.GUID;
                 var UIElement = _UIElements[featureGUID];
                 var newSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, clientObject.GetField("SelectionState")).name;
-                UIElement.Update(newSelectionState);
+                var disabledState = clientObject.GetField("Disabled");
+
+                UIElement.Update(newSelectionState, disabledState);
                 break;
             case "attributeValue":
                 break;

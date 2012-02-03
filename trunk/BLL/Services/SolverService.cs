@@ -22,7 +22,7 @@ namespace BLL.Services
         }
 
         //Private methods
-        private ISolverContext InitializeContextFromModel(BusinessObjects.Model model, ref ISolverContext context)
+        private ISolverContext InitializeContextFromModel(ref ISolverContext context, BusinessObjects.Model model)
         {
             //Loop through Features
             foreach (BLL.BusinessObjects.Feature feature in model.Features)
@@ -85,9 +85,6 @@ namespace BLL.Services
                 }
             }
 
-            //The root feature must always be selected as default
-            context.AssumeBoolVarValue(model.Features[0].ID.ToString(), true, AssumptionTypes.User);
-
             return context;
         }
 
@@ -95,48 +92,35 @@ namespace BLL.Services
         public ISolverContext CreateNewContext(BusinessObjects.Model model)
         {
             ISolverContext context = _engine.CreateBlankContext();
-            InitializeContextFromModel(model,ref context);
+            InitializeContextFromModel(ref context, model);
 
             return context;
         }
-        public void GetInitialSelections(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+        public bool UserToggleSelection(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
         {
-            //Loop through all FeatureSelections
-            foreach (BLL.BusinessObjects.FeatureSelection featureSelection in featureSelections)
-            {
-                //For those which the user has not set
-                if (featureSelection.ToggledByUser == false)
-                {
-                    bool CanBeTrue = _engine.CheckSolutionExists(context, featureSelection.FeatureID.ToString(), true);
-                    bool CanBeFalse = _engine.CheckSolutionExists(context, featureSelection.FeatureID.ToString(), false);
-
-                    //Cannot be true nor false
-                    if (!CanBeFalse && !CanBeTrue)
-                    {
-                        throw new Exception("Unsatisafiable assumption!");
-                    }
-                    //Cannot be true
-                    else if (!CanBeTrue)
-                    {
-                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Deselected;
-                        featureSelection.Disabled = true;
-                    }
-                    //Cannot be false
-                    else if (!CanBeFalse)
-                    {
-                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
-                        featureSelection.Disabled = true;
-                    }
-                    //Can be true or false
-                    else if (CanBeFalse && CanBeTrue)
-                    {
-                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
-                        featureSelection.Disabled = false;
-                    }
-                }
+            //Set the bool value in the context and in the appropriate FeatureSelection
+            BLL.BusinessObjects.FeatureSelection fSelection = featureSelections.First(k => k.FeatureID == FeatureID);
+            
+            switch(newState) {
+                case BusinessObjects.FeatureSelectionStates.Selected: //Assert-decision
+                    context.AssumeBoolVarValue(FeatureID.ToString(), true, AssumptionTypes.User);
+                    fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
+                    fSelection.ToggledByUser = true;
+                    break;
+                case BusinessObjects.FeatureSelectionStates.Unselected: //Retract-decision
+                    context.ResetBoolVarValue(FeatureID.ToString());
+                    fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
+                    //fSelection.ToggledByUser = false;
+                    break;
             }
+
+            //Check whether the model is still satisfiable
+            bool decisionIsValid = GetValidSelections(context, ref featureSelections);
+
+            //
+            return decisionIsValid;
         }
-        public void GetValidSelections(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+        private bool GetValidSelections(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
             //Loop through all FeatureSelections
             foreach (BLL.BusinessObjects.FeatureSelection featureSelection in featureSelections)
@@ -150,7 +134,7 @@ namespace BLL.Services
                     //Cannot be true nor false
                     if (!CanBeFalse && !CanBeTrue)
                     {
-                        throw new Exception("Unsatisfiable assumption!");
+                        return false;
                     }
                     //Cannot be true
                     else if (!CanBeTrue)
@@ -172,6 +156,9 @@ namespace BLL.Services
                     }
                 }
             }
+
+            //
+            return true;
 
         }
 

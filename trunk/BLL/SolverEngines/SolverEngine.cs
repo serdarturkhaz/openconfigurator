@@ -19,6 +19,7 @@ namespace BLL.SolverEngines
         ISolverStatement CreateStatement(StatementTypes type, params string[] varIDs);
         ISolverStatement CreateStatement(StatementTypes type, string varID, ISolverStatement rightStatement);
         void AssumeBoolVarValue(string varID, bool value, AssumptionTypes madeBy);
+        void ResetBoolVarValue(string varID);
         void RemoveLastAssumption(string varID);
     }
     public interface ISolverSolution

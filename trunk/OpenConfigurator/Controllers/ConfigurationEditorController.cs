@@ -48,16 +48,14 @@ namespace PresentationLayer.Controllers
                     newFeatureSelection.FeatureID = feature.ID;
                     configuration.FeatureSelections.Add(newFeatureSelection);
                 }
-                //Default selection for the first feature
-                configuration.FeatureSelections[0].ToggledByUser = true;
-                configuration.FeatureSelections[0].Disabled = true;
-                configuration.FeatureSelections[0].SelectionState = BLL.BusinessObjects.FeatureSelectionStates.Selected;
             }
             //Create new FeatureSelections for newly created Features
-            else if(configuration.FeatureSelections.Count < model.Features.Count) {
+            else if (configuration.FeatureSelections.Count < model.Features.Count)
+            {
                 foreach (BLL.BusinessObjects.Feature feature in model.Features)
                 {
-                    if(configuration.FeatureSelections.FirstOrDefault(k => k.FeatureID== feature.ID) == null) {
+                    if (configuration.FeatureSelections.FirstOrDefault(k => k.FeatureID == feature.ID) == null)
+                    {
                         BLL.BusinessObjects.FeatureSelection newFeatureSelection = BLL.BusinessObjects.FeatureSelection.CreateDefault();
                         newFeatureSelection.FeatureID = feature.ID;
                         configuration.FeatureSelections.Add(newFeatureSelection);
@@ -65,31 +63,56 @@ namespace PresentationLayer.Controllers
                 }
             }
 
-            //Determine their selection states based on the mathematical representation of the Model
-            GetInitialFeedBack(model, configuration.FeatureSelections);
+            //Toggle the root Feature and get the initial Configuration state of all the other Features
+            ToggleFeature(configuration.ID, model, configuration.FeatureSelections, model.Features[0].ID, BLL.BusinessObjects.FeatureSelectionStates.Selected);
 
             //
             return result;
         }
 
-        //
-        private void GetInitialFeedBack(BLL.BusinessObjects.Model model, List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+
+        //Method to be called on LoadData
+        private void ToggleFeature(int configurationID, BLL.BusinessObjects.Model model, List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
         {
             //Setup Solver and Context
             ISolverContext context = null;
-            SolverService solverService= new SolverService();
-            if (SessionData.SolverContexts.ContainsKey(model.ID))
+            SolverService solverService = new SolverService();
+            context = solverService.CreateNewContext(model);
+            SessionData.SolverContexts[configurationID] = context;
+            SessionData.FeatureSelections[configurationID] = featureSelections;
+
+            //Get the implicit selections for the other features
+            bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, newState);
+        }
+
+        //Method to be called whenever a feature is toggled by the User from the UI
+        [Authorize]
+        public JsonNetResult ToggleFeature(int configurationID, int FeatureID, int newState)
+        {
+            //Data return wrapper
+            JsonNetResult result = new JsonNetResult();
+
+            //Setup Solver and Context
+            ISolverContext context = context = SessionData.SolverContexts[configurationID];
+            List<BLL.BusinessObjects.FeatureSelection> featureSelections = SessionData.FeatureSelections[configurationID];
+            SolverService solverService = new SolverService();
+
+            //Get the implicit selections for the other features
+            BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
+            bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, selectionState);
+
+
+            //Return
+            if (selectionValid)
             {
-                context = SessionData.SolverContexts[model.ID];
+                result.Data = featureSelections.ToDictionary(g => g.FeatureID, k => k);
             }
             else
             {
-                context = solverService.CreateNewContext(model);
-                SessionData.SolverContexts[model.ID] = context;
+                result.Data = selectionValid;
             }
 
-            //Retreive the default selections
-            solverService.GetInitialSelections(context, ref featureSelections);
+            return result;
         }
 
 
@@ -134,9 +157,10 @@ namespace PresentationLayer.Controllers
         }
 
         [Authorize]
-        public void ClearSessionContext(int modelID)
+        public void ClearSessionContext(int configurationID)
         {
-            SessionData.SolverContexts.Remove(modelID);
+            SessionData.SolverContexts.Remove(configurationID);
+            SessionData.FeatureSelections.Remove(configurationID);
         }
 
         //Methods for default Entities

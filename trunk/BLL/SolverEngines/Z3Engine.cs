@@ -245,14 +245,34 @@ namespace BLL.SolverEngines
             //Add to the corresponding list
             switch (madeBy)
             {
-                case AssumptionTypes.Solver:
+                case AssumptionTypes.User:
                     _userValueAssumptions.Add(varID, statement);
                     break;
-                case AssumptionTypes.User:
+                case AssumptionTypes.Solver:
                     _solverValueAssumptions.Add(varID, statement);
                     break;
             }
 
+        }
+        public void ResetBoolVarValue(string varID)
+        {
+            //Get the assumption and variable
+            Term variable = _variables[varID];
+            Term assumption = null;
+            if (_userValueAssumptions.ContainsKey(varID))
+            {
+                assumption = _userValueAssumptions[varID];
+            }
+            else if (_solverValueAssumptions.ContainsKey(varID))
+            {
+                assumption = _solverValueAssumptions[varID];
+            }
+
+            //Reset it
+            if (assumption != null)
+            {
+                _context.UpdateTerm(assumption, new Term[] { variable, variable });
+            }
         }
         public void RemoveLastAssumption(string varID)
         {
