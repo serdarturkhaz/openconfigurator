@@ -58,9 +58,11 @@ namespace BLL.Services
                         context.AddConstraint(equivalence1);
                         break;
                     case BusinessObjects.GroupRelationTypes.XOR:
-                        ISolverStatement xor1 = context.CreateStatement(StatementTypes.Xor, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                        ISolverStatement implication1 = context.CreateStatement(StatementTypes.Implies, groupRelation.ParentFeatureID.ToString(), xor1);
-                        context.AddConstraint(implication1);
+                        ISolverStatement orStatement = context.CreateStatement(StatementTypes.Or, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                        ISolverStatement negatedAnds = context.CreateStatement(StatementTypes.NotAndCombinations, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                        ISolverStatement equivalence2 = context.CreateStatement(StatementTypes.Equivalence, groupRelation.ParentFeatureID.ToString(), orStatement);
+                        ISolverStatement bigAnd = context.CreateStatement(StatementTypes.And, equivalence2, negatedAnds);
+                        context.AddConstraint(bigAnd);
                         break;
                 }
             }
@@ -85,6 +87,10 @@ namespace BLL.Services
                 }
             }
 
+
+            //Create an initial point
+            context.CreateInitialPoint();
+
             return context;
         }
 
@@ -108,9 +114,9 @@ namespace BLL.Services
                     fSelection.ToggledByUser = true;
                     break;
                 case BusinessObjects.FeatureSelectionStates.Unselected: //Retract-decision
-                    context.ResetBoolVarValue(FeatureID.ToString());
+                    context.RemoveValAssumption(FeatureID.ToString());
                     fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
-                    //fSelection.ToggledByUser = false;
+                    fSelection.ToggledByUser = false;
                     break;
             }
 
@@ -161,7 +167,6 @@ namespace BLL.Services
             return true;
 
         }
-
     }
 
 

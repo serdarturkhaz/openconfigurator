@@ -48,6 +48,9 @@ namespace PresentationLayer.Controllers
                     newFeatureSelection.FeatureID = feature.ID;
                     configuration.FeatureSelections.Add(newFeatureSelection);
                 }
+
+                //Toggle the root Feature and get the initial Configuration state of all the other Features
+                ToggleFeature(configuration.ID, model, configuration.FeatureSelections, model.Features[0].ID, BLL.BusinessObjects.FeatureSelectionStates.Selected);
             }
             //Create new FeatureSelections for newly created Features
             else if (configuration.FeatureSelections.Count < model.Features.Count)
@@ -63,8 +66,7 @@ namespace PresentationLayer.Controllers
                 }
             }
 
-            //Toggle the root Feature and get the initial Configuration state of all the other Features
-            ToggleFeature(configuration.ID, model, configuration.FeatureSelections, model.Features[0].ID, BLL.BusinessObjects.FeatureSelectionStates.Selected);
+            
 
             //
             return result;
@@ -101,7 +103,6 @@ namespace PresentationLayer.Controllers
             BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
             bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, selectionState);
 
-
             //Return
             if (selectionValid)
             {
@@ -114,7 +115,6 @@ namespace PresentationLayer.Controllers
 
             return result;
         }
-
 
         [Authorize]
         public JsonNetResult SaveConfiguration(int configurationID, string configurationName, string featureSelectionsString)
