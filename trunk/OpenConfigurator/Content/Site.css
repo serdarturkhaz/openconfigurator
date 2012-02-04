@@ -1268,12 +1268,12 @@ a:hover
 /*Selected-Disabled*/
 #StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea
 {
-    background: #DFE8FF;
+    background: #EAF0FF;
     border: solid 1px #D7D7D7 !important;
 }
 #StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea:hover
 {
-    background: #DFE8FF !important;
+    background: #EAF0FF !important;
     border: solid 1px #CECECE !important;
 }
 #StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
@@ -1288,12 +1288,12 @@ a:hover
 /*Deselected-Disabled*/
 #StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea
 {
-     background: #F4F4F4;
-     border: solid 1px #D7D7D7 !important;
+    background: #FEF0EB;
+    border: solid 1px #D7D7D7 !important;
 }
 #StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea:hover
 {
-    background: #F4F4F4 !important;
+    background: #FEF0EB !important;
     border: solid 1px #CECECE !important;
 }
 #StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox

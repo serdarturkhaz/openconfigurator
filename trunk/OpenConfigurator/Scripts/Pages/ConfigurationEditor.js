@@ -722,7 +722,7 @@ var StandardView = function (container, configurationDataModelInstance) {
                 _innerElements.entry.attr("isdisabled", true);
             } else if (disabledBool == false && _disabled == true) { //Enable
                 makeToggleable();
-                innerElements.entry.removeAttr("isdisabled");
+                _innerElements.entry.removeAttr("isdisabled");
             }
 
             _disabled = disabledBool;
@@ -799,7 +799,7 @@ var StandardView = function (container, configurationDataModelInstance) {
             _innerElements.checkbox = $("<div class='Checkbox' ></div>").appendTo(_innerElements.headerDiv);
 
             //AttributesArea
-            _innerElements.attributesArea = $("<div class='AttributesArea'></div>").appendTo(_outerElement);
+            _innerElements.attributesArea = $("<div style='display:none' class='AttributesArea'></div>").appendTo(_outerElement);
 
             //ChildFeaturesArea
             _innerElements.childFeaturesArea = $("<div class='ChildFeaturesArea'></div>").appendTo(_outerElement);
@@ -823,11 +823,12 @@ var StandardView = function (container, configurationDataModelInstance) {
         this.AddChild = function (UIConfigurationElement) {
             _children.push(UIConfigurationElement);
             UIConfigurationElement.SetParent(_thisUIConfigurationFeature);
-
+            
         }
         this.AddAttribute = function (UIConfigurationElement) {
             _UIAttributes.push(UIConfigurationElement);
             UIConfigurationElement.SetParentUIFeature(_thisUIConfigurationFeature);
+            _innerElements.attributesArea.css("display", "block");
         }
         this.SetParent = function (parentUIConfigurationElement) {
             _parent = parentUIConfigurationElement;
@@ -977,17 +978,17 @@ var StandardView = function (container, configurationDataModelInstance) {
         var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
         switch (currentSelectionState) {
 
-            //Unselected -> Selected                                                                                                                                                                                            
+            //Unselected -> Selected                                                                                                                                                                                             
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
 
-            //Selected -> Unselected                       
+            //Selected -> Unselected                        
             case systemDefaults.enums.featureSelectionStates.selected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
                 break;
 
-            //Deselected -> Selected                       
+            //Deselected -> Selected                        
             case systemDefaults.enums.featureSelectionStates.deselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
@@ -1035,9 +1036,7 @@ var StandardView = function (container, configurationDataModelInstance) {
         _UIElements[clientObject.GUID] = UIfeature;
 
         //Create its Attributes
-        if (attributes.length > 0) {
-            _innerElements.attributesArea = $("<div class='AttributesArea' ></div>").appendTo(_outerElement);
-        }
+        
         for (var i = 0; i < attributes.length; i++) {
             var attributeType = attributes[i].GetField("AttributeType"), attributeDataType = attributes[i].GetField("AttributeDataType"), name = attributes[i].GetField("Name");
             var value = attributes[i].AttributeValue.GetField("Value");

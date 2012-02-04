@@ -13,14 +13,14 @@ namespace BLL.SolverEngines
     }
     public interface ISolverContext
     {
+        void CreateInitialPoint();
         void AddBoolVariable(string varID, string varName);
         void AddConstraint(params ISolverStatement[] statements);
         ISolverStatement CreateStatement(StatementTypes type, params ISolverStatement[] innerStatement);
         ISolverStatement CreateStatement(StatementTypes type, params string[] varIDs);
         ISolverStatement CreateStatement(StatementTypes type, string varID, ISolverStatement rightStatement);
         void AssumeBoolVarValue(string varID, bool value, AssumptionTypes madeBy);
-        void ResetBoolVarValue(string varID);
-        void RemoveLastAssumption(string varID);
+        void RemoveValAssumption(string varID);
     }
     public interface ISolverSolution
     {
@@ -42,8 +42,8 @@ namespace BLL.SolverEngines
     {
         And,
         Or,
-        Xor,
         Not,
+        NotAndCombinations,
         Implies,
         Excludes,
         Equivalence
