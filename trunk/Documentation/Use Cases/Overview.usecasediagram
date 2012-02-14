@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
   <packagedElements>
     <useCaseModelRootHasTypes>
       <subsystem Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" name="Product modeler" isAbstract="false" isLeaf="false" isActiveClass="false">
@@ -8,7 +8,7 @@
             <elementDefinition Id="baed6ed8-d10c-4522-84b5-809aa069e397" />
             <body>Optional [0...1]
 Mandatory [1...1]
-Cloneable [0...*]</body>
+</body>
             <annotatedElements>
               <useCaseMoniker Id="a8a70a06-aee6-4abc-9e52-f90b2a91ce86" LastKnownName="Define Relations" />
             </annotatedElements>
@@ -40,8 +40,7 @@ Explicit consequence rules
           <comment Id="45d2a5c3-b4b3-42dd-b47e-6f37f16ca10f">
             <elementDefinition Id="45d66e16-dec3-4fdf-a93c-6e61f5743781" />
             <body>OR [0...*]
-XOR [1...1]
-Cardinal OR [*...*]</body>
+XOR [1...1]</body>
             <annotatedElements>
               <useCaseMoniker Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" LastKnownName="Define Group Relations" />
             </annotatedElements>
@@ -126,7 +125,7 @@ Cardinal OR [*...*]</body>
       </subsystem>
     </useCaseModelRootHasTypes>
     <useCaseModelRootHasTypes>
-      <actor Id="bcf65c90-12a5-4216-9b93-9bf0cf38885f" name="Customer" isAbstract="false" isLeaf="false">
+      <actor Id="bcf65c90-12a5-4216-9b93-9bf0cf38885f" name="User" isAbstract="false" isLeaf="false">
         <elementDefinition Id="d629e551-722c-4c4f-9a96-6bb8a1853053" />
         <targetEnds>
           <association Id="2ea71f50-0eac-45c9-b654-434cd7ebaf55" isDerived="false" sourceEndRoleName="Customer" targetEndRoleName="Create/Edit Configuration instance" isLeaf="false" isAbstract="false">
@@ -257,11 +256,11 @@ Cardinal OR [*...*]</body>
       </useCase>
     </useCaseModelRootHasTypes>
     <useCaseModelRootHasTypes>
-      <actor Id="71a7bce9-b692-4d3f-8ce6-164cef7744d7" name="Logical  Truth Maintenance System" isAbstract="false" isLeaf="false">
+      <actor Id="71a7bce9-b692-4d3f-8ce6-164cef7744d7" name="Solver engine" isAbstract="false" isLeaf="false">
         <elementDefinition Id="d0763a74-6bf7-4f1b-9e78-fa000edd4d20" />
         <targetEnds>
           <association Id="42a7fb8f-b578-4c4e-b187-e7f0a5391916" isDerived="false" sourceEndRoleName="Logical  Truth Maintenance System" targetEndRoleName="Provide feedback" isLeaf="false" isAbstract="false">
-            <useCaseMoniker Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" LastKnownName="Provide feedback/Consequences" />
+            <useCaseMoniker Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" LastKnownName="Provide consequences" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="4bf42c2c-5b48-4b68-934e-a23782869d51" name="Logical  Truth Maintenance System" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
@@ -296,7 +295,7 @@ Cardinal OR [*...*]</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" name="Provide feedback/Consequences" isAbstract="false" isLeaf="false">
+      <useCase Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" name="Provide consequences" isAbstract="false" isLeaf="false">
         <elementDefinition Id="7cbd6dbe-50c7-4be8-9468-8a25ee31dec8" />
         <extendedCases>
           <extend Id="e14ccc32-83fa-433a-8b2f-39a179d58cfb">

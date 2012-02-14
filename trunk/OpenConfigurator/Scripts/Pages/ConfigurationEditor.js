@@ -320,14 +320,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                     var featureSelectionClientObject = null;
                     var featureSelectionGUID = _lookupTables.featureIDsToFeatureSelections[feature.ID];
                     featureSelectionClientObject = _thisConfigurationDataModel.GetByGUID(featureSelectionGUID);
-                    //                    if (featureSelectionGUID != undefined) {
-                    //                        featureSelectionClientObject = _thisConfigurationDataModel.GetByGUID(featureSelectionGUID);
-                    //                    } 
-                    //                    else {
-                    //                        //If a FeatureSelection doesn't already exist, create one
-                    //                        featureSelectionClientObject = _thisConfigurationDataModel.CreateDefaultClientObject("featureSelection", { FeatureID: feature.ID });
-                    //                        _thisConfigurationDataModel.RegisterClientObject(featureSelectionClientObject);
-                    //                    }
 
                     //Set Feature and FeatureSelection references
                     featureClientObject.FeatureSelection = featureSelectionClientObject;
@@ -343,16 +335,17 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                         //Get the related AttributeValue
                         var attributeValueClientObject = null;
                         var attributeValueGUID = _lookupTables.attributeIDsToAttributeValues[attribute.ID];
-                        if (attributeValueGUID != undefined) {
-                            attributeValueClientObject = _thisConfigurationDataModel.GetByGUID(attributeValueGUID);
-                        } else {
-                            //If an AttributeValue doesn't already exist, create one
-                            var defaultVal = getEnumEntryByID(systemDefaults.enums.attributeDataTypes, attributeClientObject.GetField("AttributeDataType")).defaultValue;
-                            attributeValueClientObject = _thisConfigurationDataModel.CreateDefaultClientObject("attributeValue", { AttributeID: attribute.ID, Value: defaultVal });
-                            _thisConfigurationDataModel.RegisterClientObject(attributeValueClientObject);
+                        attributeValueClientObject = _thisConfigurationDataModel.GetByGUID(attributeValueGUID);
+//                        if (attributeValueGUID != undefined) {
+//                            attributeValueClientObject = _thisConfigurationDataModel.GetByGUID(attributeValueGUID);
+//                        } else {
+//                            //If an AttributeValue doesn't already exist, create one
+//                            var defaultVal = getEnumEntryByID(systemDefaults.enums.attributeDataTypes, attributeClientObject.GetField("AttributeDataType")).defaultValue;
+//                            attributeValueClientObject = _thisConfigurationDataModel.CreateDefaultClientObject("attributeValue", { AttributeID: attribute.ID, Value: defaultVal });
+//                            _thisConfigurationDataModel.RegisterClientObject(attributeValueClientObject);
 
-                            featureSelectionClientObject.AttributeValues.push(attributeValueClientObject);
-                        }
+//                            featureSelectionClientObject.AttributeValues.push(attributeValueClientObject);
+//                        }
 
                         //Set references
                         featureClientObject.Attributes.push(attributeClientObject);

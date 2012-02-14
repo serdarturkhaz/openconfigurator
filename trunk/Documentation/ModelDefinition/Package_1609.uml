@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="23e816ca-a77b-4928-8d06-fff138697a42"
   name="Configurator" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -18,6 +18,7 @@
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
+            name="Consists of"
             isAbstract="false">
             <classMoniker
               Id="a1331b14-f266-47c4-9dff-564b46b8d70c"
@@ -191,6 +192,7 @@
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
+            name="Contains"
             isAbstract="false">
             <classMoniker
               Id="e91d75eb-a7f3-4510-812c-8c32958296fc"
@@ -241,6 +243,7 @@
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
+            name="Corresponds to"
             isAbstract="false">
             <classMoniker
               Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
