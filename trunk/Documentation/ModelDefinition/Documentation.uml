@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -8,7 +8,7 @@
       Id="baed6ed8-d10c-4522-84b5-809aa069e397">
       <body>Optional [0...1]
 Mandatory [1...1]
-Cloneable [0...*]</body>
+</body>
       <annotatedElements>
         <useCaseMoniker
           Id="c169cfab-f014-4474-9bcb-115ac310c409"
@@ -70,8 +70,7 @@ Explicit consequence rules
     <comment
       Id="45d66e16-dec3-4fdf-a93c-6e61f5743781">
       <body>OR [0...*]
-XOR [1...1]
-Cardinal OR [*...*]</body>
+XOR [1...1]</body>
       <annotatedElements>
         <useCaseMoniker
           Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
@@ -790,7 +789,7 @@ User Input
     <packageHasNamedElement>
       <actor
         Id="d629e551-722c-4c4f-9a96-6bb8a1853053"
-        name="Customer"
+        name="User"
         isAbstract="false"
         isLeaf="false">
         <targetEnds>
@@ -3716,7 +3715,7 @@ User Input
     <packageHasNamedElement>
       <actor
         Id="d0763a74-6bf7-4f1b-9e78-fa000edd4d20"
-        name="Logical  Truth Maintenance System"
+        name="Solver engine"
         isAbstract="false"
         isLeaf="false">
         <targetEnds>
@@ -3729,7 +3728,7 @@ User Input
             isAbstract="false">
             <useCaseMoniker
               Id="7cbd6dbe-50c7-4be8-9468-8a25ee31dec8"
-              LastKnownName="Provide feedback/Consequences"
+              LastKnownName="Provide consequences"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -3832,7 +3831,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="7cbd6dbe-50c7-4be8-9468-8a25ee31dec8"
-        name="Provide feedback/Consequences"
+        name="Provide consequences"
         isAbstract="false"
         isLeaf="false">
         <extendedCases>
@@ -4351,21 +4350,52 @@ User Input
         <ownedOperationsInternal>
           <operation
             Id="6a75cb69-0574-47f9-9cb1-3c1e57122f25"
-            name="SolverFeedback"
+            name="ToggleFeature"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
             concurrency="Sequential"
-            isQuery="false">
-            <ownedParameters>
-              <operationHasOwnedParameters>
-                <parameter
-                  Id="cfb8503b-e078-44f8-9b20-f57d860ee8e5"
-                  name="modelID"
-                  direction="In" />
-              </operationHasOwnedParameters>
-            </ownedParameters>
-          </operation>
+            isQuery="false" />
+          <operation
+            Id="de4c3094-f5de-49e2-aa1e-0ab48945869e"
+            name="LoadData"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="67fa10a9-b54e-4f1f-b307-8b04600acab0"
+            name="SaveConfiguration"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="0947c146-3ea9-43aa-99de-5b656deb0a45"
+            name="ClearSessionContext"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="b9b96bb4-f565-4527-9f9d-fa8e7c2e8717"
+            name="NewDefaultFeatureSelection"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="ed119682-ded8-4608-b627-60b78d55d10e"
+            name="NewDefaultAttributeValue"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
         </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
@@ -4463,6 +4493,42 @@ User Input
             </relationshipOwnedElementsInternal>
           </association>
         </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="145ce4ea-748f-4727-81d0-075fe72f99a8"
+            name="InitializeContextFromModel"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="738862ee-b609-4c49-9177-8bdfae8de1e8"
+            name="CreateNewContext"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="d3659107-fca1-48cd-83c5-8a4419447368"
+            name="UserToggleSelection"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="9eed7e7c-a8e5-4006-b5d5-cdd546d0aea7"
+            name="GetValidSelections"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -4483,7 +4549,15 @@ User Input
             isQuery="false" />
           <operation
             Id="3d74126f-01e0-44c9-bb3d-a27acbb43958"
-            name="InitNewContext"
+            name="CreateBlankContext"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="cb23f6de-56c7-4f8c-beef-bdda14cc8306"
+            name="CheckSolutionExists"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -4519,6 +4593,30 @@ User Input
           <operation
             Id="8f7bc51f-4142-4b9f-b747-b3e36d60edb1"
             name="AssumeBoolVarValue"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="a1436996-6cea-4dd4-a046-8d1cde56942f"
+            name="CreateInitialPoint"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="08a2fd1d-f34e-447f-b1d3-c77be605b647"
+            name="RemoveValAssumption"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="215415c0-4ede-454f-9e7c-495242e90198"
+            name="CreateStatement"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"

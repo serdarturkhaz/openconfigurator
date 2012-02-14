@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="ca2ee2c6-47ef-4107-9922-70067e636121"
   name="Modeller" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -317,7 +317,7 @@
     <packageHasNamedElement>
       <class
         Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
-        name="Custom Rules"
+        name="Custom Rule"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -540,7 +540,7 @@
             isAbstract="false">
             <classMoniker
               Id="cfd13f4c-1b58-413a-aaf7-81e40581ec52"
-              LastKnownName="Composition Rules"
+              LastKnownName="Composition Rule"
               LastKnownLocation="Package_1512.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -577,7 +577,7 @@
             isAbstract="false">
             <classMoniker
               Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
-              LastKnownName="Custom Rules"
+              LastKnownName="Custom Rule"
               LastKnownLocation="Package_1512.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -625,63 +625,10 @@
     <packageHasNamedElement>
       <class
         Id="932aef86-68e0-4465-ad0b-aaad7890167e"
-        name="Tech user"
+        name="User"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
-        <targetEnds>
-          <association
-            Id="d76a5401-b2bc-44dc-96e2-3d50585b87c2"
-            isDerived="false"
-            sourceEndRoleName=""
-            targetEndRoleName=""
-            isLeaf="false"
-            name="Designs"
-            isAbstract="false">
-            <classMoniker
-              Id="6a433e17-2eab-40d9-a334-4c9b9c3fb27c"
-              LastKnownName="Model"
-              LastKnownLocation="Package_1512.uml" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="ddb75a56-d24f-4602-9d9a-2168b215ac5c"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false"
-                  isNavigableOwned="false" />
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="32e4348a-0d6f-4a3e-84cd-d2c92cf4a383"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false">
-                  <lowerValueInternal>
-                    <literalString
-                      Id="4838be0d-0f3c-4695-984e-9b4eaa30cdee"
-                      name="Lower"
-                      value="*" />
-                  </lowerValueInternal>
-                  <upperValueInternal>
-                    <literalString
-                      Id="d6a52720-cd9f-445e-a534-d639b0445e2e"
-                      name="Upper"
-                      value="*" />
-                  </upperValueInternal>
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-          </association>
-        </targetEnds>
         <ownedAttributesInternal>
           <property
             Id="88c42367-5754-4c72-9bbd-401570cc9ea2"
@@ -914,7 +861,7 @@
     <packageHasNamedElement>
       <class
         Id="cfd13f4c-1b58-413a-aaf7-81e40581ec52"
-        name="Composition Rules"
+        name="Composition Rule"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">

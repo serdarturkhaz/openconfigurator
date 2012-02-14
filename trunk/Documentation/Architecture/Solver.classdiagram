@@ -19,15 +19,23 @@
           </dependency>
         </suppliersInternal>
         <ownedOperationsInternal>
-          <operation Id="5b94ad2f-27c7-4a70-acfb-589114e805fc" name="SolverFeedback" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+          <operation Id="5b94ad2f-27c7-4a70-acfb-589114e805fc" name="ToggleFeature" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="6a75cb69-0574-47f9-9cb1-3c1e57122f25" />
-            <ownedParameters>
-              <operationHasOwnedParameters>
-                <parameter Id="b62c523e-98a1-4d4f-8c4b-58f3416cc08d" name="modelID" direction="In">
-                  <elementDefinition Id="cfb8503b-e078-44f8-9b20-f57d860ee8e5" />
-                </parameter>
-              </operationHasOwnedParameters>
-            </ownedParameters>
+          </operation>
+          <operation Id="bd844057-0e6f-448e-983c-6394383d4f34" name="LoadData" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="de4c3094-f5de-49e2-aa1e-0ab48945869e" />
+          </operation>
+          <operation Id="f264a6fe-a9ca-4fe9-8f43-dbed12ce0972" name="SaveConfiguration" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="67fa10a9-b54e-4f1f-b307-8b04600acab0" />
+          </operation>
+          <operation Id="a78d0483-6344-4eb0-be79-846bc6f7ee15" name="ClearSessionContext" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="0947c146-3ea9-43aa-99de-5b656deb0a45" />
+          </operation>
+          <operation Id="a72105f9-d6af-434d-9926-5bf4218deea4" name="NewDefaultFeatureSelection" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="b9b96bb4-f565-4527-9f9d-fa8e7c2e8717" />
+          </operation>
+          <operation Id="83c6d8d9-5c2a-42eb-8539-73376081a66d" name="NewDefaultAttributeValue" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="ed119682-ded8-4608-b627-60b78d55d10e" />
           </operation>
         </ownedOperationsInternal>
       </class>
@@ -75,6 +83,20 @@
             <elementDefinition Id="b4d2e92e-671f-429a-95db-2033a1db4088" />
           </association>
         </targetEnds>
+        <ownedOperationsInternal>
+          <operation Id="097750d3-07f8-4e81-88d8-0559fd7deb0e" name="InitializeContextFromModel" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="145ce4ea-748f-4727-81d0-075fe72f99a8" />
+          </operation>
+          <operation Id="d8722c2c-0e51-46c3-8608-2080c1f3bec4" name="CreateNewContext" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="738862ee-b609-4c49-9177-8bdfae8de1e8" />
+          </operation>
+          <operation Id="0a4037bd-e778-42a9-a34a-e2d50e024885" name="UserToggleSelection" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="d3659107-fca1-48cd-83c5-8a4419447368" />
+          </operation>
+          <operation Id="10f75dfd-cc02-43dd-9de3-2abe5d0772e6" name="GetValidSelections" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="9eed7e7c-a8e5-4006-b5d5-cdd546d0aea7" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -84,8 +106,11 @@
           <operation Id="091b4518-fdef-4cc4-b17f-c96dcecfb2fa" name="GetSolution" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="dbd4a609-5d27-48fe-9928-edbcc3f577ab" />
           </operation>
-          <operation Id="469b2746-03fd-473f-b642-be53d6d41a45" name="InitNewContext" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+          <operation Id="469b2746-03fd-473f-b642-be53d6d41a45" name="CreateBlankContext" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="3d74126f-01e0-44c9-bb3d-a27acbb43958" />
+          </operation>
+          <operation Id="a76b139b-b19f-4ff0-b394-b530234e9cd0" name="CheckSolutionExists" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="cb23f6de-56c7-4f8c-beef-bdda14cc8306" />
           </operation>
         </ownedOperationsInternal>
       </class>
@@ -102,6 +127,15 @@
           </operation>
           <operation Id="3c8ccc16-6721-4b7c-9013-4fcfa56446cf" name="AssumeBoolVarValue" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="8f7bc51f-4142-4b9f-b747-b3e36d60edb1" />
+          </operation>
+          <operation Id="903681e1-9444-43b3-9dfa-32434d0761c8" name="CreateInitialPoint" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="a1436996-6cea-4dd4-a046-8d1cde56942f" />
+          </operation>
+          <operation Id="0f9c41f8-8715-4783-9490-822b85c8fe0a" name="RemoveValAssumption" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="08a2fd1d-f34e-447f-b1d3-c77be605b647" />
+          </operation>
+          <operation Id="d3d28e75-4d8f-480b-8a91-4c23b9397c98" name="CreateStatement" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="215415c0-4ede-454f-9e7c-495242e90198" />
           </operation>
         </ownedOperationsInternal>
       </class>

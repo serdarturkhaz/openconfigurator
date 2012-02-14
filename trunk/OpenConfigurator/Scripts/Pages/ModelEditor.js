@@ -617,6 +617,9 @@ var DiagramDataModel = function (modelID, modelName) {
         });
         return returnObj;
     }
+    var updateIDs = function (collection, type) {
+
+    }
 
     //Constructor/Initalizers
     this.Initialize = function () {
@@ -745,6 +748,38 @@ var DiagramDataModel = function (modelID, modelName) {
                     }
                 }
 
+                //Update ID's for CompositionRules
+                var updatedCompositionRulesBusinessDataObjects = response[3];
+                for (var guidKey in _dataClientObjects.compositionRules) {
+                    var clientDataObject = _dataClientObjects.compositionRules[guidKey];
+
+                    //Remove deleted items
+                    if (clientDataObject.IsDeleted()) {
+                        delete _dataClientObjects.all[guidKey];
+                        delete _dataClientObjects.compositionRules[guidKey];
+                    }
+                    //Update others
+                    else {
+                        clientDataObject.UpdateBusinessDataObject(updatedCompositionRulesBusinessDataObjects[guidKey]);
+                    }
+                }
+
+                //Update ID's for CustomRules
+                var updatedCustomRulesBusinessDataObjects = response[4];
+                for (var guidKey in _dataClientObjects.customRules) {
+                    var clientDataObject = _dataClientObjects.customRules[guidKey];
+
+                    //Remove deleted items
+                    if (clientDataObject.IsDeleted()) {
+                        delete _dataClientObjects.all[guidKey];
+                        delete _dataClientObjects.customRules[guidKey];
+                    }
+                    //Update others
+                    else {
+                        clientDataObject.UpdateBusinessDataObject(updatedCustomRulesBusinessDataObjects[guidKey]);
+                    }
+                }
+
                 //Callback
                 onSuccess();
             },
@@ -780,7 +815,7 @@ var DiagramDataModel = function (modelID, modelName) {
                     var childFeatureGUIDs = [];
                     var parentFeatureGUID = _thisDiagramDataModel.GetGUIDByID(model.GroupRelations[i].ParentFeatureID, "feature");
                     for (var j = 0; j < model.GroupRelations[i].ChildFeatureIDs.length; j++) {
-                        childFeatureGUIDs.push(_thisDiagramDataModel.GetGUIDByID(model.GroupRelations[i].ChildFeatureIDs[j],"feature"));
+                        childFeatureGUIDs.push(_thisDiagramDataModel.GetGUIDByID(model.GroupRelations[i].ChildFeatureIDs[j], "feature"));
                     }
                     var extraClientData = {
                         parentFeatureGUID: parentFeatureGUID,
@@ -1168,7 +1203,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                 var listInnerContainer = $("<div class='ListInnerContainer'></div>").appendTo(listContainer);
                 var addButton = $("<div class='Button-Thin'></div>").append("<img src='../../Content/themes/base/images/Icons/Add.png' />").append("<span>Add new</span>").appendTo(listActionsDiv);
                 addButton.bind("click", function () {
-                    var newDefaultDataObj = diagramDataModelInstance.GetDefaultDataObject(objectTypeField.defaultDataObjectName); 
+                    var newDefaultDataObj = diagramDataModelInstance.GetDefaultDataObject(objectTypeField.defaultDataObjectName);
                     var newIndex = dataObjParent[dataObjFieldName].length;
                     dataObjParent[dataObjFieldName][newIndex] = newDefaultDataObj;
 

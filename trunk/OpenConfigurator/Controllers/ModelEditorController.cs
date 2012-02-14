@@ -19,8 +19,6 @@ namespace PresentationLayer.Controllers
 
             return View();
         }
-
-
         [Authorize]
         public JsonNetResult LoadModel(int modelID)
         {   
@@ -318,7 +316,6 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
-    
         [Authorize]
         public JsonNetResult GetRelationTypes()
         {

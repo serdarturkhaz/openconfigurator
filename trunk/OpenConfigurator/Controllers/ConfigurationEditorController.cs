@@ -38,7 +38,8 @@ namespace PresentationLayer.Controllers
             BLL.BusinessObjects.Model model = _modelService.GetByID(configuration.ModelID);
             innerJObj[1] = model;
 
-            //Setup FeatureSelections for first time
+            //Setup FeatureSelections----------------------------------------------------------------------------------------------------------------------------------
+            //Create FeatureSelections for the first time
             if (configuration.FeatureSelections.Count == 0)
             {
                 //Create one instance for each Feature in the Model
@@ -47,31 +48,66 @@ namespace PresentationLayer.Controllers
                     BLL.BusinessObjects.FeatureSelection newFeatureSelection = BLL.BusinessObjects.FeatureSelection.CreateDefault();
                     newFeatureSelection.FeatureID = feature.ID;
                     configuration.FeatureSelections.Add(newFeatureSelection);
+
+                    //Create default AttributeValues
+                    foreach (BLL.BusinessObjects.Attribute attribute in feature.Attributes)
+                    {
+                        BLL.BusinessObjects.AttributeValue attrValue = BLL.BusinessObjects.AttributeValue.CreateDefault();
+                        attrValue.Value = GetDefaultAttrVal(attribute.AttributeDataType);
+                        attrValue.AttributeID = attribute.ID;
+                        newFeatureSelection.AttributeValues.Add(attrValue);
+                    }
                 }
 
                 //Toggle the root Feature and get the initial Configuration state of all the other Features
                 ToggleFeature(configuration.ID, model, configuration.FeatureSelections, model.Features[0].ID, BLL.BusinessObjects.FeatureSelectionStates.Selected);
             }
-            //Create new FeatureSelections for newly created Features
+            //Create new FeatureSelections ONLY for newly created Features
             else if (configuration.FeatureSelections.Count < model.Features.Count)
             {
+                //Create one instance for each Feature that is missing a FeatureSelection
                 foreach (BLL.BusinessObjects.Feature feature in model.Features)
                 {
-                    if (configuration.FeatureSelections.FirstOrDefault(k => k.FeatureID == feature.ID) == null)
+                    if (configuration.FeatureSelections.FirstOrDefault(k => k.FeatureID == feature.ID) == null) //If the Feature has no corresponding FeatureSelection
                     {
                         BLL.BusinessObjects.FeatureSelection newFeatureSelection = BLL.BusinessObjects.FeatureSelection.CreateDefault();
                         newFeatureSelection.FeatureID = feature.ID;
                         configuration.FeatureSelections.Add(newFeatureSelection);
+
+                        //Create default AttributeValues
+                        foreach (BLL.BusinessObjects.Attribute attribute in feature.Attributes)
+                        {
+                            BLL.BusinessObjects.AttributeValue attrValue = BLL.BusinessObjects.AttributeValue.CreateDefault();
+                            attrValue.Value = GetDefaultAttrVal(attribute.AttributeDataType);
+                            attrValue.AttributeID = attribute.ID;
+                            newFeatureSelection.AttributeValues.Add(attrValue);
+                        }
                     }
                 }
             }
-
+            //---------------------------------------------------------------------------------------------------------------------------------------------------------
             
-
-            //
             return result;
         }
 
+        private string GetDefaultAttrVal(BLL.BusinessObjects.AttributeDataTypes type)
+        {
+            string returnVal = "";
+            switch (type)
+            {
+                case BLL.BusinessObjects.AttributeDataTypes.Boolean:
+                    returnVal = "False";
+                    break;
+                case BLL.BusinessObjects.AttributeDataTypes.Integer:
+                    returnVal = "0";
+                    break;
+                case BLL.BusinessObjects.AttributeDataTypes.String:
+                    returnVal = "";
+                    break;
+            }
+
+            return returnVal;
+        }
 
         //Method to be called on LoadData
         private void ToggleFeature(int configurationID, BLL.BusinessObjects.Model model, List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)

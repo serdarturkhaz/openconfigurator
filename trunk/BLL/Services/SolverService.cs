@@ -6,6 +6,7 @@ using Microsoft.Z3;
 using System.Linq.Expressions;
 using System.IO;
 using BLL.SolverEngines;
+using BLL.RuleParser;
 
 namespace BLL.Services
 {
@@ -13,12 +14,14 @@ namespace BLL.Services
     {
         //Fields
         ISolverEngine _engine;
+        IParser _ruleParser;
 
         //Constructors
         public SolverService()
         {
             //Create a new SolverEngine
             _engine = new Z3Engine();
+            _ruleParser = new StandardParser();
         }
 
         //Private methods
@@ -125,6 +128,12 @@ namespace BLL.Services
 
             //
             return decisionIsValid;
+        }
+
+        private bool ExecuteCustomRule(int CustomRuleID)
+        {
+
+            return false;
         }
         private bool GetValidSelections(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
