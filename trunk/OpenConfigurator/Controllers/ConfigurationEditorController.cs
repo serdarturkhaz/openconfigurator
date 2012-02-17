@@ -20,7 +20,6 @@ namespace PresentationLayer.Controllers
 
             return View();
         }
-
         [Authorize]
         public JsonNetResult LoadData(int configurationID)
         {
@@ -60,7 +59,7 @@ namespace PresentationLayer.Controllers
                 }
 
                 //Toggle the root Feature and get the initial Configuration state of all the other Features
-                ToggleFeature(configuration.ID, model, configuration.FeatureSelections, model.Features[0].ID, BLL.BusinessObjects.FeatureSelectionStates.Selected);
+                InitRootSelection(configuration.ID, model, configuration.FeatureSelections, model.Features[0].ID, BLL.BusinessObjects.FeatureSelectionStates.Selected);
             }
             //Create new FeatureSelections ONLY for newly created Features
             else if (configuration.FeatureSelections.Count < model.Features.Count)
@@ -89,69 +88,6 @@ namespace PresentationLayer.Controllers
             
             return result;
         }
-
-        private string GetDefaultAttrVal(BLL.BusinessObjects.AttributeDataTypes type)
-        {
-            string returnVal = "";
-            switch (type)
-            {
-                case BLL.BusinessObjects.AttributeDataTypes.Boolean:
-                    returnVal = "False";
-                    break;
-                case BLL.BusinessObjects.AttributeDataTypes.Integer:
-                    returnVal = "0";
-                    break;
-                case BLL.BusinessObjects.AttributeDataTypes.String:
-                    returnVal = "";
-                    break;
-            }
-
-            return returnVal;
-        }
-
-        //Method to be called on LoadData
-        private void ToggleFeature(int configurationID, BLL.BusinessObjects.Model model, List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
-        {
-            //Setup Solver and Context
-            ISolverContext context = null;
-            SolverService solverService = new SolverService();
-            context = solverService.CreateNewContext(model);
-            SessionData.SolverContexts[configurationID] = context;
-            SessionData.FeatureSelections[configurationID] = featureSelections;
-
-            //Get the implicit selections for the other features
-            bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, newState);
-        }
-
-        //Method to be called whenever a feature is toggled by the User from the UI
-        [Authorize]
-        public JsonNetResult ToggleFeature(int configurationID, int FeatureID, int newState)
-        {
-            //Data return wrapper
-            JsonNetResult result = new JsonNetResult();
-
-            //Setup Solver and Context
-            ISolverContext context = context = SessionData.SolverContexts[configurationID];
-            List<BLL.BusinessObjects.FeatureSelection> featureSelections = SessionData.FeatureSelections[configurationID];
-            SolverService solverService = new SolverService();
-
-            //Get the implicit selections for the other features
-            BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
-            bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, selectionState);
-
-            //Return
-            if (selectionValid)
-            {
-                result.Data = featureSelections.ToDictionary(g => g.FeatureID, k => k);
-            }
-            else
-            {
-                result.Data = selectionValid;
-            }
-
-            return result;
-        }
-
         [Authorize]
         public JsonNetResult SaveConfiguration(int configurationID, string configurationName, string featureSelectionsString)
         {
@@ -193,10 +129,72 @@ namespace PresentationLayer.Controllers
         }
 
         [Authorize]
+        public JsonNetResult ToggleFeature(int configurationID, int FeatureID, int newState)
+        {
+            //Data return wrapper
+            JsonNetResult result = new JsonNetResult();
+
+            //Setup Solver and Context
+            ISolverContext context = context = SessionData.SolverContexts[configurationID];
+            List<BLL.BusinessObjects.FeatureSelection> featureSelections = SessionData.FeatureSelections[configurationID];
+            SolverService solverService = new SolverService();
+
+            //Get the implicit selections for the other features
+            BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
+            bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, selectionState);
+
+            string testRule = "#Root.TotalPrice=25";
+            solverService.ExecuteCustomRule(context, testRule);
+
+            //Return
+            if (selectionValid)
+            {
+                result.Data = featureSelections.ToDictionary(g => g.FeatureID, k => k);
+            }
+            else
+            {
+                result.Data = selectionValid;
+            }
+
+            return result;
+        }
+        [Authorize]
         public void ClearSessionContext(int configurationID)
         {
             SessionData.SolverContexts.Remove(configurationID);
             SessionData.FeatureSelections.Remove(configurationID);
+        }
+
+        //Private methods
+        private void InitRootSelection(int configurationID, BLL.BusinessObjects.Model model, List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
+        {
+            //Setup Solver and Context
+            ISolverContext context = null;
+            SolverService solverService = new SolverService();
+            context = solverService.CreateNewContext(model);
+            SessionData.SolverContexts[configurationID] = context;
+            SessionData.FeatureSelections[configurationID] = featureSelections;
+
+            //Get the implicit selections for the other features
+            bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, newState);
+        }
+        private string GetDefaultAttrVal(BLL.BusinessObjects.AttributeDataTypes type)
+        {
+            string returnVal = "";
+            switch (type)
+            {
+                case BLL.BusinessObjects.AttributeDataTypes.Boolean:
+                    returnVal = "False";
+                    break;
+                case BLL.BusinessObjects.AttributeDataTypes.Integer:
+                    returnVal = "0";
+                    break;
+                case BLL.BusinessObjects.AttributeDataTypes.String:
+                    returnVal = "";
+                    break;
+            }
+
+            return returnVal;
         }
 
         //Methods for default Entities
