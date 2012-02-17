@@ -96,45 +96,6 @@ namespace BLL.Services
 
             return context;
         }
-
-        //Public methods  
-        public ISolverContext CreateNewContext(BusinessObjects.Model model)
-        {
-            ISolverContext context = _engine.CreateBlankContext();
-            InitializeContextFromModel(ref context, model);
-
-            return context;
-        }
-        public bool UserToggleSelection(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
-        {
-            //Set the bool value in the context and in the appropriate FeatureSelection
-            BLL.BusinessObjects.FeatureSelection fSelection = featureSelections.First(k => k.FeatureID == FeatureID);
-            
-            switch(newState) {
-                case BusinessObjects.FeatureSelectionStates.Selected: //Assert-decision
-                    context.AssumeBoolVarValue(FeatureID.ToString(), true, AssumptionTypes.User);
-                    fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
-                    fSelection.ToggledByUser = true;
-                    break;
-                case BusinessObjects.FeatureSelectionStates.Unselected: //Retract-decision
-                    context.RemoveValAssumption(FeatureID.ToString());
-                    fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
-                    fSelection.ToggledByUser = false;
-                    break;
-            }
-
-            //Check whether the model is still satisfiable
-            bool decisionIsValid = GetValidSelections(context, ref featureSelections);
-
-            //
-            return decisionIsValid;
-        }
-
-        private bool ExecuteCustomRule(int CustomRuleID)
-        {
-
-            return false;
-        }
         private bool GetValidSelections(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
             //Loop through all FeatureSelections
@@ -175,6 +136,44 @@ namespace BLL.Services
             //
             return true;
 
+        }
+        
+        //Public methods  
+        public ISolverContext CreateNewContext(BusinessObjects.Model model)
+        {
+            ISolverContext context = _engine.CreateBlankContext();
+            InitializeContextFromModel(ref context, model);
+
+            return context;
+        }
+        public bool UserToggleSelection(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
+        {
+            //Set the bool value in the context and in the appropriate FeatureSelection
+            BLL.BusinessObjects.FeatureSelection fSelection = featureSelections.First(k => k.FeatureID == FeatureID);
+            
+            switch(newState) {
+                case BusinessObjects.FeatureSelectionStates.Selected: //Assert-decision
+                    context.AssumeBoolVarValue(FeatureID.ToString(), true, AssumptionTypes.User);
+                    fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
+                    fSelection.ToggledByUser = true;
+                    break;
+                case BusinessObjects.FeatureSelectionStates.Unselected: //Retract-decision
+                    context.RemoveValAssumption(FeatureID.ToString());
+                    fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
+                    fSelection.ToggledByUser = false;
+                    break;
+            }
+
+            //Check whether the model is still satisfiable
+            bool decisionIsValid = GetValidSelections(context, ref featureSelections);
+
+            //
+            return decisionIsValid;
+        }
+        public bool ExecuteCustomRule(ISolverContext context, string Expression)
+        {
+            _ruleParser.ExecuteCustomRule(Expression, context);
+            return false;
         }
     }
 
