@@ -87,6 +87,12 @@ namespace DAL.DataEntities
             }
         }
         private int _attributeTypeID;
+    
+        public virtual string ConstantValue
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Navigation Properties

@@ -411,7 +411,7 @@ var systemDefaults = {
                 label: "OR",
                 id: 1,
                 bounds: {
-                    lowerBound: 1,
+                    lowerBound: 0,
                     upperBound: 1
                 }
             },
@@ -1281,7 +1281,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                 });
 
                             } else {
-                                subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField);
+                                subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField, subField.onFieldDataChanged);
                             }
                             subFieldControl.attr("subField", subField.dataName);
                             var row = createControlTableRow(subField.label, subFieldControl);
@@ -1298,6 +1298,17 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             //Default select
                             if (subField.defaultSelect == true)
                                 $(subFieldControl).select();
+                        }
+
+                        //Rego through fields and call onFieldDataLoaded handler if exists
+                        for (var subFieldKey in objectTypeField.subFields) {
+
+                            //Get the field and control
+                            var subField = objectTypeField.subFields[subFieldKey];
+                            var subFieldControl = $(detailsContainer).find("[subField='" + subField.dataName + "']");
+                            if (subField.onFieldDataLoaded != undefined) {
+                                subField.onFieldDataLoaded(dataObjParent[dataObjFieldName][index][subField.dataName], subFieldControl);
+                            }
                         }
                     }
                     function deleteNestedObject(nestedObjectControl) {
@@ -1380,13 +1391,42 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                     label: "Attribute Type",
                                     dataName: "AttributeType",
                                     controlType: controlTypes.dropdown.name,
-                                    defaultOptions: systemDefaults.enums.attributeTypes
+                                    defaultOptions: systemDefaults.enums.attributeTypes,
+                                    onFieldDataChanged: function (newVal, control) {
+                                        var constantValueField = $(control).parents(".DetailsDiv").find("[subField='ConstantValue']");
+                                        var attributeType = getEnumEntryByID(systemDefaults.enums.attributeTypes, parseFloat(newVal));
+
+                                        if (attributeType == systemDefaults.enums.attributeTypes.constant) {
+                                            constantValueField.removeAttr("disabled");
+                                            constantValueField.parent().parent().show();
+                                        }
+                                        else {
+                                            constantValueField.attr("disabled", true);
+                                            constantValueField.parent().parent().hide();
+                                        }
+
+                                    },
+                                    onFieldDataLoaded: function (val, control) {
+                                        var constantValueField = $(control).parents(".DetailsDiv").find("[subField='ConstantValue']");
+                                        var attributeType = getEnumEntryByID(systemDefaults.enums.attributeTypes, parseFloat(val));
+
+                                        if (attributeType != systemDefaults.enums.attributeTypes.constant) {
+                                            constantValueField.attr("disabled", true);
+                                            constantValueField.parent().parent().hide();
+                                        }
+                                    }
                                 },
                                 datatype: {
                                     label: "Data Type",
                                     dataName: "AttributeDataType",
                                     controlType: controlTypes.dropdown.name,
                                     defaultOptions: systemDefaults.enums.attributeDataTypes
+                                },
+                                constantValue: {
+                                    label: "ConstantVal",
+                                    dataName: "ConstantValue",
+                                    controlType: controlTypes.textbox.name
+
                                 }
                             }
                         }
@@ -1489,6 +1529,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                 if (groupRelationType.bounds.editable == true) {
                                     lowerBoundControl.removeAttr("disabled");
                                     upperBoundControl.removeAttr("disabled");
+
+                                } else {
+                                    lowerBoundControl.val(groupRelationType.bounds.lowerBound);
+                                    upperBoundControl.val(groupRelationType.bounds.upperBound);
                                 }
                             }
                         },
@@ -1653,11 +1697,12 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
             }
 
-            //Rego through fields and all onFieldDataLoaded
+            //Rego through fields and call onFieldDataLoaded handler if exists
             for (var fieldKey in area.fields) {
 
                 //Get the field and control
                 var field = area.fields[fieldKey];
+                var control = $(areaInnerContainer).find("#" + field.dataName + "Control");
                 if (field.onFieldDataLoaded != undefined) {
                     field.onFieldDataLoaded(_currentBusinessDataObject[field.dataName], control);
                 }

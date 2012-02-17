@@ -54,6 +54,10 @@ namespace PresentationLayer.Controllers
                         BLL.BusinessObjects.AttributeValue attrValue = BLL.BusinessObjects.AttributeValue.CreateDefault();
                         attrValue.Value = GetDefaultAttrVal(attribute.AttributeDataType);
                         attrValue.AttributeID = attribute.ID;
+                        if (attribute.AttributeType == BLL.BusinessObjects.AttributeTypes.Constant)
+                        {
+                            attrValue.Value = attribute.ConstantValue;
+                        }
                         newFeatureSelection.AttributeValues.Add(attrValue);
                     }
                 }
@@ -79,6 +83,10 @@ namespace PresentationLayer.Controllers
                             BLL.BusinessObjects.AttributeValue attrValue = BLL.BusinessObjects.AttributeValue.CreateDefault();
                             attrValue.Value = GetDefaultAttrVal(attribute.AttributeDataType);
                             attrValue.AttributeID = attribute.ID;
+                            if (attribute.AttributeType == BLL.BusinessObjects.AttributeTypes.Constant)
+                            {
+                                attrValue.Value = attribute.ConstantValue;
+                            }
                             newFeatureSelection.AttributeValues.Add(attrValue);
                         }
                     }

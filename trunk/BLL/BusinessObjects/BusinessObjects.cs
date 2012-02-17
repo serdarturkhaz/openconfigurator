@@ -309,6 +309,18 @@ namespace BLL.BusinessObjects
                 _innerEntity.Description = value;
             }
         }
+        public string ConstantValue
+        {
+            get
+            {
+                return _innerEntity.ConstantValue;
+            }
+            set
+            {
+                _innerEntity.ConstantValue = value;
+            }
+        }
+
         public AttributeTypes AttributeType
         {
             get
@@ -1488,7 +1500,6 @@ namespace BLL.BusinessObjects
                 _innerEntity.AttributeID = value;
             }
         }
-
         public string Value
         {
             get
