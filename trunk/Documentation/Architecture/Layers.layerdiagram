@@ -90,6 +90,11 @@
       </references>
     </layer>
     <layer Id="ab8e87d9-eda6-47fd-abf8-3ea8c85432d8" name="DAL">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="ae4fe6f9-2772-4afb-906b-6779d2c6c926" direction="Forward">
+          <layerMoniker Id="e06da735-948a-4046-955b-dd66ea322c72" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
       <childLayers>
         <layer Id="cc234d04-c2f0-43d7-bc02-61c2724e8689" name="Repositories">
           <dependencyToLayers>
@@ -248,5 +253,6 @@
         </reference>
       </references>
     </layer>
+    <layer Id="e06da735-948a-4046-955b-dd66ea322c72" name="Database&#xD;&#xA;" />
   </layers>
 </layerModel>
