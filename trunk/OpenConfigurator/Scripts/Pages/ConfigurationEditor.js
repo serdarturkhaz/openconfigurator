@@ -336,16 +336,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                         var attributeValueClientObject = null;
                         var attributeValueGUID = _lookupTables.attributeIDsToAttributeValues[attribute.ID];
                         attributeValueClientObject = _thisConfigurationDataModel.GetByGUID(attributeValueGUID);
-//                        if (attributeValueGUID != undefined) {
-//                            attributeValueClientObject = _thisConfigurationDataModel.GetByGUID(attributeValueGUID);
-//                        } else {
-//                            //If an AttributeValue doesn't already exist, create one
-//                            var defaultVal = getEnumEntryByID(systemDefaults.enums.attributeDataTypes, attributeClientObject.GetField("AttributeDataType")).defaultValue;
-//                            attributeValueClientObject = _thisConfigurationDataModel.CreateDefaultClientObject("attributeValue", { AttributeID: attribute.ID, Value: defaultVal });
-//                            _thisConfigurationDataModel.RegisterClientObject(attributeValueClientObject);
-
-//                            featureSelectionClientObject.AttributeValues.push(attributeValueClientObject);
-//                        }
 
                         //Set references
                         featureClientObject.Attributes.push(attributeClientObject);
@@ -575,11 +565,23 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             success: function (response) {
                 var featureSelections = response;
                 if (featureSelections != false) {
+                    
+                    //Update FeatureSelections
                     for (var guidkey in featureSelections) {
-                        var updatedFeatureSelectionBusinessObj = featureSelections[guidkey];
+                        var updatedFeatureSelectionBusinessObj = featureSelections[guidkey]; //Get the updated business object
 
+                        //Find the corresponding featureSelection ClientObject
                         var existingClientFeatureSelectionGUID = _lookupTables.featureIDsToFeatureSelections[updatedFeatureSelectionBusinessObj.FeatureID];
                         _thisConfigurationDataModel.UpdateClientObject(existingClientFeatureSelectionGUID, updatedFeatureSelectionBusinessObj);
+
+                        //Update AttributeValues
+                        for (var i = 0; i < updatedFeatureSelectionBusinessObj.AttributeValues.length; i++) {
+
+                            //Find the corresponding featureSelection ClientObject
+                            var existingClientAttributeValueGUID = _lookupTables.attributeIDsToAttributeValues[updatedFeatureSelectionBusinessObj.AttributeValues[i].AttributeID];
+                            _thisConfigurationDataModel.UpdateClientObjectField(existingClientAttributeValueGUID, "Value", updatedFeatureSelectionBusinessObj.AttributeValues[i].Value);
+                        }
+
                     }
                 }
             }
@@ -816,7 +818,7 @@ var StandardView = function (container, configurationDataModelInstance) {
         this.AddChild = function (UIConfigurationElement) {
             _children.push(UIConfigurationElement);
             UIConfigurationElement.SetParent(_thisUIConfigurationFeature);
-            
+
         }
         this.AddAttribute = function (UIConfigurationElement) {
             _UIAttributes.push(UIConfigurationElement);
@@ -853,10 +855,12 @@ var StandardView = function (container, configurationDataModelInstance) {
             //Create HTML
             _outerElement = $("<div class='Attribute' title='" + _description + "'>" + _name + "</div>").appendTo(parentContainer);
             switch (dataTypeName) {
+                //Integer 
                 case systemDefaults.enums.attributeDataTypes.integer.name:
                     _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
                     $(_innerElements.innerControl).val(value);
                     break;
+                //Boolean 
                 case systemDefaults.enums.attributeDataTypes.boolean.name:
                     _innerElements.innerControl = $("<input type='checkbox' class='InnerCheckbox' />").appendTo(_outerElement);
                     if (value == true || value == "True") {
@@ -868,6 +872,7 @@ var StandardView = function (container, configurationDataModelInstance) {
                         return $(control).is(':checked');
                     }
                     break;
+                //String 
                 case systemDefaults.enums.attributeDataTypes.string.name:
                     _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
                     $(_innerElements.innerControl).val(value);
@@ -883,7 +888,6 @@ var StandardView = function (container, configurationDataModelInstance) {
                     _innerElements.innerControl.attr("disabled", true);
                     break;
                 case systemDefaults.enums.attributeTypes.userInput.name:
-                    //Event handlers
                     _innerElements.innerControl.bind("change", function (e) {
                         var newValue = getValue($(this));
                         InternalAttributeValueChanged.RaiseEvent([clientObjectGUID, newValue]);
@@ -892,8 +896,8 @@ var StandardView = function (container, configurationDataModelInstance) {
                     break;
             }
         }
-        this.Update = function (newSelectionState) {
-            changeState(newSelectionState);
+        this.Update = function (newValue) {
+            _innerElements.innerControl.val(newValue);
         }
         this.SetParentUIFeature = function (parentUIConfigurationElement) {
             _parentUIFeature = parentUIConfigurationElement;
@@ -971,17 +975,17 @@ var StandardView = function (container, configurationDataModelInstance) {
         var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
         switch (currentSelectionState) {
 
-            //Unselected -> Selected                                                                                                                                                                                             
+            //Unselected -> Selected                                                                                                                                                                                              
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
 
-            //Selected -> Unselected                        
+            //Selected -> Unselected                         
             case systemDefaults.enums.featureSelectionStates.selected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
                 break;
 
-            //Deselected -> Selected                        
+            //Deselected -> Selected                         
             case systemDefaults.enums.featureSelectionStates.deselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
@@ -1006,6 +1010,11 @@ var StandardView = function (container, configurationDataModelInstance) {
                 UIElement.Update(newSelectionState, disabledState);
                 break;
             case "attributeValue":
+                var attributeGUID = clientObject.Attribute.GUID;
+                var UIElement = _UIElements[attributeGUID];
+                var newValue = clientObject.GetField("Value");
+
+                UIElement.Update(newValue);
                 break;
         }
     }
@@ -1029,7 +1038,6 @@ var StandardView = function (container, configurationDataModelInstance) {
         _UIElements[clientObject.GUID] = UIfeature;
 
         //Create its Attributes
-        
         for (var i = 0; i < attributes.length; i++) {
             var attributeType = attributes[i].GetField("AttributeType"), attributeDataType = attributes[i].GetField("AttributeDataType"), name = attributes[i].GetField("Name");
             var value = attributes[i].AttributeValue.GetField("Value");
@@ -1037,6 +1045,8 @@ var StandardView = function (container, configurationDataModelInstance) {
             var UIattribute = new UIAttribute(attributes[i].GUID, attributeType, attributeDataType, name, description, value);
             UIfeature.AddAttribute(UIattribute);
             UIattribute.CreateGraphicalRepresentation();
+
+            _UIElements[attributes[i].GUID] = UIattribute;
         }
         //---------------------------------------------------------------------------------------------
 

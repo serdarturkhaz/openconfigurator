@@ -9,41 +9,7 @@ using System.Collections.Specialized;
 
 namespace BLL.SolverEngines
 {
-    public class Z3Engine : ISolverEngine
-    {
-        //Constructors
-        public Z3Engine()
-        {
-        }
-
-        //Methods
-        #region ISolverEngine Members
-        public ISolverSolution GetSolution(ISolverContext context)
-        {
-            return ((Z3Context)context).GetSolution();
-        }
-        public bool CheckSolutionExists(ISolverContext context, string varID, bool valueToTest)
-        {
-            //Add a new assumption to test for the "valueToTest" value
-            bool returnVal = false;
-            context.AssumeBoolVarValue(varID, valueToTest, AssumptionTypes.Solver);
-
-            //If the context is still satisfiable
-            if (((Z3Context)context).GetSolution() != null)
-            {
-                returnVal = true;
-            }
-
-            //Clean up and return the value
-            context.RemoveValAssumption(varID);
-            return returnVal;
-        }
-        public ISolverContext CreateBlankContext()
-        {
-            return new Z3Context();
-        }
-        #endregion
-    }
+    
     public class Z3Context : ISolverContext
     {
         //Fields
@@ -51,11 +17,15 @@ namespace BLL.SolverEngines
         Context _context;
         Dictionary<string, Term> _variables = new Dictionary<string, Term>();
         List<ISolverStatement[]> _constraints = new List<ISolverStatement[]>();
-        Dictionary<string, bool> _userValueAssumptions = new Dictionary<string, bool>();
-        Dictionary<string, bool> _solverValueAssumptions = new Dictionary<string, bool>();
+
+        //Assumptions
+        Dictionary<string, bool> _userFeatureAssumptions = new Dictionary<string, bool>();
+        Dictionary<string, bool> _solverFeatureAssumptions = new Dictionary<string, bool>();
+        Dictionary<string, object> _userAttributeAssumptions = new Dictionary<string, object>();
+        Dictionary<string, object> _solverAttributeAssumptions = new Dictionary<string, object>();
 
         //Constructor
-        internal Z3Context()
+        public Z3Context()
         {
             //Initialize Config and Context
             _config = new Config();
@@ -71,18 +41,18 @@ namespace BLL.SolverEngines
             CreateInitialPoint();
 
             //Recreate assumptions
-            foreach (string varID in _userValueAssumptions.Keys)
+            foreach (string varID in _userFeatureAssumptions.Keys)
             {
-                AssumeBoolVarValue(varID, _userValueAssumptions[varID], AssumptionTypes.User);
+                AssumeBoolVarValue(varID, _userFeatureAssumptions[varID], AssumptionTypes.User);
             }
-            foreach (string varID in _solverValueAssumptions.Keys)
+            foreach (string varID in _solverFeatureAssumptions.Keys)
             {
-                AssumeBoolVarValue(varID, _solverValueAssumptions[varID], AssumptionTypes.User);
+                AssumeBoolVarValue(varID, _solverFeatureAssumptions[varID], AssumptionTypes.User);
             }
         }
 
         //Public methods
-        internal ISolverSolution GetSolution()
+        public ISolverSolution GetSolution()
         {
             //
             Model model = null;
@@ -100,7 +70,22 @@ namespace BLL.SolverEngines
                 return null;
             }
         }
-        #region ISolverContext Members
+        public bool CheckSolutionExists(string varID, bool valueToTest)
+        {
+            //Add a new assumption to test for the "valueToTest" value
+            bool returnVal = false;
+            this.AssumeBoolVarValue(varID, valueToTest, AssumptionTypes.Solver);
+
+            //If the context is still satisfiable
+            if (this.GetSolution() != null)
+            {
+                returnVal = true;
+            }
+
+            //Clean up and return the value
+            this.RemoveValAssumption(varID);
+            return returnVal;
+        }
 
         public void CreateInitialPoint()
         {
@@ -120,6 +105,64 @@ namespace BLL.SolverEngines
 
             //Keep track of the constraint added
             _constraints.Add(statements);
+        }
+        public void AssumeBoolVarValue(string varID, bool value, AssumptionTypes madeBy)
+        {
+            //Get the variable and a representation of the desired Bool value
+            Term variable = _variables[varID];
+            Term newValue = null;
+            switch (value)
+            {
+                case true:
+                    newValue = _context.MkTrue();
+                    break;
+                case false:
+                    newValue = _context.MkFalse();
+                    break;
+            }
+
+            //Assert
+            Term statement = _context.MkEq(variable, newValue);
+            _context.AssertCnstr(statement);
+
+            //Add to the corresponding list
+            switch (madeBy)
+            {
+                case AssumptionTypes.User:
+                    if (!_userFeatureAssumptions.ContainsKey(varID))
+                    {
+                        _userFeatureAssumptions.Add(varID, value);
+                    }
+                    break;
+                case AssumptionTypes.Solver:
+                    if (!_solverFeatureAssumptions.ContainsKey(varID))
+                    {
+                        _solverFeatureAssumptions.Add(varID, value);
+                    }
+                    break;
+            }
+
+        }
+        public void RemoveValAssumption(string varID)
+        {
+            //Get the assumption and variable
+            bool varRemoved = false;
+            if (_userFeatureAssumptions.ContainsKey(varID))
+            {
+                _userFeatureAssumptions.Remove(varID);
+                varRemoved = true;
+            }
+            else if (_solverFeatureAssumptions.ContainsKey(varID))
+            {
+                _solverFeatureAssumptions.Remove(varID);
+                varRemoved = true;
+            }
+
+            //Reset the context 
+            if (varRemoved)
+            {
+                ResetContext();
+            }
         }
 
         public ISolverStatement CreateStatement(StatementTypes type, params string[] varIDs)
@@ -297,67 +340,6 @@ namespace BLL.SolverEngines
 
             return statement;
         }
-
-        public void AssumeBoolVarValue(string varID, bool value, AssumptionTypes madeBy)
-        {
-            //Get the variable and a representation of the desired Bool value
-            Term variable = _variables[varID];
-            Term newValue = null;
-            switch (value)
-            {
-                case true:
-                    newValue = _context.MkTrue();
-                    break;
-                case false:
-                    newValue = _context.MkFalse();
-                    break;
-            }
-
-            //Assert
-            Term statement = _context.MkEq(variable, newValue);
-            _context.AssertCnstr(statement);
-
-            //Add to the corresponding list
-            switch (madeBy)
-            {
-                case AssumptionTypes.User:
-                    if (!_userValueAssumptions.ContainsKey(varID))
-                    {
-                        _userValueAssumptions.Add(varID, value);
-                    }
-                    break;
-                case AssumptionTypes.Solver:
-                    if (!_solverValueAssumptions.ContainsKey(varID))
-                    {
-                        _solverValueAssumptions.Add(varID, value);
-                    }
-                    break;
-            }
-
-        }
-        public void RemoveValAssumption(string varID)
-        {
-            //Get the assumption and variable
-            bool varRemoved = false;
-            if (_userValueAssumptions.ContainsKey(varID))
-            {
-                _userValueAssumptions.Remove(varID);
-                varRemoved = true;
-            }
-            else if (_solverValueAssumptions.ContainsKey(varID))
-            {
-                _solverValueAssumptions.Remove(varID);
-                varRemoved = true;
-            }
-
-            //Reset the context 
-            if (varRemoved)
-            {
-                ResetContext();
-            }
-        }
-
-        #endregion
     }
     public class Z3Solution : ISolverSolution
     {

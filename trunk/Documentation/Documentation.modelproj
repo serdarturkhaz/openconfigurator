@@ -51,6 +51,9 @@
     <Content Include="ModelDefinition\Package1_0139.uml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="ModelDefinition\Package_0106.uml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ModelDefinition\Package_0107.uml">
       <SubType>Content</SubType>
     </Content>
@@ -63,6 +66,9 @@
     <Content Include="ModelDefinition\Package_0139.uml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="ModelDefinition\Package_1204.uml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ModelDefinition\Package_1236.uml">
       <SubType>Content</SubType>
     </Content>
@@ -73,6 +79,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="ModelDefinition\Package_2143.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_2300.uml">
       <SubType>Content</SubType>
     </Content>
     <Content Include="UI\Login.bmml">

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -3139,10 +3139,26 @@ User Input
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="c2081057-80b2-4346-9463-396cd6a846bb">
+            <classMoniker
+              Id="1c0fd755-5819-40e2-8cea-ea2ce683e794"
+              LastKnownName="DiagramDataModel"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="c722482a-9d3f-43ea-bab4-b33a43c7a451">
+            <packageMoniker
+              Id="92e5f81c-3dba-49cd-bff3-42116cce1d17"
+              LastKnownName="DiagramContext UIElements"
+              LastKnownLocation="Package_1236.uml" />
+          </dependency>
+        </suppliersInternal>
         <ownedAttributesInternal>
           <property
-            Id="45fb5725-6390-44a4-85b0-4de61ca5c110"
-            name="ElementSelected"
+            Id="ae054dd1-9663-4e62-b531-8d2e7f09ed80"
+            name="ElementSelectToggled"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -3159,44 +3175,26 @@ User Input
             </type_NamedElement>
           </property>
           <property
-            Id="ae627ea4-0abe-4051-a92f-7abe863fb373"
-            name="ElementDeselected"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false">
-            <type_NamedElement>
-              <undefinedTypeMoniker
-                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
-                LastKnownName="Event"
-                LastKnownLocation="Documentation.uml" />
-            </type_NamedElement>
-          </property>
-          <property
-            Id="c60741c1-5d35-4c05-99e5-bd7e6a431268"
-            name="AllElementsDeselected"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false">
-            <type_NamedElement>
-              <undefinedTypeMoniker
-                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
-                LastKnownName="Event"
-                LastKnownLocation="Documentation.uml" />
-            </type_NamedElement>
-          </property>
-          <property
-            Id="3563994c-5c18-481d-afcb-fb3344d0d591"
+            Id="037da2f2-ebf9-4a21-b0b3-3d523bf79f2d"
             name="Focus"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
+                LastKnownName="Event"
+                LastKnownLocation="Documentation.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="ffd582f6-ad7e-4c1a-82ed-1f39c7c38488"
+            name="SelectionCleared"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -3232,10 +3230,19 @@ User Input
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="49026cbb-df93-4102-9a29-928e4d7accc4">
+            <classMoniker
+              Id="1c0fd755-5819-40e2-8cea-ea2ce683e794"
+              LastKnownName="DiagramDataModel"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+        </suppliersInternal>
         <ownedAttributesInternal>
           <property
             Id="61a70770-446e-4087-9c47-36b019172562"
-            name="AllElementsDeselected"
+            name="ElementSelectToggled"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -3254,6 +3261,24 @@ User Input
           <property
             Id="dc231678-088a-42c2-9ef7-9a2cd8a6eb8c"
             name="Focus"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
+                LastKnownName="Event"
+                LastKnownLocation="Documentation.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="ad27381d-adb8-421a-a8b5-7b8f56237b62"
+            name="SelectionCleared"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -3289,10 +3314,55 @@ User Input
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="22a9f2ff-f432-4b37-9d40-3def0c7d0046">
+            <classMoniker
+              Id="1c0fd755-5819-40e2-8cea-ea2ce683e794"
+              LastKnownName="DiagramDataModel"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+        </suppliersInternal>
         <ownedAttributesInternal>
           <property
-            Id="5b74404e-1ae3-4b45-aba8-98bc3c439b46"
+            Id="17d3cd5c-af29-4f2a-851e-073dfd109f16"
+            name="ElementSelectToggled"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
+                LastKnownName="Event"
+                LastKnownLocation="Documentation.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="c11f5cf8-ca85-4eb9-a2f3-9a2eb253d8bb"
             name="Focus"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="11203fa0-cc6f-4682-b1e3-68d892e45b22"
+                LastKnownName="Event"
+                LastKnownLocation="Documentation.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="7aebb7b4-f178-4c57-90bf-2ee2fe438eed"
+            name="SelectionCleared"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -3344,6 +3414,15 @@ User Input
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="6ec96b99-0065-43a7-9ecd-b7546b082975">
+            <classMoniker
+              Id="1c0fd755-5819-40e2-8cea-ea2ce683e794"
+              LastKnownName="DiagramDataModel"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+        </suppliersInternal>
         <targetEnds>
           <association
             Id="2e5bcc4b-f785-4e5b-b47b-efab57c77aec"
@@ -3469,6 +3548,14 @@ User Input
             isAbstract="false"
             concurrency="Sequential"
             isQuery="false" />
+          <operation
+            Id="776681cc-f002-41cc-b3de-153bd127182e"
+            name="SaveData"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
         </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
@@ -3488,7 +3575,7 @@ User Input
     <packageHasNamedElement>
       <packageMoniker
         Id="92e5f81c-3dba-49cd-bff3-42116cce1d17"
-        LastKnownName="DiagramContext inner objects"
+        LastKnownName="DiagramContext UIElements"
         LastKnownLocation="Package_1236.uml" />
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -3520,6 +3607,15 @@ User Input
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="2a75d172-f052-473c-a935-6d2d8076e676">
+            <packageMoniker
+              Id="cb3763b5-5370-4949-b8f0-4a148941f9ea"
+              LastKnownName="ClientObjects"
+              LastKnownLocation="Package_1204.uml" />
+          </dependency>
+        </suppliersInternal>
         <ownedAttributesInternal>
           <property
             Id="1b254052-726c-46f6-9f70-1877e7839e59"
@@ -3578,24 +3674,16 @@ User Input
         </ownedAttributesInternal>
         <ownedOperationsInternal>
           <operation
-            Id="72edad06-9835-4621-9a1a-1b4fd4d3bd08"
-            name="LoadProperties"
+            Id="c66cbff6-1171-4667-a86d-d308f5a4ec77"
+            name="SaveModel"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
             concurrency="Sequential"
             isQuery="false" />
           <operation
-            Id="cb42a5bf-3c31-4481-b257-7ab487f8659a"
-            name="Clear"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-          <operation
-            Id="af307960-f77b-4be9-bc05-475bd3c1a755"
-            name="Initialize"
+            Id="1e56e5c4-45ba-482e-a36f-91d03755fe72"
+            name="LoadModel"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -4270,13 +4358,6 @@ User Input
               LastKnownName="UIElements"
               LastKnownLocation="Package_0135.uml" />
           </dependency>
-          <dependency
-            Id="f7ed1216-3da9-4d35-99d1-ff23b92334e9">
-            <packageMoniker
-              Id="e5ffc7da-4817-4134-a1a0-a97c70f28a3e"
-              LastKnownName="ClientObjects"
-              LastKnownLocation="Package1_0139.uml" />
-          </dependency>
         </suppliersInternal>
       </class>
     </packageHasNamedElement>
@@ -4289,17 +4370,17 @@ User Input
         isActiveClass="false">
         <suppliersInternal>
           <dependency
-            Id="54588c8d-60ff-44f3-a8e5-2bd340f19230">
-            <classMoniker
-              Id="de26485e-9701-4689-b9e4-c6b04de3b86e"
-              LastKnownName="ConfigurationDataModel"
-              LastKnownLocation="Documentation.uml" />
-          </dependency>
-          <dependency
             Id="9f5615f9-2989-4452-b2e5-45ca92c2e9c7">
             <classMoniker
               Id="7e971449-6033-4bc8-a5cf-fe87b6539e8d"
               LastKnownName="StandardView"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="a387d575-a3c8-4737-9062-6b7a88e34529">
+            <classMoniker
+              Id="de26485e-9701-4689-b9e4-c6b04de3b86e"
+              LastKnownName="ConfigurationDataModel"
               LastKnownLocation="Documentation.uml" />
           </dependency>
         </suppliersInternal>
@@ -4396,6 +4477,15 @@ User Input
             isAbstract="false"
             concurrency="Sequential"
             isQuery="false" />
+          <operation
+            Id="67c2f2ce-9415-48af-9787-b455ea12d935"
+            name="InitRootSelection"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
         </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
@@ -4413,6 +4503,20 @@ User Input
               Id="68238a52-05bf-4e6c-b5ad-ad2becc3de69"
               LastKnownName="ISolverSolution"
               LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="00e4f731-95f1-4793-bc02-548f5562fc64">
+            <classMoniker
+              Id="9f6e05a6-d882-4648-88f3-eec7de9a37c6"
+              LastKnownName="IParser"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="7177cacf-8a8f-444d-a627-88b6c3d162d8">
+            <packageMoniker
+              Id="ca7c703a-0ada-48eb-9b60-e8afff59d904"
+              LastKnownName="Parser"
+              LastKnownLocation="Package_0106.uml" />
           </dependency>
         </suppliersInternal>
         <targetEnds>
@@ -4572,58 +4676,7 @@ User Input
         name="ISolverContext"
         isAbstract="false"
         isLeaf="false"
-        isActiveClass="false">
-        <ownedOperationsInternal>
-          <operation
-            Id="491b33d4-94b1-4ee8-8b20-b942b8ffd8b7"
-            name="AddBoolVariable"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-          <operation
-            Id="a0bc247d-267f-4c74-bcfa-b2acf16a0da5"
-            name="AddConstraint"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-          <operation
-            Id="8f7bc51f-4142-4b9f-b747-b3e36d60edb1"
-            name="AssumeBoolVarValue"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-          <operation
-            Id="a1436996-6cea-4dd4-a046-8d1cde56942f"
-            name="CreateInitialPoint"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-          <operation
-            Id="08a2fd1d-f34e-447f-b1d3-c77be605b647"
-            name="RemoveValAssumption"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-          <operation
-            Id="215415c0-4ede-454f-9e7c-495242e90198"
-            name="CreateStatement"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-        </ownedOperationsInternal>
-      </class>
+        isActiveClass="false" />
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
@@ -4673,8 +4726,25 @@ User Input
             isComposite="false">
             <type_NamedElement>
               <undefinedTypeMoniker
-                Id="19d9bbdf-51d6-4613-b6af-5b9bf212f226"
-                LastKnownName="List&lt;ISolverContext&gt;"
+                Id="2bf6f83d-6cfd-4d0d-9b32-7532dac4f32a"
+                LastKnownName="Dictionary&lt;int, ISolverContext&gt;"
+                LastKnownLocation="Documentation.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="bf5084a9-b86e-4668-955e-e00319511533"
+            name="FeatureSelections"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="ed8046cb-282c-4d69-9e25-17bb3b7bce72"
+                LastKnownName="Dictionary&lt;int, List&lt;BLL.BusinessObjects.FeatureSelection&gt;&gt;"
                 LastKnownLocation="Documentation.uml" />
             </type_NamedElement>
           </property>
@@ -4697,6 +4767,42 @@ User Input
         Id="db6560ef-dd73-4e54-974a-2c988c1c977d"
         LastKnownName="Package1"
         LastKnownLocation="Package_0113.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="cb3763b5-5370-4949-b8f0-4a148941f9ea"
+        LastKnownName="ClientObjects"
+        LastKnownLocation="Package_1204.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="4ed3faaa-91c4-42f6-bfa6-f5b8340484eb"
+        LastKnownName="ConfigurationEditor.htm"
+        LastKnownLocation="Package_2300.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="2bf6f83d-6cfd-4d0d-9b32-7532dac4f32a"
+        name="Dictionary&lt;int, ISolverContext&gt;" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="ed8046cb-282c-4d69-9e25-17bb3b7bce72"
+        name="Dictionary&lt;int, List&lt;BLL.BusinessObjects.FeatureSelection&gt;&gt;" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9f6e05a6-d882-4648-88f3-eec7de9a37c6"
+        name="IParser"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="ca7c703a-0ada-48eb-9b60-e8afff59d904"
+        LastKnownName="Parser"
+        LastKnownLocation="Package_0106.uml" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
