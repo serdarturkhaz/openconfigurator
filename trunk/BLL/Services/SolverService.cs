@@ -13,14 +13,12 @@ namespace BLL.Services
     public class SolverService
     {
         //Fields
-        ISolverEngine _engine;
         IParser _ruleParser;
 
         //Constructors
         public SolverService()
         {
             //Create a new SolverEngine
-            _engine = new Z3Engine();
             _ruleParser = new StandardParser();
         }
 
@@ -104,8 +102,8 @@ namespace BLL.Services
                 //For those which the user has not set
                 if (featureSelection.ToggledByUser == false)
                 {
-                    bool CanBeTrue = _engine.CheckSolutionExists(context, featureSelection.FeatureID.ToString(), true);
-                    bool CanBeFalse = _engine.CheckSolutionExists(context, featureSelection.FeatureID.ToString(), false);
+                    bool CanBeTrue = context.CheckSolutionExists(featureSelection.FeatureID.ToString(), true);
+                    bool CanBeFalse = context.CheckSolutionExists(featureSelection.FeatureID.ToString(), false);
 
                     //Cannot be true nor false
                     if (!CanBeFalse && !CanBeTrue)
@@ -134,24 +132,28 @@ namespace BLL.Services
             }
 
             //
+
+            //
             return true;
 
         }
-        
+
         //Public methods  
         public ISolverContext CreateNewContext(BusinessObjects.Model model)
         {
-            ISolverContext context = _engine.CreateBlankContext();
+            ISolverContext context = new Z3Context();
             InitializeContextFromModel(ref context, model);
 
             return context;
         }
         public bool UserToggleSelection(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
         {
-            //Set the bool value in the context and in the appropriate FeatureSelection
+            //Get the FeatureSelection corresponding to the given FeatureID
             BLL.BusinessObjects.FeatureSelection fSelection = featureSelections.First(k => k.FeatureID == FeatureID);
-            
-            switch(newState) {
+
+            //Set the bool value in the context and in the appropriate FeatureSelection
+            switch (newState)
+            {
                 case BusinessObjects.FeatureSelectionStates.Selected: //Assert-decision
                     context.AssumeBoolVarValue(FeatureID.ToString(), true, AssumptionTypes.User);
                     fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
@@ -170,9 +172,9 @@ namespace BLL.Services
             //
             return decisionIsValid;
         }
-        public bool ExecuteCustomRule(ISolverContext context, string Expression)
+        public bool ExecuteCustomRule(ISolverContext context, string Expression, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
-            _ruleParser.ExecuteCustomRule(Expression, context);
+            _ruleParser.ExecuteCustomRule(Expression, context, ref featureSelections);
             return false;
         }
     }

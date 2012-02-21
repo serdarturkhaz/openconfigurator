@@ -45,13 +45,14 @@ namespace BLL.RuleParser
                     public static string IdentifyRegex = "^.*=.*$", SplitRegex = "=";
                     public override object Eval()
                     {
-                        object leftSide = base.innerStatements[0].Eval();
-                        leftSide = base.innerStatements[1].Eval();
+                        //Leftside must be reference, Rightside must be value
+                        ObjectReference leftSide = (ObjectReference)base.innerStatements[0].Eval();
+                        object rightSide = base.innerStatements[1].Eval();
+                        leftSide.SetValue(rightSide);
                         return true;
                     }
                 }
             }
-
             public static class Primitives
             {
                 //Methods
@@ -115,7 +116,9 @@ namespace BLL.RuleParser
                     public static string IdentifyRegex = @"^#[A-z,0-9]*(\.{1}[A-z,0-9]+){0,1}$", SplitRegex = null; //example : "#FeatureName.AttributeName"
                     public override object Eval()
                     {
-                        throw new NotImplementedException();
+                        object targetAttributeVal = (object) featureSelections[0].AttributeValues[0];
+                        ObjectReference returnRef = new ObjectReference(ref targetAttributeVal, "Value");
+                        return returnRef;
                     }
                 }
                 public class GetFeatureByName : ParserStatement
@@ -138,13 +141,48 @@ namespace BLL.RuleParser
                 }
             }
         }
+        public class ObjectReference
+        {
+            //
+            object targetInstance;
+            string fieldName;
+
+            //Constructor
+            public ObjectReference(ref object instance, string field)
+            {
+                targetInstance = instance;
+                fieldName = field;
+            }
+
+            //Methods
+            private static object ConvertValue(object valToConvert, Type destinationType)
+            {
+                //Get the current type
+                Type currentType = valToConvert.GetType();
+
+                //Int to String
+                if (destinationType.Name == "String" && currentType.Name == "Int32")
+                {
+                    return valToConvert.ToString();
+                }
+
+                return null;
+            }
+            public void SetValue(object newValue)
+            {
+                PropertyInfo field = targetInstance.GetType().GetProperty(fieldName);
+                Type fieldType = field.PropertyType;
+
+                field.SetValue(targetInstance, (string)ConvertValue(newValue, fieldType), null);
+            }
+        }
 
         //Private Methods
-        private ParserStatement ParseString(string str)
+        private ParserStatement ParseString(string str, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
             //Identify the string and creating a corresponding ParserStatement
             Type StatementType = IdentifyString(str);
-            ParserStatement instance = (ParserStatement)ExecuteStaticMethod(StatementType, "CreateInstance", (object)StatementType, (object)str);
+            ParserStatement instance = (ParserStatement)ExecuteStaticMethod(StatementType, "CreateInstance", (object)StatementType, (object)str, context, featureSelections);
 
             //Parse inner statements and add them to the parent
             string splitRegex = (string)GetStaticField(StatementType, "SplitRegex");
@@ -153,14 +191,13 @@ namespace BLL.RuleParser
                 string[] subStrings = Regex.Split(str, splitRegex);
                 foreach (string subString in subStrings)
                 {
-                    ParserStatement innerStatement = ParseString(subString);
+                    ParserStatement innerStatement = ParseString(subString, context, ref featureSelections);
                     instance.AddInnerStatement(innerStatement);
                 }
             }
 
             return instance;
         }
-
         private Type IdentifyString(string str)
         {
             //Loop through all Categories in SyntaxSupport - according to their parsing priority
@@ -199,24 +236,12 @@ namespace BLL.RuleParser
         }
 
         //Public Methods
-        #region IParser Members
-
-        public bool VerifySyntax(string RuleSyntax, ISolverContext context)
+        public bool ExecuteCustomRule(string RuleSyntax, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
-            throw new NotImplementedException();
-        }
-        public bool ExecuteCustomRule(string RuleSyntax, ISolverContext context)
-        {
-            //
-            ParserStatement rootStatement = ParseString(RuleSyntax);
+            ParserStatement rootStatement = ParseString(RuleSyntax, context, ref featureSelections);
+            rootStatement.Eval();
 
             return false;
         }
-
-        #endregion
-
-
-        //
-
     }
 }

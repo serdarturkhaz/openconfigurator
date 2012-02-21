@@ -9,17 +9,15 @@ namespace BLL.RuleParser
 {
     public interface IParser
     {
-        bool VerifySyntax(string RuleSyntax, ISolverContext context);
-        bool ExecuteCustomRule(string RuleSyntax, ISolverContext context);
+        bool ExecuteCustomRule(string RuleSyntax, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections);
     }
-
-
     public abstract class ParserStatement
     {
         //Fields
-        protected string _syntaxString="";
+        protected string _syntaxString = "";
         protected List<ParserStatement> innerStatements = new List<ParserStatement>();
-
+        protected ISolverContext _context;
+        protected List<BLL.BusinessObjects.FeatureSelection> featureSelections;
 
         //Methods
         public virtual void AddInnerStatement(ParserStatement statement)
@@ -29,14 +27,15 @@ namespace BLL.RuleParser
         public abstract object Eval();
 
         //Factory constructor
-        public static ParserStatement CreateInstance(Type statementType, string syntaxString)
+        public static ParserStatement CreateInstance(Type statementType, string syntaxString, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
             ParserStatement instance = (ParserStatement)Activator.CreateInstance(statementType, null);
             instance._syntaxString = syntaxString;
+            instance._context = context;
+            instance.featureSelections = featureSelections;
             return instance;
         }
     }
-
     public enum StatementEvalTypes
     {
         Feature,

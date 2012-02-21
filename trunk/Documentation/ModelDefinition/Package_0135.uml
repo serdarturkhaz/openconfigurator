@@ -15,8 +15,8 @@
           <association
             Id="7d263f8a-a764-4536-9564-8214ee8c5f48"
             isDerived="false"
-            sourceEndRoleName="UIFeature"
-            targetEndRoleName="UIGroup"
+            sourceEndRoleName="Parent"
+            targetEndRoleName="ChildGroups"
             isLeaf="false"
             isAbstract="false">
             <classMoniker
@@ -27,7 +27,7 @@
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="7a0fb731-9482-4613-9d68-33aecfb4d957"
-                  name="UIFeature"
+                  name="Parent"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -40,7 +40,7 @@
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="a87ed2a9-3171-4a02-aeee-dde3c8e6ec7e"
-                  name="UIGroup"
+                  name="ChildGroups"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -55,7 +55,7 @@
             Id="b3dbcde0-9afc-46eb-9735-fa2195a35cce"
             isDerived="false"
             sourceEndRoleName="UIFeature"
-            targetEndRoleName="UIFeature"
+            targetEndRoleName="ChildFeatures"
             isLeaf="false"
             isAbstract="false">
             <classMoniker
@@ -79,7 +79,7 @@
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="effe895a-d2bb-41be-99d7-770de71332ae"
-                  name="UIFeature"
+                  name="ChildFeatures"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -94,7 +94,7 @@
             Id="adf8329e-b6d3-41ab-8058-f48d84a0b250"
             isDerived="false"
             sourceEndRoleName="UIFeature"
-            targetEndRoleName="UIAttribute"
+            targetEndRoleName="Attributes"
             isLeaf="false"
             isAbstract="false">
             <classMoniker
@@ -118,7 +118,7 @@
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="dc8ec38d-e4f9-4a59-86a0-648cf9345227"
-                  name="UIAttribute"
+                  name="Attributes"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -143,8 +143,8 @@
           <association
             Id="ca434442-5c45-4f34-8678-ea37d86aef93"
             isDerived="false"
-            sourceEndRoleName="UIGroup"
-            targetEndRoleName="UIFeature"
+            sourceEndRoleName="Parent"
+            targetEndRoleName="ChildGroups"
             isLeaf="false"
             isAbstract="false">
             <classMoniker
@@ -155,7 +155,7 @@
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="6c6469c1-6c16-4427-b774-4c5df1153474"
-                  name="UIGroup"
+                  name="Parent"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -168,7 +168,7 @@
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="3d661163-28c6-4d88-8323-cc025de13e45"
-                  name="UIFeature"
+                  name="ChildGroups"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"

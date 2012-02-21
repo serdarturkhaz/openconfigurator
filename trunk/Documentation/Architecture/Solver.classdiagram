@@ -37,6 +37,9 @@
           <operation Id="83c6d8d9-5c2a-42eb-8539-73376081a66d" name="NewDefaultAttributeValue" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="ed119682-ded8-4608-b627-60b78d55d10e" />
           </operation>
+          <operation Id="2af5c6c0-86fa-45eb-a382-92cb0da7b704" name="InitRootSelection" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="67c2f2ce-9415-48af-9787-b455ea12d935" />
+          </operation>
         </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
@@ -48,24 +51,12 @@
             <classMoniker Id="8113b011-1482-4b83-a0bd-7aa61154e563" LastKnownName="ISolverSolution" />
             <elementDefinition Id="f368eabf-c1fe-4623-9aed-19e71c4a7359" />
           </dependency>
+          <dependency Id="f165c718-0e83-4170-96f4-5cbc160da9db">
+            <packageMoniker Id="d8a42f24-bbda-4175-be98-c4bbed5d9a1f" LastKnownName="Parser" />
+            <elementDefinition Id="7177cacf-8a8f-444d-a627-88b6c3d162d8" />
+          </dependency>
         </suppliersInternal>
         <targetEnds>
-          <association Id="0a5d17cd-ae72-4945-aab4-0cabdf030f8c" isDerived="false" sourceEndRoleName="" targetEndRoleName="_engine" isLeaf="false" isAbstract="false">
-            <classMoniker Id="23d0a117-1be3-405d-a5bc-bb37fbbdbbc9" LastKnownName="ISolverEngine" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd Id="76acb49c-a749-4be6-9b1f-f3ecd335dbec" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
-                  <elementDefinition Id="e529f72b-49e4-49f2-a6d5-b0568fb6ccd2" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd Id="a55e143f-bacc-4af3-9d10-de631c323b79" name="_engine" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                  <elementDefinition Id="40838e30-ac52-47f2-90e6-90a02a21cf20" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-            <elementDefinition Id="7421a913-3447-4a04-852d-e66a946093a7" />
-          </association>
           <association Id="42e59cb8-7850-422b-b560-aaf57098fd0d" isDerived="false" sourceEndRoleName="" targetEndRoleName="_context" isLeaf="false" isAbstract="false">
             <classMoniker Id="4453af04-27dc-461a-99c6-39308466bb9f" LastKnownName="ISolverContext" />
             <relationshipOwnedElementsInternal>
@@ -100,44 +91,8 @@
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="23d0a117-1be3-405d-a5bc-bb37fbbdbbc9" name="ISolverEngine" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <elementDefinition Id="e9a12370-dcf5-4e14-b1c6-2dae19cf7e6e" />
-        <ownedOperationsInternal>
-          <operation Id="091b4518-fdef-4cc4-b17f-c96dcecfb2fa" name="GetSolution" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="dbd4a609-5d27-48fe-9928-edbcc3f577ab" />
-          </operation>
-          <operation Id="469b2746-03fd-473f-b642-be53d6d41a45" name="CreateBlankContext" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="3d74126f-01e0-44c9-bb3d-a27acbb43958" />
-          </operation>
-          <operation Id="a76b139b-b19f-4ff0-b394-b530234e9cd0" name="CheckSolutionExists" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="cb23f6de-56c7-4f8c-beef-bdda14cc8306" />
-          </operation>
-        </ownedOperationsInternal>
-      </class>
-    </logicalClassDesignerModelHasTypes>
-    <logicalClassDesignerModelHasTypes>
       <class Id="4453af04-27dc-461a-99c6-39308466bb9f" name="ISolverContext" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="735d635c-ee5d-463d-bce0-e0da7666a53f" />
-        <ownedOperationsInternal>
-          <operation Id="912dd3bc-601b-45a0-a07a-052eacab0c73" name="AddBoolVariable" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="491b33d4-94b1-4ee8-8b20-b942b8ffd8b7" />
-          </operation>
-          <operation Id="cf796af1-719a-4af7-a43d-36fbb85ca26a" name="AddConstraint" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="a0bc247d-267f-4c74-bcfa-b2acf16a0da5" />
-          </operation>
-          <operation Id="3c8ccc16-6721-4b7c-9013-4fcfa56446cf" name="AssumeBoolVarValue" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="8f7bc51f-4142-4b9f-b747-b3e36d60edb1" />
-          </operation>
-          <operation Id="903681e1-9444-43b3-9dfa-32434d0761c8" name="CreateInitialPoint" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="a1436996-6cea-4dd4-a046-8d1cde56942f" />
-          </operation>
-          <operation Id="0f9c41f8-8715-4783-9490-822b85c8fe0a" name="RemoveValAssumption" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="08a2fd1d-f34e-447f-b1d3-c77be605b647" />
-          </operation>
-          <operation Id="d3d28e75-4d8f-480b-8a91-4c23b9397c98" name="CreateStatement" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="215415c0-4ede-454f-9e7c-495242e90198" />
-          </operation>
-        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -160,50 +115,22 @@
           <property Id="71b04091-79d5-430c-91a6-568d9a7dc1fb" name="SolverContexts" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="421ecb8d-7f85-4c2f-9ffe-d6357fee17ff" />
             <type_NamedElement>
-              <referencedTypeMoniker Id="9d9e33a0-b49c-45b0-8580-45499d86d1a0" LastKnownName="List&lt;ISolverContext&gt;" />
+              <referencedTypeMoniker Id="e41569d1-1230-45f0-a754-c3c761eca403" LastKnownName="Dictionary&lt;int, ISolverContext&gt;" />
+            </type_NamedElement>
+          </property>
+          <property Id="d51d34d1-9fb2-4fff-842c-e9f9e2b51a52" name="FeatureSelections" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="bf5084a9-b86e-4668-955e-e00319511533" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="c901f366-59ef-48c1-aec1-6a4fa851692a" LastKnownName="Dictionary&lt;int, List&lt;BLL.BusinessObjects.FeatureSelection&gt;&gt;" />
             </type_NamedElement>
           </property>
         </ownedAttributesInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
-    <packageHasNamedElement>
-      <referencedType Id="9d9e33a0-b49c-45b0-8580-45499d86d1a0" name="List&lt;ISolverContext&gt;" isAbstract="false" isLeaf="false" cachedFullName="List&lt;ISolverContext&gt;">
-        <elementDefinition Id="19d9bbdf-51d6-4613-b6af-5b9bf212f226" />
-      </referencedType>
-    </packageHasNamedElement>
     <logicalClassDesignerModelHasPackages>
       <package Id="edfa11b1-75df-4278-ba4d-eaf0c977b960" name="Z3Engine">
         <elementDefinition Id="683d86e0-6bdd-4d45-8cb5-a2a1f2e17f02" />
         <packagedElements>
-          <packageHasNamedElement>
-            <class Id="6d41ea01-e15e-4cb1-ab50-073af2d5479d" name="Z3Engine" isAbstract="false" isLeaf="false" isActiveClass="false">
-              <elementDefinition Id="7221a840-2e24-4d1d-8a79-74d25c0ade26" />
-              <generalsInternal>
-                <generalization Id="8151cf73-fb0a-463e-9219-b483cc4a4c9e" isSubstitutable="false">
-                  <classMoniker Id="23d0a117-1be3-405d-a5bc-bb37fbbdbbc9" LastKnownName="ISolverEngine" />
-                  <elementDefinition Id="569c4521-3975-43bc-83b5-1456f347d68e" />
-                </generalization>
-              </generalsInternal>
-              <targetEnds>
-                <association Id="936ffae1-d621-4d35-ad4c-1cd117997c65" isDerived="false" sourceEndRoleName="" targetEndRoleName="_context" isLeaf="false" isAbstract="false">
-                  <classMoniker Id="55d2c235-2753-4206-ae62-34c18db858af" LastKnownName="Z3Context" />
-                  <relationshipOwnedElementsInternal>
-                    <associationHasOwnedEnds>
-                      <memberEnd Id="2b7f04ae-44ea-42a6-be6d-e5bd6b04e144" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
-                        <elementDefinition Id="601fc2c5-f1d0-46e7-b91f-819380cfcb6f" />
-                      </memberEnd>
-                    </associationHasOwnedEnds>
-                    <associationHasOwnedEnds>
-                      <memberEnd Id="6660e7be-d2ad-4820-bc54-6904e4123e7d" name="_context" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
-                        <elementDefinition Id="bf0d0df5-725f-4dc9-8930-362c4ab71bed" />
-                      </memberEnd>
-                    </associationHasOwnedEnds>
-                  </relationshipOwnedElementsInternal>
-                  <elementDefinition Id="12989d0b-0507-443b-ab7e-fe1e1d85f307" />
-                </association>
-              </targetEnds>
-            </class>
-          </packageHasNamedElement>
           <packageHasNamedElement>
             <class Id="55d2c235-2753-4206-ae62-34c18db858af" name="Z3Context" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="1cb4ed2c-8bec-436e-b4f6-c1d9b4aba1fd" />
@@ -326,6 +253,21 @@
             </package>
           </packageHasNamedElement>
         </packagedElements>
+      </package>
+    </logicalClassDesignerModelHasPackages>
+    <packageHasNamedElement>
+      <referencedType Id="e41569d1-1230-45f0-a754-c3c761eca403" name="Dictionary&lt;int, ISolverContext&gt;" isAbstract="false" isLeaf="false" cachedFullName="Dictionary&lt;int, ISolverContext&gt;">
+        <elementDefinition Id="2bf6f83d-6cfd-4d0d-9b32-7532dac4f32a" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="c901f366-59ef-48c1-aec1-6a4fa851692a" name="Dictionary&lt;int, List&lt;BLL.BusinessObjects.FeatureSelection&gt;&gt;" isAbstract="false" isLeaf="false" cachedFullName="Dictionary&lt;int, List&lt;BLL.BusinessObjects.FeatureSelection&gt;&gt;">
+        <elementDefinition Id="ed8046cb-282c-4d69-9e25-17bb3b7bce72" />
+      </referencedType>
+    </packageHasNamedElement>
+    <logicalClassDesignerModelHasPackages>
+      <package Id="d8a42f24-bbda-4175-be98-c4bbed5d9a1f" name="Parser">
+        <elementDefinition Id="ca7c703a-0ada-48eb-9b60-e8afff59d904" />
       </package>
     </logicalClassDesignerModelHasPackages>
   </packagedElements>

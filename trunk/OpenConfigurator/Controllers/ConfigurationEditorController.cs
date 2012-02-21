@@ -152,7 +152,7 @@ namespace PresentationLayer.Controllers
             bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, selectionState);
 
             string testRule = "#Root.TotalPrice=25";
-            solverService.ExecuteCustomRule(context, testRule);
+            solverService.ExecuteCustomRule(context, testRule, ref featureSelections);
 
             //Return
             if (selectionValid)

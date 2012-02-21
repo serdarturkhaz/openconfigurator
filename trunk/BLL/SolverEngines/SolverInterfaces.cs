@@ -5,12 +5,6 @@ using System.Text;
 
 namespace BLL.SolverEngines
 {
-    public interface ISolverEngine
-    {
-        ISolverSolution GetSolution(ISolverContext context);
-        bool CheckSolutionExists(ISolverContext context, string varID, bool valueToTest);
-        ISolverContext CreateBlankContext();
-    }
     public interface ISolverContext
     {
         void CreateInitialPoint();
@@ -21,6 +15,9 @@ namespace BLL.SolverEngines
         ISolverStatement CreateStatement(StatementTypes type, string varID, ISolverStatement rightStatement);
         void AssumeBoolVarValue(string varID, bool value, AssumptionTypes madeBy);
         void RemoveValAssumption(string varID);
+
+        ISolverSolution GetSolution();
+        bool CheckSolutionExists(string varID, bool valueToTest);
     }
     public interface ISolverSolution
     {
