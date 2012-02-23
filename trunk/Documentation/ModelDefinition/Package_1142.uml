@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="a11cc612-33d1-4c5b-94e6-fe7814d6973b"
+  name="StandardParser" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <suppliersInternal>
+    <dependency
+      Id="65d1af64-71b9-4348-b0bc-128c16b7573b">
+      <classMoniker
+        Id="0b456808-82e6-4ba9-b61c-0159b988df6e"
+        LastKnownName="ParserStatement"
+        LastKnownLocation="Documentation.uml" />
+    </dependency>
+    <dependency
+      Id="1725fe44-e8a7-4f56-a43c-196babc81245">
+      <classMoniker
+        Id="c9d266c0-11e6-42a4-821c-884ef36d400a"
+        LastKnownName="ObjectReference"
+        LastKnownLocation="Documentation.uml" />
+    </dependency>
+  </suppliersInternal>
+  <packagedElements>
+    <packageHasNamedElement>
+      <class
+        Id="df19fe01-924a-4941-9575-98c4e8b0c1be"
+        name="StandardParser"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="71444174-9230-4d3c-9aad-cede2e621954"
+            isSubstitutable="false">
+            <classMoniker
+              Id="35807ba8-8269-452a-92be-40adc0f4b63e"
+              LastKnownName="IParser"
+              LastKnownLocation="Documentation.uml" />
+          </generalization>
+        </generalsInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="1fdaeff8-818c-4983-a4ad-9c8e4c8f9d96"
+            name="ParseString"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="d5530fd9-0f97-41ae-be64-80427912991f"
+            name="IdentifyString"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="e53d512c-831f-49eb-a3e0-3b334c156164"
+        LastKnownName="SyntaxSupport"
+        LastKnownLocation="Package_1141.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="2acb1e80-750d-48ca-b546-75680a66256a"
+        name="Class1"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+  </packagedElements>
+</package>

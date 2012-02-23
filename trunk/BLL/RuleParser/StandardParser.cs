@@ -141,41 +141,7 @@ namespace BLL.RuleParser
                 }
             }
         }
-        public class ObjectReference
-        {
-            //
-            object targetInstance;
-            string fieldName;
-
-            //Constructor
-            public ObjectReference(ref object instance, string field)
-            {
-                targetInstance = instance;
-                fieldName = field;
-            }
-
-            //Methods
-            private static object ConvertValue(object valToConvert, Type destinationType)
-            {
-                //Get the current type
-                Type currentType = valToConvert.GetType();
-
-                //Int to String
-                if (destinationType.Name == "String" && currentType.Name == "Int32")
-                {
-                    return valToConvert.ToString();
-                }
-
-                return null;
-            }
-            public void SetValue(object newValue)
-            {
-                PropertyInfo field = targetInstance.GetType().GetProperty(fieldName);
-                Type fieldType = field.PropertyType;
-
-                field.SetValue(targetInstance, (string)ConvertValue(newValue, fieldType), null);
-            }
-        }
+        
 
         //Private Methods
         private ParserStatement ParseString(string str, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)

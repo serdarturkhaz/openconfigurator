@@ -78,6 +78,13 @@
               LastKnownName="Z3Solution"
               LastKnownLocation="Package_0107.uml" />
           </dependency>
+          <dependency
+            Id="e798be26-d7c0-430f-ad91-b8e24edb8be0">
+            <classMoniker
+              Id="e771899a-c90d-437a-a365-80f6542467fc"
+              LastKnownName="Z3Statement"
+              LastKnownLocation="Package_0107.uml" />
+          </dependency>
         </suppliersInternal>
         <generalsInternal>
           <generalization
@@ -233,6 +240,92 @@
         Id="12b0dcc7-cdd7-438d-9362-0cf491461d0e"
         LastKnownName="Microsoft.Z3"
         LastKnownLocation="Package1_0113.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="e771899a-c90d-437a-a365-80f6542467fc"
+        name="Z3Statement"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="da993f4f-41a4-43c7-896f-6ae51454a11a"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName="_term"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="702d4304-310c-4256-95a9-15984b302800"
+              LastKnownName="Term"
+              LastKnownLocation="Package1_0113.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="02cba8c0-fd54-4efa-86be-2e6b89170e7b"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="7b29d438-7f8a-4bd3-8a71-f734534da431"
+                  name="_term"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="7603c927-0335-4b93-b350-cec8603e52d5"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <enumerationMoniker
+              Id="3ebfc258-11f8-4a21-a6ed-79b65d270999"
+              LastKnownName="StatementTypes"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="7ed9819d-6927-4c6e-bda0-fe3fd8367117"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="faf43cdd-da18-4164-8597-d8fb69b8cdeb"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
     </packageHasNamedElement>
   </packagedElements>
 </package>

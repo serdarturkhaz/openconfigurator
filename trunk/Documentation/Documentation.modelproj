@@ -31,6 +31,13 @@
       <SubType>Content</SubType>
       <DependentUpon>Architecture\ModelEditorJS.classdiagram</DependentUpon>
     </Content>
+    <Content Include="Architecture\Parser.classdiagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Architecture\Parser.classdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Architecture\Parser.classdiagram</DependentUpon>
+    </Content>
     <Content Include="Architecture\Solver.classdiagram">
       <SubType>Content</SubType>
     </Content>
@@ -51,6 +58,9 @@
     <Content Include="ModelDefinition\Package1_0139.uml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="ModelDefinition\Package1_1236.uml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ModelDefinition\Package_0106.uml">
       <SubType>Content</SubType>
     </Content>
@@ -66,7 +76,22 @@
     <Content Include="ModelDefinition\Package_0139.uml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="ModelDefinition\Package_1056.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_1141.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_1142.uml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ModelDefinition\Package_1204.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_1219.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_1220.uml">
       <SubType>Content</SubType>
     </Content>
     <Content Include="ModelDefinition\Package_1236.uml">

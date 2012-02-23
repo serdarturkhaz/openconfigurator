@@ -139,6 +139,10 @@
                   <classMoniker Id="0e8be7e2-788c-4fa0-9006-a8de70615906" LastKnownName="Z3Solution" />
                   <elementDefinition Id="e346fc3d-11ae-4121-8116-9178fd631570" />
                 </dependency>
+                <dependency Id="bb4ec1bd-a556-49c4-8624-35823c7e2eb1">
+                  <classMoniker Id="38af59c3-e9ff-4179-bd44-1f55a47bbb7e" LastKnownName="Z3Statement" />
+                  <elementDefinition Id="e798be26-d7c0-430f-ad91-b8e24edb8be0" />
+                </dependency>
               </suppliersInternal>
               <generalsInternal>
                 <generalization Id="5694582c-7758-4c70-a3fc-5d2876b586bd" isSubstitutable="false">
@@ -252,6 +256,45 @@
               </packagedElements>
             </package>
           </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="38af59c3-e9ff-4179-bd44-1f55a47bbb7e" name="Z3Statement" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <elementDefinition Id="e771899a-c90d-437a-a365-80f6542467fc" />
+              <targetEnds>
+                <association Id="8cbd2048-a1e3-4f8f-82d9-cbcf19bdad8b" isDerived="false" sourceEndRoleName="" targetEndRoleName="_term" isLeaf="false" isAbstract="false">
+                  <classMoniker Id="95b6b021-2ba3-4c55-849a-b4bfa08dbacb" LastKnownName="Term" />
+                  <relationshipOwnedElementsInternal>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="b69de866-bcca-49ce-8f95-d46299b5f6e1" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                        <elementDefinition Id="02cba8c0-fd54-4efa-86be-2e6b89170e7b" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="f32b0d2d-697c-4909-b48c-8f7823154636" name="_term" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                        <elementDefinition Id="7b29d438-7f8a-4bd3-8a71-f734534da431" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                  </relationshipOwnedElementsInternal>
+                  <elementDefinition Id="da993f4f-41a4-43c7-896f-6ae51454a11a" />
+                </association>
+                <association Id="f5167800-f972-4f29-9411-a57b0a879a36" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+                  <enumerationMoniker Id="8a548ea0-3301-4ac2-9444-982b922485bb" LastKnownName="StatementTypes" />
+                  <relationshipOwnedElementsInternal>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="459634d2-bd67-48ba-84cc-7fd7de5ddb12" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                        <elementDefinition Id="7ed9819d-6927-4c6e-bda0-fe3fd8367117" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="506a16c7-0203-4891-ba7a-d4f2b1d06b9f" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <elementDefinition Id="faf43cdd-da18-4164-8597-d8fb69b8cdeb" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                  </relationshipOwnedElementsInternal>
+                  <elementDefinition Id="7603c927-0335-4b93-b350-cec8603e52d5" />
+                </association>
+              </targetEnds>
+            </class>
+          </packageHasNamedElement>
         </packagedElements>
       </package>
     </logicalClassDesignerModelHasPackages>
@@ -270,6 +313,11 @@
         <elementDefinition Id="ca7c703a-0ada-48eb-9b60-e8afff59d904" />
       </package>
     </logicalClassDesignerModelHasPackages>
+    <logicalClassDesignerModelHasTypes>
+      <enumeration Id="8a548ea0-3301-4ac2-9444-982b922485bb" name="StatementTypes" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="3ebfc258-11f8-4a21-a6ed-79b65d270999" />
+      </enumeration>
+    </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="f810f739-bde2-43b3-b91d-be7ca6e4b919" name="Documentation">
     <elementDefinition Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747" />
