@@ -30,11 +30,6 @@ namespace BLL.SolverEngines
     }
 
     //Enums
-    public enum VariableTypes
-    {
-        Boolean,
-        Integer
-    }
     public enum StatementTypes
     {
         And,

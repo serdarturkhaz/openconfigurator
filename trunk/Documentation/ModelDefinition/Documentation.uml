@@ -4804,6 +4804,149 @@ User Input
         LastKnownName="Parser"
         LastKnownLocation="Package_0106.uml" />
     </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="35807ba8-8269-452a-92be-40adc0f4b63e"
+        name="IParser"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="0b456808-82e6-4ba9-b61c-0159b988df6e"
+        name="ParserStatement"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="38b73544-9526-4f29-a4fc-ca54ec54e107"
+            name="_syntaxString"
+            visibility="Protected"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="592fa1f0-f0ea-4b1c-b5ec-4045a05d9c16"
+            name="innerStatements"
+            visibility="Protected"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="50e7b068-3d00-4a53-867f-5e4bbebb03ce"
+            name="_context"
+            visibility="Protected"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="2aeb0f75-b7e8-40e5-abf6-af4c09c895e6"
+            name="featureSelections"
+            visibility="Protected"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="8353dc20-1ba7-4ec4-b8d5-13c7788618b7"
+            name="CreateInstance"
+            isLeaf="false"
+            isStatic="true"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="7e0491c8-ceeb-4da1-ad3b-936fcdad0474"
+        LastKnownName="StandardParser"
+        LastKnownLocation="Package_1056.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="700f37ee-c252-4116-8576-daacf65507b6"
+        name="StatementEvalTypes"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedLiterals>
+          <enumerationLiteral
+            Id="22791ab6-1d25-4fd9-a05a-eec0b22090fb"
+            name="Feature" />
+          <enumerationLiteral
+            Id="fef83796-b442-48e8-875c-3fd74e2ab0d5"
+            name="Attribute" />
+          <enumerationLiteral
+            Id="612b0406-2917-45a4-97a2-fd8cf7fa03c4"
+            name="PrimitiveValue" />
+        </ownedLiterals>
+      </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="a11cc612-33d1-4c5b-94e6-fe7814d6973b"
+        LastKnownName="StandardParser"
+        LastKnownLocation="Package_1142.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="c9d266c0-11e6-42a4-821c-884ef36d400a"
+        name="ObjectReference"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="db730cf0-8911-4345-bdcd-bc23148f0dd7"
+            name="SetValue"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="e83b6f42-b4b9-4b15-9f7e-7cda22ebe846"
+            name="ConvertValue"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="3ebfc258-11f8-4a21-a6ed-79b65d270999"
+        name="StatementTypes"
+        isAbstract="false"
+        isLeaf="false" />
+    </packageHasNamedElement>
   </packagedElements>
   <primitiveType
     Id="220a3521-e091-4221-bae9-3ef9018e845c"
