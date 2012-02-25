@@ -202,7 +202,7 @@ namespace BLL.RuleParser
         }
 
         //Public Methods
-        public bool ExecuteCustomRule(string RuleSyntax, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+        public bool ExecuteSyntax(string RuleSyntax, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
             ParserStatement rootStatement = ParseString(RuleSyntax, context, ref featureSelections);
             rootStatement.Eval();

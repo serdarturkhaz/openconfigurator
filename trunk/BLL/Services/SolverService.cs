@@ -174,7 +174,7 @@ namespace BLL.Services
         }
         public bool ExecuteCustomRule(ISolverContext context, string Expression, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
         {
-            _ruleParser.ExecuteCustomRule(Expression, context, ref featureSelections);
+            _ruleParser.ExecuteSyntax(Expression, context, ref featureSelections);
             return false;
         }
     }

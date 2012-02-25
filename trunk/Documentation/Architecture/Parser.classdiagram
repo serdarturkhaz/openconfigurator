@@ -4,6 +4,28 @@
     <logicalClassDesignerModelHasTypes>
       <class Id="05f7de3f-64d7-4c16-af6f-57170fed38a1" name="IParser" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="35807ba8-8269-452a-92be-40adc0f4b63e" />
+        <ownedOperationsInternal>
+          <operation Id="eaed78a6-ce60-4377-b092-6e3b3164ec39" name="ExecuteSyntax" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="cdf8f69f-105f-48dc-aabb-ef20ddc453c1" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="68ac4751-5f9d-4a2d-9e44-fa4f542e4c87" name="string RuleSyntax" direction="In" isUnique="false">
+                  <elementDefinition Id="648a066f-1065-4211-9af9-bdb44b209b57" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="1ceded38-9f9f-4a81-8954-a77e9be3bc58" name="ISolverContext context" direction="In" isUnique="false">
+                  <elementDefinition Id="715c0bf2-e5d1-4462-b4b7-d8dea0ec4a9f" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="43f80ee7-e67b-47a5-95c7-5c2657609419" name="ref List&lt;BLL.BusinessObjects.FeatureSelection&gt; featureSelections" direction="In" isUnique="false">
+                  <elementDefinition Id="14abbd59-0ad1-4f7c-b906-b3813cebbd92" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -27,24 +49,24 @@
           <operation Id="ab455932-20e7-4e83-94d5-e3ac460877b9" name="CreateInstance" isLeaf="false" isStatic="true" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="8353dc20-1ba7-4ec4-b8d5-13c7788618b7" />
           </operation>
+          <operation Id="5ebdc93c-40b0-4766-9143-0f4dd4264dd0" name="Eval" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="2ce58207-baad-456b-970d-d030153915ff" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="f5d9110a-3c66-406a-ba0f-086121a1889b" direction="Return">
+                  <elementDefinition Id="df11b3de-7a37-4e15-89ce-a7be1f482381" />
+                  <type_NamedElement>
+                    <referencedTypeMoniker Id="af60d747-1cf5-4592-9f76-750ec008abcc" LastKnownName="Object" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation Id="9d7b7843-8f28-44ba-90d6-b7fa6c6069d3" name="AddInnerStatement" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="6c98780f-7176-447f-8471-f32ab0a3edd1" />
+          </operation>
         </ownedOperationsInternal>
       </class>
-    </logicalClassDesignerModelHasTypes>
-    <logicalClassDesignerModelHasTypes>
-      <enumeration Id="3c7d10aa-3200-431b-b622-b67a96d090b6" name="StatementEvalTypes" isAbstract="false" isLeaf="false">
-        <elementDefinition Id="700f37ee-c252-4116-8576-daacf65507b6" />
-        <ownedLiterals>
-          <enumerationLiteral Id="2a42dda0-5952-4fae-9e12-11bd9c5339ce" name="Feature">
-            <elementDefinition Id="22791ab6-1d25-4fd9-a05a-eec0b22090fb" />
-          </enumerationLiteral>
-          <enumerationLiteral Id="171606a5-7b77-4ba8-953f-9f9e7838bdc6" name="Attribute">
-            <elementDefinition Id="fef83796-b442-48e8-875c-3fd74e2ab0d5" />
-          </enumerationLiteral>
-          <enumerationLiteral Id="820fafa1-85f7-4162-bf4f-04675bbb5447" name="PrimitiveValue">
-            <elementDefinition Id="612b0406-2917-45a4-97a2-fd8cf7fa03c4" />
-          </enumerationLiteral>
-        </ownedLiterals>
-      </enumeration>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasPackages>
       <package Id="eb8ac808-7b7e-4cce-aae4-b4d437b02b39" name="StandardParser">
@@ -54,27 +76,56 @@
             <classMoniker Id="ea5610e5-dec9-44f7-b85c-f1c43f4f647c" LastKnownName="ParserStatement" />
             <elementDefinition Id="65d1af64-71b9-4348-b0bc-128c16b7573b" />
           </dependency>
-          <dependency Id="dca271d6-05b0-452d-9aac-7fd4db5e10b9">
+          <dependency Id="1237a480-61a2-4c4a-b76d-90c755af353c">
             <classMoniker Id="a115c762-e9c2-4129-89df-bd5cb695ab50" LastKnownName="ObjectReference" />
-            <elementDefinition Id="1725fe44-e8a7-4f56-a43c-196babc81245" />
+            <elementDefinition Id="a3de527d-6415-4094-98aa-ede1125dc1b7" />
           </dependency>
         </suppliersInternal>
         <packagedElements>
           <packageHasNamedElement>
             <class Id="d07fa24e-d8c5-4109-9d1b-e064397a5299" name="StandardParser" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="df19fe01-924a-4941-9575-98c4e8b0c1be" />
+              <suppliersInternal>
+                <dependency Id="cf109c2f-c39d-45ca-ad2b-dc972f75c163">
+                  <packageMoniker Id="7154f91b-3432-42b4-8101-57eebaa49c6f" LastKnownName="SyntaxSupport" />
+                  <elementDefinition Id="390de04b-2c04-4dd1-99d3-4e397ae4d69d" />
+                </dependency>
+              </suppliersInternal>
               <generalsInternal>
-                <generalization Id="549e59f7-6082-41ff-8845-1eb71952a2b0" isSubstitutable="false">
+                <generalization Id="40e0d0d6-5acf-4c48-9fe9-22e9656435ce" isSubstitutable="false">
                   <classMoniker Id="05f7de3f-64d7-4c16-af6f-57170fed38a1" LastKnownName="IParser" />
-                  <elementDefinition Id="71444174-9230-4d3c-9aad-cede2e621954" />
+                  <elementDefinition Id="b8b7f740-7f63-40a9-8327-4424247f7a2e" />
                 </generalization>
               </generalsInternal>
               <ownedOperationsInternal>
-                <operation Id="7d7463bd-36da-46fb-b19e-53130cf6abad" name="ParseString" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                <operation Id="7d7463bd-36da-46fb-b19e-53130cf6abad" name="ParseString" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
                   <elementDefinition Id="1fdaeff8-818c-4983-a4ad-9c8e4c8f9d96" />
+                  <ownedParameters>
+                    <operationHasOwnedParameters>
+                      <parameter Id="d76978b6-c72a-42a8-b1d8-6109daccfcf1" name="string RuleSyntax" direction="In" isUnique="false">
+                        <elementDefinition Id="633d544b-a13c-4f95-915b-9f7b08d99eb6" />
+                      </parameter>
+                    </operationHasOwnedParameters>
+                    <operationHasOwnedParameters>
+                      <parameter Id="1d23dd34-63c4-4fc9-ad9a-318e6002efa2" name="ISolverContext context" direction="In" isUnique="false">
+                        <elementDefinition Id="a049e332-e83e-4508-8305-3d818de67b0f" />
+                      </parameter>
+                    </operationHasOwnedParameters>
+                    <operationHasOwnedParameters>
+                      <parameter Id="146610af-c5d9-452c-8723-2770f262b2b4" name="ref List&lt;BLL.BusinessObjects.FeatureSelection&gt; featureSelections" direction="In" isUnique="false">
+                        <elementDefinition Id="bc7dbdb7-629f-49c4-871f-99cc8bb49385" />
+                      </parameter>
+                    </operationHasOwnedParameters>
+                  </ownedParameters>
                 </operation>
-                <operation Id="530962c4-01a7-46c7-8c96-18e782148b2b" name="IdentifyString" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                <operation Id="530962c4-01a7-46c7-8c96-18e782148b2b" name="IdentifyString" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
                   <elementDefinition Id="d5530fd9-0f97-41ae-be64-80427912991f" />
+                </operation>
+                <operation Id="344f4d64-00b3-4f10-beef-69b809b43676" name="ExecuteStaticMethod" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <elementDefinition Id="aff15f2e-f255-41bd-a8d8-5f17a11adf9a" />
+                </operation>
+                <operation Id="9e7f5ab0-5f0b-48eb-9df2-ec399257b13b" name="GetStaticField" visibility="Private" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <elementDefinition Id="eb66fcc2-e7a3-4bf7-b3b2-63d176231c69" />
                 </operation>
               </ownedOperationsInternal>
             </class>
@@ -148,6 +199,11 @@
         </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
+    <packageHasNamedElement>
+      <referencedType Id="af60d747-1cf5-4592-9f76-750ec008abcc" name="Object" isAbstract="false" isLeaf="false" cachedFullName="Object">
+        <elementDefinition Id="5a4e569c-42cb-4d86-9385-c316171377ef" />
+      </referencedType>
+    </packageHasNamedElement>
   </packagedElements>
   <package Id="dca42202-19d9-42f6-ba42-abd19674490a" name="Documentation">
     <elementDefinition Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747" />

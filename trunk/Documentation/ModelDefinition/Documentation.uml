@@ -4810,7 +4810,42 @@ User Input
         name="IParser"
         isAbstract="false"
         isLeaf="false"
-        isActiveClass="false" />
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="cdf8f69f-105f-48dc-aabb-ef20ddc453c1"
+            name="ExecuteSyntax"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="648a066f-1065-4211-9af9-bdb44b209b57"
+                  name="string RuleSyntax"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="715c0bf2-e5d1-4462-b4b7-d8dea0ec4a9f"
+                  name="ISolverContext context"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="14abbd59-0ad1-4f7c-b906-b3813cebbd92"
+                  name="ref List&lt;BLL.BusinessObjects.FeatureSelection&gt; featureSelections"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
@@ -4875,6 +4910,37 @@ User Input
             name="CreateInstance"
             isLeaf="false"
             isStatic="true"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="2ce58207-baad-456b-970d-d030153915ff"
+            name="Eval"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="df11b3de-7a37-4e15-89ce-a7be1f482381"
+                  direction="Return">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="5a4e569c-42cb-4d86-9385-c316171377ef"
+                      LastKnownName="Object"
+                      LastKnownLocation="Documentation.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="6c98780f-7176-447f-8471-f32ab0a3edd1"
+            name="AddInnerStatement"
+            isLeaf="false"
+            isStatic="false"
             isAbstract="false"
             concurrency="Sequential"
             isQuery="false" />
@@ -4946,6 +5012,11 @@ User Input
         name="StatementTypes"
         isAbstract="false"
         isLeaf="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="5a4e569c-42cb-4d86-9385-c316171377ef"
+        name="Object" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
