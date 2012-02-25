@@ -12,7 +12,7 @@
         LastKnownLocation="Documentation.uml" />
     </dependency>
     <dependency
-      Id="1725fe44-e8a7-4f56-a43c-196babc81245">
+      Id="a3de527d-6415-4094-98aa-ede1125dc1b7">
       <classMoniker
         Id="c9d266c0-11e6-42a4-821c-884ef36d400a"
         LastKnownName="ObjectReference"
@@ -27,9 +27,18 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="390de04b-2c04-4dd1-99d3-4e397ae4d69d">
+            <packageMoniker
+              Id="e53d512c-831f-49eb-a3e0-3b334c156164"
+              LastKnownName="SyntaxSupport"
+              LastKnownLocation="Package_1141.uml" />
+          </dependency>
+        </suppliersInternal>
         <generalsInternal>
           <generalization
-            Id="71444174-9230-4d3c-9aad-cede2e621954"
+            Id="b8b7f740-7f63-40a9-8327-4424247f7a2e"
             isSubstitutable="false">
             <classMoniker
               Id="35807ba8-8269-452a-92be-40adc0f4b63e"
@@ -41,14 +50,58 @@
           <operation
             Id="1fdaeff8-818c-4983-a4ad-9c8e4c8f9d96"
             name="ParseString"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="633d544b-a13c-4f95-915b-9f7b08d99eb6"
+                  name="string RuleSyntax"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="a049e332-e83e-4508-8305-3d818de67b0f"
+                  name="ISolverContext context"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="bc7dbdb7-629f-49c4-871f-99cc8bb49385"
+                  name="ref List&lt;BLL.BusinessObjects.FeatureSelection&gt; featureSelections"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="d5530fd9-0f97-41ae-be64-80427912991f"
+            name="IdentifyString"
+            visibility="Private"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
             concurrency="Sequential"
             isQuery="false" />
           <operation
-            Id="d5530fd9-0f97-41ae-be64-80427912991f"
-            name="IdentifyString"
+            Id="aff15f2e-f255-41bd-a8d8-5f17a11adf9a"
+            name="ExecuteStaticMethod"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="eb66fcc2-e7a3-4bf7-b3b2-63d176231c69"
+            name="GetStaticField"
+            visibility="Private"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -70,6 +123,26 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="36ecb426-6419-4f81-80a0-71a21a21f05d"
+        name="string" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="d06e0e4b-36cf-4075-b40b-a4fd42b9573b"
+        name="ISolverContext context" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="f42a0672-d244-4323-812e-360804980681"
+        name="ISolverContext" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="bc2a4150-0637-4933-ba17-f2bc41ae3648"
+        name="List&lt;FeatureSelection&gt;" />
     </packageHasNamedElement>
   </packagedElements>
 </package>

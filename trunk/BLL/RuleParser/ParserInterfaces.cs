@@ -10,7 +10,7 @@ namespace BLL.RuleParser
 {
     public interface IParser
     {
-        bool ExecuteCustomRule(string RuleSyntax, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections);
+        bool ExecuteSyntax(string RuleSyntax, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections);
     }
     public abstract class ParserStatement
     {
