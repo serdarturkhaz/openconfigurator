@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="ca2ee2c6-47ef-4107-9922-70067e636121"
   name="Modeller" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -317,7 +317,7 @@
     <packageHasNamedElement>
       <class
         Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
-        name="Custom Rule"
+        name="Complex Rule"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -445,13 +445,13 @@
                     <literalString
                       Id="9a10e50e-f502-47d5-b8e2-25faf4c0a74f"
                       name="Lower"
-                      value="*" />
+                      value="1" />
                   </lowerValueInternal>
                   <upperValueInternal>
                     <literalString
                       Id="d9a53b23-2b5a-47db-a62f-65b1710d3f94"
                       name="Upper"
-                      value="*" />
+                      value=".*" />
                   </upperValueInternal>
                 </memberEnd>
               </associationHasOwnedEnds>
@@ -466,7 +466,7 @@
             isAbstract="false">
             <classMoniker
               Id="873e5a97-73e5-4788-8b77-443dd2b26e14"
-              LastKnownName="GroupRelation"
+              LastKnownName="Group Relation"
               LastKnownLocation="Package_1512.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -490,7 +490,20 @@
                   isDerived="false"
                   isDerivedUnion="false"
                   aggregation="None"
-                  isComposite="false" />
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="326bd0eb-5e18-44b2-99ca-413e7f663be0"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="fef255a7-7ea1-4e3a-8e4e-f09dc0414205"
+                      name="Upper"
+                      value=".*" />
+                  </upperValueInternal>
+                </memberEnd>
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
@@ -527,7 +540,20 @@
                   isDerived="false"
                   isDerivedUnion="false"
                   aggregation="None"
-                  isComposite="false" />
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="c8d7707a-d9f2-4469-a7a7-bcae22b25b64"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="b9fc2cd0-abaf-40ca-8d63-67d30571ec20"
+                      name="Upper"
+                      value=".*" />
+                  </upperValueInternal>
+                </memberEnd>
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
@@ -564,7 +590,20 @@
                   isDerived="false"
                   isDerivedUnion="false"
                   aggregation="None"
-                  isComposite="false" />
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="38eea18d-fed1-414b-bf2c-cd4e3c32712d"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="2d75a3f7-507e-4f3f-870b-b372c4a02fa6"
+                      name="Upper"
+                      value=".*" />
+                  </upperValueInternal>
+                </memberEnd>
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
@@ -572,12 +611,12 @@
             Id="20739df5-98e2-49d1-8a35-470c3666628c"
             isDerived="false"
             sourceEndRoleName=""
-            targetEndRoleName="Custom Rules"
+            targetEndRoleName=""
             isLeaf="false"
             isAbstract="false">
             <classMoniker
               Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
-              LastKnownName="Custom Rule"
+              LastKnownName="Complex Rule"
               LastKnownLocation="Package_1512.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -595,14 +634,26 @@
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="3ee64f53-5584-406c-b291-33ad3edf3013"
-                  name="Custom Rules"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
                   isDerived="false"
                   isDerivedUnion="false"
                   aggregation="None"
-                  isComposite="false" />
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="bb4b54a5-ae35-4f86-8391-f8480d192f68"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="2dbe5965-f11b-4829-8fb1-300e1df3ba14"
+                      name="Upper"
+                      value=".*" />
+                  </upperValueInternal>
+                </memberEnd>
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
@@ -658,7 +709,7 @@
     <packageHasNamedElement>
       <class
         Id="873e5a97-73e5-4788-8b77-443dd2b26e14"
-        name="GroupRelation"
+        name="Group Relation"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -737,7 +788,7 @@
         <ownedLiterals>
           <enumerationLiteral
             Id="a37ebe87-6a40-4571-8349-b1fb502edca6"
-            name="Optional [0...1" />
+            name="Optional [0...1]" />
           <enumerationLiteral
             Id="842ddf7a-f8bd-49ff-96c8-f6419255c2ed"
             name="Mandatory [1...1]" />
@@ -918,17 +969,6 @@
             aggregation="None"
             isComposite="false" />
           <property
-            Id="916ea517-302d-41bc-924b-e8bf73558930"
-            name="Expression"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
             Id="e6b143cd-3c45-4b40-9db5-2b9d36085bce"
             name="Type"
             isLeaf="false"
@@ -976,7 +1016,7 @@
             name="XOR[1...1]" />
           <enumerationLiteral
             Id="b5937090-b6b7-4c31-9197-7966fc67c4cd"
-            name="Cardinal OR [*...*]" />
+            name="Cardinal Group [*...*]" />
         </ownedLiterals>
       </enumeration>
     </packageHasNamedElement>
