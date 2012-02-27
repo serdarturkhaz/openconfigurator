@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="23e816ca-a77b-4928-8d06-fff138697a42"
   name="Configurator" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -316,8 +316,8 @@
         </targetEnds>
         <ownedAttributesInternal>
           <property
-            Id="bb158d3c-2542-44ef-9f07-f16d0f4b143c"
-            name="SelectionState"
+            Id="59a4a39c-41f4-4880-b995-64e8455284ad"
+            name="Disabled"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -327,8 +327,8 @@
             aggregation="None"
             isComposite="false" />
           <property
-            Id="59a4a39c-41f4-4880-b995-64e8455284ad"
-            name="Disabled"
+            Id="cb5e7ecf-f3fc-4e3a-ade0-2d3a84c614b1"
+            name="SelectionState"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -348,11 +348,8 @@
         isLeaf="false">
         <ownedLiterals>
           <enumerationLiteral
-            Id="a99531e3-7e8d-462a-bc0a-63c9471fe6ac"
-            name="Dynamic" />
-          <enumerationLiteral
             Id="9b81a9d9-f2fa-4d47-a7ee-a7a35f6b3d73"
-            name="Deselected" />
+            name="Selected" />
           <enumerationLiteral
             Id="d31794c8-6916-47ab-bbb5-a2f23c06ec85"
             name="Unselected" />

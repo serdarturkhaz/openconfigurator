@@ -1,51 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
   <packagedElements>
     <useCaseModelRootHasTypes>
       <subsystem Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" name="Product modeler" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <ownedCommentsInternal>
-          <comment Id="37faf9fe-5fd1-42ef-a850-9a079db2646a">
-            <elementDefinition Id="baed6ed8-d10c-4522-84b5-809aa069e397" />
-            <body>Optional [0...1]
-Mandatory [1...1]
-</body>
-            <annotatedElements>
-              <useCaseMoniker Id="a8a70a06-aee6-4abc-9e52-f90b2a91ce86" LastKnownName="Define Relations" />
-            </annotatedElements>
-          </comment>
-          <comment Id="b6202542-364e-408e-9896-1892b90d734a">
-            <elementDefinition Id="76c46720-94ad-4a97-9402-9829e67dea3a" />
-            <body>Dependency, Mutual dependency, Mutual exclusion
-</body>
-            <annotatedElements>
-              <useCaseMoniker Id="259c5946-6644-4e90-b75f-3ef25a9f80ba" LastKnownName="Define Composition Rules" />
-            </annotatedElements>
-          </comment>
-          <comment Id="5bc813bd-30c5-4de7-9b35-d156dacb536d">
-            <elementDefinition Id="2bfb1452-28e8-4768-ae9a-a6ad07835bda" />
-            <body>Calculation rules
-Explicit consequence rules
-</body>
-            <annotatedElements>
-              <useCaseMoniker Id="dcb90012-6b49-46f6-9582-033b88a962bc" LastKnownName="Define Custom Rules" />
-            </annotatedElements>
-          </comment>
-          <comment Id="68980a81-2820-4cb8-89c6-91b3a784fa33">
-            <elementDefinition Id="8bb50c43-3c68-4c11-adf2-7296cb92ce38" />
-            <body>Int , String, Bool</body>
-            <annotatedElements>
-              <useCaseMoniker Id="31f7881c-5794-4723-a12b-4fa84b3a6a66" LastKnownName="Define  Attributes " />
-            </annotatedElements>
-          </comment>
-          <comment Id="45d2a5c3-b4b3-42dd-b47e-6f37f16ca10f">
-            <elementDefinition Id="45d66e16-dec3-4fdf-a93c-6e61f5743781" />
-            <body>OR [0...*]
-XOR [1...1]</body>
-            <annotatedElements>
-              <useCaseMoniker Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" LastKnownName="Define Group Relations" />
-            </annotatedElements>
-          </comment>
-        </ownedCommentsInternal>
         <elementDefinition Id="88001c5f-4d5d-4e98-950f-b669903f1fa1" />
       </subsystem>
     </useCaseModelRootHasTypes>
@@ -93,7 +50,7 @@ XOR [1...1]</body>
         <elementDefinition Id="dd98d3dc-a892-4244-a356-84e8aebc0b67" />
         <extendedCases>
           <extend Id="ebafe7af-4a8c-44fc-81a2-d8abacfd98e7">
-            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Define Features" />
+            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Define/Manipulate Features" />
             <elementDefinition Id="7b9b2da5-a301-4345-b99d-e8e60c56b337" />
           </extend>
         </extendedCases>
@@ -103,7 +60,7 @@ XOR [1...1]</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="259c5946-6644-4e90-b75f-3ef25a9f80ba" name="Define Composition Rules" isAbstract="false" isLeaf="false">
+      <useCase Id="259c5946-6644-4e90-b75f-3ef25a9f80ba" name="Define/Manipulate Composition Rules" isAbstract="false" isLeaf="false">
         <elementDefinition Id="e24e3468-e1e3-4785-b259-8096122a8dba" />
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
@@ -112,20 +69,11 @@ XOR [1...1]</body>
     </packageHasNamedElement>
     <useCaseModelRootHasTypes>
       <subsystem Id="e744f6d4-54be-4540-a875-f4dd89917137" name="Configurator" isAbstract="false" isLeaf="false" isActiveClass="false">
-        <ownedCommentsInternal>
-          <comment Id="4f25f6a5-c789-40d6-84e1-d976eed9b078">
-            <elementDefinition Id="688dc4b6-c5eb-4cd7-bc04-abb1749e8796" />
-            <body>Instance of Model</body>
-            <annotatedElements>
-              <useCaseMoniker Id="0855ce31-6aed-45cc-aa62-ba2180ef5b6a" LastKnownName="Manage configurations (CREDO)" />
-            </annotatedElements>
-          </comment>
-        </ownedCommentsInternal>
         <elementDefinition Id="5079c949-412d-4716-8274-b6f587b4d3eb" />
       </subsystem>
     </useCaseModelRootHasTypes>
     <useCaseModelRootHasTypes>
-      <actor Id="bcf65c90-12a5-4216-9b93-9bf0cf38885f" name="User" isAbstract="false" isLeaf="false">
+      <actor Id="bcf65c90-12a5-4216-9b93-9bf0cf38885f" name="Normal User" isAbstract="false" isLeaf="false">
         <elementDefinition Id="d629e551-722c-4c4f-9a96-6bb8a1853053" />
         <targetEnds>
           <association Id="2ea71f50-0eac-45c9-b654-434cd7ebaf55" isDerived="false" sourceEndRoleName="Customer" targetEndRoleName="Create/Edit Configuration instance" isLeaf="false" isAbstract="false">
@@ -180,7 +128,7 @@ XOR [1...1]</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="3f831426-dce1-485d-837c-e938f091a4fc" name="Define Features" isAbstract="false" isLeaf="false">
+      <useCase Id="3f831426-dce1-485d-837c-e938f091a4fc" name="Define/Manipulate Features" isAbstract="false" isLeaf="false">
         <elementDefinition Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802" />
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
@@ -188,7 +136,7 @@ XOR [1...1]</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" name="Define Group Relations" isAbstract="false" isLeaf="false">
+      <useCase Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" name="Define/Manipulate Group Relations" isAbstract="false" isLeaf="false">
         <elementDefinition Id="75616a27-7a38-4020-99f3-96a8f2da8c47" />
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
@@ -196,7 +144,7 @@ XOR [1...1]</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="a8a70a06-aee6-4abc-9e52-f90b2a91ce86" name="Define Relations" isAbstract="false" isLeaf="false">
+      <useCase Id="a8a70a06-aee6-4abc-9e52-f90b2a91ce86" name="Define/Manipulate Relations" isAbstract="false" isLeaf="false">
         <elementDefinition Id="d0841d8c-3074-4b5d-90d7-3200d76b496e" />
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
@@ -212,7 +160,7 @@ XOR [1...1]</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="8e176db6-5c5f-4f3c-b892-6c6bf1437ae3" name="Create/Edit  Model" isAbstract="false" isLeaf="false">
+      <useCase Id="8e176db6-5c5f-4f3c-b892-6c6bf1437ae3" name="Define/Manipulate  Model" isAbstract="false" isLeaf="false">
         <elementDefinition Id="9bc198e8-d70b-4f49-a3c7-a060067ecd67" />
         <generalsInternal>
           <generalization Id="ec6f804c-a232-4290-bcdd-af506f6c92ba" isSubstitutable="false">
@@ -222,23 +170,23 @@ XOR [1...1]</body>
         </generalsInternal>
         <additions>
           <include Id="30131f04-049c-4333-bf45-2579c77680f1">
-            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Define Features" />
+            <useCaseMoniker Id="3f831426-dce1-485d-837c-e938f091a4fc" LastKnownName="Define/Manipulate Features" />
             <elementDefinition Id="8937b7d9-f9be-4c73-b6e0-0175f74ca488" />
           </include>
           <include Id="b4ad49a8-efe6-45ce-9703-269a78693d3a">
-            <useCaseMoniker Id="a8a70a06-aee6-4abc-9e52-f90b2a91ce86" LastKnownName="Define Relations" />
+            <useCaseMoniker Id="a8a70a06-aee6-4abc-9e52-f90b2a91ce86" LastKnownName="Define/Manipulate Relations" />
             <elementDefinition Id="3ae81178-946c-414f-8e69-f4fc51332949" />
           </include>
           <include Id="181c8d7b-72b8-414a-9498-e0815de6c2cb">
-            <useCaseMoniker Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" LastKnownName="Define Group Relations" />
+            <useCaseMoniker Id="43319d21-808e-4fbb-9ef1-f00fc1ef36a0" LastKnownName="Define/Manipulate Group Relations" />
             <elementDefinition Id="63743735-a899-4117-a970-a8e7de7f955e" />
           </include>
           <include Id="f7f9041f-c46f-4927-9578-6faaf65c6934">
-            <useCaseMoniker Id="259c5946-6644-4e90-b75f-3ef25a9f80ba" LastKnownName="Define Composition Rules" />
+            <useCaseMoniker Id="259c5946-6644-4e90-b75f-3ef25a9f80ba" LastKnownName="Define/Manipulate Composition Rules" />
             <elementDefinition Id="8ed958e3-53f9-450f-a4f2-b972ce72b2b3" />
           </include>
           <include Id="ecbb0775-c8b1-44f8-a833-d1507a112173">
-            <useCaseMoniker Id="dcb90012-6b49-46f6-9582-033b88a962bc" LastKnownName="Define Custom Rules" />
+            <useCaseMoniker Id="dcb90012-6b49-46f6-9582-033b88a962bc" LastKnownName="Define/Manipulate Custom Rules" />
             <elementDefinition Id="6f3af01e-b939-4033-86ce-7c0ef9451978" />
           </include>
         </additions>
@@ -248,7 +196,7 @@ XOR [1...1]</body>
       </useCase>
     </packageHasNamedElement>
     <useCaseModelRootHasTypes>
-      <useCase Id="dcb90012-6b49-46f6-9582-033b88a962bc" name="Define Custom Rules" isAbstract="false" isLeaf="false">
+      <useCase Id="dcb90012-6b49-46f6-9582-033b88a962bc" name="Define/Manipulate Custom Rules" isAbstract="false" isLeaf="false">
         <elementDefinition Id="73a7bb0d-ea5d-40b4-a9cf-5b6e67bcd5a8" />
         <subjects>
           <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
@@ -256,11 +204,11 @@ XOR [1...1]</body>
       </useCase>
     </useCaseModelRootHasTypes>
     <useCaseModelRootHasTypes>
-      <actor Id="71a7bce9-b692-4d3f-8ce6-164cef7744d7" name="Solver engine" isAbstract="false" isLeaf="false">
+      <actor Id="71a7bce9-b692-4d3f-8ce6-164cef7744d7" name="Configurator engine" isAbstract="false" isLeaf="false">
         <elementDefinition Id="d0763a74-6bf7-4f1b-9e78-fa000edd4d20" />
         <targetEnds>
           <association Id="42a7fb8f-b578-4c4e-b187-e7f0a5391916" isDerived="false" sourceEndRoleName="Logical  Truth Maintenance System" targetEndRoleName="Provide feedback" isLeaf="false" isAbstract="false">
-            <useCaseMoniker Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" LastKnownName="Provide consequences" />
+            <useCaseMoniker Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" LastKnownName="Compute and display consequences" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="4bf42c2c-5b48-4b68-934e-a23782869d51" name="Logical  Truth Maintenance System" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
@@ -295,7 +243,7 @@ XOR [1...1]</body>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" name="Provide consequences" isAbstract="false" isLeaf="false">
+      <useCase Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" name="Compute and display consequences" isAbstract="false" isLeaf="false">
         <elementDefinition Id="7cbd6dbe-50c7-4be8-9468-8a25ee31dec8" />
         <extendedCases>
           <extend Id="e14ccc32-83fa-433a-8b2f-39a179d58cfb">

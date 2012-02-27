@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel" dslVersion="1.0.0.0" Id="920f37e8-18d6-4675-92b2-89bce3a3f024" name="DomainModel" linkedPackageId="5cc612a1-8dd7-4304-baab-c61b74550699" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="920f37e8-18d6-4675-92b2-89bce3a3f024" name="DomainModel" linkedPackageId="5cc612a1-8dd7-4304-baab-c61b74550699" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
   <packagedElements>
     <logicalClassDesignerModelHasPackages>
       <package Id="9cd8095a-96d4-4c31-a866-62043dc65ba0" name="Modeller">
@@ -113,26 +113,8 @@
             </enumeration>
           </packageHasNamedElement>
           <packageHasNamedElement>
-            <class Id="d8d57ed9-a6cb-4065-ac0b-40805dec9ebb" name="Custom Rule" isAbstract="false" isLeaf="false" isActiveClass="false">
+            <class Id="d8d57ed9-a6cb-4065-ac0b-40805dec9ebb" name="Complex Rule" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed" />
-              <targetEnds>
-                <association Id="93e9263a-d1c2-41d8-8a57-4dc33f490b0a" isDerived="false" sourceEndRoleName="" targetEndRoleName="Type" isLeaf="false" isAbstract="false">
-                  <enumerationMoniker Id="81457e11-03f7-4f34-aff0-0d8d004629c3" LastKnownName="CustomRule Types" />
-                  <relationshipOwnedElementsInternal>
-                    <associationHasOwnedEnds>
-                      <memberEnd Id="b07ef62a-9ee0-4528-b232-90ec13440ad1" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
-                        <elementDefinition Id="16a36a1e-4c80-4078-84f1-0c9e735f067b" />
-                      </memberEnd>
-                    </associationHasOwnedEnds>
-                    <associationHasOwnedEnds>
-                      <memberEnd Id="7b68d451-b944-4125-b0e1-51be8b8fa912" name="Type" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                        <elementDefinition Id="ce8d09fd-b0d6-4e61-8feb-1624d18baa00" />
-                      </memberEnd>
-                    </associationHasOwnedEnds>
-                  </relationshipOwnedElementsInternal>
-                  <elementDefinition Id="36c23fe7-18bd-450c-bd5f-4cacc531be5e" />
-                </association>
-              </targetEnds>
               <ownedAttributesInternal>
                 <property Id="ef42f9f5-4e1a-41fb-bba5-3ebce86a9590" name="Name" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
                   <elementDefinition Id="8ab1fb3f-63b8-4b68-b90b-6d12f42450ee" />
@@ -161,12 +143,12 @@
                     <associationHasOwnedEnds>
                       <memberEnd Id="a817325f-683a-41c1-9f5e-e40bcba4013d" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
                         <lowerValueInternal>
-                          <literalString Id="0ab938e2-1827-41f8-ac63-5b8e29f9d9bf" name="Lower" value="*">
+                          <literalString Id="0ab938e2-1827-41f8-ac63-5b8e29f9d9bf" name="Lower" value="1">
                             <elementDefinition Id="9a10e50e-f502-47d5-b8e2-25faf4c0a74f" />
                           </literalString>
                         </lowerValueInternal>
                         <upperValueInternal>
-                          <literalString Id="98473bf3-a6ec-4926-81e4-80690303a540" name="Upper" value="*">
+                          <literalString Id="98473bf3-a6ec-4926-81e4-80690303a540" name="Upper" value=".*">
                             <elementDefinition Id="d9a53b23-2b5a-47db-a62f-65b1710d3f94" />
                           </literalString>
                         </upperValueInternal>
@@ -177,7 +159,7 @@
                   <elementDefinition Id="c33ac779-04df-4490-84e2-d4f5b5f44e49" />
                 </association>
                 <association Id="f37eba4d-9609-4395-b87b-2bc142cf36e9" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
-                  <classMoniker Id="ada82d05-8032-415a-b22e-0167fba47b76" LastKnownName="GroupRelation" />
+                  <classMoniker Id="ada82d05-8032-415a-b22e-0167fba47b76" LastKnownName="Group Relation" />
                   <relationshipOwnedElementsInternal>
                     <associationHasOwnedEnds>
                       <memberEnd Id="130f23ea-726a-44c8-bda3-901921af2b25" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
@@ -186,6 +168,16 @@
                     </associationHasOwnedEnds>
                     <associationHasOwnedEnds>
                       <memberEnd Id="14605653-9986-48dc-b3de-38d516e7f244" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <lowerValueInternal>
+                          <literalString Id="ab78597e-1007-4085-95da-f331f81ad913" name="Lower" value="0">
+                            <elementDefinition Id="326bd0eb-5e18-44b2-99ca-413e7f663be0" />
+                          </literalString>
+                        </lowerValueInternal>
+                        <upperValueInternal>
+                          <literalString Id="d4c4dd93-4a8d-434e-a84e-dd548880e314" name="Upper" value=".*">
+                            <elementDefinition Id="fef255a7-7ea1-4e3a-8e4e-f09dc0414205" />
+                          </literalString>
+                        </upperValueInternal>
                         <elementDefinition Id="7b1f86e2-6775-46bb-8737-61f4037e6029" />
                       </memberEnd>
                     </associationHasOwnedEnds>
@@ -202,6 +194,16 @@
                     </associationHasOwnedEnds>
                     <associationHasOwnedEnds>
                       <memberEnd Id="d50980b3-cc96-4dcd-bfd0-05cd724a1421" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <lowerValueInternal>
+                          <literalString Id="edef0b21-7f92-4772-ac85-54068e84a7ea" name="Lower" value="0">
+                            <elementDefinition Id="c8d7707a-d9f2-4469-a7a7-bcae22b25b64" />
+                          </literalString>
+                        </lowerValueInternal>
+                        <upperValueInternal>
+                          <literalString Id="a1e66c29-b2a0-44b4-96f0-1adeb0321bd8" name="Upper" value=".*">
+                            <elementDefinition Id="b9fc2cd0-abaf-40ca-8d63-67d30571ec20" />
+                          </literalString>
+                        </upperValueInternal>
                         <elementDefinition Id="49f6faa0-a68f-4f66-9646-dd98881737d3" />
                       </memberEnd>
                     </associationHasOwnedEnds>
@@ -218,14 +220,24 @@
                     </associationHasOwnedEnds>
                     <associationHasOwnedEnds>
                       <memberEnd Id="17da3df1-605c-4c88-9867-064040bf388f" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <lowerValueInternal>
+                          <literalString Id="b2a0e911-5f98-40e0-be3a-5900c66dc560" name="Lower" value="0">
+                            <elementDefinition Id="38eea18d-fed1-414b-bf2c-cd4e3c32712d" />
+                          </literalString>
+                        </lowerValueInternal>
+                        <upperValueInternal>
+                          <literalString Id="901b2e83-5561-4599-b72d-54f083fcd268" name="Upper" value=".*">
+                            <elementDefinition Id="2d75a3f7-507e-4f3f-870b-b372c4a02fa6" />
+                          </literalString>
+                        </upperValueInternal>
                         <elementDefinition Id="0e09f96a-b2e9-4466-9d2d-3d29a158ffda" />
                       </memberEnd>
                     </associationHasOwnedEnds>
                   </relationshipOwnedElementsInternal>
                   <elementDefinition Id="59ed7243-6729-4317-93ee-c0ce4e6f09ee" />
                 </association>
-                <association Id="bba01b0f-65d4-44d6-bdd0-1c031ad701f8" isDerived="false" sourceEndRoleName="" targetEndRoleName="Custom Rules" isLeaf="false" isAbstract="false">
-                  <classMoniker Id="d8d57ed9-a6cb-4065-ac0b-40805dec9ebb" LastKnownName="Custom Rule" />
+                <association Id="bba01b0f-65d4-44d6-bdd0-1c031ad701f8" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+                  <classMoniker Id="d8d57ed9-a6cb-4065-ac0b-40805dec9ebb" LastKnownName="Complex Rule" />
                   <relationshipOwnedElementsInternal>
                     <associationHasOwnedEnds>
                       <memberEnd Id="8e88e615-f158-415f-968b-4eff96987046" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
@@ -233,7 +245,17 @@
                       </memberEnd>
                     </associationHasOwnedEnds>
                     <associationHasOwnedEnds>
-                      <memberEnd Id="b2c8fa10-1b28-4c87-8c8d-f005210f57a8" name="Custom Rules" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                      <memberEnd Id="b2c8fa10-1b28-4c87-8c8d-f005210f57a8" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <lowerValueInternal>
+                          <literalString Id="f9504ff4-1035-453d-8e83-8db6f00b1996" name="Lower" value="0">
+                            <elementDefinition Id="bb4b54a5-ae35-4f86-8391-f8480d192f68" />
+                          </literalString>
+                        </lowerValueInternal>
+                        <upperValueInternal>
+                          <literalString Id="6d6f89e0-7bbe-4ae9-888f-f7a4c7ec0c3a" name="Upper" value=".*">
+                            <elementDefinition Id="2dbe5965-f11b-4829-8fb1-300e1df3ba14" />
+                          </literalString>
+                        </upperValueInternal>
                         <elementDefinition Id="3ee64f53-5584-406c-b291-33ad3edf3013" />
                       </memberEnd>
                     </associationHasOwnedEnds>
@@ -249,7 +271,7 @@
             </class>
           </packageHasNamedElement>
           <packageHasNamedElement>
-            <class Id="ada82d05-8032-415a-b22e-0167fba47b76" name="GroupRelation" isAbstract="false" isLeaf="false" isActiveClass="false">
+            <class Id="ada82d05-8032-415a-b22e-0167fba47b76" name="Group Relation" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="873e5a97-73e5-4788-8b77-443dd2b26e14" />
               <targetEnds>
                 <association Id="2c6861e5-27b2-4e5b-8fce-0dc837628fb0" isDerived="false" sourceEndRoleName="" targetEndRoleName="Type" isLeaf="false" isAbstract="false">
@@ -283,7 +305,7 @@
             <enumeration Id="71b3601a-1ab2-4ff9-bca9-f778c529797c" name="Relation types" isAbstract="false" isLeaf="false">
               <elementDefinition Id="e6464712-41fb-4a00-ba55-f999ee903f3f" />
               <ownedLiterals>
-                <enumerationLiteral Id="0ad15894-634c-4d81-ab31-383fb589cc37" name="Optional [0...1">
+                <enumerationLiteral Id="0ad15894-634c-4d81-ab31-383fb589cc37" name="Optional [0...1]">
                   <elementDefinition Id="a37ebe87-6a40-4571-8349-b1fb502edca6" />
                 </enumerationLiteral>
                 <enumerationLiteral Id="c10565db-24de-45fc-8ae8-9b99acbcc8bb" name="Mandatory [1...1]">
@@ -307,22 +329,6 @@
                 </enumerationLiteral>
                 <enumerationLiteral Id="79953d1d-1f77-4fb9-a08c-bf9db61f7764" name="Constant">
                   <elementDefinition Id="b67d633f-f261-43c2-98a5-01ec8bbcd60e" />
-                </enumerationLiteral>
-              </ownedLiterals>
-            </enumeration>
-          </packageHasNamedElement>
-          <packageHasNamedElement>
-            <enumeration Id="81457e11-03f7-4f34-aff0-0d8d004629c3" name="CustomRule Types" isAbstract="false" isLeaf="false">
-              <elementDefinition Id="40a31eae-7408-42df-9235-2e1879879034" />
-              <ownedLiterals>
-                <enumerationLiteral Id="9e551ffb-26ac-4658-b716-aacf41ecf321" name="Functions">
-                  <elementDefinition Id="8b28b2d9-8c46-4558-807b-ba36fad59e95" />
-                </enumerationLiteral>
-                <enumerationLiteral Id="eea7082f-8ec6-48bd-b05c-beb2da1a09a2" name="Calculation Rules">
-                  <elementDefinition Id="3dd7ead2-2ff6-40d3-aaec-a6c5a211247f" />
-                </enumerationLiteral>
-                <enumerationLiteral Id="74951bc5-cba9-45f7-a680-53703acaec7c" name="Consequence Rules">
-                  <elementDefinition Id="a4a60153-6e53-4c75-aaa1-53b1a7cfd85c" />
                 </enumerationLiteral>
               </ownedLiterals>
             </enumeration>
@@ -383,9 +389,6 @@
                 <property Id="ecc6f34a-dad8-4ee6-9292-3625c102b5bf" name="Name" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
                   <elementDefinition Id="1a9c5346-fd2f-4e31-8896-c91e93bcdc16" />
                 </property>
-                <property Id="78e23f3a-a555-4933-8f43-5bb73ccd0621" name="Expression" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                  <elementDefinition Id="916ea517-302d-41bc-924b-e8bf73558930" />
-                </property>
                 <property Id="56d285a8-58b1-4eb7-854d-c711f7304343" name="Type" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
                   <elementDefinition Id="e6b143cd-3c45-4b40-9db5-2b9d36085bce" />
                 </property>
@@ -418,7 +421,7 @@
                 <enumerationLiteral Id="e83e9b3a-d79d-4490-85f8-a94a22117738" name="XOR[1...1]">
                   <elementDefinition Id="18c8c236-72c3-4fe8-9c86-de88be1b8014" />
                 </enumerationLiteral>
-                <enumerationLiteral Id="eb9fb919-7e0d-4991-9671-36d7083ad557" name="Cardinal OR [*...*]">
+                <enumerationLiteral Id="eb9fb919-7e0d-4991-9671-36d7083ad557" name="Cardinal Group [*...*]">
                   <elementDefinition Id="b5937090-b6b7-4c31-9197-7966fc67c4cd" />
                 </enumerationLiteral>
               </ownedLiterals>
@@ -577,11 +580,11 @@
                 </association>
               </targetEnds>
               <ownedAttributesInternal>
-                <property Id="2932902a-bc8f-4774-82cc-f1856bcce86d" name="SelectionState" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                  <elementDefinition Id="bb158d3c-2542-44ef-9f07-f16d0f4b143c" />
-                </property>
                 <property Id="003adbea-6aa9-4a7d-96b2-1e5b9777b212" name="Disabled" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
                   <elementDefinition Id="59a4a39c-41f4-4880-b995-64e8455284ad" />
+                </property>
+                <property Id="ff52868b-5ddf-42cf-bf20-42043be673e8" name="SelectionState" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="cb5e7ecf-f3fc-4e3a-ade0-2d3a84c614b1" />
                 </property>
               </ownedAttributesInternal>
             </class>
@@ -590,10 +593,7 @@
             <enumeration Id="2e1be579-67d8-4ea2-b0fa-0058eed51151" name="Selection States" isAbstract="false" isLeaf="false">
               <elementDefinition Id="96aa1cfe-ebfd-48b8-a441-61a910652fb6" />
               <ownedLiterals>
-                <enumerationLiteral Id="d3d36c72-e6df-4d0c-b3a4-64c000a2c410" name="Dynamic">
-                  <elementDefinition Id="a99531e3-7e8d-462a-bc0a-63c9471fe6ac" />
-                </enumerationLiteral>
-                <enumerationLiteral Id="8ca53172-6aec-468d-87fd-f92ee1d37ce8" name="Deselected">
+                <enumerationLiteral Id="8ca53172-6aec-468d-87fd-f92ee1d37ce8" name="Selected">
                   <elementDefinition Id="9b81a9d9-f2fa-4d47-a7ee-a7a35f6b3d73" />
                 </enumerationLiteral>
                 <enumerationLiteral Id="a381ed59-0c37-49cd-810f-db187bf2ce69" name="Unselected">

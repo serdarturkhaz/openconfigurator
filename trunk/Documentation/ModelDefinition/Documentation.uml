@@ -1,83 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
   <ownedCommentsInternal>
-    <comment
-      Id="baed6ed8-d10c-4522-84b5-809aa069e397">
-      <body>Optional [0...1]
-Mandatory [1...1]
-</body>
-      <annotatedElements>
-        <useCaseMoniker
-          Id="c169cfab-f014-4474-9bcb-115ac310c409"
-          LastKnownName="Define parent-child relation"
-          LastKnownLocation="Documentation.uml" />
-        <useCaseMoniker
-          Id="d0841d8c-3074-4b5d-90d7-3200d76b496e"
-          LastKnownName="Define Relations"
-          LastKnownLocation="Documentation.uml" />
-      </annotatedElements>
-    </comment>
-    <comment
-      Id="76c46720-94ad-4a97-9402-9829e67dea3a">
-      <body>Dependency, Mutual dependency, Mutual exclusion
-</body>
-      <annotatedElements>
-        <useCaseMoniker
-          Id="e24e3468-e1e3-4785-b259-8096122a8dba"
-          LastKnownName="Define Composition Rules"
-          LastKnownLocation="Documentation.uml" />
-      </annotatedElements>
-    </comment>
-    <comment
-      Id="2bfb1452-28e8-4768-ae9a-a6ad07835bda">
-      <body>Calculation rules
-Explicit consequence rules
-</body>
-      <annotatedElements>
-        <useCaseMoniker
-          Id="20f39045-f285-4a69-a5e9-176f089ba765"
-          LastKnownName="Define Custom Rules"
-          LastKnownLocation="Documentation.uml" />
-        <useCaseMoniker
-          Id="73a7bb0d-ea5d-40b4-a9cf-5b6e67bcd5a8"
-          LastKnownName="Define Custom Rules"
-          LastKnownLocation="Documentation.uml" />
-      </annotatedElements>
-    </comment>
-    <comment
-      Id="8bb50c43-3c68-4c11-adf2-7296cb92ce38">
-      <body>Int , String, Bool</body>
-      <annotatedElements>
-        <useCaseMoniker
-          Id="dd98d3dc-a892-4244-a356-84e8aebc0b67"
-          LastKnownName="Define  Attributes "
-          LastKnownLocation="Documentation.uml" />
-      </annotatedElements>
-    </comment>
-    <comment
-      Id="688dc4b6-c5eb-4cd7-bc04-abb1749e8796">
-      <body>Instance of Model</body>
-      <annotatedElements>
-        <useCaseMoniker
-          Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c"
-          LastKnownName="Manage configurations (CREDO)"
-          LastKnownLocation="Documentation.uml" />
-      </annotatedElements>
-    </comment>
-    <comment
-      Id="45d66e16-dec3-4fdf-a93c-6e61f5743781">
-      <body>OR [0...*]
-XOR [1...1]</body>
-      <annotatedElements>
-        <useCaseMoniker
-          Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
-          LastKnownName="Define Group Relations"
-          LastKnownLocation="Documentation.uml" />
-      </annotatedElements>
-    </comment>
     <comment
       Id="76f29f86-477d-4fd0-8ba3-30b3b3ddf22f">
       <body>Cloneable [0...*]
@@ -636,7 +562,7 @@ User Input
             Id="f462d81c-f04f-4b97-a40b-8acb451c9538">
             <useCaseMoniker
               Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
-              LastKnownName="Define Features"
+              LastKnownName="Define/Manipulate Features"
               LastKnownLocation="Documentation.uml" />
           </include>
           <include
@@ -667,7 +593,7 @@ User Input
             Id="f825bf65-25a6-4cf4-9701-f754decf0899">
             <useCaseMoniker
               Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
-              LastKnownName="Define Features"
+              LastKnownName="Define/Manipulate Features"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -684,7 +610,7 @@ User Input
             Id="7b9b2da5-a301-4345-b99d-e8e60c56b337">
             <useCaseMoniker
               Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
-              LastKnownName="Define Features"
+              LastKnownName="Define/Manipulate Features"
               LastKnownLocation="Documentation.uml" />
           </extend>
         </extendedCases>
@@ -716,7 +642,7 @@ User Input
             Id="ba408c0c-6e87-46fb-802c-0f4e7ebc27dc">
             <useCaseMoniker
               Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
-              LastKnownName="Define Group Relations"
+              LastKnownName="Define/Manipulate Group Relations"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -725,7 +651,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="e24e3468-e1e3-4785-b259-8096122a8dba"
-        name="Define Composition Rules"
+        name="Define/Manipulate Composition Rules"
         isAbstract="false"
         isLeaf="false">
         <extendedCases>
@@ -772,7 +698,7 @@ User Input
             Id="42019d2d-236a-4d9d-9721-7cc91d886ffc">
             <useCaseMoniker
               Id="9bc198e8-d70b-4f49-a3c7-a060067ecd67"
-              LastKnownName="Create/Edit  Model"
+              LastKnownName="Define/Manipulate  Model"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -789,7 +715,7 @@ User Input
     <packageHasNamedElement>
       <actor
         Id="d629e551-722c-4c4f-9a96-6bb8a1853053"
-        name="User"
+        name="Normal User"
         isAbstract="false"
         isLeaf="false">
         <targetEnds>
@@ -2263,7 +2189,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
-        name="Define Features"
+        name="Define/Manipulate Features"
         isAbstract="false"
         isLeaf="false">
         <subjects>
@@ -2319,7 +2245,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
-        name="Define Group Relations"
+        name="Define/Manipulate Group Relations"
         isAbstract="false"
         isLeaf="false">
         <subjects>
@@ -2801,7 +2727,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="d0841d8c-3074-4b5d-90d7-3200d76b496e"
-        name="Define Relations"
+        name="Define/Manipulate Relations"
         isAbstract="false"
         isLeaf="false">
         <generalsInternal>
@@ -3728,7 +3654,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="9bc198e8-d70b-4f49-a3c7-a060067ecd67"
-        name="Create/Edit  Model"
+        name="Define/Manipulate  Model"
         isAbstract="false"
         isLeaf="false">
         <generalsInternal>
@@ -3746,35 +3672,35 @@ User Input
             Id="8937b7d9-f9be-4c73-b6e0-0175f74ca488">
             <useCaseMoniker
               Id="0d313e83-97ad-4ec7-8159-0ae14a0b8802"
-              LastKnownName="Define Features"
+              LastKnownName="Define/Manipulate Features"
               LastKnownLocation="Documentation.uml" />
           </include>
           <include
             Id="3ae81178-946c-414f-8e69-f4fc51332949">
             <useCaseMoniker
               Id="d0841d8c-3074-4b5d-90d7-3200d76b496e"
-              LastKnownName="Define Relations"
+              LastKnownName="Define/Manipulate Relations"
               LastKnownLocation="Documentation.uml" />
           </include>
           <include
             Id="63743735-a899-4117-a970-a8e7de7f955e">
             <useCaseMoniker
               Id="75616a27-7a38-4020-99f3-96a8f2da8c47"
-              LastKnownName="Define Group Relations"
+              LastKnownName="Define/Manipulate Group Relations"
               LastKnownLocation="Documentation.uml" />
           </include>
           <include
             Id="8ed958e3-53f9-450f-a4f2-b972ce72b2b3">
             <useCaseMoniker
               Id="e24e3468-e1e3-4785-b259-8096122a8dba"
-              LastKnownName="Define Composition Rules"
+              LastKnownName="Define/Manipulate Composition Rules"
               LastKnownLocation="Documentation.uml" />
           </include>
           <include
             Id="6f3af01e-b939-4033-86ce-7c0ef9451978">
             <useCaseMoniker
               Id="73a7bb0d-ea5d-40b4-a9cf-5b6e67bcd5a8"
-              LastKnownName="Define Custom Rules"
+              LastKnownName="Define/Manipulate Custom Rules"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -3789,7 +3715,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="73a7bb0d-ea5d-40b4-a9cf-5b6e67bcd5a8"
-        name="Define Custom Rules"
+        name="Define/Manipulate Custom Rules"
         isAbstract="false"
         isLeaf="false">
         <subjects>
@@ -3803,7 +3729,7 @@ User Input
     <packageHasNamedElement>
       <actor
         Id="d0763a74-6bf7-4f1b-9e78-fa000edd4d20"
-        name="Solver engine"
+        name="Configurator engine"
         isAbstract="false"
         isLeaf="false">
         <targetEnds>
@@ -3816,7 +3742,7 @@ User Input
             isAbstract="false">
             <useCaseMoniker
               Id="7cbd6dbe-50c7-4be8-9468-8a25ee31dec8"
-              LastKnownName="Provide consequences"
+              LastKnownName="Compute and display consequences"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -3919,7 +3845,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="7cbd6dbe-50c7-4be8-9468-8a25ee31dec8"
-        name="Provide consequences"
+        name="Compute and display consequences"
         isAbstract="false"
         isLeaf="false">
         <extendedCases>
