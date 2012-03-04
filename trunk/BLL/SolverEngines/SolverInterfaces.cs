@@ -7,27 +7,29 @@ namespace BLL.SolverEngines
 {
     public interface ISolverContext
     {
-        void CreateInitialPoint();
-        void AddBoolVariable(string varID, string varName);
-        void AddConstraint(params ISolverStatement[] statements);
+        void CreateInitialRestorePoint();
+
+        void AddVariable(string name, string identifier, string categoryName, VariableDataTypes dataType);
+        void AddConstraint(string categoryName, params ISolverStatement[] statements);
+        void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
+        void RemoveValueAssumption(string varID, string categoryName);
+
+        ISolverStatement CreateStatement(StatementTypes type, string categoryName, params string[] variableIDs);
         ISolverStatement CreateStatement(StatementTypes type, params ISolverStatement[] innerStatement);
-        ISolverStatement CreateStatement(StatementTypes type, params string[] varIDs);
-        ISolverStatement CreateStatement(StatementTypes type, string varID, ISolverStatement rightStatement);
-        void AssumeBoolVarValue(string varID, bool value, AssumptionTypes madeBy);
-        void RemoveValAssumption(string varID);
+        ISolverStatement CreateStatement(StatementTypes type, string categoryName, string varID, ISolverStatement rightStatement);
 
         ISolverSolution GetSolution();
-        bool CheckSolutionExists(string varID, bool valueToTest);
+        bool CheckSolutionExists(string variableID, string categoryName, VariableDataTypes dataType, object valueToTest);
     }
     public interface ISolverSolution
     {
-        bool? GetVariableValue(string varID);
-        Dictionary<string,bool?> GetAllVariableValues();
+        object GetVariableValue(string variableID, string categoryName);
     }
     public interface ISolverStatement
     {
        
     }
+
 
     //Enums
     public enum StatementTypes
@@ -45,4 +47,11 @@ namespace BLL.SolverEngines
         User,
         Solver
     }
+    public enum VariableDataTypes
+    {
+        Integer,
+        Boolean
+    }
+
+    
 }

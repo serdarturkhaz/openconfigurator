@@ -14,6 +14,8 @@ namespace BLL.Services
     {
         //Fields
         IParser _ruleParser;
+        const string featuresCategory = "Features", attributesCategory = "Attributes", relationsCategory = "Relations",
+            groupRelationsCategory = "GroupRelations", compositionRulesCategory = "CompositionRules";
 
         //Constructors
         public SolverService()
@@ -28,69 +30,37 @@ namespace BLL.Services
             //Loop through Features
             foreach (BLL.BusinessObjects.Feature feature in model.Features)
             {
-                context.AddBoolVariable(feature.ID.ToString(), feature.Name);
+                context.AddVariable(feature.Name, feature.ID.ToString(), featuresCategory, VariableDataTypes.Boolean);
+
+                //Loop through Attributes
+                foreach (BLL.BusinessObjects.Attribute attribute in feature.Attributes)
+                {
+                    context.AddVariable(attribute.Name, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer);
+                }
             }
 
             //Loop through Relations
             List<ISolverStatement> statementsList = new List<ISolverStatement>();
             foreach (BLL.BusinessObjects.Relation relation in model.Relations)
             {
-                switch (relation.RelationType)
-                {
-                    case BusinessObjects.RelationTypes.Mandatory:
-                        ISolverStatement equivalence1 = context.CreateStatement(StatementTypes.Equivalence, relation.ParentFeatureID.ToString(), relation.ChildFeatureID.ToString());
-                        context.AddConstraint(equivalence1);
-                        break;
-                    case BusinessObjects.RelationTypes.Optional:
-                        ISolverStatement implication1 = context.CreateStatement(StatementTypes.Implies, relation.ChildFeatureID.ToString(), relation.ParentFeatureID.ToString());
-                        context.AddConstraint(implication1);
-                        break;
-                }
+                context.AddConstraint(relationsCategory, GetStatement(context,relation));
             }
 
             //Loop through GroupRelations
             foreach (BLL.BusinessObjects.GroupRelation groupRelation in model.GroupRelations)
             {
-                switch (groupRelation.GroupRelationType)
-                {
-                    case BusinessObjects.GroupRelationTypes.OR:
-                        ISolverStatement innerOr1 = context.CreateStatement(StatementTypes.Or, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                        ISolverStatement equivalence1 = context.CreateStatement(StatementTypes.Equivalence, groupRelation.ParentFeatureID.ToString(), innerOr1);
-                        context.AddConstraint(equivalence1);
-                        break;
-                    case BusinessObjects.GroupRelationTypes.XOR:
-                        ISolverStatement orStatement = context.CreateStatement(StatementTypes.Or, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                        ISolverStatement negatedAnds = context.CreateStatement(StatementTypes.NotAndCombinations, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                        ISolverStatement equivalence2 = context.CreateStatement(StatementTypes.Equivalence, groupRelation.ParentFeatureID.ToString(), orStatement);
-                        ISolverStatement bigAnd = context.CreateStatement(StatementTypes.And, equivalence2, negatedAnds);
-                        context.AddConstraint(bigAnd);
-                        break;
-                }
+                context.AddConstraint(groupRelationsCategory, GetStatement(context, groupRelation));
             }
 
             //Loop through CompositionRules
             foreach (BLL.BusinessObjects.CompositionRule compositionRule in model.CompositionRules)
             {
-                switch (compositionRule.CompositionRuleType)
-                {
-                    case BusinessObjects.CompositionRuleTypes.Dependency:
-                        ISolverStatement implication1 = context.CreateStatement(StatementTypes.Implies, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-                        context.AddConstraint(implication1);
-                        break;
-                    case BusinessObjects.CompositionRuleTypes.MutualDependency:
-                        ISolverStatement equivalence1 = context.CreateStatement(StatementTypes.Equivalence, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-                        context.AddConstraint(equivalence1);
-                        break;
-                    case BusinessObjects.CompositionRuleTypes.MutualExclusion:
-                        ISolverStatement exclusion1 = context.CreateStatement(StatementTypes.Excludes, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-                        context.AddConstraint(exclusion1);
-                        break;
-                }
+                context.AddConstraint(compositionRulesCategory, GetStatement(context, compositionRule));
             }
 
 
             //Create an initial point
-            context.CreateInitialPoint();
+            context.CreateInitialRestorePoint();
 
             return context;
         }
@@ -102,8 +72,8 @@ namespace BLL.Services
                 //For those which the user has not set
                 if (featureSelection.ToggledByUser == false)
                 {
-                    bool CanBeTrue = context.CheckSolutionExists(featureSelection.FeatureID.ToString(), true);
-                    bool CanBeFalse = context.CheckSolutionExists(featureSelection.FeatureID.ToString(), false);
+                    bool CanBeTrue = context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
+                    bool CanBeFalse = context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, false);
 
                     //Cannot be true nor false
                     if (!CanBeFalse && !CanBeTrue)
@@ -137,7 +107,56 @@ namespace BLL.Services
             return true;
 
         }
-
+        private ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
+        {
+            ISolverStatement returnStatement = null;
+            switch (relation.RelationType)
+            {
+                case BusinessObjects.RelationTypes.Mandatory:
+                    returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, relation.ParentFeatureID.ToString(), relation.ChildFeatureID.ToString());
+                    break;
+                case BusinessObjects.RelationTypes.Optional:
+                    returnStatement = context.CreateStatement(StatementTypes.Implies, featuresCategory, relation.ChildFeatureID.ToString(), relation.ParentFeatureID.ToString());
+                    break;
+            }
+            return returnStatement;
+        }
+        private ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.GroupRelation groupRelation)
+        {
+            ISolverStatement returnStatement = null;
+            switch (groupRelation.GroupRelationType)
+            {
+                case BusinessObjects.GroupRelationTypes.OR:
+                    ISolverStatement innerOr1 = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                    returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), innerOr1);
+                    break;
+                case BusinessObjects.GroupRelationTypes.XOR:
+                    ISolverStatement orStatement = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                    ISolverStatement negatedAnds = context.CreateStatement(StatementTypes.NotAndCombinations, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                    ISolverStatement equivalence2 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement);
+                    returnStatement = context.CreateStatement(StatementTypes.And, equivalence2, negatedAnds);
+                    break;
+            }
+            return returnStatement;
+        }
+        private ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.CompositionRule compositionRule)
+        {
+            ISolverStatement returnStatement = null;
+            switch (compositionRule.CompositionRuleType)
+            {
+                case BusinessObjects.CompositionRuleTypes.Dependency:
+                    returnStatement = context.CreateStatement(StatementTypes.Implies, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+                    break;
+                case BusinessObjects.CompositionRuleTypes.MutualDependency:
+                    returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+                    break;
+                case BusinessObjects.CompositionRuleTypes.MutualExclusion:
+                    returnStatement = context.CreateStatement(StatementTypes.Excludes, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+                    break;
+            }
+            return returnStatement;
+        }
+        
         //Public methods  
         public ISolverContext CreateNewContext(BusinessObjects.Model model)
         {
@@ -155,12 +174,12 @@ namespace BLL.Services
             switch (newState)
             {
                 case BusinessObjects.FeatureSelectionStates.Selected: //Assert-decision
-                    context.AssumeBoolVarValue(FeatureID.ToString(), true, AssumptionTypes.User);
+                    context.AddValueAssumption(FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
                     fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
                     fSelection.ToggledByUser = true;
                     break;
                 case BusinessObjects.FeatureSelectionStates.Unselected: //Retract-decision
-                    context.RemoveValAssumption(FeatureID.ToString());
+                    context.RemoveValueAssumption(FeatureID.ToString(), featuresCategory);
                     fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
                     fSelection.ToggledByUser = false;
                     break;

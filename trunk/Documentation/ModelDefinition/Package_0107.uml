@@ -248,6 +248,16 @@
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="024f5466-2920-4e60-b9ce-c99b70843153"
+            isSubstitutable="false">
+            <classMoniker
+              Id="8870af84-05e0-46ec-9a5c-a6646624dbd3"
+              LastKnownName="ISolverStatement"
+              LastKnownLocation="Documentation.uml" />
+          </generalization>
+        </generalsInternal>
         <targetEnds>
           <association
             Id="da993f4f-41a4-43c7-896f-6ae51454a11a"

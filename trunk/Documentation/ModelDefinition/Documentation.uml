@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -531,6 +531,45 @@ User Input
                 <memberEnd
                   Id="5c8716ad-03fa-4848-a00b-3bf489dda4bf"
                   name="Manage configurations (CREDO)"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="c07284f1-dc35-4b57-831e-47b5a8740b5b"
+            isDerived="false"
+            sourceEndRoleName="Tech user"
+            targetEndRoleName="Login"
+            isLeaf="false"
+            isAbstract="false">
+            <useCaseMoniker
+              Id="1c053af6-dba9-495e-8768-7499720c7a11"
+              LastKnownName="Login"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ff9799cb-6c90-4423-ba08-3c94e2f14cb2"
+                  name="Tech user"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="39c85898-8922-4645-9ce6-9c57c9c26ae2"
+                  name="Login"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -4353,6 +4392,13 @@ User Input
               LastKnownName="ISolverContext"
               LastKnownLocation="Documentation.uml" />
           </dependency>
+          <dependency
+            Id="4fdb0eac-67ba-4d18-b588-8a509f9872f7">
+            <classMoniker
+              Id="8870af84-05e0-46ec-9a5c-a6646624dbd3"
+              LastKnownName="ISolverStatement"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
         </suppliersInternal>
         <ownedOperationsInternal>
           <operation
@@ -4602,7 +4648,50 @@ User Input
         name="ISolverContext"
         isAbstract="false"
         isLeaf="false"
-        isActiveClass="false" />
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="b15a91db-8719-4a9b-9f1e-3229c4358098"
+            name="CreateInitialPoint"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="a8cc6255-f411-49e0-bb3e-fb2585031b98"
+            name="AddBoolVariable"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="af667388-b9e1-4e67-b4f1-9dd105fda34a"
+            name="AddConstraint"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="938c95b6-506b-4629-82bf-08860b962249"
+            name="AssumeBoolVarValue"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="2eaace37-9908-4f46-acdd-450aa310647b"
+            name="RemoveValAssumption"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
@@ -4943,6 +5032,35 @@ User Input
       <undefinedType
         Id="5a4e569c-42cb-4d86-9385-c316171377ef"
         name="Object" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="2eb6cb55-cdd5-4968-8ec5-7b653d3302b7"
+        name="Login"
+        isAbstract="false"
+        isLeaf="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="1c053af6-dba9-495e-8768-7499720c7a11"
+        name="Login"
+        isAbstract="false"
+        isLeaf="false">
+        <subjects>
+          <subsystemMoniker
+            Id="88001c5f-4d5d-4e98-950f-b669903f1fa1"
+            LastKnownName="Product modeler"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="8870af84-05e0-46ec-9a5c-a6646624dbd3"
+        name="ISolverStatement"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
