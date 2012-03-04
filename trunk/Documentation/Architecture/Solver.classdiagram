@@ -17,6 +17,10 @@
             <classMoniker Id="4453af04-27dc-461a-99c6-39308466bb9f" LastKnownName="ISolverContext" />
             <elementDefinition Id="23405c9d-a3d3-4580-bd18-b28f6a9abf7c" />
           </dependency>
+          <dependency Id="ecd5de9e-f250-4c7c-81dd-d0316b2e2510">
+            <classMoniker Id="d49e15e9-de59-4bf5-8aba-15f769d19466" LastKnownName="ISolverStatement" />
+            <elementDefinition Id="4fdb0eac-67ba-4d18-b588-8a509f9872f7" />
+          </dependency>
         </suppliersInternal>
         <ownedOperationsInternal>
           <operation Id="5b94ad2f-27c7-4a70-acfb-589114e805fc" name="ToggleFeature" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
@@ -93,6 +97,23 @@
     <logicalClassDesignerModelHasTypes>
       <class Id="4453af04-27dc-461a-99c6-39308466bb9f" name="ISolverContext" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="735d635c-ee5d-463d-bce0-e0da7666a53f" />
+        <ownedOperationsInternal>
+          <operation Id="ffac6b7a-d649-4c69-9cbc-f78a14bc8f80" name="CreateInitialPoint" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="b15a91db-8719-4a9b-9f1e-3229c4358098" />
+          </operation>
+          <operation Id="1fde241c-447c-425e-ade7-571ded19aed4" name="AddBoolVariable" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="a8cc6255-f411-49e0-bb3e-fb2585031b98" />
+          </operation>
+          <operation Id="23c71cff-82fb-4184-a55d-8a8736f4d3d3" name="AddConstraint" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="af667388-b9e1-4e67-b4f1-9dd105fda34a" />
+          </operation>
+          <operation Id="c206f57e-25fb-4f92-b77d-b3f4cee225cb" name="AssumeBoolVarValue" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="938c95b6-506b-4629-82bf-08860b962249" />
+          </operation>
+          <operation Id="7fcb785f-91d5-420b-ae3d-18df2a48e2b7" name="RemoveValAssumption" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="2eaace37-9908-4f46-acdd-450aa310647b" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -259,6 +280,12 @@
           <packageHasNamedElement>
             <class Id="38af59c3-e9ff-4179-bd44-1f55a47bbb7e" name="Z3Statement" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="e771899a-c90d-437a-a365-80f6542467fc" />
+              <generalsInternal>
+                <generalization Id="c395a445-87ee-4a34-a3b0-2f051ba2f6b6" isSubstitutable="false">
+                  <classMoniker Id="d49e15e9-de59-4bf5-8aba-15f769d19466" LastKnownName="ISolverStatement" />
+                  <elementDefinition Id="024f5466-2920-4e60-b9ce-c99b70843153" />
+                </generalization>
+              </generalsInternal>
               <targetEnds>
                 <association Id="8cbd2048-a1e3-4f8f-82d9-cbcf19bdad8b" isDerived="false" sourceEndRoleName="" targetEndRoleName="_term" isLeaf="false" isAbstract="false">
                   <classMoniker Id="95b6b021-2ba3-4c55-849a-b4bfa08dbacb" LastKnownName="Term" />
@@ -317,6 +344,11 @@
       <enumeration Id="8a548ea0-3301-4ac2-9444-982b922485bb" name="StatementTypes" isAbstract="false" isLeaf="false">
         <elementDefinition Id="3ebfc258-11f8-4a21-a6ed-79b65d270999" />
       </enumeration>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d49e15e9-de59-4bf5-8aba-15f769d19466" name="ISolverStatement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="8870af84-05e0-46ec-9a5c-a6646624dbd3" />
+      </class>
     </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="f810f739-bde2-43b3-b91d-be7ca6e4b919" name="Documentation">

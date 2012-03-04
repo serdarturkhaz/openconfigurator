@@ -116,6 +116,7 @@ namespace BLL.RuleParser
                     public static string IdentifyRegex = @"^#[A-z,0-9]*(\.{1}[A-z,0-9]+){0,1}$", SplitRegex = null; //example : "#FeatureName.AttributeName"
                     public override object Eval()
                     {
+                        //Get the Feature
                         object targetAttributeVal = (object) featureSelections[0].AttributeValues[0];
                         ObjectReference returnRef = new ObjectReference(ref targetAttributeVal, "Value");
                         return returnRef;

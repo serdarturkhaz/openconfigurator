@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
   <packagedElements>
     <useCaseModelRootHasTypes>
       <subsystem Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" name="Product modeler" isAbstract="false" isLeaf="false" isActiveClass="false">
@@ -41,6 +41,22 @@
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
             <elementDefinition Id="ee8b5d9d-536b-4411-82e0-d5e6819ffe2e" />
+          </association>
+          <association Id="21f8cd3a-edf3-4dbd-af03-38aa9a9924b5" isDerived="false" sourceEndRoleName="Tech user" targetEndRoleName="Login" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="c78fbcd2-e8c6-4d92-9d6c-923a7ae8db69" LastKnownName="Login" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="ab6e8a7c-d944-45c4-97a9-7d40ae52c2ed" name="Tech user" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="ff9799cb-6c90-4423-ba08-3c94e2f14cb2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="a783c6a8-7b69-4bd6-8168-c9f2bc202f88" name="Login" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="39c85898-8922-4645-9ce6-9c57c9c26ae2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="c07284f1-dc35-4b57-831e-47b5a8740b5b" />
           </association>
         </targetEnds>
       </actor>
@@ -257,6 +273,14 @@
         </extendedCases>
         <subjects>
           <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="c78fbcd2-e8c6-4d92-9d6c-923a7ae8db69" name="Login" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="1c053af6-dba9-495e-8768-7499720c7a11" />
+        <subjects>
+          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
         </subjects>
       </useCase>
     </packageHasNamedElement>
