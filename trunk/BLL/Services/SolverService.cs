@@ -25,8 +25,12 @@ namespace BLL.Services
         }
 
         //Private methods
-        private ISolverContext InitializeContextFromModel(ref ISolverContext context, BusinessObjects.Model model)
+        private static ISolverContext InitializeContextFromModel(BusinessObjects.Model model)
         {
+            //Return val
+            ISolverContext context = new Z3Context();
+
+
             //Loop through Features
             foreach (BLL.BusinessObjects.Feature feature in model.Features)
             {
@@ -43,7 +47,7 @@ namespace BLL.Services
             List<ISolverStatement> statementsList = new List<ISolverStatement>();
             foreach (BLL.BusinessObjects.Relation relation in model.Relations)
             {
-                context.AddConstraint(relationsCategory, GetStatement(context,relation));
+                context.AddConstraint(relationsCategory, GetStatement(context, relation));
             }
 
             //Loop through GroupRelations
@@ -61,19 +65,18 @@ namespace BLL.Services
 
             //Create an initial point
             context.CreateInitialRestorePoint();
-
             return context;
         }
-        private bool GetValidSelections(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+        private bool GetValidSelections(ref ConfiguratorSession configSession)
         {
             //Loop through all FeatureSelections
-            foreach (BLL.BusinessObjects.FeatureSelection featureSelection in featureSelections)
+            foreach (BLL.BusinessObjects.FeatureSelection featureSelection in configSession.Configuration.FeatureSelections)
             {
                 //For those which the user has not set
                 if (featureSelection.ToggledByUser == false)
                 {
-                    bool CanBeTrue = context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
-                    bool CanBeFalse = context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, false);
+                    bool CanBeTrue = configSession.Context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
+                    bool CanBeFalse = configSession.Context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, false);
 
                     //Cannot be true nor false
                     if (!CanBeFalse && !CanBeTrue)
@@ -107,7 +110,7 @@ namespace BLL.Services
             return true;
 
         }
-        private ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
+        private static ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
         {
             ISolverStatement returnStatement = null;
             switch (relation.RelationType)
@@ -121,7 +124,7 @@ namespace BLL.Services
             }
             return returnStatement;
         }
-        private ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.GroupRelation groupRelation)
+        private static ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.GroupRelation groupRelation)
         {
             ISolverStatement returnStatement = null;
             switch (groupRelation.GroupRelationType)
@@ -139,7 +142,7 @@ namespace BLL.Services
             }
             return returnStatement;
         }
-        private ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.CompositionRule compositionRule)
+        private static ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.CompositionRule compositionRule)
         {
             ISolverStatement returnStatement = null;
             switch (compositionRule.CompositionRuleType)
@@ -156,47 +159,79 @@ namespace BLL.Services
             }
             return returnStatement;
         }
-        
+
         //Public methods  
-        public ISolverContext CreateNewContext(BusinessObjects.Model model)
+        public static ISolverContext CreateNewContext(BusinessObjects.Model model)
         {
-            ISolverContext context = new Z3Context();
-            InitializeContextFromModel(ref context, model);
+            ISolverContext context = InitializeContextFromModel(model);
 
             return context;
         }
-        public bool UserToggleSelection(ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
+        public bool UserToggleSelection(ref ConfiguratorSession configSession, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
         {
             //Get the FeatureSelection corresponding to the given FeatureID
-            BLL.BusinessObjects.FeatureSelection fSelection = featureSelections.First(k => k.FeatureID == FeatureID);
+            BLL.BusinessObjects.FeatureSelection fSelection = configSession.Configuration.FeatureSelections.First(k => k.FeatureID == FeatureID);
 
             //Set the bool value in the context and in the appropriate FeatureSelection
             switch (newState)
             {
                 case BusinessObjects.FeatureSelectionStates.Selected: //Assert-decision
-                    context.AddValueAssumption(FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
+                    configSession.Context.AddValueAssumption(FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
                     fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
                     fSelection.ToggledByUser = true;
                     break;
                 case BusinessObjects.FeatureSelectionStates.Unselected: //Retract-decision
-                    context.RemoveValueAssumption(FeatureID.ToString(), featuresCategory);
+                    configSession.Context.RemoveValueAssumption(FeatureID.ToString(), featuresCategory);
                     fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
                     fSelection.ToggledByUser = false;
                     break;
             }
 
             //Check whether the model is still satisfiable
-            bool decisionIsValid = GetValidSelections(context, ref featureSelections);
+            bool decisionIsValid = GetValidSelections(ref configSession);
 
             //
             return decisionIsValid;
         }
-        public bool ExecuteCustomRule(ISolverContext context, string Expression, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+        public bool ExecuteCustomRule(ref ConfiguratorSession configSession, string Expression)
         {
-            _ruleParser.ExecuteSyntax(Expression, context, ref featureSelections);
+            _ruleParser.ExecuteSyntax(ref configSession, Expression);
             return false;
         }
     }
 
 
+    public class ConfiguratorSession
+    {
+        //Fields
+        private BusinessObjects.Model _model;
+        private ISolverContext _context;
+        private BusinessObjects.Configuration _configuration;
+
+        //Properties
+        public BusinessObjects.Model Model
+        {
+            get { return _model; }
+            set { _model = value; }
+        }
+        public ISolverContext Context
+        {
+            get { return _context; }
+            set { _context = value; }
+        }
+        public BusinessObjects.Configuration Configuration
+        {
+            get { return _configuration; }
+            set { _configuration = value; }
+        }
+
+        //Constructor
+        public ConfiguratorSession(BusinessObjects.Model model, BusinessObjects.Configuration configuration, ISolverContext context)
+        {
+            _model = model;
+            _context = context;
+            _configuration = configuration;
+        }
+
+    }
 }
