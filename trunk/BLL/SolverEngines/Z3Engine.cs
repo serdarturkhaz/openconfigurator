@@ -373,8 +373,6 @@ namespace BLL.SolverEngines
 
             return statement;
         }
-
-
     }
     public class Z3Solution : ISolverSolution
     {

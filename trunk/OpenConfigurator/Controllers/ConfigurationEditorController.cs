@@ -12,6 +12,7 @@ namespace PresentationLayer.Controllers
 {
     public class ConfigurationEditorController : Controller
     {
+        //Controller methods
         [Authorize]
         public ActionResult ConfigurationEditor(int configurationID)
         {
@@ -37,63 +38,11 @@ namespace PresentationLayer.Controllers
             BLL.BusinessObjects.Model model = _modelService.GetByID(configuration.ModelID);
             innerJObj[1] = model;
 
-            //Setup FeatureSelections----------------------------------------------------------------------------------------------------------------------------------
-            //Create FeatureSelections for the first time
-            if (configuration.FeatureSelections.Count == 0)
-            {
-                //Create one instance for each Feature in the Model
-                foreach (BLL.BusinessObjects.Feature feature in model.Features)
-                {
-                    BLL.BusinessObjects.FeatureSelection newFeatureSelection = BLL.BusinessObjects.FeatureSelection.CreateDefault();
-                    newFeatureSelection.FeatureID = feature.ID;
-                    configuration.FeatureSelections.Add(newFeatureSelection);
+            //Setup the ConfigurationSession
+            ConfiguratorSession newSession = new ConfiguratorSession(model, configuration, SolverService.CreateNewContext(model));
+            SetupFeatureSelections(ref newSession);
+            SessionData.ConfiguratorSessions[configurationID] = newSession;
 
-                    //Create default AttributeValues
-                    foreach (BLL.BusinessObjects.Attribute attribute in feature.Attributes)
-                    {
-                        BLL.BusinessObjects.AttributeValue attrValue = BLL.BusinessObjects.AttributeValue.CreateDefault();
-                        attrValue.Value = GetDefaultAttrVal(attribute.AttributeDataType);
-                        attrValue.AttributeID = attribute.ID;
-                        if (attribute.AttributeType == BLL.BusinessObjects.AttributeTypes.Constant)
-                        {
-                            attrValue.Value = attribute.ConstantValue;
-                        }
-                        newFeatureSelection.AttributeValues.Add(attrValue);
-                    }
-                }
-
-                //Toggle the root Feature and get the initial Configuration state of all the other Features
-                InitRootSelection(configuration.ID, model, configuration.FeatureSelections, model.Features[0].ID, BLL.BusinessObjects.FeatureSelectionStates.Selected);
-            }
-            //Create new FeatureSelections ONLY for newly created Features
-            else if (configuration.FeatureSelections.Count < model.Features.Count)
-            {
-                //Create one instance for each Feature that is missing a FeatureSelection
-                foreach (BLL.BusinessObjects.Feature feature in model.Features)
-                {
-                    if (configuration.FeatureSelections.FirstOrDefault(k => k.FeatureID == feature.ID) == null) //If the Feature has no corresponding FeatureSelection
-                    {
-                        BLL.BusinessObjects.FeatureSelection newFeatureSelection = BLL.BusinessObjects.FeatureSelection.CreateDefault();
-                        newFeatureSelection.FeatureID = feature.ID;
-                        configuration.FeatureSelections.Add(newFeatureSelection);
-
-                        //Create default AttributeValues
-                        foreach (BLL.BusinessObjects.Attribute attribute in feature.Attributes)
-                        {
-                            BLL.BusinessObjects.AttributeValue attrValue = BLL.BusinessObjects.AttributeValue.CreateDefault();
-                            attrValue.Value = GetDefaultAttrVal(attribute.AttributeDataType);
-                            attrValue.AttributeID = attribute.ID;
-                            if (attribute.AttributeType == BLL.BusinessObjects.AttributeTypes.Constant)
-                            {
-                                attrValue.Value = attribute.ConstantValue;
-                            }
-                            newFeatureSelection.AttributeValues.Add(attrValue);
-                        }
-                    }
-                }
-            }
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-            
             return result;
         }
         [Authorize]
@@ -135,29 +84,27 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
-
         [Authorize]
         public JsonNetResult ToggleFeature(int configurationID, int FeatureID, int newState)
         {
             //Data return wrapper
             JsonNetResult result = new JsonNetResult();
 
-            //Setup Solver and Context
-            ISolverContext context = context = SessionData.SolverContexts[configurationID];
-            List<BLL.BusinessObjects.FeatureSelection> featureSelections = SessionData.FeatureSelections[configurationID];
+            //Get the ConfiguratorSession
+            ConfiguratorSession configSession = SessionData.ConfiguratorSessions[configurationID];
             SolverService solverService = new SolverService();
 
             //Get the implicit selections for the other features
             BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
-            bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, selectionState);
+            bool selectionValid = solverService.UserToggleSelection(ref configSession, FeatureID, selectionState);
 
-            string testRule = "#Root.TotalPrice=25";
-            solverService.ExecuteCustomRule(context, testRule, ref featureSelections);
+            string testRule = "#HIS.Total_Price=250";
+            solverService.ExecuteCustomRule(ref configSession, testRule);
 
             //Return
             if (selectionValid)
             {
-                result.Data = featureSelections.ToDictionary(g => g.FeatureID, k => k);
+                result.Data = configSession.Configuration.FeatureSelections.ToDictionary(g => g.FeatureID, k => k);
             }
             else
             {
@@ -169,22 +116,74 @@ namespace PresentationLayer.Controllers
         [Authorize]
         public void ClearSessionContext(int configurationID)
         {
-            SessionData.SolverContexts.Remove(configurationID);
-            SessionData.FeatureSelections.Remove(configurationID);
+            SessionData.ConfiguratorSessions.Remove(configurationID);
         }
 
         //Private methods
-        private void InitRootSelection(int configurationID, BLL.BusinessObjects.Model model, List<BLL.BusinessObjects.FeatureSelection> featureSelections, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
+        private void SetupFeatureSelections(ref ConfiguratorSession configSession)
         {
-            //Setup Solver and Context
-            ISolverContext context = null;
-            SolverService solverService = new SolverService();
-            context = solverService.CreateNewContext(model);
-            SessionData.SolverContexts[configurationID] = context;
-            SessionData.FeatureSelections[configurationID] = featureSelections;
+            //Setup FeatureSelections----------------------------------------------------------------------------------------------------------------------------------
+            //Create FeatureSelections for the first time
+            if (configSession.Configuration.FeatureSelections.Count == 0)
+            {
+                //Create one instance for each Feature in the Model
+                foreach (BLL.BusinessObjects.Feature feature in configSession.Model.Features)
+                {
+                    BLL.BusinessObjects.FeatureSelection newFeatureSelection = BLL.BusinessObjects.FeatureSelection.CreateDefault();
+                    newFeatureSelection.FeatureID = feature.ID;
+                    configSession.Configuration.FeatureSelections.Add(newFeatureSelection);
 
-            //Get the implicit selections for the other features
-            bool selectionValid = solverService.UserToggleSelection(context, ref featureSelections, FeatureID, newState);
+                    //Create default AttributeValues
+                    foreach (BLL.BusinessObjects.Attribute attribute in feature.Attributes)
+                    {
+                        BLL.BusinessObjects.AttributeValue attrValue = BLL.BusinessObjects.AttributeValue.CreateDefault();
+                        attrValue.Value = GetDefaultAttrVal(attribute.AttributeDataType);
+                        attrValue.AttributeID = attribute.ID;
+                        if (attribute.AttributeType == BLL.BusinessObjects.AttributeTypes.Constant)
+                        {
+                            attrValue.Value = attribute.ConstantValue;
+                        }
+                        newFeatureSelection.AttributeValues.Add(attrValue);
+                    }
+                }
+
+                //Toggle the root Feature and get the initial Configuration state of all the other Features
+                GetInitialFeedback(ref configSession);
+            }
+            //Create new FeatureSelections ONLY for newly created Features
+            else if (configSession.Configuration.FeatureSelections.Count < configSession.Model.Features.Count)
+            {
+                //Create one instance for each Feature that is missing a FeatureSelection
+                foreach (BLL.BusinessObjects.Feature feature in configSession.Model.Features)
+                {
+                    if (configSession.Configuration.FeatureSelections.FirstOrDefault(k => k.FeatureID == feature.ID) == null) //If the Feature has no corresponding FeatureSelection
+                    {
+                        BLL.BusinessObjects.FeatureSelection newFeatureSelection = BLL.BusinessObjects.FeatureSelection.CreateDefault();
+                        newFeatureSelection.FeatureID = feature.ID;
+                        configSession.Configuration.FeatureSelections.Add(newFeatureSelection);
+
+                        //Create default AttributeValues
+                        foreach (BLL.BusinessObjects.Attribute attribute in feature.Attributes)
+                        {
+                            BLL.BusinessObjects.AttributeValue attrValue = BLL.BusinessObjects.AttributeValue.CreateDefault();
+                            attrValue.Value = GetDefaultAttrVal(attribute.AttributeDataType);
+                            attrValue.AttributeID = attribute.ID;
+                            if (attribute.AttributeType == BLL.BusinessObjects.AttributeTypes.Constant)
+                            {
+                                attrValue.Value = attribute.ConstantValue;
+                            }
+                            newFeatureSelection.AttributeValues.Add(attrValue);
+                        }
+                    }
+                }
+            }
+            //---------------------------------------------------------------------------------------------------------------------------------------------------------
+        }
+        private void GetInitialFeedback(ref ConfiguratorSession configSession)
+        {
+            //Set the root feature to selected and update the other FeatureSelections
+            SolverService solverService = new SolverService();
+            bool selectionValid = solverService.UserToggleSelection(ref configSession, configSession.Model.Features[0].ID, BLL.BusinessObjects.FeatureSelectionStates.Selected);
         }
         private string GetDefaultAttrVal(BLL.BusinessObjects.AttributeDataTypes type)
         {

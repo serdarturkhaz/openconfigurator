@@ -5,6 +5,7 @@ using System.Text;
 
 namespace BLL.SolverEngines
 {
+    
     public interface ISolverContext
     {
         void CreateInitialRestorePoint();

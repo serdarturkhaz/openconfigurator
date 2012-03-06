@@ -136,7 +136,6 @@ namespace BLL.BusinessObjects
                 return LastModifiedDate.Value.ToShortDateString();
             }
         }
-        
         public List<BLL.BusinessObjects.Feature> Features
         {
             get
@@ -191,6 +190,18 @@ namespace BLL.BusinessObjects
             {
                 _customRules = value;
             }
+        }
+
+        //Methods
+        public BLL.BusinessObjects.Feature GetFeatureByName(string name)
+        {
+            BLL.BusinessObjects.Feature feature = Features.FirstOrDefault(x => x.Name == name);
+            return feature;
+        }
+        public BLL.BusinessObjects.Attribute GetAttributeByName(BLL.BusinessObjects.Feature feature, string name)
+        {
+            BLL.BusinessObjects.Attribute attribute = feature.Attributes.FirstOrDefault(x => x.Name == name);
+            return attribute;
         }
 
         //Conversion
@@ -1235,7 +1246,6 @@ namespace BLL.BusinessObjects
                 return LastModifiedDate.Value.ToShortDateString();
             }
         }
-
         public List<BLL.BusinessObjects.FeatureSelection> FeatureSelections
         {
             get
@@ -1246,6 +1256,18 @@ namespace BLL.BusinessObjects
             {
                 _featureSelections = value;
             }
+        }
+
+        //Methods
+        public BLL.BusinessObjects.FeatureSelection GetFeatureSelectionByFeatureID(int featureID)
+        {
+            BLL.BusinessObjects.FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(x => x.FeatureID == featureID);
+            return featureSelection;
+        }
+        public BLL.BusinessObjects.AttributeValue GetAttributeValueByAttributeID(BLL.BusinessObjects.FeatureSelection featureSelection, int attributeID)
+        {
+            BLL.BusinessObjects.AttributeValue attributeValue = featureSelection.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID);
+            return attributeValue;
         }
 
 

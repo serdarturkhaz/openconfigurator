@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using BLL.SolverEngines;
 using System.Reflection;
+using BLL.Services;
 
 namespace BLL.RuleParser
 {
@@ -116,9 +117,24 @@ namespace BLL.RuleParser
                     public static string IdentifyRegex = @"^#[A-z,0-9]*(\.{1}[A-z,0-9]+){0,1}$", SplitRegex = null; //example : "#FeatureName.AttributeName"
                     public override object Eval()
                     {
-                        //Get the Feature
-                        object targetAttributeVal = (object) featureSelections[0].AttributeValues[0];
+                        //Split 
+                        string[] subStrings = Regex.Split(_syntaxString, @"\.");
+
+                        //Get the Feature and FeatureSelection
+                        string featureName = subStrings[0].Replace("#", "").Replace("_"," ");
+                        BusinessObjects.Feature feature = _configSession.Model.GetFeatureByName(featureName);
+                        BusinessObjects.FeatureSelection featureSelection = _configSession.Configuration.GetFeatureSelectionByFeatureID(feature.ID);
+
+                        //Get the Attribute and AttributeValue
+                        string attributeName = subStrings[1].Replace("_", " ");
+                        BusinessObjects.Attribute attribute = _configSession.Model.GetAttributeByName(feature, attributeName);
+                        BusinessObjects.AttributeValue attributeValue = _configSession.Configuration.GetAttributeValueByAttributeID(featureSelection, attribute.ID);
+
+                        //Create a reference pointing to the Attribute
+                        object targetAttributeVal = (object)attributeValue;
                         ObjectReference returnRef = new ObjectReference(ref targetAttributeVal, "Value");
+
+                        //
                         return returnRef;
                     }
                 }
@@ -142,14 +158,14 @@ namespace BLL.RuleParser
                 }
             }
         }
-        
+
 
         //Private Methods
-        private ParserStatement ParseString(string str, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+        private ParserStatement ParseString(ref ConfiguratorSession configSession, string str)
         {
             //Identify the string and creating a corresponding ParserStatement
             Type StatementType = IdentifyString(str);
-            ParserStatement instance = (ParserStatement)ExecuteStaticMethod(StatementType, "CreateInstance", (object)StatementType, (object)str, context, featureSelections);
+            ParserStatement instance = (ParserStatement)ExecuteStaticMethod(StatementType, "CreateInstance", (object)StatementType, configSession, (object)str);
 
             //Parse inner statements and add them to the parent
             string splitRegex = (string)GetStaticField(StatementType, "SplitRegex");
@@ -158,7 +174,7 @@ namespace BLL.RuleParser
                 string[] subStrings = Regex.Split(str, splitRegex);
                 foreach (string subString in subStrings)
                 {
-                    ParserStatement innerStatement = ParseString(subString, context, ref featureSelections);
+                    ParserStatement innerStatement = ParseString(ref configSession, subString);
                     instance.AddInnerStatement(innerStatement);
                 }
             }
@@ -203,9 +219,9 @@ namespace BLL.RuleParser
         }
 
         //Public Methods
-        public bool ExecuteSyntax(string RuleSyntax, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+        public bool ExecuteSyntax(ref ConfiguratorSession configSession, string RuleSyntax)
         {
-            ParserStatement rootStatement = ParseString(RuleSyntax, context, ref featureSelections);
+            ParserStatement rootStatement = ParseString(ref configSession, RuleSyntax);
             rootStatement.Eval();
 
             return false;

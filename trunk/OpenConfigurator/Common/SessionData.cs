@@ -5,6 +5,7 @@ using System.Web;
 using BLL.BusinessObjects;
 using System.Data.Objects;
 using BLL.SolverEngines;
+using BLL.Services;
 
 namespace PresentationLayer.Common
 {
@@ -25,26 +26,14 @@ namespace PresentationLayer.Common
         }
 
         //SolverContexts
-        public static Dictionary<int, ISolverContext> SolverContexts //One SolverContext per ConfigurationID
+        public static Dictionary<int, ConfiguratorSession> ConfiguratorSessions //One ConfigurationState per ConfigurationID
         {
             get
             {
-                if (HttpContext.Current.Session["SolverContexts"] == null)
-                    HttpContext.Current.Session["SolverContexts"] = new Dictionary<int, ISolverContext>();
+                if (HttpContext.Current.Session["ConfiguratorSessions"] == null)
+                    HttpContext.Current.Session["ConfiguratorSessions"] = new Dictionary<int, ConfiguratorSession>();
 
-                return (Dictionary<int, ISolverContext>)HttpContext.Current.Session["SolverContexts"];
-            }
-        }
-
-        //FeatureSelection collections
-        public static Dictionary<int, List<BLL.BusinessObjects.FeatureSelection>> FeatureSelections //One FeatureSelection list per ConfigurationID
-        {
-            get
-            {
-                if (HttpContext.Current.Session["FeatureSelections"] == null)
-                    HttpContext.Current.Session["FeatureSelections"] = new Dictionary<int, List<BLL.BusinessObjects.FeatureSelection>>();
-
-                return (Dictionary<int, List<BLL.BusinessObjects.FeatureSelection>>)HttpContext.Current.Session["FeatureSelections"];
+                return (Dictionary<int, ConfiguratorSession>)HttpContext.Current.Session["ConfiguratorSessions"];
             }
         }
     }

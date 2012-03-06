@@ -5,20 +5,20 @@ using System.Text;
 using BLL.SolverEngines;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using BLL.Services;
 
 namespace BLL.RuleParser
 {
     public interface IParser
     {
-        bool ExecuteSyntax(string RuleSyntax, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections);
+        bool ExecuteSyntax(ref ConfiguratorSession configSession, string RuleSyntax);
     }
     public abstract class ParserStatement
     {
         //Fields
         protected string _syntaxString = "";
         protected List<ParserStatement> innerStatements = new List<ParserStatement>();
-        protected ISolverContext _context;
-        protected List<BLL.BusinessObjects.FeatureSelection> featureSelections;
+        protected ConfiguratorSession _configSession;
 
         //Methods
         public virtual void AddInnerStatement(ParserStatement statement)
@@ -28,12 +28,11 @@ namespace BLL.RuleParser
         public abstract object Eval();
 
         //Factory constructor
-        public static ParserStatement CreateInstance(Type statementType, string syntaxString, ISolverContext context, ref List<BLL.BusinessObjects.FeatureSelection> featureSelections)
+        public static ParserStatement CreateInstance(Type statementType, ref ConfiguratorSession configSession, string syntaxString)
         {
             ParserStatement instance = (ParserStatement)Activator.CreateInstance(statementType, null);
+            instance._configSession = configSession;
             instance._syntaxString = syntaxString;
-            instance._context = context;
-            instance.featureSelections = featureSelections;
             return instance;
         }
     }
