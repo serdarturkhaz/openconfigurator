@@ -1264,11 +1264,14 @@ namespace BLL.BusinessObjects
             BLL.BusinessObjects.FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(x => x.FeatureID == featureID);
             return featureSelection;
         }
-        public BLL.BusinessObjects.AttributeValue GetAttributeValueByAttributeID(BLL.BusinessObjects.FeatureSelection featureSelection, int attributeID)
+        public BLL.BusinessObjects.AttributeValue GetAttributeValueByAttributeID(int attributeID)
         {
+            //Find FeatureSelection which the appropriate AttributeValue
+            BLL.BusinessObjects.FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(f => f.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID) != null);
             BLL.BusinessObjects.AttributeValue attributeValue = featureSelection.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID);
             return attributeValue;
         }
+        
 
 
         //Conversion

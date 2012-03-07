@@ -105,8 +105,9 @@ namespace BLL.RuleParser
                     return new List<Type>()
                     {
                         typeof(CompositeSelector),
-                        typeof(GetFeatureByName),
-                        typeof(GetFeatureRelativeToParent)
+                        typeof(AbsoluteFeatureSelector),
+                        typeof(RelativeFeatureSelector),
+                        typeof(AbsoluteAttributeSelector)
                     };
                 }
 
@@ -114,46 +115,74 @@ namespace BLL.RuleParser
                 public class CompositeSelector : ParserStatement
                 {
                     //Fields
-                    public static string IdentifyRegex = @"^#[A-z,0-9]*(\.{1}[A-z,0-9]+){0,1}$", SplitRegex = null; //example : "#FeatureName.AttributeName"
+                    public static string IdentifyRegex = @"^[^\.]+(\.[^\.]{2,}){1,}[^\.]*$", SplitRegex = @"\."; //example : "#FeatureName.>Descendants.AttributeName"
+                    
                     public override object Eval()
                     {
-                        //Split 
-                        string[] subStrings = Regex.Split(_syntaxString, @"\.");
+                        //Get the Feature
+                        ObjectReference featureRef = (ObjectReference)base.innerStatements[0].Eval();
+                        BusinessObjects.Feature feature = (BusinessObjects.Feature)featureRef.GetTargetObject();
 
-                        //Get the Feature and FeatureSelection
-                        string featureName = subStrings[0].Replace("#", "").Replace("_"," ");
-                        BusinessObjects.Feature feature = _configSession.Model.GetFeatureByName(featureName);
-                        BusinessObjects.FeatureSelection featureSelection = _configSession.Configuration.GetFeatureSelectionByFeatureID(feature.ID);
+                        //Get the Attribute
+                        ObjectReference attributeRef = (ObjectReference)base.innerStatements[1].Eval(new object [] { (object)feature });
+                        BusinessObjects.Attribute attribute = (BusinessObjects.Attribute)attributeRef.GetTargetObject();
 
-                        //Get the Attribute and AttributeValue
-                        string attributeName = subStrings[1].Replace("_", " ");
-                        BusinessObjects.Attribute attribute = _configSession.Model.GetAttributeByName(feature, attributeName);
-                        BusinessObjects.AttributeValue attributeValue = _configSession.Configuration.GetAttributeValueByAttributeID(featureSelection, attribute.ID);
+                        //Get the AttributeValue
+                        BusinessObjects.AttributeValue attributeValue = _configSession.Configuration.GetAttributeValueByAttributeID(attribute.ID);
 
-                        //Create a reference pointing to the Attribute
+                        //Return a reference pointing to the AttributeValue
                         object targetAttributeVal = (object)attributeValue;
                         ObjectReference returnRef = new ObjectReference(ref targetAttributeVal, "Value");
-
-                        //
                         return returnRef;
                     }
                 }
-                public class GetFeatureByName : ParserStatement
+                public class AbsoluteFeatureSelector : ParserStatement
                 {
                     //Fields
                     public static string IdentifyRegex = "^#[A-z,0-9]*$", SplitRegex = null; //example : "#FeatureName"
                     public override object Eval()
                     {
-                        throw new NotImplementedException();
+                        //Get the Feature and FeatureSelection
+                        string featureName = _syntaxString.Replace("#", "").Replace("_", " ");
+                        BusinessObjects.Feature feature = _configSession.Model.GetFeatureByName(featureName);
+                        if (feature == null)
+                            throw new ElementNotFoundException();
+
+                        //Return a reference pointing to the Feature
+                        object target = (object)feature;
+                        ObjectReference returnRef = new ObjectReference(ref target);
+                        return returnRef;
                     }
                 }
-                public class GetFeatureRelativeToParent : ParserStatement
+                public class RelativeFeatureSelector : ParserStatement
                 {
                     //Fields
-                    public static string IdentifyRegex = "^>root|descendants$", SplitRegex = null; //example : "#FeatureName>descendants"
-                    public override object Eval()
+                    public static string IdentifyRegex = "^>root|descendants$", SplitRegex = null; //example : ">descendants"
+                    
+                    public override object Eval(object[] parameters)
                     {
-                        throw new NotImplementedException();
+                        return base.Eval(parameters);
+                    }
+                }
+                public class AbsoluteAttributeSelector : ParserStatement
+                {
+                    //Fields
+                    public static string IdentifyRegex = "^[A-z,0-9]*$", SplitRegex = null; //example : "FeatureName"
+                    public override object Eval(object[] parameters)
+                    {
+                        //Get the Feature parameter and its FeatureSelection
+                        BusinessObjects.Feature referenceFeature = (BusinessObjects.Feature)parameters[0];
+
+                        //Get the Attribute and AttributeValue
+                        string attributeName = _syntaxString.Replace("_", " ");
+                        BusinessObjects.Attribute attribute = _configSession.Model.GetAttributeByName(referenceFeature, attributeName);
+                        if (attribute == null)
+                            throw new ElementNotFoundException();
+
+                        //Return a reference pointing to the Attribute
+                        object target = (object)attribute;
+                        ObjectReference returnRef = new ObjectReference(ref target);
+                        return returnRef;
                     }
                 }
             }
@@ -221,10 +250,19 @@ namespace BLL.RuleParser
         //Public Methods
         public bool ExecuteSyntax(ref ConfiguratorSession configSession, string RuleSyntax)
         {
-            ParserStatement rootStatement = ParseString(ref configSession, RuleSyntax);
-            rootStatement.Eval();
+            try
+            {
+                ParserStatement rootStatement = ParseString(ref configSession, RuleSyntax);
+                rootStatement.Eval();
+            }
+            catch (ElementNotFoundException ex)
+            {
 
-            return false;
+            }
+
+            return true;
         }
     }
+
+    
 }
