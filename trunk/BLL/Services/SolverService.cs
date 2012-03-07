@@ -139,6 +139,7 @@ namespace BLL.Services
                     ISolverStatement equivalence2 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement);
                     returnStatement = context.CreateStatement(StatementTypes.And, equivalence2, negatedAnds);
                     break;
+                
             }
             return returnStatement;
         }
@@ -193,10 +194,9 @@ namespace BLL.Services
             //
             return decisionIsValid;
         }
-        public bool ExecuteCustomRule(ref ConfiguratorSession configSession, string Expression)
+        public void ExecuteCustomRule(ref ConfiguratorSession configSession, string Expression)
         {
             _ruleParser.ExecuteSyntax(ref configSession, Expression);
-            return false;
         }
     }
 

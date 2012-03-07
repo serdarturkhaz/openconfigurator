@@ -164,7 +164,10 @@ namespace BLL.SolverEngines
             //Assert the statements into the Z3 context
             foreach (ISolverStatement statement in statements)
             {
-                _context.AssertCnstr(((Z3Statement)statement).Term);
+                if (statement != null)
+                {
+                    _context.AssertCnstr(((Z3Statement)statement).Term);
+                }
             }
 
             //Keep track of the constraint added

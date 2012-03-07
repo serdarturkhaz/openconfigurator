@@ -25,7 +25,8 @@ namespace BLL.RuleParser
         {
             innerStatements.Add(statement);
         }
-        public abstract object Eval();
+        public virtual object Eval(object[] parameters) { return null;}
+        public virtual object Eval() { return null;}
 
         //Factory constructor
         public static ParserStatement CreateInstance(Type statementType, ref ConfiguratorSession configSession, string syntaxString)
@@ -48,6 +49,11 @@ namespace BLL.RuleParser
             targetInstance = instance;
             fieldName = field;
         }
+        public ObjectReference(ref object instance)
+        {
+            targetInstance = instance;
+            fieldName = null;
+        }
 
         //Methods
         private static object ConvertValue(object valToConvert, Type destinationType)
@@ -63,6 +69,10 @@ namespace BLL.RuleParser
 
             return null;
         }
+        public object GetTargetObject()
+        {
+            return targetInstance;
+        }
         public void SetValue(object newValue)
         {
             PropertyInfo field = targetInstance.GetType().GetProperty(fieldName);
@@ -77,5 +87,12 @@ namespace BLL.RuleParser
         Attribute,
         PrimitiveValue
     }
+    public class ElementNotFoundException : Exception
+    {
 
+    }
+    public class SyntaxIncorrectException : Exception
+    {
+
+    }
 }
