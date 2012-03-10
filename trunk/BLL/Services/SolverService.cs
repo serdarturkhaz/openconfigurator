@@ -67,49 +67,6 @@ namespace BLL.Services
             context.CreateInitialRestorePoint();
             return context;
         }
-        private bool GetValidSelections(ref ConfiguratorSession configSession)
-        {
-            //Loop through all FeatureSelections
-            foreach (BLL.BusinessObjects.FeatureSelection featureSelection in configSession.Configuration.FeatureSelections)
-            {
-                //For those which the user has not set
-                if (featureSelection.ToggledByUser == false)
-                {
-                    bool CanBeTrue = configSession.Context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
-                    bool CanBeFalse = configSession.Context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, false);
-
-                    //Cannot be true nor false
-                    if (!CanBeFalse && !CanBeTrue)
-                    {
-                        return false;
-                    }
-                    //Cannot be true
-                    else if (!CanBeTrue)
-                    {
-                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Deselected;
-                        featureSelection.Disabled = true;
-                    }
-                    //Cannot be false
-                    else if (!CanBeFalse)
-                    {
-                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
-                        featureSelection.Disabled = true;
-                    }
-                    //Can be true or false
-                    else if (CanBeFalse && CanBeTrue)
-                    {
-                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
-                        featureSelection.Disabled = false;
-                    }
-                }
-            }
-
-            //
-
-            //
-            return true;
-
-        }
         private static ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
         {
             ISolverStatement returnStatement = null;
@@ -160,6 +117,58 @@ namespace BLL.Services
             }
             return returnStatement;
         }
+        private bool ExecuteCustomRule(ref ConfiguratorSession configSession, string Expression)
+        {
+            return _ruleParser.ExecuteSyntax(ref configSession, Expression);
+        }
+        private bool GetValidSelections(ref ConfiguratorSession configSession)
+        {
+            //Loop through all FeatureSelections
+            foreach (BLL.BusinessObjects.FeatureSelection featureSelection in configSession.Configuration.FeatureSelections)
+            {
+                //Only FeatureSelections which have not been explicitly toggled by the user
+                if (featureSelection.ToggledByUser == false)
+                {
+                    bool CanBeTrue = configSession.Context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
+                    bool CanBeFalse = configSession.Context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, false);
+
+                    //Cannot be true nor false
+                    if (!CanBeFalse && !CanBeTrue)
+                    {
+                        return false;
+                    }
+                    //Cannot be true
+                    else if (!CanBeTrue)
+                    {
+                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Deselected;
+                        featureSelection.Disabled = true;
+                    }
+                    //Cannot be false
+                    else if (!CanBeFalse)
+                    {
+                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
+                        featureSelection.Disabled = true;
+                    }
+                    //Can be true or false
+                    else if (CanBeFalse && CanBeTrue)
+                    {
+                        featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
+                        featureSelection.Disabled = false;
+                    }
+                }
+            }
+
+            //Loop through CustomRUles
+            foreach (BLL.BusinessObjects.CustomRule customRule in configSession.Model.CustomRules)
+            {
+                ExecuteCustomRule(ref configSession, customRule.Expression);
+            }
+            
+
+            //
+            return true;
+
+        }
 
         //Public methods  
         public static ISolverContext CreateNewContext(BusinessObjects.Model model)
@@ -194,10 +203,7 @@ namespace BLL.Services
             //
             return decisionIsValid;
         }
-        public void ExecuteCustomRule(ref ConfiguratorSession configSession, string Expression)
-        {
-            _ruleParser.ExecuteSyntax(ref configSession, Expression);
-        }
+        
     }
 
 

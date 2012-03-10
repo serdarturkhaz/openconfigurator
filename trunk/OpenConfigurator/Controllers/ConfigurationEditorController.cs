@@ -98,8 +98,8 @@ namespace PresentationLayer.Controllers
             BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
             bool selectionValid = solverService.UserToggleSelection(ref configSession, FeatureID, selectionState);
 
-            string testRule = "#HIS.Total_Price=250";
-            solverService.ExecuteCustomRule(ref configSession, testRule);
+            //string testRule = "#HIS.Total_Price=250";
+            //solverService.ExecuteCustomRule(ref configSession, testRule);
 
             //Return
             if (selectionValid)
