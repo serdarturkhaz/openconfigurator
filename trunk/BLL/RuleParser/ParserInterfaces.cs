@@ -25,8 +25,8 @@ namespace BLL.RuleParser
         {
             innerStatements.Add(statement);
         }
-        public virtual IEvalResult Eval(IEvalResult[] parameters) { return null; }
-        public virtual IEvalResult Eval() { return null; }
+        public virtual IEvalResult[] Eval(IEvalResult[] parameters) { return null; }
+        public virtual IEvalResult[] Eval() { return null; }
 
 
         //Factory constructor
@@ -39,51 +39,6 @@ namespace BLL.RuleParser
         }
     }
 
-    ////Helper classes
-    //public class ObjectReference
-    //{
-    //    //Fields
-    //    object targetInstance;
-    //    string fieldName;
-
-    //    //Constructor
-    //    public ObjectReference(ref object instance, string field)
-    //    {
-    //        targetInstance = instance;
-    //        fieldName = field;
-    //    }
-    //    public ObjectReference(ref object instance)
-    //    {
-    //        targetInstance = instance;
-    //        fieldName = null;
-    //    }
-
-    //    //Methods
-    //    private static object ConvertValue(object valToConvert, Type destinationType)
-    //    {
-    //        //Get the current type
-    //        Type currentType = valToConvert.GetType();
-
-    //        //Int to String
-    //        if (destinationType.Name == "String" && currentType.Name == "Int32")
-    //        {
-    //            return valToConvert.ToString();
-    //        }
-
-    //        return null;
-    //    }
-    //    public object GetTargetObject()
-    //    {
-    //        return targetInstance;
-    //    }
-    //    public void SetValue(object newValue)
-    //    {
-    //        PropertyInfo field = targetInstance.GetType().GetProperty(fieldName);
-    //        Type fieldType = field.PropertyType;
-
-    //        field.SetValue(targetInstance, (string)ConvertValue(newValue, fieldType), null);
-    //    }
-    //}
 
     public interface IEvalResult
     {

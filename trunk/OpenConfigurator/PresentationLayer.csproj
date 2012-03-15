@@ -33,6 +33,66 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\PresentationLayer.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\PresentationLayer.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\PresentationLayer.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\PresentationLayer.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json">
@@ -79,8 +139,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\themes\base\images\Controls\checkbox-checked.png" />
-    <Content Include="Content\themes\base\images\Controls\checkbox-unchecked.png" />
+    <Content Include="Content\themes\base\images\Controls\check-deselected-disabled.png" />
+    <Content Include="Content\themes\base\images\Controls\check-deselected.png" />
+    <Content Include="Content\themes\base\images\Controls\check-selected-disabled.png" />
+    <Content Include="Content\themes\base\images\Controls\check-selected.png" />
+    <Content Include="Content\themes\base\images\Controls\check-unselected.png" />
+    <Content Include="Content\themes\base\images\Controls\featureSelectionConnector-last.png" />
+    <Content Include="Content\themes\base\images\Controls\featureSelectionConnector-standard.png" />
+    <Content Include="Content\themes\base\images\Controls\featureSelectionConnector-verticalline.png" />
     <Content Include="Content\themes\base\images\Controls\progress.gif" />
     <Content Include="Content\themes\base\images\Controls\simpleTree\elementx.png" />
     <Content Include="Content\themes\base\images\Controls\simpleTree\feature.png" />
@@ -89,7 +155,22 @@
     <Content Include="Content\themes\base\images\Controls\simpleTree\minus.png" />
     <Content Include="Content\themes\base\images\Controls\simpleTree\plus.png" />
     <Content Include="Content\themes\base\images\Controls\textbox-bg.png" />
+    <Content Include="Content\themes\base\images\Icons\add.png" />
+    <Content Include="Content\themes\base\images\Icons\configure-toolbar.png" />
+    <Content Include="Content\themes\base\images\Icons\configure.png" />
+    <Content Include="Content\themes\base\images\Icons\Delete.png" />
+    <Content Include="Content\themes\base\images\Icons\error-notification.png" />
     <Content Include="Content\themes\base\images\Icons\Login.png" />
+    <Content Include="Content\themes\base\images\Icons\Model.png" />
+    <Content Include="Content\themes\base\images\Icons\NewModel.png" />
+    <Content Include="Content\themes\base\images\Icons\save.png" />
+    <Content Include="Content\themes\base\images\Icons\success-notification.png" />
+    <Content Include="Content\themes\base\images\Icons\Toolbox\compositionrule.png" />
+    <Content Include="Content\themes\base\images\Icons\Toolbox\customrule.png" />
+    <Content Include="Content\themes\base\images\Icons\Toolbox\feature.png" />
+    <Content Include="Content\themes\base\images\Icons\Toolbox\grouprelation.png" />
+    <Content Include="Content\themes\base\images\Icons\Toolbox\relation.png" />
+    <Content Include="Content\themes\base\images\Icons\undo-toolbar.png" />
     <Content Include="Content\themes\base\images\Layout\content-bg.png" />
     <Content Include="Content\themes\base\images\Layout\header-bar.png" />
     <Content Include="Content\themes\base\images\Layout\menu-bar.png" />

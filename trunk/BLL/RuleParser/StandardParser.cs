@@ -20,6 +20,7 @@ namespace BLL.RuleParser
                 return new List<Type>()
                 {
                     typeof(Manipulation),
+                    typeof(Functions),
                     typeof(Primitives),
                     typeof(Selectors)
                 };
@@ -44,14 +45,14 @@ namespace BLL.RuleParser
                 {
                     //
                     public static string IdentifyRegex = "^.*=.*$", SplitRegex = "=";
-                    public override IEvalResult Eval()
+                    public override IEvalResult[] Eval()
                     {
                         //Evaluate left side
-                        IEvalResult leftSide = base.innerStatements[0].Eval();
+                        IEvalResult[] leftSide = base.innerStatements[0].Eval();
                         FieldReference leftSideRef = null;
-                        if (leftSide.GetType() == typeof(FieldReference))
+                        if (leftSide.Length == 1 && leftSide[0].GetType() == typeof(FieldReference))
                         {
-                            leftSideRef = (FieldReference)leftSide;
+                            leftSideRef = (FieldReference)leftSide[0];
                         }
                         else
                         {
@@ -60,15 +61,15 @@ namespace BLL.RuleParser
 
 
                         //Evaluate right side and perform assignment
-                        IEvalResult rightSide = base.innerStatements[1].Eval();
-                        if (rightSide.GetType() == typeof(FieldReference))
+                        IEvalResult[] rightSide = base.innerStatements[1].Eval();
+                        if (rightSide.Length == 1 && rightSide[0].GetType() == typeof(FieldReference))
                         {
-                            FieldReference rightSideRef = (FieldReference)rightSide;
+                            FieldReference rightSideRef = (FieldReference)rightSide[0];
                             leftSideRef.SetValue(rightSideRef.GetValue());
                         }
-                        else if (rightSide.GetType() == typeof(ValueResult))
+                        else if (rightSide.Length == 1 && rightSide[0].GetType() == typeof(ValueResult))
                         {
-                            ValueResult rightSideValue = (ValueResult)rightSide;
+                            ValueResult rightSideValue = (ValueResult)rightSide[0];
                             leftSideRef.SetValue(rightSideValue.GetValue());
                         }
                         else
@@ -77,7 +78,44 @@ namespace BLL.RuleParser
                         }
 
                         //Return outcome
-                        return new OutcomeResult(true);
+                        return new IEvalResult[] { new OutcomeResult(true) };
+                    }
+                }
+            }
+            public static class Functions
+            {
+                //Methods
+                public static List<Type> GetStatementTypes()
+                {
+                    return new List<Type>()
+                    {
+                        typeof(SumOf)
+                    };
+                }
+
+                //StatementTypes
+                public class SumOf : ParserStatement
+                {
+                    //
+                    public static string IdentifyRegex = @"^sumOf\(.*\)$", SplitRegex = @"sumOf\(|\)";
+                    public override IEvalResult[] Eval()
+                    {
+                        IEvalResult[] innerEvalResult = innerStatements[0].Eval();
+                        int sum = 0;
+                        foreach (IEvalResult evalResult in innerEvalResult)
+                        {
+                            try
+                            {
+                                FieldReference objRef = (FieldReference)evalResult;
+                                BusinessObjects.AttributeValue attrVal = (BusinessObjects.AttributeValue)objRef.GetReference();
+                                sum += Int32.Parse(attrVal.Value);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new SyntaxIncorrectException();
+                            }
+                        }
+                        return new IEvalResult[] { (IEvalResult)new ValueResult(sum) };
                     }
                 }
             }
@@ -100,30 +138,30 @@ namespace BLL.RuleParser
                 {
                     //
                     public static string IdentifyRegex = "^(true|false){1}$", SplitRegex = null;
-                    public override IEvalResult Eval()
+                    public override IEvalResult[] Eval()
                     {
                         bool val = System.Boolean.Parse(base._syntaxString);
-                        return (IEvalResult)new ValueResult(val);
+                        return new IEvalResult[] { (IEvalResult)new ValueResult(val) };
                     }
                 }
                 public class String : ParserStatement
                 {
                     //
                     public static string IdentifyRegex = "^\"[A-z]+\"$", SplitRegex = null;
-                    public override IEvalResult Eval()
+                    public override IEvalResult[] Eval()
                     {
                         object str = base._syntaxString.Replace("\"", "");
-                        return (IEvalResult)new ValueResult(str);
+                        return new IEvalResult[] { (IEvalResult)new ValueResult(str) };
                     }
                 }
                 public class Integer : ParserStatement
                 {
                     //
                     public static string IdentifyRegex = "^[0-9]+$", SplitRegex = null;
-                    public override IEvalResult Eval()
+                    public override IEvalResult[] Eval()
                     {
                         int val = System.Int32.Parse(base._syntaxString);
-                        return (IEvalResult)new ValueResult(val);
+                        return new IEvalResult[] { (IEvalResult)new ValueResult(val) };
                     }
                 }
             }
@@ -147,11 +185,11 @@ namespace BLL.RuleParser
                     //Fields
                     public static string IdentifyRegex = @"^[^\.]+(\.[^\.]{2,}){1,}[^\.]*$", SplitRegex = @"\."; //example : "#FeatureName.>Descendants.AttributeName"
 
-                    public override IEvalResult Eval()
+                    public override IEvalResult[] Eval()
                     {
                         //Loop through inner statements
-                        IEvalResult[] evalResults = new IEvalResult[base.innerStatements.Count];
-                        IEvalResult finalEvalResult = null;
+                        List<IEvalResult[]> evalResults = new List<IEvalResult[]>();
+                        IEvalResult[] finalEvalResult = null;
                         for (int i = 0; i < base.innerStatements.Count; i++)
                         {
                             //First inner statement
@@ -159,29 +197,21 @@ namespace BLL.RuleParser
                             {
                                 //Evaluate
                                 ParserStatement statement = base.innerStatements[i];
-                                IEvalResult evalResult = base.innerStatements[i].Eval();
-                                evalResults[i] = evalResult;
+                                IEvalResult[] evalResult = base.innerStatements[i].Eval();
+                                evalResults.Add(evalResult);
                             }
                             //Following inner statements
                             else if (i >= 1)
                             {
                                 //Evaluate using the previous statement's result as a parameter
                                 ParserStatement statement = base.innerStatements[i];
-                                IEvalResult evalResult = base.innerStatements[i].Eval(new IEvalResult[] { evalResults[i - 1] });
+                                IEvalResult[] evalResult = base.innerStatements[i].Eval(evalResults[i - 1]);
+                                evalResults.Add(evalResult);
+
+                                //
                                 finalEvalResult = evalResult;
                             }
                         }
-
-                        ////Get the Feature
-                        //ObjectReference featureRef = (ObjectReference)base.innerStatements[0].Eval();
-                        //BusinessObjects.Feature feature = (BusinessObjects.Feature)featureRef.GetTargetObject();
-
-                        ////Get the Attribute
-                        //ObjectReference attributeRef = (ObjectReference)base.innerStatements[1].Eval(new object [] { (object)feature });
-                        //BusinessObjects.Attribute attribute = (BusinessObjects.Attribute)attributeRef.GetTargetObject();
-
-                        ////Get the AttributeValue
-                        //BusinessObjects.AttributeValue attributeValue = _configSession.Configuration.GetAttributeValueByAttributeID(attribute.ID);
 
                         return finalEvalResult;
                     }
@@ -189,30 +219,80 @@ namespace BLL.RuleParser
                 public class AbsoluteFeatureSelector : ParserStatement
                 {
                     //Fields
-                    public static string IdentifyRegex = "^#[A-z,0-9]*$", SplitRegex = null; //example : "#FeatureName"
-                    public override IEvalResult Eval()
+                    public static string IdentifyRegex = "^(#[A-z,0-9]*|>root)$", SplitRegex = null; //example : "#FeatureName"
+                    public override IEvalResult[] Eval()
                     {
-                        //Get the Feature and FeatureSelection
-                        string featureName = _syntaxString.Replace("#", "").Replace("_", " ");
-                        BusinessObjects.Feature feature = _configSession.Model.GetFeatureByName(featureName);
-                        if (feature == null)
-                            throw new ElementNotFoundException();
-                        //BusinessObjects.FeatureSelection featureSelection = _configSession.Configuration.GetFeatureSelectionByFeatureID(feature.ID);
+                        //Root selector
+                        if (_syntaxString.Contains("root"))
+                        {
+                            BLL.BusinessObjects.Feature root = _configSession.Model.GetRootFeature();
 
-                        //Return a reference pointing to the Feature
-                        object target = (object)feature;
-                        ObjectReference returnRef = new ObjectReference(ref target);
-                        return returnRef;
+                            //Return a reference pointing to the Feature
+                            object target = (object)root;
+                            ObjectReference returnRef = new ObjectReference(ref target);
+                            return new IEvalResult[] { returnRef };
+                        }
+                        else
+                        //ID selector
+                        {
+                            //Get the Feature and FeatureSelection
+                            string featureName = _syntaxString.Replace("#", "").Replace("_", " ");
+                            BusinessObjects.Feature feature = _configSession.Model.GetFeatureByName(featureName);
+                            if (feature == null)
+                                throw new ElementNotFoundException();
+
+                            //Return a reference pointing to the Feature
+                            object target = (object)feature;
+                            ObjectReference returnRef = new ObjectReference(ref target);
+                            return new IEvalResult[] { returnRef };
+                        }
                     }
                 }
                 public class RelativeFeatureSelector : ParserStatement
                 {
                     //Fields
-                    public static string IdentifyRegex = "^>root|descendants$", SplitRegex = null; //example : ">descendants"
+                    public static string IdentifyRegex = "^>children|>descendants$", SplitRegex = null; //example : ">descendants"
 
-                    public override IEvalResult Eval(IEvalResult[] parameters)
+                    public override IEvalResult[] Eval(IEvalResult[] parameters)
                     {
-                        //return base.Eval(parameters);
+                        //Get parameters
+                        List<BLL.BusinessObjects.Feature> featureReferences = new List<BusinessObjects.Feature>();
+                        foreach (IEvalResult parameter in parameters)
+                        {
+                            try
+                            {
+                                ObjectReference objRef = (ObjectReference)parameter;
+                                featureReferences.Add((BusinessObjects.Feature)objRef.GetReference());
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new SyntaxIncorrectException();
+                            }
+                        }
+
+                        //Children selector
+                        if (_syntaxString.Contains("children"))
+                        {
+                            //Get the child Features
+                            List<BLL.BusinessObjects.Feature> childFeatures = new List<BusinessObjects.Feature>();
+                            foreach (BLL.BusinessObjects.Feature featureRef in featureReferences)
+                            {
+                                childFeatures.AddRange(_configSession.Model.GetChildFeatures(featureRef));
+                            }
+
+                            //Return a list of references pointing to the each of the childFeatures
+                            List<IEvalResult> returnRef = new List<IEvalResult>(); ;
+                            foreach (BLL.BusinessObjects.Feature childFeature in childFeatures)
+                            {
+                                object target = (object)childFeature;
+                                ObjectReference objRef = new ObjectReference(ref target);
+                                returnRef.Add(objRef);
+                            }
+
+                            return returnRef.ToArray();
+                        }
+
+
                         return null;
                     }
                 }
@@ -220,36 +300,52 @@ namespace BLL.RuleParser
                 {
                     //Fields
                     public static string IdentifyRegex = "^[A-z,0-9]*$", SplitRegex = null; //example : "FeatureName"
-                    public override IEvalResult Eval(IEvalResult[] parameters)
+                    public override IEvalResult[] Eval(IEvalResult[] parameters)
                     {
-                        //Get the Feature parameter and its FeatureSelection
-                        BusinessObjects.Feature featureRef = null;
-                        try
+                        //Get parameters
+                        List<BLL.BusinessObjects.Feature> featureReferences = new List<BusinessObjects.Feature>();
+                        foreach (IEvalResult parameter in parameters)
                         {
-                            ObjectReference objRef = (ObjectReference)parameters[0];
-                            featureRef = (BusinessObjects.Feature)objRef.GetReference();
+                            try
+                            {
+                                ObjectReference objRef = (ObjectReference)parameter;
+                                featureReferences.Add((BusinessObjects.Feature)objRef.GetReference());
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new SyntaxIncorrectException();
+                            }
                         }
-                        catch (Exception ex)
+
+                        //Get the Attributes and AttributeValues 
+                        List<BLL.BusinessObjects.AttributeValue> attributeValues = new List<BusinessObjects.AttributeValue>();
+                        foreach (BLL.BusinessObjects.Feature featureRef in featureReferences)
                         {
-                            throw new SyntaxIncorrectException();
+                            //Get the Attribute
+                            string attributeName = _syntaxString.Replace("_", " ");
+                            BusinessObjects.Attribute attribute = _configSession.Model.GetAttributeByName(featureRef, attributeName);
+                            if (attribute != null)
+                            {
+                                //Get the AttributeValue
+                                BusinessObjects.AttributeValue attributeValue = _configSession.Configuration.GetAttributeValueByAttributeID(attribute.ID);
+                                attributeValues.Add(attributeValue);
+                            }
+
+
                         }
-
-                        //Get the Attribute 
-                        string attributeName = _syntaxString.Replace("_", " ");
-                        BusinessObjects.Attribute attribute = _configSession.Model.GetAttributeByName(featureRef, attributeName);
-                        if (attribute == null)
-                            throw new ElementNotFoundException();
-
-                        //Get the AttributeValue
-                        BusinessObjects.AttributeValue attributeValue = _configSession.Configuration.GetAttributeValueByAttributeID(attribute.ID);
-
-                        //Return a reference pointing to the AttributeValue
-                        object target = (object)attributeValue;
-                        FieldReference returnRef = new FieldReference(ref target, "Value");
-                        return returnRef;
+                        //Return a list of references pointing to the each of the childFeatures
+                        List<IEvalResult> returnRef = new List<IEvalResult>();
+                        foreach (BLL.BusinessObjects.AttributeValue attrValue in attributeValues)
+                        {
+                            object target = (object)attrValue;
+                            FieldReference objRef = new FieldReference(ref target, "Value");
+                            returnRef.Add(objRef);
+                        }
+                        return returnRef.ToArray();
                     }
                 }
             }
+
         }
 
 
@@ -267,8 +363,11 @@ namespace BLL.RuleParser
                 string[] subStrings = Regex.Split(str, splitRegex);
                 foreach (string subString in subStrings)
                 {
-                    ParserStatement innerStatement = ParseString(ref configSession, subString);
-                    instance.AddInnerStatement(innerStatement);
+                    if (subString != "")
+                    {
+                        ParserStatement innerStatement = ParseString(ref configSession, subString);
+                        instance.AddInnerStatement(innerStatement);
+                    }
                 }
             }
 
@@ -316,12 +415,19 @@ namespace BLL.RuleParser
         {
             try
             {
-                ParserStatement rootStatement = ParseString(ref configSession, RuleSyntax);
-                rootStatement.Eval();
+                if (RuleSyntax != "" && RuleSyntax != null)
+                {
+                    ParserStatement rootStatement = ParseString(ref configSession, RuleSyntax);
+                    rootStatement.Eval();
+                }
             }
             catch (ElementNotFoundException ex)
             {
 
+            }
+            catch (NullReferenceException ex)
+            {
+                //throw new SyntaxIncorrectException();
             }
 
             return true;
