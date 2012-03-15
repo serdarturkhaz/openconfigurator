@@ -193,6 +193,22 @@ namespace BLL.BusinessObjects
         }
 
         //Methods
+        public List<BLL.BusinessObjects.Feature> GetChildFeatures(BLL.BusinessObjects.Feature targetFeature)
+        {
+            //Get all Features for which there exists a Relation which has them as a child and the targetFeature is the parent
+            List<BLL.BusinessObjects.Feature> childrenFromRelations = Features.FindAll(f => Relations.FirstOrDefault(r => r.ParentFeatureID == targetFeature.ID && r.ChildFeatureID == f.ID) != null);
+
+            //Get all Features for which there exists a Relation which has them as a child and the targetFeature is the parent
+            List<BLL.BusinessObjects.Feature> childrenFromGroupRelations = Features.FindAll(f => GroupRelations.FirstOrDefault(r => r.ParentFeatureID == targetFeature.ID && r.ChildFeatureIDs.Contains(f.ID)) != null);
+        
+            //
+            return childrenFromRelations.Union(childrenFromGroupRelations).ToList();
+        }
+        public BLL.BusinessObjects.Feature GetRootFeature()
+        {
+            BLL.BusinessObjects.Feature rootFeature = Features.FirstOrDefault(f => Relations.FirstOrDefault(r => r.ChildFeatureID == f.ID) == null);
+            return rootFeature;
+        }
         public BLL.BusinessObjects.Feature GetFeatureByName(string name)
         {
             BLL.BusinessObjects.Feature feature = Features.FirstOrDefault(x => x.Name == name);

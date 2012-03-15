@@ -43,6 +43,9 @@ namespace PresentationLayer.Controllers
             SetupFeatureSelections(ref newSession);
             SessionData.ConfiguratorSessions[configurationID] = newSession;
 
+            
+            
+
             return result;
         }
         [Authorize]
