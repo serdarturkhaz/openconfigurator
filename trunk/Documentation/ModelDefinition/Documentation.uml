@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -4393,24 +4393,41 @@ User Input
               LastKnownLocation="Documentation.uml" />
           </dependency>
           <dependency
-            Id="4fdb0eac-67ba-4d18-b588-8a509f9872f7">
+            Id="16d0133a-08f9-4a5f-a7b8-16b91ebee3f8">
             <classMoniker
-              Id="8870af84-05e0-46ec-9a5c-a6646624dbd3"
-              LastKnownName="ISolverStatement"
+              Id="fc600db0-eb95-4f7a-a3da-e6f1e6b8e7d2"
+              LastKnownName="ConfiguratorSession"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="a6d7b944-6786-40bf-b805-7118be680e8d">
+            <interfaceMoniker
+              Id="d972d164-899a-4178-91bd-56658bb2b1d6"
+              LastKnownName="ISolverContext"
               LastKnownLocation="Documentation.uml" />
           </dependency>
         </suppliersInternal>
         <ownedOperationsInternal>
           <operation
-            Id="6a75cb69-0574-47f9-9cb1-3c1e57122f25"
-            name="ToggleFeature"
+            Id="67c2f2ce-9415-48af-9787-b455ea12d935"
+            name="InitRootSelection"
+            visibility="Private"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
             concurrency="Sequential"
             isQuery="false" />
           <operation
-            Id="de4c3094-f5de-49e2-aa1e-0ab48945869e"
+            Id="e44d2c62-69ed-4de4-af65-6260f00e5817"
+            name="SetupFeatureSelections"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="026852c3-857e-46d6-a1ba-a790e9311080"
             name="LoadData"
             isLeaf="false"
             isStatic="false"
@@ -4418,7 +4435,7 @@ User Input
             concurrency="Sequential"
             isQuery="false" />
           <operation
-            Id="67fa10a9-b54e-4f1f-b307-8b04600acab0"
+            Id="95e7912a-30cb-40f6-ab88-32f30ff3263f"
             name="SaveConfiguration"
             isLeaf="false"
             isStatic="false"
@@ -4426,7 +4443,33 @@ User Input
             concurrency="Sequential"
             isQuery="false" />
           <operation
-            Id="0947c146-3ea9-43aa-99de-5b656deb0a45"
+            Id="a37804fc-6053-4f31-975b-03d1839780e9"
+            name="ToggleFeature"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="b78fca7b-7d36-47e5-9e07-3b3d3821e82c"
+            name="GetInitialFeedback"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="bb2dc68c-41b0-476c-bffb-34e603a3a5e4"
+            name="GetDefaultAttrVal"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="17e026de-d19f-4d3c-8b35-4468307c2b03"
             name="ClearSessionContext"
             isLeaf="false"
             isStatic="false"
@@ -4434,7 +4477,7 @@ User Input
             concurrency="Sequential"
             isQuery="false" />
           <operation
-            Id="b9b96bb4-f565-4527-9f9d-fa8e7c2e8717"
+            Id="b9cd1a83-70c0-48fe-b67f-be738c553368"
             name="NewDefaultFeatureSelection"
             isLeaf="false"
             isStatic="false"
@@ -4442,17 +4485,8 @@ User Input
             concurrency="Sequential"
             isQuery="false" />
           <operation
-            Id="ed119682-ded8-4608-b627-60b78d55d10e"
+            Id="db5382d2-bac1-4aef-b1a4-b7bf5d77518b"
             name="NewDefaultAttributeValue"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-          <operation
-            Id="67c2f2ce-9415-48af-9787-b455ea12d935"
-            name="InitRootSelection"
-            visibility="Private"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -4487,8 +4521,36 @@ User Input
             Id="7177cacf-8a8f-444d-a627-88b6c3d162d8">
             <packageMoniker
               Id="ca7c703a-0ada-48eb-9b60-e8afff59d904"
-              LastKnownName="Parser"
+              LastKnownName="ParserInterfaces"
               LastKnownLocation="Package_0106.uml" />
+          </dependency>
+          <dependency
+            Id="2d16b889-a90c-48b0-8b1f-5e24cf400c56">
+            <classMoniker
+              Id="fc600db0-eb95-4f7a-a3da-e6f1e6b8e7d2"
+              LastKnownName="ConfiguratorSession"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="ab4d0016-444a-48f2-b423-ef7c1e0676f5">
+            <classMoniker
+              Id="8870af84-05e0-46ec-9a5c-a6646624dbd3"
+              LastKnownName="ISolverStatement"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="08a2db7c-c511-47a5-8fc7-3396c4c076db">
+            <interfaceMoniker
+              Id="a7f152cb-6b1c-40f0-8cec-69a09da600c0"
+              LastKnownName="ISolverStatement"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="97c9deca-4761-4f85-b94f-1c84efd606ff">
+            <interfaceMoniker
+              Id="e358e09a-e0ba-4b9f-ad15-5c685f46467a"
+              LastKnownName="ISolverSolution"
+              LastKnownLocation="Documentation.uml" />
           </dependency>
         </suppliersInternal>
         <targetEnds>
@@ -4568,6 +4630,44 @@ User Input
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="53136114-5705-48fc-bb66-8ea7999625d1"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName="_context"
+            isLeaf="false"
+            isAbstract="false">
+            <interfaceMoniker
+              Id="d972d164-899a-4178-91bd-56658bb2b1d6"
+              LastKnownName="ISolverContext"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="48c375e2-424f-4a63-99e4-cc1f40b70a93"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ac64d4a8-ba5f-4a26-80df-5e77f0ad8098"
+                  name="_context"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
         <ownedOperationsInternal>
           <operation
@@ -4599,6 +4699,23 @@ User Input
             Id="9eed7e7c-a8e5-4006-b5d5-cdd546d0aea7"
             name="GetValidSelections"
             visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="c86eb3c4-68a9-4f52-b172-55cb55bdfe95"
+            name="ExecuteCustomRule"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="cb424f4f-767b-4951-9da6-5717bcfbf1eb"
+            name="GetStatement"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -4649,6 +4766,22 @@ User Input
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="7b3579be-8fc1-47a7-8065-25deefd6be63">
+            <classMoniker
+              Id="68238a52-05bf-4e6c-b5ad-ad2becc3de69"
+              LastKnownName="ISolverSolution"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="0cb83c53-a8db-4b61-a4a1-d2476c8c06ae">
+            <classMoniker
+              Id="8870af84-05e0-46ec-9a5c-a6646624dbd3"
+              LastKnownName="ISolverStatement"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+        </suppliersInternal>
         <ownedOperationsInternal>
           <operation
             Id="b15a91db-8719-4a9b-9f1e-3229c4358098"
@@ -4660,7 +4793,7 @@ User Input
             isQuery="false" />
           <operation
             Id="a8cc6255-f411-49e0-bb3e-fb2585031b98"
-            name="AddBoolVariable"
+            name="AddVariable"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -4676,7 +4809,7 @@ User Input
             isQuery="false" />
           <operation
             Id="938c95b6-506b-4629-82bf-08860b962249"
-            name="AssumeBoolVarValue"
+            name="AddValueAssumption"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -4685,6 +4818,30 @@ User Input
           <operation
             Id="2eaace37-9908-4f46-acdd-450aa310647b"
             name="RemoveValAssumption"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="8d6a097d-e5ef-40b8-8c97-61310f1bbcb0"
+            name="GetSolution"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="36975360-0a33-4e61-8320-9f35fcd46f6a"
+            name="CheckSolutionExists"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="c2ed15cd-fad1-45fe-ba52-37761bde0db2"
+            name="CreateStatement"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -4702,16 +4859,8 @@ User Input
         isActiveClass="false">
         <ownedOperationsInternal>
           <operation
-            Id="32ee2bb9-d62c-42f7-a896-664992203308"
+            Id="c56d9284-f0a0-4ad7-a555-a645cf1e563a"
             name="GetVariableValue"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-          <operation
-            Id="29058b8d-3170-4a8d-bd6a-a05ce5dd29a0"
-            name="GetAllVariableValues"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -4727,10 +4876,62 @@ User Input
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="e9ad6a1c-edb4-4c87-a63f-0426074b064d"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="fc600db0-eb95-4f7a-a3da-e6f1e6b8e7d2"
+              LastKnownName="ConfiguratorSession"
+              LastKnownLocation="Documentation.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="52544461-6458-4dca-89d2-d50b7422be98"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4d2af368-6d1b-417f-a22f-09d0f085743e"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="4e8301da-5e64-4869-ab63-81eea5bc9e5b"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="c8bea6af-0784-4908-af31-5fd174fc49cf"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
         <ownedAttributesInternal>
           <property
-            Id="421ecb8d-7f85-4c2f-9ffe-d6357fee17ff"
-            name="SolverContexts"
+            Id="1fc2f404-c36c-4142-b19f-d6a9bd96a4a3"
+            name="ConfiguratorSessions"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -4741,25 +4942,8 @@ User Input
             isComposite="false">
             <type_NamedElement>
               <undefinedTypeMoniker
-                Id="2bf6f83d-6cfd-4d0d-9b32-7532dac4f32a"
-                LastKnownName="Dictionary&lt;int, ISolverContext&gt;"
-                LastKnownLocation="Documentation.uml" />
-            </type_NamedElement>
-          </property>
-          <property
-            Id="bf5084a9-b86e-4668-955e-e00319511533"
-            name="FeatureSelections"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false">
-            <type_NamedElement>
-              <undefinedTypeMoniker
-                Id="ed8046cb-282c-4d69-9e25-17bb3b7bce72"
-                LastKnownName="Dictionary&lt;int, List&lt;BLL.BusinessObjects.FeatureSelection&gt;&gt;"
+                Id="8e5bb7b8-b90b-4111-a1be-b3f86b015f90"
+                LastKnownName="Dictionary&lt;int, ConfiguratorSession&gt;"
                 LastKnownLocation="Documentation.uml" />
             </type_NamedElement>
           </property>
@@ -4816,151 +5000,8 @@ User Input
     <packageHasNamedElement>
       <packageMoniker
         Id="ca7c703a-0ada-48eb-9b60-e8afff59d904"
-        LastKnownName="Parser"
+        LastKnownName="ParserInterfaces"
         LastKnownLocation="Package_0106.uml" />
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <class
-        Id="35807ba8-8269-452a-92be-40adc0f4b63e"
-        name="IParser"
-        isAbstract="false"
-        isLeaf="false"
-        isActiveClass="false">
-        <ownedOperationsInternal>
-          <operation
-            Id="cdf8f69f-105f-48dc-aabb-ef20ddc453c1"
-            name="ExecuteSyntax"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false">
-            <ownedParameters>
-              <operationHasOwnedParameters>
-                <parameter
-                  Id="648a066f-1065-4211-9af9-bdb44b209b57"
-                  name="string RuleSyntax"
-                  direction="In"
-                  isUnique="false" />
-              </operationHasOwnedParameters>
-              <operationHasOwnedParameters>
-                <parameter
-                  Id="715c0bf2-e5d1-4462-b4b7-d8dea0ec4a9f"
-                  name="ISolverContext context"
-                  direction="In"
-                  isUnique="false" />
-              </operationHasOwnedParameters>
-              <operationHasOwnedParameters>
-                <parameter
-                  Id="14abbd59-0ad1-4f7c-b906-b3813cebbd92"
-                  name="ref List&lt;BLL.BusinessObjects.FeatureSelection&gt; featureSelections"
-                  direction="In"
-                  isUnique="false" />
-              </operationHasOwnedParameters>
-            </ownedParameters>
-          </operation>
-        </ownedOperationsInternal>
-      </class>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <class
-        Id="0b456808-82e6-4ba9-b61c-0159b988df6e"
-        name="ParserStatement"
-        isAbstract="true"
-        isLeaf="false"
-        isActiveClass="false">
-        <ownedAttributesInternal>
-          <property
-            Id="38b73544-9526-4f29-a4fc-ca54ec54e107"
-            name="_syntaxString"
-            visibility="Protected"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="592fa1f0-f0ea-4b1c-b5ec-4045a05d9c16"
-            name="innerStatements"
-            visibility="Protected"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="50e7b068-3d00-4a53-867f-5e4bbebb03ce"
-            name="_context"
-            visibility="Protected"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="2aeb0f75-b7e8-40e5-abf6-af4c09c895e6"
-            name="featureSelections"
-            visibility="Protected"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-        </ownedAttributesInternal>
-        <ownedOperationsInternal>
-          <operation
-            Id="8353dc20-1ba7-4ec4-b8d5-13c7788618b7"
-            name="CreateInstance"
-            isLeaf="false"
-            isStatic="true"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-          <operation
-            Id="2ce58207-baad-456b-970d-d030153915ff"
-            name="Eval"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="true"
-            concurrency="Sequential"
-            isQuery="false">
-            <ownedParameters>
-              <operationHasOwnedParameters>
-                <parameter
-                  Id="df11b3de-7a37-4e15-89ce-a7be1f482381"
-                  direction="Return">
-                  <type_NamedElement>
-                    <undefinedTypeMoniker
-                      Id="5a4e569c-42cb-4d86-9385-c316171377ef"
-                      LastKnownName="Object"
-                      LastKnownLocation="Documentation.uml" />
-                  </type_NamedElement>
-                </parameter>
-              </operationHasOwnedParameters>
-            </ownedParameters>
-          </operation>
-          <operation
-            Id="6c98780f-7176-447f-8471-f32ab0a3edd1"
-            name="AddInnerStatement"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false" />
-        </ownedOperationsInternal>
-      </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <packageMoniker
@@ -5026,7 +5067,31 @@ User Input
         Id="3ebfc258-11f8-4a21-a6ed-79b65d270999"
         name="StatementTypes"
         isAbstract="false"
-        isLeaf="false" />
+        isLeaf="false">
+        <ownedLiterals>
+          <enumerationLiteral
+            Id="c60633d4-1c00-4d5c-a3b5-06f123f46a6b"
+            name="And" />
+          <enumerationLiteral
+            Id="d3ce829b-883a-419d-9531-72d20238a03d"
+            name="Or" />
+          <enumerationLiteral
+            Id="539331be-632d-47ba-941d-bd29a80fbbee"
+            name="Not" />
+          <enumerationLiteral
+            Id="a9edaba6-06f1-4d1e-9a79-9351e66251d3"
+            name="NotAndCombinations" />
+          <enumerationLiteral
+            Id="0d933f33-5656-4ad2-8d2a-d484eebf65c6"
+            name="Implies" />
+          <enumerationLiteral
+            Id="be9eb3d9-2dad-42ca-8354-9dd43f5dc698"
+            name="Excludes" />
+          <enumerationLiteral
+            Id="3e5dbf35-48d3-43b0-86ab-4337c17eaae2"
+            name="Equivalence" />
+        </ownedLiterals>
+      </enumeration>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <undefinedType
@@ -5061,6 +5126,205 @@ User Input
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="fc600db0-eb95-4f7a-a3da-e6f1e6b8e7d2"
+        name="ConfiguratorSession"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="a07dd6b8-60e4-4983-a83a-9de609c9a2b2"
+            name="Model"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="876374fe-65c8-4e09-9d31-a3210249bcb6"
+            name="Context"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="fc5e0e66-1c53-4545-a285-ce86a49b4fd9"
+            name="Configuration"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="8e5bb7b8-b90b-4111-a1be-b3f86b015f90"
+        name="Dictionary&lt;int, ConfiguratorSession&gt;" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="ffe953a0-d93d-48a5-b922-66c0598ff424"
+        name="VariableDataTypes"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedLiterals>
+          <enumerationLiteral
+            Id="a210277e-4860-48b5-a5ae-8029c8f256db"
+            name="Integer" />
+          <enumerationLiteral
+            Id="3a25598d-c9e4-4f44-a4da-525c4b7b399b"
+            name="Boolean" />
+        </ownedLiterals>
+      </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="027f2e60-28c2-468a-9218-25d17e268f0d"
+        name="VariableDataTypes"
+        isAbstract="false"
+        isLeaf="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="2af11e99-3e8d-4927-9216-2d3e4de8393d"
+        LastKnownName="ParserInterfaces"
+        LastKnownLocation="Package_1759.uml" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="d972d164-899a-4178-91bd-56658bb2b1d6"
+        name="ISolverContext"
+        isAbstract="false"
+        isLeaf="false">
+        <suppliersInternal>
+          <dependency
+            Id="9834fefa-861f-49a1-be65-a2b79a230e7b">
+            <interfaceMoniker
+              Id="e358e09a-e0ba-4b9f-ad15-5c685f46467a"
+              LastKnownName="ISolverSolution"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="ed9a6e01-51e2-427a-a2fe-ce42e6a32020">
+            <interfaceMoniker
+              Id="a7f152cb-6b1c-40f0-8cec-69a09da600c0"
+              LastKnownName="ISolverStatement"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+        </suppliersInternal>
+        <ownedOperations>
+          <operation
+            Id="df095d06-d740-4745-ace4-6e685e2bdbe9"
+            name="AddConstraint"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="01c5af0b-6d4d-45b8-bdfe-5f99434a675f"
+            name="AddValueAssumption"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="8304cdfe-d0fc-4ca9-b9af-818d1c33958c"
+            name="AddVariable"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="f1ba5fbe-370b-4941-bd93-fd50897506f8"
+            name="CheckSolutionExists"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="7aaaf0e6-3678-47f9-91af-087f6d1f746a"
+            name="CreateInitialPoint"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="5ab65651-f51e-4762-baef-8c0a435e20ea"
+            name="CreateStatement"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="ea9d2d18-2492-4d43-9526-70516a4867df"
+            name="GetSolution"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="dee2c970-a0ae-4704-90ea-e2a0f006f2bb"
+            name="RemoveValAssumption"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperations>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="a7f152cb-6b1c-40f0-8cec-69a09da600c0"
+        name="ISolverStatement"
+        isAbstract="false"
+        isLeaf="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="e358e09a-e0ba-4b9f-ad15-5c685f46467a"
+        name="ISolverSolution"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedOperations>
+          <operation
+            Id="186c42aa-aa63-4618-88b1-69b8a87941d4"
+            name="GetVariableValue"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperations>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <packageMoniker
+        Id="97355446-6cf6-47f9-88e5-9e6c5c94029f"
+        LastKnownName="SolverService"
+        LastKnownLocation="Package_1807.uml" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
