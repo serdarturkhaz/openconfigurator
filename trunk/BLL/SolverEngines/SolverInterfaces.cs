@@ -43,11 +43,6 @@ namespace BLL.SolverEngines
         Excludes,
         Equivalence
     }
-    public enum AssumptionTypes
-    {
-        User,
-        Solver
-    }
     public enum VariableDataTypes
     {
         Integer,

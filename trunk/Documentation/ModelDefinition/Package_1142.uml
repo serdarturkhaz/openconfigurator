@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="a11cc612-33d1-4c5b-94e6-fe7814d6973b"
   name="StandardParser" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
   <suppliersInternal>
-    <dependency
-      Id="65d1af64-71b9-4348-b0bc-128c16b7573b">
-      <classMoniker
-        Id="0b456808-82e6-4ba9-b61c-0159b988df6e"
-        LastKnownName="ParserStatement"
-        LastKnownLocation="Documentation.uml" />
-    </dependency>
     <dependency
       Id="a3de527d-6415-4094-98aa-ede1125dc1b7">
       <classMoniker
         Id="c9d266c0-11e6-42a4-821c-884ef36d400a"
         LastKnownName="ObjectReference"
         LastKnownLocation="Documentation.uml" />
+    </dependency>
+    <dependency
+      Id="b5013e01-1d8e-4c92-882b-ea434eb9bee4">
+      <packageMoniker
+        Id="2af11e99-3e8d-4927-9216-2d3e4de8393d"
+        LastKnownName="ParserInterfaces"
+        LastKnownLocation="Package_1759.uml" />
     </dependency>
   </suppliersInternal>
   <packagedElements>
@@ -43,7 +43,7 @@
             <classMoniker
               Id="35807ba8-8269-452a-92be-40adc0f4b63e"
               LastKnownName="IParser"
-              LastKnownLocation="Documentation.uml" />
+              LastKnownLocation="Package_1759.uml" />
           </generalization>
         </generalsInternal>
         <ownedOperationsInternal>
@@ -60,21 +60,14 @@
               <operationHasOwnedParameters>
                 <parameter
                   Id="633d544b-a13c-4f95-915b-9f7b08d99eb6"
-                  name="string RuleSyntax"
+                  name="ref ConfiguratorSession configSession"
                   direction="In"
                   isUnique="false" />
               </operationHasOwnedParameters>
               <operationHasOwnedParameters>
                 <parameter
                   Id="a049e332-e83e-4508-8305-3d818de67b0f"
-                  name="ISolverContext context"
-                  direction="In"
-                  isUnique="false" />
-              </operationHasOwnedParameters>
-              <operationHasOwnedParameters>
-                <parameter
-                  Id="bc7dbdb7-629f-49c4-871f-99cc8bb49385"
-                  name="ref List&lt;BLL.BusinessObjects.FeatureSelection&gt; featureSelections"
+                  name="string str"
                   direction="In"
                   isUnique="false" />
               </operationHasOwnedParameters>
@@ -88,7 +81,24 @@
             isStatic="false"
             isAbstract="false"
             concurrency="Sequential"
-            isQuery="false" />
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="a59758a3-da4c-4542-83f4-fab3bf032dee"
+                  name="ref ConfiguratorSession configSession"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="f471d53c-1d43-4b0b-b23f-6296dc3f7f19"
+                  name="string str"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
           <operation
             Id="aff15f2e-f255-41bd-a8d8-5f17a11adf9a"
             name="ExecuteStaticMethod"
@@ -107,6 +117,31 @@
             isAbstract="false"
             concurrency="Sequential"
             isQuery="false" />
+          <operation
+            Id="8fd7c5fd-a2ed-4d00-b03c-bda84e55eedf"
+            name="ExecuteSyntax"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="cbd6a554-db1a-4724-9638-ae8701aef94d"
+                  name="ref ConfiguratorSession configSession"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ce18ee54-87c5-455d-adb6-5561467af368"
+                  name="string RuleSyntax"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
         </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
