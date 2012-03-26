@@ -20,7 +20,7 @@ namespace PresentationLayer.Controllers
             return View();
         }
         [Authorize]
-        public JsonNetResult LoadModel(int modelID)
+        public JsonNetResult LoadData(int modelID)
         {   
             //Data return wrapper
             JsonNetResult result = new JsonNetResult();
@@ -33,7 +33,7 @@ namespace PresentationLayer.Controllers
             return result;
         }
         [Authorize]
-        public JsonNetResult SaveModel(int modelID, string modelName, string featuresString, string relationsString, string relationsAdjFeaturesString, string groupRelationsString,
+        public JsonNetResult SaveData(int modelID, string modelName, string featuresString, string relationsString, string relationsAdjFeaturesString, string groupRelationsString,
             string groupRelationsAdjFeaturesString, string compositionRulesString, string compositionRulesAdjFeaturesString, string customRulesString)
         {
             //Data return wrapper
