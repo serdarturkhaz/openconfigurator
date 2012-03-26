@@ -237,8 +237,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         featureIDsToFeatureSelections: {},
         attributeIDsToAttributeValues: {}
     }
-    var _configurationID = configurationID;
-    var _configuration = null, _model = null, _rootFeatureGUID = null, _configurationName = configurationName;
+    var _configurationID = configurationID, _configuration = null, _model = null, _rootFeatureGUID = null, _configurationName = configurationName;
     var _thisConfigurationDataModel = this;
 
     //Private methods
@@ -465,6 +464,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             }
         });
     }
+
     this.CreateDefaultClientObject = function (type, initialFieldValues) {
 
         //Variables
@@ -508,24 +508,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             return clientObject.GUID;
         }
     }
-
-    this.GetByGUID = function (guid) {
-        return _clientObjects.all[guid];
-    }
-    this.GetByID = function (ID, type) {
-        for (var guidKey in _clientObjects[type + "s"]) {
-            var clientObject = _clientObjects[type + "s"][guidKey];
-            if (ID == clientObject.GetField("ID")) {
-                return clientObject;
-            }
-        }
-    }
-    this.GetModelID = function () {
-        return _model.ID;
-    }
-    this.GetConfigurationID = function () {
-        return _configuration.ID;
-    }
     this.UpdateClientObject = function (guid, modifiedBusinessObject) {
 
         //Update the whole businessDataObject
@@ -549,6 +531,24 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             _clientObjects.all[guid].SetField(fieldName, value);
             _thisConfigurationDataModel.ClientObjectUpdated.RaiseEvent(guid);
         }
+    }
+
+    this.GetByGUID = function (guid) {
+        return _clientObjects.all[guid];
+    }
+    this.GetByID = function (ID, type) {
+        for (var guidKey in _clientObjects[type + "s"]) {
+            var clientObject = _clientObjects[type + "s"][guidKey];
+            if (ID == clientObject.GetField("ID")) {
+                return clientObject;
+            }
+        }
+    }
+    this.GetModelID = function () {
+        return _model.ID;
+    }
+    this.GetConfigurationID = function () {
+        return _configuration.ID;
     }
 
     //Events
