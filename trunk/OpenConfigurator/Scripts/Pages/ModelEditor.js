@@ -703,6 +703,76 @@ ClientObjects.GroupRelation = function (businessObject) {
         return _businessObject["ToBeDeleted"] == true;
     }
 }
+ClientObjects.CompositionRule = function (businessObject) {
+
+    //Fields
+    var _guid = null;
+    var _businessObject = businessObject;
+    var _firstFeature = {}, _secondFeature = {};
+
+    //Properties
+    this.GUID = _guid;
+    this.GetType = function () {
+        return "compositionRule";
+    }
+    this.FirstFeature = _firstFeature;
+    this.SecondFeature = _secondFeature;
+
+    //Methods
+    this.GetBusinessObjectCopy = function () {
+        var copy = jQuery.extend(true, {}, _businessObject);
+        return copy;
+    }
+    this.UpdateBusinessObject = function (modifiedBusinessObject) {
+        _businessObject = modifiedBusinessObject;
+    }
+    this.GetField = function (fieldName) {
+        return _businessObject[fieldName];
+    }
+    this.SetField = function (fieldName, value) {
+        _businessObject[fieldName] = value;
+    }
+    this.SetDeleteFlag = function () {
+        _businessObject["ToBeDeleted"] = true;
+    }
+    this.IsDeleted = function () {
+        return _businessObject["ToBeDeleted"] == true;
+    }
+}
+ClientObjects.CustomRule = function (businessObject) {
+
+    //Fields
+    var _guid = null;
+    var _businessObject = businessObject;
+
+    //Properties
+    this.GUID = _guid;
+    this.GetType = function () {
+        return "customRule";
+    }
+    this.Attributes = _attributes;
+
+    //Methods
+    this.GetBusinessObjectCopy = function () {
+        var copy = jQuery.extend(true, {}, _businessObject);
+        return copy;
+    }
+    this.UpdateBusinessObject = function (modifiedBusinessObject) {
+        _businessObject = modifiedBusinessObject;
+    }
+    this.GetField = function (fieldName) {
+        return _businessObject[fieldName];
+    }
+    this.SetField = function (fieldName, value) {
+        _businessObject[fieldName] = value;
+    }
+    this.SetDeleteFlag = function () {
+        _businessObject["ToBeDeleted"] = true;
+    }
+    this.IsDeleted = function () {
+        return _businessObject["ToBeDeleted"] == true;
+    }
+}
 //****************************************************************************************************************
 
 
@@ -719,408 +789,414 @@ var DiagramDataModel = function (modelID, modelName) {
         compositionRules: {},
         customRules: {}
     }
-    var _lookupTables = {
-}
-var _modelID = modelID, _model = null, _modelName = modelName;
-var _thisDiagramDataModel = this;
+    var _lookupTables = {}
+    var _modelID = modelID, _model = null, _modelName = modelName;
+    var _thisDiagramDataModel = this;
 
-//Properties
-this.ClientObjects = _clientObjects;
+    //Properties
+    this.ClientObjects = _clientObjects;
 
-//Private methods
-var getDefaultBusinessObject = function (type) {
-    var returnObj;
-    $.ajax({
-        url: "/ModelEditor/NewDefault" + type,
-        data: {},
-        async: false,
-        success: function (dataObj) {
-            returnObj = dataObj;
+    //Private methods
+    var getDefaultBusinessObject = function (type) {
+        var returnObj;
+        $.ajax({
+            url: "/ModelEditor/NewDefault" + type,
+            data: {},
+            async: false,
+            success: function (dataObj) {
+                returnObj = dataObj;
+            }
+        });
+        return returnObj;
+    }
+
+    //Constructor/Initalizers
+    this.Initialize = function () {
+
+    }
+
+    //Public methods
+    this.LoadData = function (onFinished) {
+        $.ajax({
+            type: "POST",
+            url: "/ModelEditor/LoadData",
+            data: JSON.stringify({ modelID: _modelID }),
+            async: false,
+            success: function (response) {
+
+                _model = response;
+
+                //Load Features
+                for (var i = 0; i < _model.Features.length; i++) {
+
+                    //Variables
+                    var feature = _model.Features[i];
+
+                    //Create a new ClientDataObject
+                    var featureClientObject = new ClientObjects.Feature(feature);
+                    _thisDiagramDataModel.RegisterClientObject(featureClientObject);
+
+                    //Load Attributes----------------------------------------------------------------------------------------
+                    for (var j = 0; j < feature.Attributes.length; j++) {
+                        var attribute = feature.Attributes[j];
+                        var attributeClientObject = new ClientObjects.Attribute(attribute);
+                        _thisDiagramDataModel.RegisterClientObject(attributeClientObject);
+
+                        //Set references
+                        featureClientObject.Attributes.push(attributeClientObject);
+                        attributeClientObject.Feature = featureClientObject;
+                    }
+                    //-------------------------------------------------------------------------------------------------------
+                }
+
+                //Load Relations
+                for (var i = 0; i < _model.Relations.length; i++) {
+
+                    //Variables
+                    var relation = _model.Relations[i];
+
+                    //Create a new ClientDataObject
+                    var relationClientObject = new ClientObjects.Relation(relation);
+                    _thisDiagramDataModel.RegisterClientObject(relationClientObject);
+
+                    //Set references-----------------------------------------------------------------------------------------
+                    relationClientObject.ParentFeature = _thisDiagramDataModel.GetByID(relation.ParentFeatureID, "feature");
+                    relationClientObject.ChildFeature = _thisDiagramDataModel.GetByID(relation.ChildFeatureID, "feature");
+                    //-------------------------------------------------------------------------------------------------------
+                }
+
+                //Load GroupRelations
+                for (var i = 0; i < _model.GroupRelations.length; i++) {
+
+                    //Variables
+                    var groupRelation = _model.GroupRelations[i];
+
+                    //Create a new ClientDataObject
+                    var groupRelationClientObject = new ClientObjects.GroupRelation(groupRelation);
+                    _thisDiagramDataModel.RegisterClientObject(groupRelationClientObject);
+
+                    //Set references-----------------------------------------------------------------------------------------
+                    groupRelationClientObject.ParentFeature = _thisDiagramDataModel.GetByID(groupRelation.ParentFeatureID, "feature");
+                    for (var j = 0; j < groupRelation.ChildFeatureIDs.length; j++) {
+                        groupRelationClientObject.ChildFeatures.push(_thisDiagramDataModel.GetByID(groupRelation.ChildFeatureIDs[j], "feature"));
+                    }
+                    //-------------------------------------------------------------------------------------------------------
+                }
+
+                //Load CompositionRules
+                for (var i = 0; i < _model.CompositionRules.length; i++) {
+
+                    //Variables
+                    var compositionRule = _model.CompositionRules[i];
+
+                    //Create a new ClientDataObject
+                    var compositionRuleClientObject = new ClientObjects.CompositionRule(compositionRule);
+                    _thisDiagramDataModel.RegisterClientObject(compositionRuleClientObject);
+
+                    //Set references-----------------------------------------------------------------------------------------
+                    compositionRuleClientObject.FirstFeature = _thisDiagramDataModel.GetByID(compositionRule.FirstFeatureID, "feature");
+                    compositionRuleClientObject.SecondFeature = _thisDiagramDataModel.GetByID(compositionRule.SecondFeatureID, "feature");
+                    //-------------------------------------------------------------------------------------------------------
+                }
+
+                //                //Load CustomRules
+                //                for (var i = 0; i < model.CustomRules.length; i++) {
+                //                    _thisDiagramDataModel.AddClientObject("customRule", model.CustomRules[i]);
+                //                }
+
+
+            },
+            error: function (req, status, error) {
+                alert("error");
+            }
+        });
+
+        //Raise events
+        _thisDiagramDataModel.ClientObjectsLoaded.RaiseEvent();
+
+        //CallBack
+        onFinished(_model);
+    }
+    this.SaveData = function (newName, beforeSend, onSuccess, onError) {
+        _modelName = newName;
+
+        //Stringify collection of Features
+        var featuresObjectCollection = {};
+        for (var guidKey in _clientObjects.features) {
+            var clientObject = _clientObjects.features[guidKey];
+
+            featuresObjectCollection[guidKey] = clientObject.GetBusinessObjectCopy();
         }
-    });
-    return returnObj;
-}
 
-//Constructor/Initalizers
-this.Initialize = function () {
+        //Stringify collection of Relations
+        var relationsObjectCollection = {};
+        var relationsAdjFeatures = {};
+        for (var guidKey in _clientObjects.relations) {
+            var clientObject = _clientObjects.relations[guidKey];
 
-}
-
-//Public methods
-this.LoadData = function (onFinished) {
-    $.ajax({
-        type: "POST",
-        url: "/ModelEditor/LoadData",
-        data: JSON.stringify({ modelID: _modelID }),
-        async: false,
-        success: function (response) {
-
-            _model = response;
-
-            //Load Features
-            for (var i = 0; i < _model.Features.length; i++) {
-
-                //Variables
-                var feature = _model.Features[i];
-
-                //Create a new ClientDataObject
-                var featureClientObject = new ClientObjects.Feature(feature);
-                _thisDiagramDataModel.RegisterClientObject(featureClientObject);
-
-                //Load Attributes----------------------------------------------------------------------------------------
-                for (var j = 0; j < feature.Attributes.length; j++) {
-                    var attribute = feature.Attributes[j];
-                    var attributeClientObject = new ClientObjects.Attribute(attribute);
-                    _thisDiagramDataModel.RegisterClientObject(attributeClientObject);
-
-                    //Set references
-                    featureClientObject.Attributes.push(attributeClientObject);
-                    attributeClientObject.Feature = featureClientObject;
-                }
-                //-------------------------------------------------------------------------------------------------------
-            }
-
-            //Load Relations
-            for (var i = 0; i < _model.Relations.length; i++) {
-
-                //Variables
-                var relation = _model.Relations[i];
-
-                //Create a new ClientDataObject
-                var relationClientObject = new ClientObjects.Relation(relation);
-                _thisDiagramDataModel.RegisterClientObject(relationClientObject);
-
-                //Set references-----------------------------------------------------------------------------------------
-                relationClientObject.ParentFeature = _thisDiagramDataModel.GetByID(relation.ParentFeatureID, "feature");
-                relationClientObject.ChildFeature = _thisDiagramDataModel.GetByID(relation.ChildFeatureID, "feature");
-                //-------------------------------------------------------------------------------------------------------
-            }
-
-            //Load GroupRelations
-            for (var i = 0; i < _model.GroupRelations.length; i++) {
-
-                //Variables
-                var groupRelation = _model.GroupRelations[i];
-
-                //Create a new ClientDataObject
-                var groupRelationClientObject = new ClientObjects.GroupRelation(groupRelation);
-                _thisDiagramDataModel.RegisterClientObject(groupRelationClientObject);
-
-                //Set references-----------------------------------------------------------------------------------------
-                groupRelationClientObject.ParentFeature = _thisDiagramDataModel.GetByID(relation.ParentFeatureID, "feature");
-                for (var j = 0; j < groupRelation.ChildFeatureIDs.length; j++) {
-                    groupRelationClientObject.ChildFeatures.push(_thisDiagramDataModel.GetByID(groupRelation.ChildFeatureIDs[j], "feature"));
-                }
-                //-------------------------------------------------------------------------------------------------------
-            }
-
-            //                //Load GroupRelations
-            //                for (var i = 0; i < model.GroupRelations.length; i++) {
-            //                    var childFeatureGUIDs = [];
-            //                    var parentFeatureGUID = _thisDiagramDataModel.GetByID(model.GroupRelations[i].ParentFeatureID, "feature");
-            //                    for (var j = 0; j < model.GroupRelations[i].ChildFeatureIDs.length; j++) {
-            //                        childFeatureGUIDs.push(_thisDiagramDataModel.GetByID(model.GroupRelations[i].ChildFeatureIDs[j], "feature"));
-            //                    }
-            //                    var extraClientData = {
-            //                        parentFeatureGUID: parentFeatureGUID,
-            //                        childFeatureGUIDs: childFeatureGUIDs
-            //                    }
-
-            //                    _thisDiagramDataModel.AddClientObject("groupRelation", model.GroupRelations[i], extraClientData);
-            //                }
-
-            //                //Load CompositionRules
-            //                for (var i = 0; i < model.CompositionRules.length; i++) {
-            //                    var extraClientData = {
-            //                        firstFeatureGUID: _thisDiagramDataModel.GetByID(model.CompositionRules[i].FirstFeatureID, "feature"),
-            //                        secondFeatureGUID: _thisDiagramDataModel.GetByID(model.CompositionRules[i].SecondFeatureID, "feature")
-            //                    }
-            //                    _thisDiagramDataModel.AddClientObject("compositionRule", model.CompositionRules[i], extraClientData);
-            //                }
-
-            //                //Load CustomRules
-            //                for (var i = 0; i < model.CustomRules.length; i++) {
-            //                    _thisDiagramDataModel.AddClientObject("customRule", model.CustomRules[i]);
-            //                }
-
-
-        },
-        error: function (req, status, error) {
-            alert("error");
+            relationsObjectCollection[guidKey] = clientObject.GetBusinessObjectCopy();
+            relationsAdjFeatures[guidKey] = {
+                parentFeatureGUID: clientObject.ParentFeature.GUID,
+                childFeatureGUID: clientObject.ChildFeature.GUID
+            };
         }
-    });
 
-    //Raise events
-    _thisDiagramDataModel.ClientObjectsLoaded.RaiseEvent();
+        //Stringify collection of GroupRelations
+        var groupRelationsObjectCollection = {};
+        var groupRelationsAdjFeatures = {};
+        for (var guidKey in _clientObjects.groupRelations) {
+            var clientObject = _clientObjects.groupRelations[guidKey];
 
-    //CallBack
-    onFinished(_model);
-}
-this.SaveData = function (newName, beforeSend, onSuccess, onError) {
-    _modelName = newName;
-
-    //Stringify collection of Features
-    var featuresObjectCollection = {};
-    for (var guidKey in _clientObjects.features) {
-        var clientObject = _clientObjects.features[guidKey];
-
-        featuresObjectCollection[guidKey] = clientObject.GetBusinessObject();
-    }
-
-    //Stringify collection of Relations
-    var relationsObjectCollection = {};
-    var relationsAdjFeatures = {};
-    for (var guidKey in _clientObjects.relations) {
-        var clientObject = _clientObjects.relations[guidKey];
-
-        relationsObjectCollection[guidKey] = clientObject.GetBusinessObject();
-        relationsAdjFeatures[guidKey] = clientObject.ExtraClientData;
-    }
-
-    //Stringify collection of GroupRelations
-    var groupRelationsObjectCollection = {};
-    var groupRelationsAdjFeatures = {};
-    for (var guidKey in _clientObjects.groupRelations) {
-        var clientObject = _clientObjects.groupRelations[guidKey];
-
-        groupRelationsObjectCollection[guidKey] = clientObject.GetBusinessObject();
-        groupRelationsAdjFeatures[guidKey] = clientObject.ExtraClientData;
-    }
-
-    //Stringify collection of CompositionRules
-    var compositionRulesObjectCollection = {};
-    var compositionRulesAdjFeatures = {};
-    for (var guidKey in _clientObjects.compositionRules) {
-        var clientObject = _clientObjects.compositionRules[guidKey];
-
-        compositionRulesObjectCollection[guidKey] = clientObject.GetBusinessObject();
-        compositionRulesAdjFeatures[guidKey] = clientObject.ExtraClientData;
-    }
-
-    //Stringify collection of CustomRules
-    var customRulesObjectCollection = {};
-    for (var guidKey in _clientObjects.customRules) {
-        var clientObject = _clientObjects.customRules[guidKey];
-
-        customRulesObjectCollection[guidKey] = clientObject.GetBusinessObject();
-    }
-
-    //Setup data parameters
-    var dataParameters = {
-        modelID: _modelID,
-        modelName: _modelName,
-        featuresString: JSON.stringify(featuresObjectCollection),
-        relationsString: JSON.stringify(relationsObjectCollection),
-        relationsAdjFeaturesString: JSON.stringify(relationsAdjFeatures),
-        groupRelationsString: JSON.stringify(groupRelationsObjectCollection),
-        groupRelationsAdjFeaturesString: JSON.stringify(groupRelationsAdjFeatures),
-        compositionRulesString: JSON.stringify(compositionRulesObjectCollection),
-        compositionRulesAdjFeaturesString: JSON.stringify(compositionRulesAdjFeatures),
-        customRulesString: JSON.stringify(customRulesObjectCollection)
-    }
-
-    //Send data to WebService method
-    $.ajax({
-        type: "POST",
-        url: "/ModelEditor/SaveData",
-        data: JSON.stringify(dataParameters),
-        beforeSend: function () {
-            beforeSend();
-        },
-        success: function (response) {
-
-            //Update ID's for Features
-            var updatedFeatureBusinessObjects = response[0];
-            for (var guidKey in _clientObjects.features) {
-                var clientObject = _clientObjects.features[guidKey];
-
-                //Remove deleted items
-                if (clientObject.IsDeleted()) {
-                    delete _clientObjects.all[guidKey];
-                    delete _clientObjects.features[guidKey];
-                }
-                //Update others
-                else {
-                    clientObject.UpdateBusinessObject(updatedFeatureBusinessObjects[guidKey]);
-                }
-            }
-
-            //Update ID's for Relations
-            var updatedRelationBusinessObjects = response[1];
-            for (var guidKey in _clientObjects.relations) {
-                var clientObject = _clientObjects.relations[guidKey];
-
-                //Remove deleted items
-                if (clientObject.IsDeleted()) {
-                    delete _clientObjects.all[guidKey];
-                    delete _clientObjects.relations[guidKey];
-                }
-                //Update others
-                else {
-                    clientObject.UpdateBusinessObject(updatedRelationBusinessObjects[guidKey]);
-                }
-            }
-
-            //Update ID's for GroupRelations
-            var updatedGroupRelationBusinessObjects = response[2];
-            for (var guidKey in _clientObjects.groupRelations) {
-                var clientObject = _clientObjects.groupRelations[guidKey];
-
-                //Remove deleted items
-                if (clientObject.IsDeleted()) {
-                    delete _clientObjects.all[guidKey];
-                    delete _clientObjects.groupRelations[guidKey];
-                }
-                //Update others
-                else {
-                    clientObject.UpdateBusinessObject(updatedGroupRelationBusinessObjects[guidKey]);
-                }
-            }
-
-            //Update ID's for CompositionRules
-            var updatedCompositionRulesBusinessObjects = response[3];
-            for (var guidKey in _clientObjects.compositionRules) {
-                var clientObject = _clientObjects.compositionRules[guidKey];
-
-                //Remove deleted items
-                if (clientObject.IsDeleted()) {
-                    delete _clientObjects.all[guidKey];
-                    delete _clientObjects.compositionRules[guidKey];
-                }
-                //Update others
-                else {
-                    clientObject.UpdateBusinessObject(updatedCompositionRulesBusinessObjects[guidKey]);
-                }
-            }
-
-            //Update ID's for CustomRules
-            var updatedCustomRulesBusinessObjects = response[4];
-            for (var guidKey in _clientObjects.customRules) {
-                var clientObject = _clientObjects.customRules[guidKey];
-
-                //Remove deleted items
-                if (clientObject.IsDeleted()) {
-                    delete _clientObjects.all[guidKey];
-                    delete _clientObjects.customRules[guidKey];
-                }
-                //Update others
-                else {
-                    clientObject.UpdateBusinessObject(updatedCustomRulesBusinessObjects[guidKey]);
-                }
-            }
-
-            //Callback
-            onSuccess();
-        },
-        error: function (req, status, error) {
-            onError();
+            groupRelationsObjectCollection[guidKey] = clientObject.GetBusinessObjectCopy();
+            groupRelationsAdjFeatures[guidKey] = clientObject.ExtraClientData;
         }
-    });
-}
 
-this.CreateDefaultClientObject = function (type, initialFieldValues) {
+        //Stringify collection of CompositionRules
+        var compositionRulesObjectCollection = {};
+        var compositionRulesAdjFeatures = {};
+        for (var guidKey in _clientObjects.compositionRules) {
+            var clientObject = _clientObjects.compositionRules[guidKey];
 
-    //Variables
-    var newBusinessObject = getDefaultBusinessObject(type);
-
-    //Initial values
-    if (initialFieldValues != undefined && initialFieldValues != null) {
-        for (var fieldName in initialFieldValues) {
-            var fieldValue = initialFieldValues[fieldName];
-            newBusinessObject[fieldName] = fieldValue;
+            compositionRulesObjectCollection[guidKey] = clientObject.GetBusinessObjectCopy();
+            compositionRulesAdjFeatures[guidKey] = clientObject.ExtraClientData;
         }
+
+        //Stringify collection of CustomRules
+        var customRulesObjectCollection = {};
+        for (var guidKey in _clientObjects.customRules) {
+            var clientObject = _clientObjects.customRules[guidKey];
+
+            customRulesObjectCollection[guidKey] = clientObject.GetBusinessObjectCopy();
+        }
+
+        //Setup data parameters
+        var dataParameters = {
+            modelID: _modelID,
+            modelName: _modelName,
+            featuresString: JSON.stringify(featuresObjectCollection),
+            relationsString: JSON.stringify(relationsObjectCollection),
+            relationsAdjFeaturesString: JSON.stringify(relationsAdjFeatures),
+            groupRelationsString: JSON.stringify(groupRelationsObjectCollection),
+            groupRelationsAdjFeaturesString: JSON.stringify(groupRelationsAdjFeatures),
+            compositionRulesString: JSON.stringify(compositionRulesObjectCollection),
+            compositionRulesAdjFeaturesString: JSON.stringify(compositionRulesAdjFeatures),
+            customRulesString: JSON.stringify(customRulesObjectCollection)
+        }
+
+        //Send data to WebService method
+        $.ajax({
+            type: "POST",
+            url: "/ModelEditor/SaveData",
+            data: JSON.stringify(dataParameters),
+            beforeSend: function () {
+                beforeSend();
+            },
+            success: function (response) {
+
+                //Update ID's for Features
+                var updatedFeatureBusinessObjects = response[0];
+                for (var guidKey in _clientObjects.features) {
+                    var clientObject = _clientObjects.features[guidKey];
+
+                    //Remove deleted items
+                    if (clientObject.IsDeleted()) {
+                        delete _clientObjects.all[guidKey];
+                        delete _clientObjects.features[guidKey];
+                    }
+                    //Update others
+                    else {
+                        clientObject.UpdateBusinessObject(updatedFeatureBusinessObjects[guidKey]);
+                    }
+                }
+
+                //Update ID's for Relations
+                var updatedRelationBusinessObjects = response[1];
+                for (var guidKey in _clientObjects.relations) {
+                    var clientObject = _clientObjects.relations[guidKey];
+
+                    //Remove deleted items
+                    if (clientObject.IsDeleted()) {
+                        delete _clientObjects.all[guidKey];
+                        delete _clientObjects.relations[guidKey];
+                    }
+                    //Update others
+                    else {
+                        clientObject.UpdateBusinessObject(updatedRelationBusinessObjects[guidKey]);
+                    }
+                }
+
+                //Update ID's for GroupRelations
+                var updatedGroupRelationBusinessObjects = response[2];
+                for (var guidKey in _clientObjects.groupRelations) {
+                    var clientObject = _clientObjects.groupRelations[guidKey];
+
+                    //Remove deleted items
+                    if (clientObject.IsDeleted()) {
+                        delete _clientObjects.all[guidKey];
+                        delete _clientObjects.groupRelations[guidKey];
+                    }
+                    //Update others
+                    else {
+                        clientObject.UpdateBusinessObject(updatedGroupRelationBusinessObjects[guidKey]);
+                    }
+                }
+
+                //Update ID's for CompositionRules
+                var updatedCompositionRulesBusinessObjects = response[3];
+                for (var guidKey in _clientObjects.compositionRules) {
+                    var clientObject = _clientObjects.compositionRules[guidKey];
+
+                    //Remove deleted items
+                    if (clientObject.IsDeleted()) {
+                        delete _clientObjects.all[guidKey];
+                        delete _clientObjects.compositionRules[guidKey];
+                    }
+                    //Update others
+                    else {
+                        clientObject.UpdateBusinessObject(updatedCompositionRulesBusinessObjects[guidKey]);
+                    }
+                }
+
+                //Update ID's for CustomRules
+                var updatedCustomRulesBusinessObjects = response[4];
+                for (var guidKey in _clientObjects.customRules) {
+                    var clientObject = _clientObjects.customRules[guidKey];
+
+                    //Remove deleted items
+                    if (clientObject.IsDeleted()) {
+                        delete _clientObjects.all[guidKey];
+                        delete _clientObjects.customRules[guidKey];
+                    }
+                    //Update others
+                    else {
+                        clientObject.UpdateBusinessObject(updatedCustomRulesBusinessObjects[guidKey]);
+                    }
+                }
+
+                //Callback
+                onSuccess();
+            },
+            error: function (req, status, error) {
+                onError();
+            }
+        });
     }
 
-    //Wrap a new default BusinessObject into a ClientObject
-    var newClientObject = null;
-    switch (type) {
-        case "feature":
-            newClientObject = new ClientObjects.Feature(newBusinessObject);
-            break;
-        case "attribute":
-            newClientObject = new ClientObjects.Attribute(newBusinessObject);
-            break;
-        case "relation":
-            newClientObject = new ClientObjects.Relation(newBusinessObject);
-            break;
-        case "groupRelation":
-            newClientObject = new ClientObjects.GroupRelation(newBusinessObject);
-            break;
-        case "compositionRule":
-            newClientObject = new ClientObjects.CompositionRule(newBusinessObject);
-            break;
-        case "customRule":
-            newClientObject = new ClientObjects.CustomRule(newBusinessObject);
-            break;
+    this.AddNewClientObject = function (type, initialBusinessValues, initialClientValues) {
+
+        //Setup inner business object
+        var newBusinessObject = getDefaultBusinessObject(type);
+        if (initialBusinessValues != undefined && initialBusinessValues != null) {
+            for (var fieldName in initialBusinessValues) {
+                var fieldValue = initialBusinessValues[fieldName];
+                newBusinessObject[fieldName] = fieldValue;
+            }
+        }
+
+        //Setup client object
+        var newClientObject = null;
+        switch (type) {
+            case "feature":
+                newClientObject = new ClientObjects.Feature(newBusinessObject);
+                break;
+            case "attribute":
+                newClientObject = new ClientObjects.Attribute(newBusinessObject);
+                break;
+            case "relation":
+                newClientObject = new ClientObjects.Relation(newBusinessObject);
+                break;
+            case "groupRelation":
+                newClientObject = new ClientObjects.GroupRelation(newBusinessObject);
+                break;
+            case "compositionRule":
+                newClientObject = new ClientObjects.CompositionRule(newBusinessObject);
+                break;
+            case "customRule":
+                newClientObject = new ClientObjects.CustomRule(newBusinessObject);
+                break;
+        }
+        if (initialClientValues != undefined && initialClientValues != null) {
+            for (var fieldName in initialClientValues) {
+                var fieldValue = initialClientValues[fieldName];
+                newClientObject[fieldName] = fieldValue;
+            }
+        }
+
+        //Register the object
+        _thisDiagramDataModel.RegisterClientObject(newClientObject);
+
+        //Raise events
+        _thisDiagramDataModel.ClientObjectCreated.RaiseEvent(newClientObject.GUID);
+
+        return newClientObject;
     }
+    this.RegisterClientObject = function (clientObject) {
+        if (clientObject.GUID == null) {
 
+            //Create a new GUID
+            var guid = _GUIDCounter++;
+            var type = clientObject.GetType();
+            clientObject.GUID = guid;
 
-    return newClientObject;
-}
-this.RegisterClientObject = function (clientObject) {
-    if (clientObject.GUID == null) {
-        //Create a new GUID
-        var guid = _GUIDCounter++;
-        var type = clientObject.GetType();
-        clientObject.GUID = guid;
+            //Save references to it
+            _clientObjects.all[clientObject.GUID] = clientObject;
+            _clientObjects[type + "s"][clientObject.GUID] = clientObject;
 
-        //Save references to it
-        _clientObjects.all[clientObject.GUID] = clientObject;
-        _clientObjects[type + "s"][clientObject.GUID] = clientObject;
-
-        //
-        return guid;
-    } else {
-        //If the clientObject already has a GUID, return it
-        return clientObject.GUID;
-    }
-}
-this.DeleteClientObject = function (guid) {
-
-    //Set delete flag
-    _clientObjects.all[guid].SetDeleteFlag();
-
-    //Raise events
-    _thisDiagramDataModel.ClientObjectDeleted.RaiseEvent(guid);
-}
-this.UpdateClientObject = function (guid, modifiedBusinessObject) {
-
-    //Update the whole businessObject
-    _clientObjects.all[guid].UpdateBusinessObject(modifiedBusinessObject);
-
-    //Raise events
-    _thisDiagramDataModel.ClientObjectUpdated.RaiseEvent(guid);
-}
-this.UpdateClientObjectField = function (guid, fieldName, value) {
-    _clientObjects.all[guid].SetField(fieldName, value);
-
-    //Raise events
-    _thisDiagramDataModel.ClientObjectUpdated.RaiseEvent(guid);
-}
-
-this.GetByGUID = function (guid) {
-    return _clientObjects.all[guid];
-}
-this.GetByID = function (ID, type) {
-    for (var guidKey in _clientObjects[type + "s"]) {
-        var clientObject = _clientObjects[type + "s"][guidKey];
-        if (ID == clientObject.GetField("ID")) {
-            return clientObject;
+            //
+            return guid;
+        } else {
+            //If the clientObject already has a GUID, return it
+            return clientObject.GUID;
         }
     }
-}
-this.GetClientObjectField = function (guid, fieldName) {
-    return _clientObjects.all[guid].GetField(fieldName);
-}
-this.GetDefaultObject = function (type) {
-    return getDefaultBusinessObject(type);
-}
+    this.DeleteClientObject = function (guid) {
+        if (_clientObjects.all[guid].IsDeleted() == false) {
 
-//Events
-this.ClientObjectsLoaded = new Event();
-this.ClientObjectCreated = new Event();
-this.ClientObjectUpdated = new Event();
-this.ClientObjectDeleted = new Event();
+            //Set delete flag
+            _clientObjects.all[guid].SetDeleteFlag();
+
+            //Raise events
+            _thisDiagramDataModel.ClientObjectDeleted.RaiseEvent(guid);
+        }
+    }
+    this.UpdateClientObject = function (guid, modifiedBusinessObject) {
+
+        //Update the whole businessObject
+        _clientObjects.all[guid].UpdateBusinessObject(modifiedBusinessObject);
+
+        //Raise events
+        _thisDiagramDataModel.ClientObjectUpdated.RaiseEvent(guid);
+    }
+    this.UpdateClientObjectField = function (guid, fieldName, value) {
+        _clientObjects.all[guid].SetField(fieldName, value);
+
+        //Raise events
+        _thisDiagramDataModel.ClientObjectUpdated.RaiseEvent(guid);
+    }
+
+    this.GetByGUID = function (guid) {
+        return _clientObjects.all[guid];
+    }
+    this.GetByID = function (ID, type) {
+        for (var guidKey in _clientObjects[type + "s"]) {
+            var clientObject = _clientObjects[type + "s"][guidKey];
+            if (ID == clientObject.GetField("ID")) {
+                return clientObject;
+            }
+        }
+    }
+    this.GetClientObjectField = function (guid, fieldName) {
+        return _clientObjects.all[guid].GetField(fieldName);
+    }
+    this.GetDefaultObject = function (type) {
+        return getDefaultBusinessObject(type);
+    }
+
+    //Events
+    this.ClientObjectsLoaded = new Event();
+    this.ClientObjectCreated = new Event();
+    this.ClientObjectUpdated = new Event();
+    this.ClientObjectDeleted = new Event();
 }
 var ClientController = function (diagramContainer, propertiesContainer, explorerContainer, modelNameTextbox, diagramDataModelInstance) {
 
@@ -1140,33 +1216,34 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
             //Instantiate/Initialize controls
             _diagramContext = new DiagramContext($("#SVGCanvas")[0], _diagramDataModel);
             _diagramContext.Initialize();
-//            _propertiesComponent = new PropertiesComponent($("#PropertiesBox"), _diagramDataModel);
-//            _propertiesComponent.Initialize();
-//            _modelExplorer = new ModelExplorer($("#ModelExplorerTree"), _diagramDataModel);
-//            _modelExplorer.Initialize();
+            _propertiesComponent = new PropertiesComponent($("#PropertiesBox"), _diagramDataModel);
+            _propertiesComponent.Initialize();
+            _modelExplorer = new ModelExplorer($("#ModelExplorerTree"), _diagramDataModel);
+            _modelExplorer.Initialize();
 
             //Modelexplorer eventhandlers
-//            _diagramContext.ElementSelectToggled.Add(new EventHandler(_modelExplorer.OnRelatedViewElementSelectToggled));
-//            _diagramContext.SelectionCleared.Add(new EventHandler(_modelExplorer.OnRelatedViewSelectionCleared));
-//            _diagramDataModel.ClientObjectCreated.Add(new EventHandler(_modelExplorer.OnClientObjectCreated));
-//            _diagramDataModel.ClientObjectUpdated.Add(new EventHandler(_modelExplorer.OnClientObjectUpdated));
-//            _diagramDataModel.ClientObjectDeleted.Add(new EventHandler(_modelExplorer.OnClientObjectDeleted));
+            _diagramContext.ElementSelectToggled.Add(new EventHandler(_modelExplorer.OnRelatedViewElementSelectToggled));
+            _diagramContext.SelectionCleared.Add(new EventHandler(_modelExplorer.OnRelatedViewSelectionCleared));
+            _diagramDataModel.ClientObjectsLoaded.Add(new EventHandler(_modelExplorer.OnClientObjectsLoaded));
+            _diagramDataModel.ClientObjectCreated.Add(new EventHandler(_modelExplorer.OnClientObjectCreated));
+            _diagramDataModel.ClientObjectUpdated.Add(new EventHandler(_modelExplorer.OnClientObjectUpdated));
+            _diagramDataModel.ClientObjectDeleted.Add(new EventHandler(_modelExplorer.OnClientObjectDeleted));
 
             //DiagramContext eventhandlers
-            //_modelExplorer.ElementSelectToggled.Add(new EventHandler(_diagramContext.OnRelatedViewElementSelectToggled));
-            //_modelExplorer.SelectionCleared.Add(new EventHandler(_diagramContext.OnRelatedViewSelectionCleared));
+            _modelExplorer.ElementSelectToggled.Add(new EventHandler(_diagramContext.OnRelatedViewElementSelectToggled));
+            _modelExplorer.SelectionCleared.Add(new EventHandler(_diagramContext.OnRelatedViewSelectionCleared));
             _diagramDataModel.ClientObjectsLoaded.Add(new EventHandler(_diagramContext.OnClientObjectsLoaded));
             _diagramDataModel.ClientObjectCreated.Add(new EventHandler(_diagramContext.OnClientObjectCreated));
             _diagramDataModel.ClientObjectUpdated.Add(new EventHandler(_diagramContext.OnClientObjectUpdated));
             _diagramDataModel.ClientObjectDeleted.Add(new EventHandler(_diagramContext.OnClientObjectDeleted));
 
             //PropertiesComponent eventhandlers
-//            _diagramContext.ElementSelectToggled.Add(new EventHandler(_propertiesComponent.OnRelatedViewElementSelectToggled));
-//            _modelExplorer.ElementSelectToggled.Add(new EventHandler(_propertiesComponent.OnRelatedViewElementSelectToggled));
-//            _modelExplorer.SelectionCleared.Add(new EventHandler(_propertiesComponent.OnRelatedViewSelectionCleared));
-//            _diagramContext.SelectionCleared.Add(new EventHandler(_propertiesComponent.OnRelatedViewSelectionCleared));
-//            _diagramDataModel.ClientObjectUpdated.Add(new EventHandler(_propertiesComponent.OnClientObjectUpdated));
-//            _diagramDataModel.ClientObjectDeleted.Add(new EventHandler(_propertiesComponent.OnClientObjectDeleted));
+            _diagramContext.ElementSelectToggled.Add(new EventHandler(_propertiesComponent.OnRelatedViewElementSelectToggled));
+            _modelExplorer.ElementSelectToggled.Add(new EventHandler(_propertiesComponent.OnRelatedViewElementSelectToggled));
+            _modelExplorer.SelectionCleared.Add(new EventHandler(_propertiesComponent.OnRelatedViewSelectionCleared));
+            _diagramContext.SelectionCleared.Add(new EventHandler(_propertiesComponent.OnRelatedViewSelectionCleared));
+            _diagramDataModel.ClientObjectUpdated.Add(new EventHandler(_propertiesComponent.OnClientObjectUpdated));
+            _diagramDataModel.ClientObjectDeleted.Add(new EventHandler(_propertiesComponent.OnClientObjectDeleted));
 
             //Focus handlers
             _diagramContext.Focus.Add(new EventHandler(function () {
@@ -1174,16 +1251,16 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
                     _currentControlFocus = _diagramContext;
                 }
             }));
-//            _modelExplorer.Focus.Add(new EventHandler(function () {
-//                if (_currentControlFocus != _modelExplorer) {
-//                    _currentControlFocus = _modelExplorer;
-//                }
-//            }));
-//            _propertiesComponent.Focus.Add(new EventHandler(function () {
-//                if (_currentControlFocus != _propertiesComponent) {
-//                    _currentControlFocus = _propertiesComponent;
-//                }
-//            }));
+            _modelExplorer.Focus.Add(new EventHandler(function () {
+                if (_currentControlFocus != _modelExplorer) {
+                    _currentControlFocus = _modelExplorer;
+                }
+            }));
+            _propertiesComponent.Focus.Add(new EventHandler(function () {
+                if (_currentControlFocus != _propertiesComponent) {
+                    _currentControlFocus = _propertiesComponent;
+                }
+            }));
             $(_modelNameTextbox).bind("focus", function () {
                 if (_currentControlFocus != _modelNameTextbox) {
                     _currentControlFocus = _modelNameTextbox;
@@ -1233,7 +1310,7 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
         _diagramContext.CreateNewElement("compositionRule");
     }
     this.CreateNewCustomRule = function () {
-        var clientCustomRuleObject = _diagramDataModel.CreateDefaultClientObject("customRule");
+        var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("customRule");
     }
     this.Delete = function () {
         switch (_currentControlFocus) {
@@ -1914,7 +1991,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         var clientObject = _diagramDataModel.GetByGUID(guid);
         _currentClientObjectGUID = guid;
         _currentClientObjectType = clientObject.GetType();
-        _currentBusinessObject = clientObject.GetBusinessObject();
+        _currentBusinessObject = clientObject.GetBusinessObjectCopy();
 
         //Setup UI
         clearUI();
@@ -2116,6 +2193,17 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
     this.Focus = new Event();
 
     //Eventhandlers
+    this.OnClientObjectsLoaded = function () {
+        for (var guidKey in _diagramDataModel.ClientObjects.all) {
+            var clientObject = _diagramDataModel.GetByGUID(guidKey);
+            var type = clientObject.GetType();
+
+            //
+            if (_supportedTypes[type] != undefined) {
+                addElement(guidKey);
+            }
+        }
+    }
     this.OnClientObjectCreated = function (guid) {
         var clientObject = _diagramDataModel.GetByGUID(guid);
         var type = clientObject.GetType();
@@ -2174,7 +2262,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var _thisUIFeature = this;
 
         //Properties
-        this.ClientObjectGUID = clientObjectGUID;
+        this.GUID = clientObjectGUID;
         this.IsSelected = function () {
             return _currentState == systemDefaults.uiElementStates.selected;
         }
@@ -2298,7 +2386,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     _inlineEditMode = false;
 
                     //Update dataModel
-                    _diagramDataModel.UpdateClientObjectField(_thisUIFeature.ClientObjectGUID, "Name", newName);
+                    _diagramDataModel.UpdateClientObjectField(_thisUIFeature.GUID, "Name", newName);
                 }).bind("keypress", function (e) {
                     if (e.which == 13) { //Enter
                         //
@@ -2307,7 +2395,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                         _inlineEditMode = false;
 
                         //Update dataModel
-                        _diagramDataModel.UpdateClientObjectField(_thisUIFeature.ClientObjectGUID, "Name", newName);
+                        _diagramDataModel.UpdateClientObjectField(_thisUIFeature.GUID, "Name", newName);
                     }
                     else if (e.which == 27) { //Escape
                         $(this).remove();
@@ -2382,7 +2470,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var _relationType = relationType;
 
         //Properties
-        this.ClientObjectGUID = clientObjectGUID;
+        this.GUID = clientObjectGUID;
         this.IsSelected = function () {
             return _currentState == systemDefaults.uiElementStates.selected;
         }
@@ -2543,7 +2631,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var _thisUIGroupRelation = this;
 
         //Properties
-        this.ClientObjectGUID = clientObjectGUID;
+        this.GUID = clientObjectGUID;
         this.IsSelected = function () {
             return _currentState == systemDefaults.uiElementStates.selected;
         }
@@ -2689,7 +2777,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
                 //Add references
                 childFeatures[i].RelatedCompositeElements.push(_thisUIGroupRelation);
-                _featuresToConnections[childFeatures[i].ClientObjectGUID] = newUIConnection;
+                _featuresToConnections[childFeatures[i].GUID] = newUIConnection;
             }
 
             //Add reference to parentFeature
@@ -2756,7 +2844,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             }
             else {
                 //Refresh connection connected to single child UIFeature
-                var connection = _featuresToConnections[UIFeature.ClientObjectGUID];
+                var connection = _featuresToConnections[UIFeature.GUID];
                 connection.RefreshGraphicalRepresentation();
 
                 //Refresh arc
@@ -2775,7 +2863,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //ChildFeature deleted
             else {
             //Delete connection connected to single child UIFeature
-            var connection = _featuresToConnections[UIFeature.ClientObjectGUID];
+            var connection = _featuresToConnections[UIFeature.GUID];
             connection.Delete();
             var index = $(_innerElements.connections).index(connection);
             _innerElements.connections.splice(index, 1);
@@ -2801,7 +2889,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var _thisUICompositionRule = this;
 
         //Properties
-        this.ClientObjectGUID = clientObjectGUID;
+        this.GUID = clientObjectGUID;
         this.IsSelected = function () {
             return _currentState == systemDefaults.uiElementStates.selected;
         }
@@ -3311,15 +3399,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //Raise events
         if (raiseEvents == true) {
-            _thisDiagramContext.ElementSelectToggled.RaiseEvent([UIElement.ClientObjectGUID, shift, newState]);
+            _thisDiagramContext.ElementSelectToggled.RaiseEvent([UIElement.GUID, shift, newState]);
         }
     }
     var deleteElement = function (UIElement) {
         setElementUnselected(UIElement);
         UIElement.Delete();
-        _UIElements[UIElement.ClientObjectGUID] = null;
+        _UIElements[UIElement.GUID] = null;
     }
-
     var createFeature = function () {
         if (_createFeatureMode == false) {
             _createFeatureMode = true;
@@ -3358,7 +3445,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     XPos: posx,
                     YPos: posy
                 }
-                var clientFeatureObject = _diagramDataModel.CreateDefaultClientObject("feature", initialValues);
+                var clientFeatureObject = _diagramDataModel.AddNewClientObject("feature", initialValues);
 
                 //
                 _createFeatureMode = false;
@@ -3370,69 +3457,43 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         if (_selectedElements.length == 2) {
 
             //Create a new clientObject in the diagramDataModel
-            var parentFeatureGUID = _selectedElements[0].ClientObjectGUID;
-            var childFeatureGUID = _selectedElements[1].ClientObjectGUID;
-            var extraClientData = {
-                parentFeatureGUID: parentFeatureGUID,
-                childFeatureGUID: childFeatureGUID
+            var parentFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
+            var childFeature = _diagramDataModel.GetByGUID(_selectedElements[1].GUID);
+            var initialClientValues = {
+                ParentFeature: parentFeature,
+                ChildFeature: childFeature
             }
-            var clientRelationObject = _diagramDataModel.CreateDefaultClientObject("relation", null, extraClientData);
+            var clientRelationObject = _diagramDataModel.AddNewClientObject("relation", null, initialClientValues);
         }
     }
     var createGroupRelation = function () {
         if (_selectedElements.length > 2) {
-
+            
             //Create a new clientObject in the diagramDataModel
-            var parentFeatureGUID = _selectedElements[0].ClientObjectGUID;
-            var childFeaturesGUID = [];
-            var childFeatures = _selectedElements.slice(1);
-            for (var i = 0; i < childFeatures.length; i++) {
-                childFeaturesGUID.push(childFeatures[i].ClientObjectGUID);
+            var parentFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
+            var childFeatures = [];
+            var childUIFeatures = _selectedElements.slice(1);
+            for (var i = 0; i < childUIFeatures.length; i++) {
+                childFeatures.push(_diagramDataModel.GetByGUID(childUIFeatures[i].GUID));
             }
-            var extraClientData = {
-                parentFeatureGUID: parentFeatureGUID,
-                childFeatureGUIDs: childFeaturesGUID
+            var initialClientValues = {
+                ParentFeature: parentFeature,
+                ChildFeatures: childFeatures
             }
-            var clientGroupRelationObject = _diagramDataModel.CreateDefaultClientObject("groupRelation", null, extraClientData);
+            var clientGroupRelationObject = _diagramDataModel.AddNewClientObject("groupRelation", null, initialClientValues);
         }
     }
     var createCompositionRule = function () {
         if (_selectedElements.length == 2) {
 
             //Create a new clientObject in the diagramDataModel
-            var firstFeatureGUID = _selectedElements[0].ClientObjectGUID;
-            var secondFeatureGUID = _selectedElements[1].ClientObjectGUID;
-            var extraClientData = {
-                firstFeatureGUID: firstFeatureGUID,
-                secondFeatureGUID: secondFeatureGUID
+            var firstFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
+            var secondFeature = _diagramDataModel.GetByGUID(_selectedElements[1].GUID);
+            var initialClientValues = {
+                FirstFeature: firstFeature,
+                SecondFeature: secondFeature
             }
-            var clientRelationObject = _diagramDataModel.CreateDefaultClientObject("compositionRule", null, extraClientData);
-        }
-    }
-
-    //Public methods (triggered by ModelController)
-    this.DeleteSelectedElements = function () {
-        if (_inlineEditMode != true) {
-            for (var i = _selectedElements.length - 1; i >= 0; i--) {
-                _diagramDataModel.DeleteClientObject(_selectedElements[i].ClientObjectGUID);
-            }
-        }
-    }
-    this.CreateNewElement = function (type) {
-
-        switch (type) {
-            case "feature":
-                createFeature();
-                break;
-            case "relation":
-                createRelation();
-                break;
-            case "groupRelation":
-                createGroupRelation();
-                break;
-            case "compositionRule":
-                createCompositionRule();
-                break;
+            var clientRelationObject = _diagramDataModel.AddNewClientObject("compositionRule", null, initialClientValues);
         }
     }
 
@@ -3501,7 +3562,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var clientObject = _diagramDataModel.GetByGUID(guid);
         var UIparentFeature = _UIElements[clientObject.ParentFeature.GUID];
         var UIchildFeature = _UIElements[clientObject.ChildFeature.GUID];
-
         var relationType = clientObject.GetField("RelationType");
         var lowerBound = clientObject.GetField("LowerBound");
         var upperBound = clientObject.GetField("UpperBound");
@@ -3517,18 +3577,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //Variables
         var clientObject = _diagramDataModel.GetByGUID(guid);
-        var parentFeature = _UIElements[clientObject.ExtraClientData.parentFeatureGUID];
-        var childFeatures = [];
-        for (var i = 0; i < clientObject.ExtraClientData.childFeatureGUIDs.length; i++) {
-            childFeatures.push(_UIElements[clientObject.ExtraClientData.childFeatureGUIDs[i]]);
+        var parentUIFeature = _UIElements[clientObject.ParentFeature.GUID];
+        var childUIFeatures = [];
+        for (var i = 0; i < clientObject.ChildFeatures.length; i++) {
+            childUIFeatures.push(_UIElements[clientObject.ChildFeatures[i].GUID]);
         }
-
-        var groupRelationType = _diagramDataModel.GetByGUID(guid).GetField("GroupRelationType");
-        var lowerBound = _diagramDataModel.GetByGUID(guid).GetField("LowerBound");
-        var upperBound = _diagramDataModel.GetByGUID(guid).GetField("UpperBound");
+        var groupRelationType = clientObject.GetField("GroupRelationType");
+        var lowerBound = clientObject.GetField("LowerBound");
+        var upperBound = clientObject.GetField("UpperBound");
 
         //Create
-        var newUIGroupRelation = new UIGroupRelation(guid, groupRelationType, lowerBound, upperBound, parentFeature, childFeatures);
+        var newUIGroupRelation = new UIGroupRelation(guid, groupRelationType, lowerBound, upperBound, parentUIFeature, childUIFeatures);
         newUIGroupRelation.CreateGraphicalRepresentation();
 
         //Raise events/etc
@@ -3538,10 +3597,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //Variables
         var clientObject = _diagramDataModel.GetByGUID(guid);
-        var firstFeature = _UIElements[clientObject.ExtraClientData.firstFeatureGUID];
-        var secondFeature = _UIElements[clientObject.ExtraClientData.secondFeatureGUID];
-
-        var compositionRuleType = _diagramDataModel.GetByGUID(guid).GetField("CompositionRuleType");
+        var firstFeature = _UIElements[clientObject.FirstFeature.GUID];
+        var secondFeature = _UIElements[clientObject.SecondFeature.GUID];
+        var compositionRuleType = clientObject.GetField("CompositionRuleType");
 
         //Create
         var newUICompositionRule = new UICompositionRule(guid, compositionRuleType, firstFeature, secondFeature);
@@ -3551,6 +3609,31 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         _UIElements[guid] = newUICompositionRule;
     }
 
+    //Public methods (triggered by ModelController)
+    this.DeleteSelectedElements = function () {
+        if (_inlineEditMode != true) {
+            var elementsToBeDeleted = _selectedElements.slice(0);
+            for (var i = 0; i < elementsToBeDeleted.length; i++) {
+                _diagramDataModel.DeleteClientObject(elementsToBeDeleted[i].GUID);
+            }
+        }
+    }
+    this.CreateNewElement = function (type) {
+        switch (type) {
+            case "feature":
+                createFeature();
+                break;
+            case "relation":
+                createRelation();
+                break;
+            case "groupRelation":
+                createGroupRelation();
+                break;
+            case "compositionRule":
+                createCompositionRule();
+                break;
+        }
+    }
 
     //Events
     this.ElementSelectToggled = new Event();
@@ -3561,11 +3644,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
     //Eventhandlers
     this.OnClientObjectsLoaded = function () {
-        debugger;
         for (var guidKey in _diagramDataModel.ClientObjects.all) {
             addElement(guidKey);
         }
-        var x;
     }
     this.OnClientObjectCreated = function (guid) {
         var clientObject = _diagramDataModel.GetByGUID(guid);
@@ -3600,11 +3681,11 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         clearSelection();
     }
     var onInternalUIElementCascadeDeleted = function (UIElement) {
-        _diagramDataModel.DeleteClientObject(UIElement.ClientObjectGUID);
+        _diagramDataModel.DeleteClientObject(UIElement.GUID);
     }
     var onInternalUIFeatureMoved = function (UIFeature) {
-        _diagramDataModel.UpdateClientObjectField(UIFeature.ClientObjectGUID, "XPos", UIFeature.GetPos().x);
-        _diagramDataModel.UpdateClientObjectField(UIFeature.ClientObjectGUID, "YPos", UIFeature.GetPos().y);
+        _diagramDataModel.UpdateClientObjectField(UIFeature.GUID, "XPos", UIFeature.GetPos().x);
+        _diagramDataModel.UpdateClientObjectField(UIFeature.GUID, "YPos", UIFeature.GetPos().y);
     }
 }
 
