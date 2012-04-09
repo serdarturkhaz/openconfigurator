@@ -7,12 +7,11 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class FeatureService
+    public class FeatureService : IDataService
     {
         //Fields
         private IRepository<DAL.DataEntities.Feature> _FeatureRepository;
         private IRepository<DAL.DataEntities.FeatureSelection> _FeatureSelectionRepository;
-        private IRepository<DAL.DataEntities.Attribute> _AttributeRepository;
         private int _LoggedInUserID;
 
         //Constructors
@@ -22,6 +21,11 @@ namespace BLL.Services
         }
 
         //Methods
+        public IBusinessObject CreateDefault()
+        {
+            BLL.BusinessObjects.Feature defaultFeature = BLL.BusinessObjects.Feature.CreateDefault();
+            return defaultFeature;
+        }
         public List<BLL.BusinessObjects.Feature> GetByModelID(int ModelID)
         {
             //
@@ -42,19 +46,6 @@ namespace BLL.Services
             }
             return BFeatures;
         }
-        public IBusinessObject CreateDefault()
-        {
-            BLL.BusinessObjects.Feature defaultFeature = BLL.BusinessObjects.Feature.CreateDefault();
-            return defaultFeature;
-        }
-        public IBusinessObject CreateDefaultAttribute()
-        {
-            BLL.BusinessObjects.Attribute defaultAttribute = BLL.BusinessObjects.Attribute.CreateDefault();
-            return defaultAttribute;
-        }
-
-        //Interface members
-        #region IService<Feature> Members
 
         public BusinessObjects.Feature GetByID(int id)
         {
@@ -66,10 +57,6 @@ namespace BLL.Services
             //
             return new BLL.BusinessObjects.Feature(feature);
         }
-        public IList<BusinessObjects.Feature> GetAll()
-        {
-            throw new NotImplementedException();
-        }
         public void Update(BusinessObjects.Feature entity)
         {
             using (_FeatureRepository = new GenericRepository<DAL.DataEntities.Feature>())
@@ -77,35 +64,6 @@ namespace BLL.Services
                 //Update the Feature
                 _FeatureRepository.Attach((DAL.DataEntities.Feature)entity.InnerEntity);
                 _FeatureRepository.SaveChanges();
-
-                //Update Attributes
-                using (_AttributeRepository = new GenericRepository<DAL.DataEntities.Attribute>())
-                {
-                    for (int i = entity.Attributes.Count - 1; i >= 0; i--)
-                    {
-                        BLL.BusinessObjects.Attribute BLLattribute = entity.Attributes[i];
-                        BLLattribute.FeatureID = entity.ID;
-                       
-                        //Delete 
-                        if (BLLattribute.ToBeDeleted == true && BLLattribute.ID != 0)
-                        {
-                            _AttributeRepository.Attach((DAL.DataEntities.Attribute)BLLattribute.InnerEntity);
-                            _AttributeRepository.Delete((DAL.DataEntities.Attribute)BLLattribute.InnerEntity);
-                            entity.Attributes.Remove(BLLattribute);
-                        }
-                        //Add
-                        else if (BLLattribute.ToBeDeleted == false && BLLattribute.ID == 0)
-                        {
-                            _AttributeRepository.Add((DAL.DataEntities.Attribute)BLLattribute.InnerEntity);
-                        }
-                        //Update
-                        else if (BLLattribute.ToBeDeleted == false && BLLattribute.ID != 0)
-                        {
-                            _AttributeRepository.Attach((DAL.DataEntities.Attribute)BLLattribute.InnerEntity);
-                        }
-                        _AttributeRepository.SaveChanges();
-                    }
-                }
             }
         }
         public void Delete(BusinessObjects.Feature entity)
@@ -143,26 +101,22 @@ namespace BLL.Services
                 //Add the Feature
                 _FeatureRepository.Add((DAL.DataEntities.Feature)entity.InnerEntity);
                 _FeatureRepository.SaveChanges();
-
-                //Update Attributes
-                using (_AttributeRepository = new GenericRepository<DAL.DataEntities.Attribute>())
-                {
-                    for (int i = entity.Attributes.Count - 1; i >= 0; i--)
-                    {
-                        BLL.BusinessObjects.Attribute BLLattribute = entity.Attributes[i];
-                        BLLattribute.FeatureID = entity.ID;
-
-                        //Add
-                        if (BLLattribute.ToBeDeleted == false && BLLattribute.ID == 0)
-                        {
-                            _AttributeRepository.Add((DAL.DataEntities.Attribute)BLLattribute.InnerEntity);
-                        }
-                        _AttributeRepository.SaveChanges();
-                    }
-                }
             }
         }
 
-        #endregion
+
+        //IDataService
+        public void Add(IBusinessObject obj)
+        {
+            Add((BLL.BusinessObjects.Feature)obj);
+        }
+        public void Delete(IBusinessObject obj)
+        {
+            throw new NotImplementedException();
+        }
+        public void Update(IBusinessObject obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

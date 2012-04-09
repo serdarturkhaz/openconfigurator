@@ -20,6 +20,12 @@ namespace BLL.Services
         }
 
         //Methods
+        public IBusinessObject CreateDefault()
+        {
+            BLL.BusinessObjects.CustomRule defaultCustomRule = BLL.BusinessObjects.CustomRule.CreateDefault();
+            return defaultCustomRule;
+        }
+
         public List<BLL.BusinessObjects.CustomRule> GetByModelID(int ModelID)
         {
             //
@@ -37,18 +43,6 @@ namespace BLL.Services
             }
             return BCustomRules;
         }
-
-        public IBusinessObject CreateDefault()
-        {
-            BLL.BusinessObjects.CustomRule defaultCustomRule = BLL.BusinessObjects.CustomRule.CreateDefault();
-            return defaultCustomRule;
-        }
-
-
-
-        //Interface members
-        #region IService<Feature> Members
-
         public BusinessObjects.CustomRule GetByID(int id)
         {
             DAL.DataEntities.CustomRule customRule;
@@ -59,12 +53,10 @@ namespace BLL.Services
             //
             return new BLL.BusinessObjects.CustomRule(customRule);
         }
-
         public IList<BusinessObjects.CustomRule> GetAll()
         {
             throw new NotImplementedException();
         }
-
         public void Update(BusinessObjects.CustomRule entity)
         {
             using (_CustomRuleRepository = new GenericRepository<DAL.DataEntities.CustomRule>())
@@ -74,7 +66,6 @@ namespace BLL.Services
                 _CustomRuleRepository.SaveChanges();
             }
         }
-
         public void Delete(BusinessObjects.CustomRule entity)
         {
             Delete(entity.ID);
@@ -97,8 +88,5 @@ namespace BLL.Services
                 _CustomRuleRepository.SaveChanges();
             }
         }
-
-
-        #endregion
     }
 }

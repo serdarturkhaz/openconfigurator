@@ -205,8 +205,6 @@ namespace BLL.Services
         }
         
     }
-
-
     public class ConfiguratorSession
     {
         //Fields

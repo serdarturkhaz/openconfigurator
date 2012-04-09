@@ -20,6 +20,12 @@ namespace BLL.Services
         }
 
         //Methods
+        public IBusinessObject CreateDefault()
+        {
+            BLL.BusinessObjects.CompositionRule defaultCompositionRule = BLL.BusinessObjects.CompositionRule.CreateDefault();
+            return defaultCompositionRule;
+        }
+
         public List<BLL.BusinessObjects.CompositionRule> GetByModelID(int ModelID)
         {
             //
@@ -37,18 +43,6 @@ namespace BLL.Services
             }
             return BLLCompositionRules;
         }
-
-        public IBusinessObject CreateDefault()
-        {
-            BLL.BusinessObjects.CompositionRule defaultCompositionRule = BLL.BusinessObjects.CompositionRule.CreateDefault();
-            return defaultCompositionRule;
-        }
-
-
-
-        //Interface members
-        #region IService<Feature> Members
-
         public BusinessObjects.CompositionRule GetByID(int id)
         {
             DAL.DataEntities.CompositionRule feature;
@@ -59,12 +53,6 @@ namespace BLL.Services
             //
             return new BLL.BusinessObjects.CompositionRule(feature);
         }
-
-        public IList<BusinessObjects.CompositionRule> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
         public void Update(BusinessObjects.CompositionRule entity)
         {
             using (_CompositionRuleRepository = new GenericRepository<DAL.DataEntities.CompositionRule>())
@@ -74,7 +62,6 @@ namespace BLL.Services
                 _CompositionRuleRepository.SaveChanges();
             }
         }
-
         public void Delete(BusinessObjects.CompositionRule entity)
         {
             Delete(entity.ID);
@@ -97,9 +84,5 @@ namespace BLL.Services
                 _CompositionRuleRepository.SaveChanges();
             }
         }
-
-        #endregion
-
-
     }
 }

@@ -565,7 +565,7 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             success: function (response) {
                 var featureSelections = response;
                 if (featureSelections != false) {
-                    
+
                     //Update FeatureSelections
                     for (var guidkey in featureSelections) {
                         var updatedFeatureSelectionBusinessObj = featureSelections[guidkey]; //Get the updated business object
@@ -855,12 +855,12 @@ var StandardView = function (container, configurationDataModelInstance) {
             //Create HTML
             _outerElement = $("<div class='Attribute' title='" + _description + "'>" + _name + "</div>").appendTo(parentContainer);
             switch (dataTypeName) {
-                //Integer 
+                //Integer  
                 case systemDefaults.enums.attributeDataTypes.integer.name:
                     _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
                     $(_innerElements.innerControl).val(value);
                     break;
-                //Boolean 
+                //Boolean  
                 case systemDefaults.enums.attributeDataTypes.boolean.name:
                     _innerElements.innerControl = $("<input type='checkbox' class='InnerCheckbox' />").appendTo(_outerElement);
                     if (value == true || value == "True") {
@@ -872,7 +872,7 @@ var StandardView = function (container, configurationDataModelInstance) {
                         return $(control).is(':checked');
                     }
                     break;
-                //String 
+                //String  
                 case systemDefaults.enums.attributeDataTypes.string.name:
                     _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
                     $(_innerElements.innerControl).val(value);
@@ -975,17 +975,17 @@ var StandardView = function (container, configurationDataModelInstance) {
         var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
         switch (currentSelectionState) {
 
-            //Unselected -> Selected                                                                                                                                                                                              
+            //Unselected -> Selected                                                                                                                                                                                               
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
 
-            //Selected -> Unselected                         
+            //Selected -> Unselected                          
             case systemDefaults.enums.featureSelectionStates.selected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
                 break;
 
-            //Deselected -> Selected                         
+            //Deselected -> Selected                          
             case systemDefaults.enums.featureSelectionStates.deselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;

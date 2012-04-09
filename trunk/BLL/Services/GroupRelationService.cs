@@ -22,6 +22,12 @@ namespace BLL.Services
         }
 
         //Methods
+        public IBusinessObject CreateDefault()
+        {
+            BLL.BusinessObjects.GroupRelation defaultGroupRelation = (BLL.BusinessObjects.GroupRelation)BLL.BusinessObjects.GroupRelation.CreateDefault();
+            return defaultGroupRelation;
+        }
+
         public List<BLL.BusinessObjects.GroupRelation> GetByModelID(int ModelID)
         {
             //
@@ -42,11 +48,6 @@ namespace BLL.Services
             }
             return BLLGroupRelations;
         }
-        public IBusinessObject CreateDefault()
-        {
-            BLL.BusinessObjects.GroupRelation defaultGroupRelation = (BLL.BusinessObjects.GroupRelation)BLL.BusinessObjects.GroupRelation.CreateDefault();
-            return defaultGroupRelation;
-        }
         public Dictionary<int, string> GetGroupRelationTypes()
         {
             Dictionary<int, string> dict = new Dictionary<int, string>();
@@ -56,10 +57,6 @@ namespace BLL.Services
 
             return dict;
         }
-
-        //Interface members
-        #region IService<Model> Members
-
         public BusinessObjects.GroupRelation GetByID(int id)
         {
             DAL.DataEntities.GroupRelation groupRelation;
@@ -125,7 +122,5 @@ namespace BLL.Services
                 _GroupRelationsToFeaturesRepository.SaveChanges();
             }
         }
-
-        #endregion
     }
 }
