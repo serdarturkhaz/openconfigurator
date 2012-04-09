@@ -25,6 +25,7 @@ namespace BLL.Services
             BLL.BusinessObjects.Configuration defaultConfiguration = (BLL.BusinessObjects.Configuration)BLL.BusinessObjects.Configuration.CreateDefault(modelID);
             return defaultConfiguration;
         }
+
         public List<BLL.BusinessObjects.Configuration> GetByModelID(int modelID)
         {
             //

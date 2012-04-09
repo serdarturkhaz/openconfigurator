@@ -6,6 +6,10 @@ using System.Web.Mvc;
 using BLL.Services;
 using PresentationLayer.Common;
 using Newtonsoft.Json.Linq;
+using BLL.BusinessObjects;
+using System.Globalization;
+using System.Reflection;
+using System.Collections;
 
 namespace PresentationLayer.Controllers
 {
@@ -21,7 +25,7 @@ namespace PresentationLayer.Controllers
         }
         [Authorize]
         public JsonNetResult LoadData(int modelID)
-        {   
+        {
             //Data return wrapper
             JsonNetResult result = new JsonNetResult();
 
@@ -32,189 +36,259 @@ namespace PresentationLayer.Controllers
 
             return result;
         }
-        [Authorize]
-        public JsonNetResult SaveData(int modelID, string modelName, string featuresString, string relationsString, string relationsAdjFeaturesString, string groupRelationsString,
-            string groupRelationsAdjFeaturesString, string compositionRulesString, string compositionRulesAdjFeaturesString, string customRulesString)
-        {
-            //Data return wrapper
-            object[] innerJObj = new object[5];
-            JsonNetResult result = new JsonNetResult() { Data = innerJObj };
 
+
+        [Authorize]
+        public void SaveModel(int modelID, string modelName)
+        {
             //Create services
             ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
-            FeatureService _featureService = new FeatureService(SessionData.LoggedInUser.ID);
-            RelationService _relationService = new RelationService(SessionData.LoggedInUser.ID);
-            GroupRelationService _groupRelationService = new GroupRelationService(SessionData.LoggedInUser.ID);
-            CompositionRuleService _compositionRuleService = new CompositionRuleService(SessionData.LoggedInUser.ID);
-            CustomRuleService _customRuleService = new CustomRuleService(SessionData.LoggedInUser.ID);
 
             //Save changes to Model
             _modelService.UpdateName(modelID, modelName);
-
-
-            //Changes to Features********************************************************************************************************************************************************
-            Dictionary<int, BLL.BusinessObjects.Feature> features = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.Feature>>(featuresString);
-            foreach (int guid in features.Keys)
-            {
-                BLL.BusinessObjects.Feature feature = features[guid];
-                
-                //Delete 
-                if (feature.ToBeDeleted == true && feature.ID != 0)
-                {
-                    _featureService.Delete(feature);
-                }
-                //Add
-                else if (feature.ToBeDeleted == false && feature.ID == 0)
-                {
-                    ((DAL.DataEntities.Feature)feature.InnerEntity).ModelID = modelID;
-                    _featureService.Add(feature);
-                }
-                //Update
-                else if (feature.ToBeDeleted == false && feature.ID != 0)
-                {
-                    ((DAL.DataEntities.Feature)feature.InnerEntity).ModelID = modelID;
-                    _featureService.Update(feature);
-                }
-            }
-            innerJObj[0] = features;
-            //***************************************************************************************************************************************************************************
-
-
-            //Changes to Relations*******************************************************************************************************************************************************
-            Dictionary<int, BLL.BusinessObjects.Relation> relations = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.Relation>>(relationsString);
-            Dictionary<int, JObject> relationsAdjFeatures = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, JObject>>(relationsAdjFeaturesString);
-            foreach (int guid in relations.Keys)
-            {
-                BLL.BusinessObjects.Relation relation = relations[guid];
-                JObject relAdj = relationsAdjFeatures[guid];
-
-                //Delete 
-                if (relation.ToBeDeleted == true && relation.ID != 0)
-                {
-                    _relationService.Delete(relation);
-                }
-                //Add
-                else if (relation.ToBeDeleted == false && relation.ID == 0)
-                {
-                    ((DAL.DataEntities.Relation)relation.InnerEntity).ModelID = modelID;
-                    int childFeatureGUID = (int)relAdj.SelectToken("childFeatureGUID");
-                    int parentFeatureGUID = (int)relAdj.SelectToken("parentFeatureGUID");
-                    ((DAL.DataEntities.Relation)relation.InnerEntity).ChildFeatureID = features[childFeatureGUID].ID;
-                    ((DAL.DataEntities.Relation)relation.InnerEntity).ParentFeatureID = features[parentFeatureGUID].ID;
-
-                    _relationService.Add(relation);
-                }
-                //Update
-                else if (relation.ToBeDeleted == false && relation.ID != 0)
-                {
-                    ((DAL.DataEntities.Relation)relation.InnerEntity).ModelID = modelID;
-                    _relationService.Update(relation);
-                }
-            }
-            //var filteredRelations = relations.Where(entry => entry.Value.ToBeDeleted == false).ToDictionary(entry => entry.Key, entry => entry.Value);
-            innerJObj[1] = relations;
-            //***************************************************************************************************************************************************************************
-
-            //Changes to GroupRelations**************************************************************************************************************************************************
-            Dictionary<int, BLL.BusinessObjects.GroupRelation> groupRelations = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.GroupRelation>>(groupRelationsString);
-            Dictionary<int, JObject> groupRelationsAdjFeatures = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, JObject>>(groupRelationsAdjFeaturesString);
-            foreach (int guid in groupRelations.Keys)
-            {
-                BLL.BusinessObjects.GroupRelation groupRelation = groupRelations[guid];
-                JObject relAdj = groupRelationsAdjFeatures[guid];
-                
-                //Delete 
-                if (groupRelation.ToBeDeleted == true && groupRelation.ID != 0)
-                {
-                    _groupRelationService.Delete(groupRelation);
-                }
-                //Add
-                else if (groupRelation.ToBeDeleted == false && groupRelation.ID == 0)
-                {
-                    ((DAL.DataEntities.GroupRelation)groupRelation.InnerEntity).ModelID = modelID;
-                    int parentFeatureGUID = (int)relAdj["parentFeatureGUID"];
-                    List<int> childFeatureGUIDs = ((JArray)relAdj["childFeatureGUIDs"]).Values<int>().ToList<int>();
-                    List<int> childFeatureIDs = childFeatureGUIDs.Select(entry => features[entry].ID).ToList<int>();
-
-                    groupRelation.ParentFeatureID = features[parentFeatureGUID].ID;
-                    groupRelation.ChildFeatureIDs = childFeatureIDs;
-
-                    _groupRelationService.Add(groupRelation);
-                }
-                //Update
-                else if (groupRelation.ToBeDeleted == false && groupRelation.ID != 0)
-                {
-                    ((DAL.DataEntities.GroupRelation)groupRelation.InnerEntity).ModelID = modelID;
-                    _groupRelationService.Update(groupRelation);
-                }
-            }
-            innerJObj[2] = groupRelations;
-            //***************************************************************************************************************************************************************************
-
-            //Changes to CompositionRules************************************************************************************************************************************************
-            Dictionary<int, BLL.BusinessObjects.CompositionRule> compositionRules = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.CompositionRule>>(compositionRulesString);
-            Dictionary<int, JObject> compositionRulesAdjFeatures = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, JObject>>(compositionRulesAdjFeaturesString);
-            foreach (int guid in compositionRules.Keys)
-            {
-                BLL.BusinessObjects.CompositionRule compositionRule = compositionRules[guid];
-                JObject relAdj = compositionRulesAdjFeatures[guid];
-
-                //Delete 
-                if (compositionRule.ToBeDeleted == true && compositionRule.ID != 0)
-                {
-                    _compositionRuleService.Delete(compositionRule);
-                }
-                //Add
-                else if (compositionRule.ToBeDeleted == false && compositionRule.ID == 0)
-                {
-                    ((DAL.DataEntities.CompositionRule)compositionRule.InnerEntity).ModelID = modelID;
-                    int firstFeatureGUID = (int)relAdj.SelectToken("firstFeatureGUID");
-                    int secondFeatureGUID = (int)relAdj.SelectToken("secondFeatureGUID");
-                    ((DAL.DataEntities.CompositionRule)compositionRule.InnerEntity).FirstFeatureID = features[firstFeatureGUID].ID;
-                    ((DAL.DataEntities.CompositionRule)compositionRule.InnerEntity).SecondFeatureID = features[secondFeatureGUID].ID;
-
-                    _compositionRuleService.Add(compositionRule);
-                }
-                //Update
-                else if (compositionRule.ToBeDeleted == false && compositionRule.ID != 0)
-                {
-                    ((DAL.DataEntities.CompositionRule)compositionRule.InnerEntity).ModelID = modelID;
-                    _compositionRuleService.Update(compositionRule);
-                }
-            }
-            innerJObj[3] = compositionRules;
-            //******************************************************************************************************************************************************************************
-
-            //Changes to CustomRules********************************************************************************************************************************************************
-            Dictionary<int, BLL.BusinessObjects.CustomRule> customRules = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.CustomRule>>(customRulesString);
-            foreach (int guid in customRules.Keys)
-            {
-                BLL.BusinessObjects.CustomRule customRule = customRules[guid];
-
-                //Delete 
-                if (customRule.ToBeDeleted == true && customRule.ID != 0)
-                {
-                    _customRuleService.Delete(customRule);
-                }
-                //Add
-                else if (customRule.ToBeDeleted == false && customRule.ID == 0)
-                {
-                    ((DAL.DataEntities.CustomRule)customRule.InnerEntity).ModelID = modelID;
-                    _customRuleService.Add(customRule);
-                }
-                //Update
-                else if (customRule.ToBeDeleted == false && customRule.ID != 0)
-                {
-                    ((DAL.DataEntities.CustomRule)customRule.InnerEntity).ModelID = modelID;
-                    _customRuleService.Update(customRule);
-                }
-            }
-            innerJObj[4] = customRules;
-            //***************************************************************************************************************************************************************************
-
-            //
-            return result;
         }
+
+        [Authorize]
+        public JsonNetResult SaveBusinessObjects(int modelID, string businessObjectsString, string businessObjectsType)
+        {
+            //Setup variables & types
+            Assembly BLLAssembly = Assembly.GetAssembly(typeof(BLL.BusinessObjects.IBusinessObject));
+            Type businessObjectType = BLLAssembly.GetType("BLL.BusinessObjects." + businessObjectsType, false, true);
+
+            //Serialize to businessObjects into a List
+            List<JObject> list = (List<JObject>)Newtonsoft.Json.JsonConvert.DeserializeObject(businessObjectsString, typeof(List<JObject>));
+            List<IBusinessObject> businessObjects = new List<IBusinessObject>();
+            foreach (JObject jObj in list)
+            {
+                IBusinessObject businessObj = (IBusinessObject)Newtonsoft.Json.JsonConvert.DeserializeObject(jObj.ToString(), businessObjectType);
+                businessObjects.Add(businessObj);
+            }
+
+            //Create a corresponding service
+            Type specificServiceType = BLLAssembly.GetType("BLL.Services." + businessObjectsType + "Service", false, true);
+            IDataService service = (IDataService)Activator.CreateInstance(specificServiceType, (object)SessionData.LoggedInUser.ID);
+
+            return null;
+        }
+        //[Authorize]
+        //public JsonNetResult ExecuteOperation(int modelID, string operationString)
+        //{
+        //    //Variables
+        //    TemporaryOp tempOp = Newtonsoft.Json.JsonConvert.DeserializeObject<TemporaryOp>(operationString);
+
+        //    //Create a proper operation
+        //    Operation operation = new Operation(tempOp);
+
+
+        //    return null;
+        //}
+        ////Operations
+        //public class TemporaryOp
+        //{
+        //    public string GUID, ClientObjectType;
+        //    public JObject Data;
+        //}
+        //public class Operation
+        //{
+        //    //Fields
+        //    public string GUID, ClientObjectType;
+        //    public IBusinessObject BusinessObject;
+
+        //    public Operation(TemporaryOp tempOp)
+        //    {
+        //        this.GUID = tempOp.GUID;
+        //        this.ClientObjectType = Common.HelperMethods.UppercaseFirst(tempOp.ClientObjectType);
+
+        //        //Transform the data into an IBusinessObject
+        //        Assembly businessLayer = Assembly.GetAssembly(typeof(BLL.BusinessObjects.IBusinessObject));
+        //        Type businessObjectType = businessLayer.GetType("BLL.BusinessObjects." + this.ClientObjectType);
+        //        this.BusinessObject = (IBusinessObject)Newtonsoft.Json.JsonConvert.DeserializeObject(tempOp.Data.ToString(), businessObjectType);
+        //    }
+        //}
+
+        //[Authorize]
+        //public JsonNetResult SaveData(int modelID, string modelName, string featuresString, string relationsString, string relationsAdjFeaturesString, string groupRelationsString,
+        //    string groupRelationsAdjFeaturesString, string compositionRulesString, string compositionRulesAdjFeaturesString, string customRulesString)
+        //{
+        //    //Data return wrapper
+        //    object[] innerJObj = new object[5];
+        //    JsonNetResult result = new JsonNetResult() { Data = innerJObj };
+
+        //    //Create services
+        //    ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
+        //    FeatureService _featureService = new FeatureService(SessionData.LoggedInUser.ID);
+        //    RelationService _relationService = new RelationService(SessionData.LoggedInUser.ID);
+        //    GroupRelationService _groupRelationService = new GroupRelationService(SessionData.LoggedInUser.ID);
+        //    CompositionRuleService _compositionRuleService = new CompositionRuleService(SessionData.LoggedInUser.ID);
+        //    CustomRuleService _customRuleService = new CustomRuleService(SessionData.LoggedInUser.ID);
+
+        //    //Save changes to Model
+        //    _modelService.UpdateName(modelID, modelName);
+
+
+        //    //Changes to Features********************************************************************************************************************************************************
+        //    Dictionary<int, BLL.BusinessObjects.Feature> features = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.Feature>>(featuresString);
+        //    foreach (int guid in features.Keys)
+        //    {
+        //        BLL.BusinessObjects.Feature feature = features[guid];
+
+        //        //Delete 
+        //        if (feature.ToBeDeleted == true && feature.ID != 0)
+        //        {
+        //            _featureService.Delete(feature);
+        //        }
+        //        //Add
+        //        else if (feature.ToBeDeleted == false && feature.ID == 0)
+        //        {
+        //            ((DAL.DataEntities.Feature)feature.InnerEntity).ModelID = modelID;
+        //            _featureService.Add(feature);
+        //        }
+        //        //Update
+        //        else if (feature.ToBeDeleted == false && feature.ID != 0)
+        //        {
+        //            ((DAL.DataEntities.Feature)feature.InnerEntity).ModelID = modelID;
+        //            _featureService.Update(feature);
+        //        }
+        //    }
+        //    innerJObj[0] = features;
+        //    //***************************************************************************************************************************************************************************
+
+
+        //    //Changes to Relations*******************************************************************************************************************************************************
+        //    Dictionary<int, BLL.BusinessObjects.Relation> relations = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.Relation>>(relationsString);
+        //    Dictionary<int, JObject> relationsAdjFeatures = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, JObject>>(relationsAdjFeaturesString);
+        //    foreach (int guid in relations.Keys)
+        //    {
+        //        BLL.BusinessObjects.Relation relation = relations[guid];
+        //        JObject relAdj = relationsAdjFeatures[guid];
+
+        //        //Delete 
+        //        if (relation.ToBeDeleted == true && relation.ID != 0)
+        //        {
+        //            _relationService.Delete(relation);
+        //        }
+        //        //Add
+        //        else if (relation.ToBeDeleted == false && relation.ID == 0)
+        //        {
+        //            ((DAL.DataEntities.Relation)relation.InnerEntity).ModelID = modelID;
+        //            int childFeatureGUID = (int)relAdj.SelectToken("childFeatureGUID");
+        //            int parentFeatureGUID = (int)relAdj.SelectToken("parentFeatureGUID");
+        //            ((DAL.DataEntities.Relation)relation.InnerEntity).ChildFeatureID = features[childFeatureGUID].ID;
+        //            ((DAL.DataEntities.Relation)relation.InnerEntity).ParentFeatureID = features[parentFeatureGUID].ID;
+
+        //            _relationService.Add(relation);
+        //        }
+        //        //Update
+        //        else if (relation.ToBeDeleted == false && relation.ID != 0)
+        //        {
+        //            ((DAL.DataEntities.Relation)relation.InnerEntity).ModelID = modelID;
+        //            _relationService.Update(relation);
+        //        }
+        //    }
+        //    //var filteredRelations = relations.Where(entry => entry.Value.ToBeDeleted == false).ToDictionary(entry => entry.Key, entry => entry.Value);
+        //    innerJObj[1] = relations;
+        //    //***************************************************************************************************************************************************************************
+
+        //    //Changes to GroupRelations**************************************************************************************************************************************************
+        //    Dictionary<int, BLL.BusinessObjects.GroupRelation> groupRelations = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.GroupRelation>>(groupRelationsString);
+        //    Dictionary<int, JObject> groupRelationsAdjFeatures = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, JObject>>(groupRelationsAdjFeaturesString);
+        //    foreach (int guid in groupRelations.Keys)
+        //    {
+        //        BLL.BusinessObjects.GroupRelation groupRelation = groupRelations[guid];
+        //        JObject relAdj = groupRelationsAdjFeatures[guid];
+
+        //        //Delete 
+        //        if (groupRelation.ToBeDeleted == true && groupRelation.ID != 0)
+        //        {
+        //            _groupRelationService.Delete(groupRelation);
+        //        }
+        //        //Add
+        //        else if (groupRelation.ToBeDeleted == false && groupRelation.ID == 0)
+        //        {
+        //            ((DAL.DataEntities.GroupRelation)groupRelation.InnerEntity).ModelID = modelID;
+        //            int parentFeatureGUID = (int)relAdj["parentFeatureGUID"];
+        //            List<int> childFeatureGUIDs = ((JArray)relAdj["childFeatureGUIDs"]).Values<int>().ToList<int>();
+        //            List<int> childFeatureIDs = childFeatureGUIDs.Select(entry => features[entry].ID).ToList<int>();
+
+        //            groupRelation.ParentFeatureID = features[parentFeatureGUID].ID;
+        //            groupRelation.ChildFeatureIDs = childFeatureIDs;
+
+        //            _groupRelationService.Add(groupRelation);
+        //        }
+        //        //Update
+        //        else if (groupRelation.ToBeDeleted == false && groupRelation.ID != 0)
+        //        {
+        //            ((DAL.DataEntities.GroupRelation)groupRelation.InnerEntity).ModelID = modelID;
+        //            _groupRelationService.Update(groupRelation);
+        //        }
+        //    }
+        //    innerJObj[2] = groupRelations;
+        //    //***************************************************************************************************************************************************************************
+
+        //    //Changes to CompositionRules************************************************************************************************************************************************
+        //    Dictionary<int, BLL.BusinessObjects.CompositionRule> compositionRules = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.CompositionRule>>(compositionRulesString);
+        //    Dictionary<int, JObject> compositionRulesAdjFeatures = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, JObject>>(compositionRulesAdjFeaturesString);
+        //    foreach (int guid in compositionRules.Keys)
+        //    {
+        //        BLL.BusinessObjects.CompositionRule compositionRule = compositionRules[guid];
+        //        JObject relAdj = compositionRulesAdjFeatures[guid];
+
+        //        //Delete 
+        //        if (compositionRule.ToBeDeleted == true && compositionRule.ID != 0)
+        //        {
+        //            _compositionRuleService.Delete(compositionRule);
+        //        }
+        //        //Add
+        //        else if (compositionRule.ToBeDeleted == false && compositionRule.ID == 0)
+        //        {
+        //            ((DAL.DataEntities.CompositionRule)compositionRule.InnerEntity).ModelID = modelID;
+        //            int firstFeatureGUID = (int)relAdj.SelectToken("firstFeatureGUID");
+        //            int secondFeatureGUID = (int)relAdj.SelectToken("secondFeatureGUID");
+        //            ((DAL.DataEntities.CompositionRule)compositionRule.InnerEntity).FirstFeatureID = features[firstFeatureGUID].ID;
+        //            ((DAL.DataEntities.CompositionRule)compositionRule.InnerEntity).SecondFeatureID = features[secondFeatureGUID].ID;
+
+        //            _compositionRuleService.Add(compositionRule);
+        //        }
+        //        //Update
+        //        else if (compositionRule.ToBeDeleted == false && compositionRule.ID != 0)
+        //        {
+        //            ((DAL.DataEntities.CompositionRule)compositionRule.InnerEntity).ModelID = modelID;
+        //            _compositionRuleService.Update(compositionRule);
+        //        }
+        //    }
+        //    innerJObj[3] = compositionRules;
+        //    //******************************************************************************************************************************************************************************
+
+        //    //Changes to CustomRules********************************************************************************************************************************************************
+        //    Dictionary<int, BLL.BusinessObjects.CustomRule> customRules = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<int, BLL.BusinessObjects.CustomRule>>(customRulesString);
+        //    foreach (int guid in customRules.Keys)
+        //    {
+        //        BLL.BusinessObjects.CustomRule customRule = customRules[guid];
+
+        //        //Delete 
+        //        if (customRule.ToBeDeleted == true && customRule.ID != 0)
+        //        {
+        //            _customRuleService.Delete(customRule);
+        //        }
+        //        //Add
+        //        else if (customRule.ToBeDeleted == false && customRule.ID == 0)
+        //        {
+        //            ((DAL.DataEntities.CustomRule)customRule.InnerEntity).ModelID = modelID;
+        //            _customRuleService.Add(customRule);
+        //        }
+        //        //Update
+        //        else if (customRule.ToBeDeleted == false && customRule.ID != 0)
+        //        {
+        //            ((DAL.DataEntities.CustomRule)customRule.InnerEntity).ModelID = modelID;
+        //            _customRuleService.Update(customRule);
+        //        }
+        //    }
+        //    innerJObj[4] = customRules;
+        //    //***************************************************************************************************************************************************************************
+
+        //    //
+        //    return result;
+        //}
         [Authorize]
         public JsonNetResult AddNewConfiguration(int modelID)
         {
@@ -281,8 +355,8 @@ namespace PresentationLayer.Controllers
             JsonNetResult result = new JsonNetResult() { Data = null };
 
             //Get a new default Attribute
-            FeatureService _featureService = new FeatureService(SessionData.LoggedInUser.ID);
-            BLL.BusinessObjects.Attribute newAttribute = (BLL.BusinessObjects.Attribute)_featureService.CreateDefaultAttribute();
+            AttributeService _attributeService = new AttributeService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Attribute newAttribute = (BLL.BusinessObjects.Attribute)_attributeService.CreateDefault();
             result.Data = newAttribute;
 
             //

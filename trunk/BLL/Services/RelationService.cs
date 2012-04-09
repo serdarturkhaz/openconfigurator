@@ -21,6 +21,12 @@ namespace BLL.Services
         }
 
         //Methods
+        public IBusinessObject CreateDefault()
+        {
+            BLL.BusinessObjects.Relation defaultRelation = (BLL.BusinessObjects.Relation)BLL.BusinessObjects.Relation.CreateDefault();
+            return defaultRelation;
+        }
+
         public List<BLL.BusinessObjects.Relation> GetByModelID(int ModelID)
         {
             //
@@ -39,11 +45,6 @@ namespace BLL.Services
             }
             return BRelations;
         }
-        public IBusinessObject CreateDefault()
-        {
-            BLL.BusinessObjects.Relation defaultRelation = (BLL.BusinessObjects.Relation)BLL.BusinessObjects.Relation.CreateDefault();
-            return defaultRelation;
-        }
         public Dictionary<int, string> GetRelationTypes()
         {
             Dictionary<int, string> dict = new Dictionary<int, string>();
@@ -53,10 +54,6 @@ namespace BLL.Services
 
             return dict;
         }
-
-        //Interface members
-        #region IService<Model> Members
-
         public BusinessObjects.Relation GetByID(int id)
         {
             DAL.DataEntities.Relation relation;
@@ -102,7 +99,5 @@ namespace BLL.Services
                 _RelationRepository.SaveChanges();
             }
         }
-
-        #endregion
     }
 }

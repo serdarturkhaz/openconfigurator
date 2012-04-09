@@ -270,9 +270,6 @@ namespace BLL.BusinessObjects
                 this._toBeDeleted = value;
             }
         }
-
-
-
         #endregion
     }
     public class Attribute : IBusinessObject
@@ -1091,12 +1088,15 @@ namespace BLL.BusinessObjects
         }
 
         //Properties
-        [ReadOnly(true)]
         public int ID
         {
             get
             {
                 return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
             }
         }
         public string Email

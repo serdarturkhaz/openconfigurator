@@ -17,7 +17,6 @@ namespace BLL.Services
         {
         }
 
-
         //Methods
         public BLL.BusinessObjects.User GetByEmailAndPassword(string email, string password)
         {
@@ -30,10 +29,6 @@ namespace BLL.Services
             //
             return (BLL.BusinessObjects.User)BLL.BusinessObjects.User.FromDataEntity(user);
         }
-
-        //IService members
-        #region IService<BLL.BusinessObjects.User> Members
-
         public BLL.BusinessObjects.User GetByID(int id)
         {
             DAL.DataEntities.User user;
@@ -44,27 +39,21 @@ namespace BLL.Services
             //
             return new BLL.BusinessObjects.User(user);
         }
-
         public IList<BLL.BusinessObjects.User> GetAll()
         {
             throw new NotImplementedException();
         }
-
         public void Update(BLL.BusinessObjects.User entity)
         {
             throw new NotImplementedException();
         }
-
         public void Delete(BLL.BusinessObjects.User entity)
         {
             throw new NotImplementedException();
         }
-
         public void Add(BLL.BusinessObjects.User entity)
         {
             throw new NotImplementedException();
         }
-
-        #endregion
     }
 }

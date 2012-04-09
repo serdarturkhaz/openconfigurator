@@ -21,6 +21,12 @@ namespace BLL.Services
         }
 
         //Methods
+        public IBusinessObject CreateDefault()
+        {
+            BLL.BusinessObjects.Model defaultModel = (BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.CreateDefault(_LoggedInUserID);
+            return defaultModel;
+        }
+
         public List<BLL.BusinessObjects.Model> GetByUserID(int userid)
         {
             //
@@ -49,11 +55,6 @@ namespace BLL.Services
                 //_ModelRepository.Attach(model);
                 _ModelRepository.SaveChanges();
             }
-        }
-        public IBusinessObject CreateDefault()
-        {
-            BLL.BusinessObjects.Model defaultModel = (BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.CreateDefault(_LoggedInUserID);
-            return defaultModel;
         }
         public BusinessObjects.Model GetByID(int id)
         {

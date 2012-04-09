@@ -18,5 +18,11 @@ namespace BLL.BusinessObjects
             get;
             set;
         }
+
+        int ID
+        {
+            get;
+            set;
+        }
     }
 }
