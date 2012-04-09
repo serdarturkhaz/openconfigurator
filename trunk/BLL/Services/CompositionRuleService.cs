@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class CompositionRuleService 
+    public class CompositionRuleService : IDataService
     {
         //Fields
         private IRepository<DAL.DataEntities.CompositionRule> _CompositionRuleRepository;
@@ -83,6 +83,20 @@ namespace BLL.Services
                 _CompositionRuleRepository.Add((DAL.DataEntities.CompositionRule)entity.InnerEntity);
                 _CompositionRuleRepository.SaveChanges();
             }
+        }
+
+        //IDataService
+        public void Add(IBusinessObject obj)
+        {
+            Add((BLL.BusinessObjects.CompositionRule)obj);
+        }
+        public void Delete(IBusinessObject obj)
+        {
+            Delete((BLL.BusinessObjects.CompositionRule)obj);
+        }
+        public void Update(IBusinessObject obj)
+        {
+            Update((BLL.BusinessObjects.CompositionRule)obj);
         }
     }
 }

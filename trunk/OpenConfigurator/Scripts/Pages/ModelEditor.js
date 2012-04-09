@@ -595,6 +595,9 @@ ClientObjects.Feature = function (businessObject) {
     this.IsDeleted = function () {
         return _businessObject["ToBeDeleted"] == true;
     }
+    this.SyncBusinessObject = function () {
+
+    }
 }
 ClientObjects.Attribute = function (businessObject) {
 
@@ -666,6 +669,11 @@ ClientObjects.Relation = function (businessObject) {
     this.IsDeleted = function () {
         return _businessObject["ToBeDeleted"] == true;
     }
+    this.SyncBusinessObject = function () {
+        _businessObject.ParentFeatureID = this.ParentFeature.GetField("ID");
+        _businessObject.ChildFeatureID = this.ChildFeature.GetField("ID");
+    }
+
 }
 ClientObjects.GroupRelation = function (businessObject) {
 
@@ -701,6 +709,13 @@ ClientObjects.GroupRelation = function (businessObject) {
     }
     this.IsDeleted = function () {
         return _businessObject["ToBeDeleted"] == true;
+    }
+    this.SyncBusinessObject = function () {
+        _businessObject.ParentFeatureID = this.ParentFeature.GetField("ID");
+        for (var i = 0; i < this.ChildFeatures.length; i++) {
+            _businessObject.ChildFeatureIDs[i] = this.ChildFeatures[i].GetField("ID");
+        }
+
     }
 }
 ClientObjects.CompositionRule = function (businessObject) {
@@ -738,6 +753,10 @@ ClientObjects.CompositionRule = function (businessObject) {
     this.IsDeleted = function () {
         return _businessObject["ToBeDeleted"] == true;
     }
+    this.SyncBusinessObject = function () {
+        _businessObject.FirstFeatureID = this.FirstFeature.GetField("ID");
+        _businessObject.SecondFeatureID = this.SecondFeature.GetField("ID");
+    }
 }
 ClientObjects.CustomRule = function (businessObject) {
 
@@ -770,6 +789,8 @@ ClientObjects.CustomRule = function (businessObject) {
     }
     this.IsDeleted = function () {
         return _businessObject["ToBeDeleted"] == true;
+    }
+    this.SyncBusinessObject = function () {
     }
 }
 //****************************************************************************************************************
@@ -823,6 +844,7 @@ var DiagramDataModel = function (modelID, modelName) {
 
     //Properties
     this.ClientObjects = _clientObjects;
+    this.ModelID = _modelID;
 
     //Private methods
     var getDefaultBusinessObject = function (type) {
@@ -866,6 +888,7 @@ var DiagramDataModel = function (modelID, modelName) {
         //Set internal eventhandlers
         _thisDiagramDataModel.ClientObjectCreated.Add(new EventHandler(onInternalClientObjectCreated));
         _thisDiagramDataModel.ClientObjectUpdated.Add(new EventHandler(onInternalClientObjectUpdated));
+        _thisDiagramDataModel.ClientObjectDeleted.Add(new EventHandler(onInternalClientObjectDeleted));
     }
 
     //Public methods
@@ -978,58 +1001,82 @@ var DiagramDataModel = function (modelID, modelName) {
     }
     this.SaveData = function (newName, beforeSend, onSuccess, onError) {
 
-        //Variables
         beforeSend();
-        var error = false, success = true;
-        _modelName = newName;
-        debugger;
+        $.timer(300, function () {
 
-        //Save the name
-        $.ajax({
-            type: "POST",
-            url: "/ModelEditor/SaveModel",
-            data: JSON.stringify({ modelID: _modelID, modelName: newName }),
-            async: true,
-            success: function (response) {
 
+
+            //Variables
+            var error = false, success = true;
+            _modelName = newName;
+
+            //Save the name
+            $.ajax({
+                type: "POST",
+                url: "/ModelEditor/SaveModel",
+                data: JSON.stringify({ modelID: _modelID, modelName: newName }),
+                async: true
+            });
+
+            //Go through all of the clientObjects in _unsavedData
+            for (var objectType in _unsavedData) {
+                var guidCollection = _unsavedData[objectType];
+                var businessObjectsCollection = {};
+
+                //Collect the businessObjects
+                for (var guid in guidCollection) {
+                    var clientObject = _clientObjects.all[guid];
+                    clientObject.SyncBusinessObject();
+                    businessObjectsCollection[guid] = clientObject.GetBusinessObjectCopy();
+                }
+
+                //Send data to WebService method
+                if (Object.size(businessObjectsCollection) > 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/ModelEditor/SaveBusinessObjects",
+                        data: JSON.stringify({ modelID: _modelID, businessObjectsString: JSON.stringify(businessObjectsCollection), businessObjectsType: objectType.substring(0, objectType.length - 1) }),
+                        async: false,
+                        success: function (response) {
+
+                            //Get the list with updated business objects 
+                            var updatedBusinessObjects = response;
+
+                            //Loop through list
+                            for (var guidKey in updatedBusinessObjects) {
+                                var clientObject = _clientObjects.all[guidKey];
+
+                                //Remove deleted items
+                                if (clientObject.IsDeleted()) {
+                                    delete _clientObjects.all[guidKey];
+                                    delete _clientObjects[objectType][guidKey];
+                                }
+                                //Update others
+                                else {
+                                    clientObject.UpdateBusinessObject(updatedBusinessObjects[guidKey]);
+                                }
+                            }
+
+                            //Clear _unsavedData collection
+                            _unsavedData[objectType] = {};
+                            success = true;
+                        },
+                        error: function (req, status, error) {
+                            error = true;
+                        }
+                    });
+                }
             }
+
+
+            //Callbacks
+            if (error) {
+                onError();
+            } else if (success) {
+                onSuccess();
+            }
+
         });
-
-        //Go through all of the clientObjects in _unsavedData
-        for (var objectType in _unsavedData) {
-            var guidCollection = _unsavedData[objectType];
-            var businessObjectsCollection = [];
-
-            //Collect the businessObjects
-            for (var guid in guidCollection) {
-                var clientObject = _clientObjects.all[guid];
-                businessObjectsCollection.push(clientObject.GetBusinessObjectCopy());
-            }
-
-            //Send data to WebService method
-            if (businessObjectsCollection.length > 0) {
-                $.ajax({
-                    type: "POST",
-                    url: "/ModelEditor/SaveBusinessObjects",
-                    data: JSON.stringify({ modelID: _modelID, businessObjectsString: JSON.stringify(businessObjectsCollection), businessObjectsType: objectType.substring(0, objectType.length - 1) }),
-                    async: false,
-                    success: function (response) {
-                        success = true;
-                    },
-                    error: function (req, status, error) {
-                        error = true;
-                    }
-                });
-            }
-        }
-
-
-        //Callbacks
-        if (error) {
-            onError();
-        } else if (success) {
-            onSuccess();
-        }
     }
 
     this.AddNewClientObject = function (type, initialBusinessValues, initialClientValues) {
@@ -1173,6 +1220,16 @@ var DiagramDataModel = function (modelID, modelName) {
         var operation = new Operation(OperationTypes.Update, guid, clientObject.GetType(), data);
         registerOperation(operation);
     }
+    var onInternalClientObjectDeleted = function (guid) {
+
+        //Variables
+        var clientObject = _clientObjects.all[guid];
+        clientObject.SetDeleteFlag();
+
+        //Register a new operation
+        var operation = new Operation(OperationTypes.Delete, guid, clientObject.GetType());
+        registerOperation(operation);
+    }
 }
 var ClientController = function (diagramContainer, propertiesContainer, explorerContainer, modelNameTextbox, diagramDataModelInstance) {
 
@@ -1286,7 +1343,10 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
         _diagramContext.CreateNewElement("compositionRule");
     }
     this.CreateNewCustomRule = function () {
-        var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("customRule");
+        var initialValues = {
+            ModelID: _diagramDataModel.ModelID
+        }
+        var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("customRule", initialValues);
     }
     this.Delete = function () {
         switch (_currentControlFocus) {
@@ -3418,6 +3478,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
                 //Create a new clientObject in the diagramDataModel
                 var initialValues = {
+                    ModelID: _diagramDataModel.ModelID,
                     XPos: posx,
                     YPos: posy
                 }
@@ -3435,11 +3496,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //Create a new clientObject in the diagramDataModel
             var parentFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
             var childFeature = _diagramDataModel.GetByGUID(_selectedElements[1].GUID);
+            var initialValues = {
+                ModelID: _diagramDataModel.ModelID
+            }
             var initialClientValues = {
                 ParentFeature: parentFeature,
                 ChildFeature: childFeature
             }
-            var clientRelationObject = _diagramDataModel.AddNewClientObject("relation", null, initialClientValues);
+            var clientRelationObject = _diagramDataModel.AddNewClientObject("relation", initialValues, initialClientValues);
         }
     }
     var createGroupRelation = function () {
@@ -3452,11 +3516,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             for (var i = 0; i < childUIFeatures.length; i++) {
                 childFeatures.push(_diagramDataModel.GetByGUID(childUIFeatures[i].GUID));
             }
+            var initialValues = {
+                ModelID: _diagramDataModel.ModelID
+            }
             var initialClientValues = {
                 ParentFeature: parentFeature,
                 ChildFeatures: childFeatures
             }
-            var clientGroupRelationObject = _diagramDataModel.AddNewClientObject("groupRelation", null, initialClientValues);
+            var clientGroupRelationObject = _diagramDataModel.AddNewClientObject("groupRelation", initialValues, initialClientValues);
         }
     }
     var createCompositionRule = function () {
@@ -3465,11 +3532,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //Create a new clientObject in the diagramDataModel
             var firstFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
             var secondFeature = _diagramDataModel.GetByGUID(_selectedElements[1].GUID);
+            var initialValues = {
+                ModelID: _diagramDataModel.ModelID
+            }
             var initialClientValues = {
                 FirstFeature: firstFeature,
                 SecondFeature: secondFeature
             }
-            var clientRelationObject = _diagramDataModel.AddNewClientObject("compositionRule", null, initialClientValues);
+            var clientRelationObject = _diagramDataModel.AddNewClientObject("compositionRule", initialValues, initialClientValues);
         }
     }
 

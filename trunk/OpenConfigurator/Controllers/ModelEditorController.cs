@@ -52,59 +52,45 @@ namespace PresentationLayer.Controllers
         public JsonNetResult SaveBusinessObjects(int modelID, string businessObjectsString, string businessObjectsType)
         {
             //Setup variables & types
+            JsonNetResult result = new JsonNetResult();
             Assembly BLLAssembly = Assembly.GetAssembly(typeof(BLL.BusinessObjects.IBusinessObject));
             Type businessObjectType = BLLAssembly.GetType("BLL.BusinessObjects." + businessObjectsType, false, true);
-
-            //Serialize to businessObjects into a List
-            List<JObject> list = (List<JObject>)Newtonsoft.Json.JsonConvert.DeserializeObject(businessObjectsString, typeof(List<JObject>));
-            List<IBusinessObject> businessObjects = new List<IBusinessObject>();
-            foreach (JObject jObj in list)
-            {
-                IBusinessObject businessObj = (IBusinessObject)Newtonsoft.Json.JsonConvert.DeserializeObject(jObj.ToString(), businessObjectType);
-                businessObjects.Add(businessObj);
-            }
 
             //Create a corresponding service
             Type specificServiceType = BLLAssembly.GetType("BLL.Services." + businessObjectsType + "Service", false, true);
             IDataService service = (IDataService)Activator.CreateInstance(specificServiceType, (object)SessionData.LoggedInUser.ID);
 
-            return null;
+            //Handle BusinessObjects
+            Dictionary<int, JObject> businessObjectsCollection = (Dictionary<int, JObject>)Newtonsoft.Json.JsonConvert.DeserializeObject(businessObjectsString, typeof(Dictionary<int, JObject>));
+            Dictionary<int, IBusinessObject> updatedObjects = new Dictionary<int, IBusinessObject>();
+            foreach (KeyValuePair<int, JObject> entry in businessObjectsCollection)
+            {
+                JObject jObj = (JObject)entry.Value;
+                IBusinessObject businessObj = (IBusinessObject)Newtonsoft.Json.JsonConvert.DeserializeObject(jObj.ToString(), businessObjectType);
+
+                //Delete 
+                if (businessObj.ToBeDeleted == true && businessObj.ID != 0)
+                {
+                    service.Delete(businessObj);
+                }
+                //Add
+                else if (businessObj.ToBeDeleted == false && businessObj.ID == 0)
+                {
+                    service.Add(businessObj);
+                }
+                //Update
+                else if (businessObj.ToBeDeleted == false && businessObj.ID != 0)
+                {
+                    service.Update(businessObj);
+                }
+
+                updatedObjects.Add((int)entry.Key, businessObj);
+            }
+
+            //Return
+            result.Data = updatedObjects;
+            return result;
         }
-        //[Authorize]
-        //public JsonNetResult ExecuteOperation(int modelID, string operationString)
-        //{
-        //    //Variables
-        //    TemporaryOp tempOp = Newtonsoft.Json.JsonConvert.DeserializeObject<TemporaryOp>(operationString);
-
-        //    //Create a proper operation
-        //    Operation operation = new Operation(tempOp);
-
-
-        //    return null;
-        //}
-        ////Operations
-        //public class TemporaryOp
-        //{
-        //    public string GUID, ClientObjectType;
-        //    public JObject Data;
-        //}
-        //public class Operation
-        //{
-        //    //Fields
-        //    public string GUID, ClientObjectType;
-        //    public IBusinessObject BusinessObject;
-
-        //    public Operation(TemporaryOp tempOp)
-        //    {
-        //        this.GUID = tempOp.GUID;
-        //        this.ClientObjectType = Common.HelperMethods.UppercaseFirst(tempOp.ClientObjectType);
-
-        //        //Transform the data into an IBusinessObject
-        //        Assembly businessLayer = Assembly.GetAssembly(typeof(BLL.BusinessObjects.IBusinessObject));
-        //        Type businessObjectType = businessLayer.GetType("BLL.BusinessObjects." + this.ClientObjectType);
-        //        this.BusinessObject = (IBusinessObject)Newtonsoft.Json.JsonConvert.DeserializeObject(tempOp.Data.ToString(), businessObjectType);
-        //    }
-        //}
 
         //[Authorize]
         //public JsonNetResult SaveData(int modelID, string modelName, string featuresString, string relationsString, string relationsAdjFeaturesString, string groupRelationsString,

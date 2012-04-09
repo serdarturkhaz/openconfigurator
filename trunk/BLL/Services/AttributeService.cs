@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class AttributeService
+    public class AttributeService : IDataService
     {
         //Fields
         private IRepository<DAL.DataEntities.Attribute> _AttributeRepository;
@@ -54,8 +54,6 @@ namespace BLL.Services
             //
             return new BLL.BusinessObjects.Attribute(attribute);
         }
-
-
         public void Update(BusinessObjects.Attribute entity)
         {
             using (_AttributeRepository = new GenericRepository<DAL.DataEntities.Attribute>())
@@ -87,6 +85,20 @@ namespace BLL.Services
                 _AttributeRepository.Add((DAL.DataEntities.Attribute)entity.InnerEntity);
                 _AttributeRepository.SaveChanges();
             }
+        }
+
+        //IDataService
+        public void Add(IBusinessObject obj)
+        {
+            Add((BLL.BusinessObjects.Attribute)obj);
+        }
+        public void Delete(IBusinessObject obj)
+        {
+            Delete((BLL.BusinessObjects.Attribute)obj);
+        }
+        public void Update(IBusinessObject obj)
+        {
+            Update((BLL.BusinessObjects.Attribute)obj);
         }
     }
 }

@@ -112,11 +112,11 @@ namespace BLL.Services
         }
         public void Delete(IBusinessObject obj)
         {
-            throw new NotImplementedException();
+            Delete((BLL.BusinessObjects.Feature)obj);
         }
         public void Update(IBusinessObject obj)
         {
-            throw new NotImplementedException();
+            Update((BLL.BusinessObjects.Feature)obj);
         }
     }
 }
