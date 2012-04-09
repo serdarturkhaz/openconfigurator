@@ -449,6 +449,17 @@ namespace BLL.BusinessObjects
                 _innerEntity.ID = value;
             }
         }
+        public int ModelID
+        {
+            get
+            {
+                return _innerEntity.ModelID;
+            }
+            set
+            {
+                _innerEntity.ModelID = value;
+            }
+        }
         public string Name
         {
             get
@@ -591,6 +602,18 @@ namespace BLL.BusinessObjects
                 _innerEntity.ID = value;
             }
         }
+        public int ModelID
+        {
+            get
+            {
+                return _innerEntity.ModelID;
+            }
+            set
+            {
+                _innerEntity.ModelID = value;
+            }
+        }
+
         public RelationTypes RelationType
         {
             get
@@ -726,6 +749,18 @@ namespace BLL.BusinessObjects
                 _innerEntity.ID = value;
             }
         }
+        public int ModelID
+        {
+            get
+            {
+                return _innerEntity.ModelID;
+            }
+            set
+            {
+                _innerEntity.ModelID = value;
+            }
+        }
+
         public GroupRelationTypes GroupRelationType
         {
             get
@@ -852,6 +887,18 @@ namespace BLL.BusinessObjects
                 _innerEntity.ID = value;
             }
         }
+        public int ModelID
+        {
+            get
+            {
+                return _innerEntity.ModelID;
+            }
+            set
+            {
+                _innerEntity.ModelID = value;
+            }
+        }
+
         public CompositionRuleTypes CompositionRuleType
         {
             get
@@ -988,6 +1035,18 @@ namespace BLL.BusinessObjects
                 _innerEntity.ID = value;
             }
         }
+        public int ModelID
+        {
+            get
+            {
+                return _innerEntity.ModelID;
+            }
+            set
+            {
+                _innerEntity.ModelID = value;
+            }
+        }
+
         public string Name
         {
             get

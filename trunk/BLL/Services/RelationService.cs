@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class RelationService 
+    public class RelationService : IDataService
     {
         //Fields
         private IRepository<DAL.DataEntities.Relation> _RelationRepository;
@@ -98,6 +98,20 @@ namespace BLL.Services
                 _RelationRepository.Add((DAL.DataEntities.Relation)entity.InnerEntity);
                 _RelationRepository.SaveChanges();
             }
+        }
+
+        //IDataService
+        public void Add(IBusinessObject obj)
+        {
+            Add((BLL.BusinessObjects.Relation)obj);
+        }
+        public void Delete(IBusinessObject obj)
+        {
+            Delete((BLL.BusinessObjects.Relation)obj);
+        }
+        public void Update(IBusinessObject obj)
+        {
+            Update((BLL.BusinessObjects.Relation)obj);
         }
     }
 }

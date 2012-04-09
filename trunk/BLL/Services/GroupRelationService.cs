@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class GroupRelationService 
+    public class GroupRelationService : IDataService
     {
         //Fields
         private IRepository<DAL.DataEntities.GroupRelation> _GroupRelationRepository;
@@ -108,7 +108,7 @@ namespace BLL.Services
             //Add GroupRelations_To_Features
             using (_GroupRelationsToFeaturesRepository = new GenericRepository<DAL.DataEntities.GroupRelation_To_Feature>())
             {
-                
+
                 foreach (int childFeatureID in entity.ChildFeatureIDs)
                 {
                     DAL.DataEntities.GroupRelation_To_Feature grToFeature = new DAL.DataEntities.GroupRelation_To_Feature();
@@ -118,9 +118,23 @@ namespace BLL.Services
 
                     _GroupRelationsToFeaturesRepository.Add(grToFeature);
                 }
-                
+
                 _GroupRelationsToFeaturesRepository.SaveChanges();
             }
+        }
+
+        //IDataService
+        public void Add(IBusinessObject obj)
+        {
+            Add((BLL.BusinessObjects.GroupRelation)obj);
+        }
+        public void Delete(IBusinessObject obj)
+        {
+            Delete((BLL.BusinessObjects.GroupRelation)obj);
+        }
+        public void Update(IBusinessObject obj)
+        {
+            Update((BLL.BusinessObjects.GroupRelation)obj);
         }
     }
 }

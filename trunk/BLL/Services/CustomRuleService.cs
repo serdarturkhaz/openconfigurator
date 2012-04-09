@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class CustomRuleService 
+    public class CustomRuleService : IDataService
     {
         //Fields
         private IRepository<DAL.DataEntities.CustomRule> _CustomRuleRepository;
@@ -87,6 +87,20 @@ namespace BLL.Services
                 _CustomRuleRepository.Add((DAL.DataEntities.CustomRule)entity.InnerEntity);
                 _CustomRuleRepository.SaveChanges();
             }
+        }
+
+        //IDataService
+        public void Add(IBusinessObject obj)
+        {
+            Add((BLL.BusinessObjects.CustomRule)obj);
+        }
+        public void Delete(IBusinessObject obj)
+        {
+            Delete((BLL.BusinessObjects.CustomRule)obj);
+        }
+        public void Update(IBusinessObject obj)
+        {
+            Update((BLL.BusinessObjects.CustomRule)obj);
         }
     }
 }

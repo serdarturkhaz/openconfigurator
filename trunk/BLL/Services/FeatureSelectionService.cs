@@ -7,7 +7,7 @@ using BLL.BusinessObjects;
 
 namespace BLL.Services
 {
-    public class FeatureSelectionService
+    public class FeatureSelectionService: IDataService
     {
         //Fields
         private IRepository<DAL.DataEntities.FeatureSelection> _FeatureSelectionRepository;
@@ -98,6 +98,20 @@ namespace BLL.Services
                     _AttributeValuesRepository.SaveChanges();
                 }
             }
+        }
+
+        //IDataService
+        public void Add(IBusinessObject obj)
+        {
+            Add((BLL.BusinessObjects.FeatureSelection)obj);
+        }
+        public void Delete(IBusinessObject obj)
+        {
+            Delete((BLL.BusinessObjects.FeatureSelection)obj);
+        }
+        public void Update(IBusinessObject obj)
+        {
+            Update((BLL.BusinessObjects.FeatureSelection)obj);
         }
     }
 }
