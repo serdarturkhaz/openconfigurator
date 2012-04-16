@@ -633,6 +633,10 @@ ClientObjects.Attribute = function (businessObject) {
     this.IsDeleted = function () {
         return _businessObject["ToBeDeleted"] == true;
     }
+    this.SyncBusinessObject = function () {
+
+    }
+
 }
 ClientObjects.Relation = function (businessObject) {
 
@@ -1365,7 +1369,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         Textarea: null,
         Checkbox: null,
         Dropdown: null,
-        Composite: null
+        CompositeList: null
     }
     Controls.Textbox = function (fieldParent, fieldName, supportedClientObjectField, onDataFieldChanged, onDataFieldLoaded) {
 
@@ -1393,7 +1397,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             var value = _fieldParent[_fieldName];
             _control.val(value);
         }
-        this.OnDataFieldLoaded = function () {
+        this.CallOnDataFieldLoaded = function () {
             if (onDataFieldLoaded != undefined) {
                 onDataFieldLoaded(_fieldParent[_fieldName], _control);
             }
@@ -1444,7 +1448,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
             $(_control).autoGrow();
         }
-        this.OnDataFieldLoaded = function () {
+        this.CallOnDataFieldLoaded = function () {
             if (onDataFieldLoaded != undefined) {
                 onDataFieldLoaded(_fieldParent[_fieldName], _control);
             }
@@ -1488,7 +1492,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             var value = _fieldParent[_fieldName];
             _control.attr("checked", value);
         }
-        this.OnDataFieldLoaded = function () {
+        this.CallOnDataFieldLoaded = function () {
             if (onDataFieldLoaded != undefined) {
                 onDataFieldLoaded(_fieldParent[_fieldName], _control);
             }
@@ -1542,7 +1546,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             var value = _fieldParent[_fieldName];
             _control.val(value);
         }
-        this.OnDataFieldLoaded = function () {
+        this.CallOnDataFieldLoaded = function () {
             if (onDataFieldLoaded != undefined) {
                 onDataFieldLoaded(_fieldParent[_fieldName], _control);
             }
@@ -1560,92 +1564,112 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             onDataChanged();
         }
     }
-    Controls.Composite = function (fieldParent, fieldName, supportedClientObjectField, onDataFieldChanged, onDataFieldLoaded) {
+    Controls.CompositeList = function (fieldParent, fieldName, supportedClientObjectField, onDataFieldChanged, onDataFieldLoaded) {
 
         //Inner classes
-        var NestedObject = function (name, index, listContainer, detailsContainer) {
+        var ListElement = function (clientObject, onListElementDeleted) {
 
             //Fields
-            var _nestedObjectControl = null;
-            var _name = name, _index = index, _listContainer = listContainer, _detailsContainer = detailsContainer;
+            var _innerControl = null;
+            var _businessObject = clientObject.GetBusinessObjectCopy();
+            var _clientObject = clientObject;
+            var _thisListElement = this;
 
             //Methods
+            this.GetIndex = function () {
+                var index = $(_listContainer).find(".ListElement").index($(_innerControl));
+                return index;
+            }
             this.CreateHTML = function () {
-                var _nestedObjectControl = $("<div class='NestedControl'></div>").attr("nestedObjectIndex", index);
-                var controlLabel = $("<span class='Label-Small'>" + label + "</span>").appendTo(_nestedObjectControl);
-                var deleteButton = $("<div id='DeleteButton' class='IconButton-Simple'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").appendTo(_nestedObjectControl);
 
-                return _nestedObjectControl;
-            }
+                _innerControl = $("<div class='ListElement'></div>");
+                var controlLabel = $("<span class='Label-Small'>" + _businessObject.Name + "</span>").appendTo(_innerControl);
+                var deleteButton = $("<div id='DeleteButton' class='IconButton-Simple'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").appendTo(_innerControl);
+                deleteButton.bind("click", function () {
+                    var index = _thisListElement.GetIndex();
+                    onListElementDeleted($(_innerControl), index);
+                });
 
-            //Handlers
-            var onDeleteButtonClick = function () {
-                deleteNestedObject($(this).parents(".NestedControl"));
-                deSelectAll();
-            }
-            var onNestedObjectClick = function () {
-                toggleSelected($(this));
+                return _innerControl;
             }
         }
 
-
         //Fields
         var _control = null;
+        var _listElements = [];
         var _fieldParent = fieldParent, _fieldName = fieldName;
         var _supportedClientObjectField = supportedClientObjectField;
+        var _listContainer = null, _detailsContainer = null;
 
+        //Private methods
+        var addListElement = function (clientObject) {
+
+            //Create the ListElement
+            var listElement = new ListElement(clientObject, onListElementDeleted);
+            _listElements.push(listElement);
+
+            //Create the HTML
+            var listElementControl = listElement.CreateHTML();
+            $(listElementControl).appendTo(_listContainer);
+
+            //
+            return listElement;
+        }
 
         //Public methods
         this.CreateHTML = function () {
 
             //Outer control
-            var _control = $("<div class='Composite''></div>");
+            var _control = $("<div class='CompositeList''></div>");
 
             //List
-            var listContainer = $("<div class='ListDiv'></div>").appendTo(_control);
-            var listActionsDiv = $("<div class='ListActionsDiv'></div>").appendTo(listContainer);
-            var listInnerContainer = $("<div class='ListInnerContainer'></div>").appendTo(listContainer);
+            var listDiv = $("<div class='ListDiv'></div>").appendTo(_control);
+            var listActionsDiv = $("<div class='ListActionsDiv'></div>").appendTo(listDiv);
+            _listContainer = $("<div class='ListInnerContainer'></div>").appendTo(listDiv);
 
             //Add button
             var addButton = $("<div class='Button-Thin'></div>").append("<img src='../../Content/themes/base/images/Icons/Add.png' />").append("<span>Add new</span>").appendTo(listActionsDiv);
             addButton.bind("click", onAddButtonClick);
 
             //Details
-            var detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(_control);
-            var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(detailsContainer).find("tbody");
+            _detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(_control);
+            var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(_detailsContainer).find("tbody");
 
             //
             return _control;
         }
         this.LoadData = function () {
 
-            //Create nestedObjects
-            var nestedObjects = [];
-            var collection = fieldParent[fieldName];
-            for (var i = 0; i < collection.length; i++) {
-                //var collectionElement = new NestedObject(
-            }
-
-        }
-        this.OnDataFieldLoaded = function () {
-            if (onDataFieldLoaded != undefined) {
-                onDataFieldLoaded(_fieldParent[_fieldName], _control);
+            //Create list elements
+            var clientObjectCollection = fieldParent[fieldName];
+            for (var i = 0; i < clientObjectCollection.length; i++) {
+                addListElement(clientObjectCollection[i]);
             }
         }
 
         //Event handlers
-        var onChanged = function () {
-
+        this.CallOnDataFieldLoaded = function () {
+            if (onDataFieldLoaded != undefined) {
+                onDataFieldLoaded(_fieldParent[_fieldName], _control);
+            }
         }
         var onAddButtonClick = function () {
-            var newDefaultDataObj = diagramDataModelInstance.GetDefaultObject(objectTypeField.defaultObjectName);
-            var newIndex = _fieldParent[_fieldName].length;
-            _fieldParent[_fieldName][newIndex] = newDefaultDataObj;
 
-            //Create a new NestedObjectControl
-            var label = _fieldParent[_fieldName][newIndex].Name;
-            //var nestedObjectControl = _this.privateMethods.createNestedObject(label, dataObjParent, dataObjFieldName, newIndex, objectTypeField, listContainer, detailsContainer);
-            //nestedObjectControl.appendTo(listInnerContainer);
+            //Create a new clientObject in the DataModel
+            var newClientObject = diagramDataModelInstance.AddNewClientObject(supportedClientObjectField.clientObjectType);
+            fieldParent[fieldName].push(newClientObject);
+
+            //Create and add a new ListElement
+            addListElement(newClientObject);
+        }
+        var onListElementDeleted = function (control, index) {
+            var guid = fieldParent[fieldName][index].GUID;
+            $(control).remove();
+            _listElements.splice(index, 1);
+
+            //Delete from DataModel and parent collection
+            fieldParent[fieldName].splice(index, 1);
+            _diagramDataModel.DeleteClientObject(guid);
         }
     }
 
@@ -1657,7 +1681,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
                 //Outer control
                 var _this = this;
-                var control = $("<div class='Composite''></div>");
+                var control = $("<div class='CompositeList''></div>");
 
                 //List
                 var listContainer = $("<div class='ListDiv'></div>").appendTo(control);
@@ -1665,7 +1689,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                 var listInnerContainer = $("<div class='ListInnerContainer'></div>").appendTo(listContainer);
                 var addButton = $("<div class='Button-Thin'></div>").append("<img src='../../Content/themes/base/images/Icons/Add.png' />").append("<span>Add new</span>").appendTo(listActionsDiv);
                 addButton.bind("click", function () {
-                    var newDefaultDataObj = diagramDataModelInstance.GetDefaultObject(objectTypeField.defaultObjectName);
+                    var newDefaultDataObj = diagramDataModelInstance.GetDefaultObject(objectTypeField.clientObjectType);
                     var newIndex = dataObjParent[dataObjFieldName].length;
                     dataObjParent[dataObjFieldName][newIndex] = newDefaultDataObj;
 
@@ -1729,7 +1753,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                         }
                     }
                     function loadNestedObjectData(nestedObjectControl) {
-                        var nestedObjectIndex = $(listContainer).find(".NestedControl").index(nestedObjectControl);
+                        var nestedObjectIndex = $(listContainer).find(".ListElement").index(nestedObjectControl);
                         var detailsInnerTableTbody = $(detailsContainer).find("tbody");
 
                         //Create controls for SubFields in Details area
@@ -1785,11 +1809,11 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                     }
 
                     //Create nestedObject control
-                    var nestedObjectControl = $("<div class='NestedControl'></div>").attr("nestedObjectIndex", index);
+                    var nestedObjectControl = $("<div class='ListElement'></div>").attr("nestedObjectIndex", index);
                     var controlLabel = $("<span class='Label-Small'>" + label + "</span>").appendTo(nestedObjectControl);
                     var deleteButton = $("<div id='DeleteButton' class='IconButton-Simple'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").appendTo(nestedObjectControl);
                     deleteButton.bind("click", function () {
-                        deleteNestedObject($(this).parents(".NestedControl"));
+                        deleteNestedObject($(this).parents(".ListElement"));
                         deSelectAll();
                     });
 
@@ -1836,8 +1860,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             label: "Attributes",
                             dataName: "Attributes",
                             useClientObject: true,
-                            defaultObjectName: "Attribute",
-                            controlType: Controls.Composite,
+                            clientObjectType: "attribute",
+                            controlType: Controls.CompositeList,
                             subFields: {
                                 name: {
                                     label: "Name",
@@ -2174,7 +2198,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
             //Rego through controlInstances and call onDataFieldLoaded handler
             for (var i = 0; i < controlInstances.length; i++) {
-                controlInstances[i].OnDataFieldLoaded();
+                controlInstances[i].CallOnDataFieldLoaded();
             }
         }
 
@@ -2201,7 +2225,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         //loadData(guid);
     }
     this.OnClientObjectDeleted = function (guid) {
-        clear();
+        var type = _diagramDataModel.GetByGUID(guid).GetType();
+        if (supportedClientObjects[type] != undefined) {
+            clear();
+        }
     }
     this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
         if (newState == systemDefaults.uiElementStates.selected && shift == false) {
@@ -3886,766 +3913,3 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
 
 
-
-
-/*
-
-var PropertiesComponent = function (container, diagramDataModelInstance) {
-
-//
-var Controls = {
-Textbox: null,
-Textarea: null,
-Checkbox: null,
-Dropdown: null,
-Composite: null
-}
-Controls.Textbox = function (dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-
-//Fields
-var _control = null;
-var _dataFieldParent, _dataFieldName;
-var _supportedClientObjectField;
-
-//Public methods
-this.CreateHTML = function () {
-
-//Create control
-_control = $("<input class='Textbox' type='text' />");
-_control.bind("change", onTextboxChanged).bind("keypress", onEnterPressed);
-
-//
-return _control;
-}
-this.LoadData = function () {
-var value = _dataFieldParent[_dataFieldName];
-_control.val(value);
-}
-
-//Event handlers
-var onTextboxChanged = function () {
-var newVal = control.val();
-dataObjParent[dataObjFieldName] = newVal;
-
-//Call handlers
-if (onChangedCallBack != undefined) {
-onChangedCallBack(newVal, control);
-}
-onDataChanged();
-}
-var onEnterPressed = function (e) {
-if (e.which == 13) {
-onTextboxChanged();
-}
-}
-}
-
-//Defaults and settings
-var controlTypes = {
-textbox: {
-name: "textbox",
-createControlHTML: function (dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-
-//Create control
-var control = $("<input class='Textbox' type='text' />");
-
-//Event handlers
-var _this = this;
-control.bind("change", function () {
-var newVal = control.val();
-dataObjParent[dataObjFieldName] = newVal;
-
-//Call handlers
-if (onChangedCallBack != undefined) {
-onChangedCallBack(newVal, control);
-}
-onDataChanged();
-}).bind("keypress", function (e) {
-if (e.which == 13) {
-var newVal = control.val();
-dataObjParent[dataObjFieldName] = newVal;
-
-//Call handlers
-if (onChangedCallBack != undefined) onChangedCallBack(newVal, control);
-onDataChanged();
-
-}
-});
-
-//
-return control;
-},
-loadData: function (control, dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-var value = dataObjParent[dataObjFieldName];
-control.val(value);
-}
-},
-textarea: {
-name: "textarea",
-createControlHTML: function (dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-
-//Create control
-var control = $("<textarea class='Textarea'></textarea>");
-
-
-//Event handlers
-var _this = this;
-control.bind("change", function () {
-var newVal = control.val();
-dataObjParent[dataObjFieldName] = newVal;
-
-//Call handlers
-if (onChangedCallBack != undefined) onChangedCallBack(newVal, control);
-onDataChanged();
-
-})
-
-//
-return control;
-},
-loadData: function (control, dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-var value = dataObjParent[dataObjFieldName];
-control.val(value);
-
-$(control).autoGrow();
-}
-},
-checkbox: {
-name: "checkbox",
-createControlHTML: function (dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-
-//Create control
-var control = $("<input class='Checkbox' type='checkbox' />");
-
-//Event handlers
-var _this = this;
-control.bind("change", function () {
-var newVal = control.attr("checked");
-dataObjParent[dataObjFieldName] = newVal;
-
-//Call handlers
-if (onChangedCallBack != undefined) onChangedCallBack(newVal, control);
-onDataChanged();
-
-})
-
-//
-return control;
-},
-loadData: function (control, dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-var value = dataObjParent[dataObjFieldName];
-control.attr("checked", value);
-}
-},
-dropdown: {
-name: "dropdown",
-createControlHTML: function (dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-
-//Create control
-var control = $("<select class='Dropdown' />");
-
-//Create default options
-if (objectTypeField.defaultOptions != undefined) {
-for (var key in objectTypeField.defaultOptions) {
-var enumEntry = objectTypeField.defaultOptions[key];
-var option = $("<option value='" + enumEntry.id + "'>" + enumEntry.label + "</option>").appendTo(control);
-}
-}
-
-//Event handlers
-var _this = this;
-control.bind("change", function () {
-var newVal = $(control).find("option:selected").attr("value");
-dataObjParent[dataObjFieldName] = newVal;
-
-//Call handlers
-if (onChangedCallBack != undefined) onChangedCallBack(newVal, control);
-onDataChanged();
-
-});
-
-return control;
-},
-loadData: function (control, dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-var value = dataObjParent[dataObjFieldName];
-control.val(value);
-}
-},
-composite: {
-name: "composite",
-createControlHTML: function (dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-
-//Outer control
-var _this = this;
-var control = $("<div class='Composite''></div>");
-
-//List
-var listContainer = $("<div class='ListDiv'></div>").appendTo(control);
-var listActionsDiv = $("<div class='ListActionsDiv'></div>").appendTo(listContainer);
-var listInnerContainer = $("<div class='ListInnerContainer'></div>").appendTo(listContainer);
-var addButton = $("<div class='Button-Thin'></div>").append("<img src='../../Content/themes/base/images/Icons/Add.png' />").append("<span>Add new</span>").appendTo(listActionsDiv);
-addButton.bind("click", function () {
-var newDefaultDataObj = diagramDataModelInstance.GetDefaultObject(objectTypeField.defaultObjectName);
-var newIndex = dataObjParent[dataObjFieldName].length;
-dataObjParent[dataObjFieldName][newIndex] = newDefaultDataObj;
-
-//Create a new NestedObjectControl
-var label = dataObjParent[dataObjFieldName][newIndex].Name;
-var nestedObjectControl = _this.privateMethods.createNestedObject(label, dataObjParent, dataObjFieldName, newIndex, objectTypeField, listContainer, detailsContainer);
-nestedObjectControl.appendTo(listInnerContainer);
-
-//Call handler
-onDataChanged();
-});
-
-//Details
-var detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(control);
-var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(detailsContainer).find("tbody");
-
-//
-return control;
-},
-loadData: function (control, dataObjParent, dataObjFieldName, objectTypeField, onChangedCallBack) {
-//
-var listContainer = $(control).find(".ListDiv");
-var listInnerContainer = $(listContainer).find(".ListInnerContainer");
-var detailsContainer = $(control).find(".DetailsDiv");
-var _this = this;
-
-//Create nestedControls for nested Objects
-for (var i = 0; i < dataObjParent[dataObjFieldName].length; i++) {
-if (dataObjParent[dataObjFieldName][i].ToBeDeleted != true) {
-var label = dataObjParent[dataObjFieldName][i].Name;
-var nestedObjectControl = this.privateMethods.createNestedObject(label, dataObjParent, dataObjFieldName, i, objectTypeField, listContainer, detailsContainer);
-nestedObjectControl.appendTo(listInnerContainer);
-}
-}
-},
-privateMethods: {
-createNestedObject: function (label, dataObjParent, dataObjFieldName, index, objectTypeField, listContainer, detailsContainer) {
-//Inner methods
-function deSelectAll() {
-var selectedNestedObjects = $(listContainer).find(".ListInnerContainer").children(".Selected");
-$(selectedNestedObjects).removeClass("Selected");
-$(detailsContainer).find("tbody").html("");
-$(detailsContainer).css("display", "none")
-}
-function toggleSelected(nestedObjectControl) {
-var selectedNestedObjects = $(listContainer).find(".ListInnerContainer").children(".Selected");
-
-//Deselect if already selected
-if ($(nestedObjectControl).hasClass("Selected")) {
-deSelectAll();
-}
-//Select if not selected
-else {
-$(selectedNestedObjects).removeClass("Selected");
-$(nestedObjectControl).addClass("Selected");
-$(detailsContainer).css("display", "block")
-$(detailsContainer).find("tbody").html("");
-
-//
-loadNestedObjectData(nestedObjectControl);
-}
-}
-function loadNestedObjectData(nestedObjectControl) {
-var nestedObjectIndex = $(listContainer).find(".NestedControl").index(nestedObjectControl);
-var detailsInnerTableTbody = $(detailsContainer).find("tbody");
-
-//Create controls for SubFields in Details area
-for (var subFieldKey in objectTypeField.subFields) {
-var subField = objectTypeField.subFields[subFieldKey];
-
-var subFieldControl = null;
-if (subField.dataName == "Name") { //special handler for Name
-subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField, function (newVal, control) {
-nestedObjectControl.find(".Label-Small").text(newVal);
-});
-
-} else {
-subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField, subField.onDataFieldChanged);
-}
-subFieldControl.attr("subField", subField.dataName);
-var row = createControlTableRow(subField.label, subFieldControl);
-row.appendTo(detailsInnerTableTbody);
-}
-
-//Load data into SubFieldControls
-var defaultFieldName = null;
-for (var subFieldKey in objectTypeField.subFields) {
-var subField = objectTypeField.subFields[subFieldKey];
-var subFieldControl = $(detailsContainer).find("[subField='" + subField.dataName + "']");
-controlTypes[subField.controlType].loadData(subFieldControl, dataObjParent[dataObjFieldName][index], subField.dataName, subField);
-
-//Default select
-if (subField.defaultSelect == true)
-$(subFieldControl).select();
-}
-
-//Rego through fields and call onDataFieldLoaded handler if exists
-for (var subFieldKey in objectTypeField.subFields) {
-
-//Get the field and control
-var subField = objectTypeField.subFields[subFieldKey];
-var subFieldControl = $(detailsContainer).find("[subField='" + subField.dataName + "']");
-if (subField.onDataFieldLoaded != undefined) {
-subField.onDataFieldLoaded(dataObjParent[dataObjFieldName][index][subField.dataName], subFieldControl);
-}
-}
-}
-function deleteNestedObject(nestedObjectControl) {
-var nestedObjectIndex = $(nestedObjectControl).attr("nestedObjectIndex");
-dataObjParent[dataObjFieldName][index].ToBeDeleted = true;
-$(nestedObjectControl).remove();
-$(detailsContainer).find("tbody").html("");
-$(detailsContainer).css("display", "none")
-
-//
-onDataChanged();
-}
-
-//Create nestedObject control
-var nestedObjectControl = $("<div class='NestedControl'></div>").attr("nestedObjectIndex", index);
-var controlLabel = $("<span class='Label-Small'>" + label + "</span>").appendTo(nestedObjectControl);
-var deleteButton = $("<div id='DeleteButton' class='IconButton-Simple'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").appendTo(nestedObjectControl);
-deleteButton.bind("click", function () {
-deleteNestedObject($(this).parents(".NestedControl"));
-deSelectAll();
-});
-
-//Click handler
-nestedObjectControl.bind("click", function () {
-toggleSelected($(this));
-});
-
-return nestedObjectControl;
-}
-}
-}
-};
-var supportedClientObjects = {
-feature: {
-areas: {
-basicArea: {
-displayTitle: false,
-tableLayout: true,
-fields: {
-rootFeature: {
-label: "Root Feature",
-dataName: "IsRoot",
-controlType: controlTypes.checkbox.name,
-disabled: true
-},
-name: {
-label: "Name",
-dataName: "Name",
-controlType: controlTypes.textbox.name
-},
-description: {
-label: "Description",
-dataName: "Description",
-controlType: controlTypes.textarea.name
-}
-}
-},
-attributesArea: {
-displayTitle: "Attributes",
-tableLayout: false,
-fields: {
-attributes: {
-label: "Attributes",
-dataName: "Attributes",
-defaultObjectName: "Attribute",
-controlType: controlTypes.composite.name,
-
-subFields: {
-name: {
-label: "Name",
-dataName: "Name",
-controlType: controlTypes.textbox.name,
-defaultSelect: true
-},
-description: {
-label: "Description",
-dataName: "Description",
-controlType: controlTypes.textarea.name
-},
-type: {
-label: "Attribute Type",
-dataName: "AttributeType",
-controlType: controlTypes.dropdown.name,
-defaultOptions: systemDefaults.enums.attributeTypes,
-onDataFieldChanged: function (newVal, control) {
-var constantValueField = $(control).parents(".DetailsDiv").find("[subField='ConstantValue']");
-var attributeType = getEnumEntryByID(systemDefaults.enums.attributeTypes, parseFloat(newVal));
-
-if (attributeType == systemDefaults.enums.attributeTypes.constant) {
-constantValueField.removeAttr("disabled");
-constantValueField.parent().parent().show();
-}
-else {
-constantValueField.attr("disabled", true);
-constantValueField.parent().parent().hide();
-}
-
-},
-onDataFieldLoaded: function (val, control) {
-var constantValueField = $(control).parents(".DetailsDiv").find("[subField='ConstantValue']");
-var attributeType = getEnumEntryByID(systemDefaults.enums.attributeTypes, parseFloat(val));
-
-if (attributeType != systemDefaults.enums.attributeTypes.constant) {
-constantValueField.attr("disabled", true);
-constantValueField.parent().parent().hide();
-}
-}
-},
-datatype: {
-label: "Data Type",
-dataName: "AttributeDataType",
-controlType: controlTypes.dropdown.name,
-defaultOptions: systemDefaults.enums.attributeDataTypes
-},
-constantValue: {
-label: "ConstantVal",
-dataName: "ConstantValue",
-controlType: controlTypes.textbox.name
-}
-}
-}
-}
-}
-}
-},
-relation: {
-areas: {
-basicArea: {
-displayTitle: false,
-tableLayout: true,
-fields: {
-relationType: {
-label: "Relation type",
-dataName: "RelationType",
-controlType: controlTypes.dropdown.name,
-defaultOptions: systemDefaults.enums.relationTypes,
-onDataFieldChanged: function (newVal, control) {
-var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
-var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
-var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(newVal));
-
-//
-lowerBoundControl.val(relationType.bounds.lowerBound).trigger("change");
-upperBoundControl.val(relationType.bounds.upperBound).trigger("change");
-
-if (relationType.bounds.editable == true) {
-lowerBoundControl.removeAttr("disabled");
-upperBoundControl.removeAttr("disabled");
-}
-else {
-lowerBoundControl.attr("disabled", "disabled");
-upperBoundControl.attr("disabled", "disabled");
-}
-
-},
-onDataFieldLoaded: function (val, control) {
-var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
-var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
-var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(val));
-
-if (relationType.bounds.editable == true) {
-lowerBoundControl.removeAttr("disabled");
-upperBoundControl.removeAttr("disabled");
-}
-}
-},
-lowerBound: {
-label: "Lower bound",
-dataName: "LowerBound",
-controlType: controlTypes.textbox.name,
-disabled: true
-},
-upperBound: {
-label: "Upper bound",
-dataName: "UpperBound",
-controlType: controlTypes.textbox.name,
-disabled: true
-}
-}
-}
-}
-},
-groupRelation: {
-areas: {
-basicArea: {
-displayTitle: false,
-tableLayout: true,
-fields: {
-groupRelationType: {
-label: "GroupRel. type",
-dataName: "GroupRelationType",
-controlType: controlTypes.dropdown.name,
-defaultOptions: systemDefaults.enums.groupRelationTypes,
-onDataFieldChanged: function (newVal, control) {
-var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
-var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
-var groupRelationType = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, parseFloat(newVal));
-
-//
-lowerBoundControl.val(groupRelationType.bounds.lowerBound).trigger("change");
-upperBoundControl.val(groupRelationType.bounds.upperBound).trigger("change");
-
-if (groupRelationType.bounds.editable == true) {
-lowerBoundControl.removeAttr("disabled");
-upperBoundControl.removeAttr("disabled");
-}
-else {
-lowerBoundControl.attr("disabled", "disabled");
-upperBoundControl.attr("disabled", "disabled");
-}
-
-},
-onDataFieldLoaded: function (val, control) {
-var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
-var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
-var groupRelationType = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, parseFloat(val));
-
-if (groupRelationType.bounds.editable == true) {
-lowerBoundControl.removeAttr("disabled");
-upperBoundControl.removeAttr("disabled");
-
-} else {
-lowerBoundControl.val(groupRelationType.bounds.lowerBound);
-upperBoundControl.val(groupRelationType.bounds.upperBound);
-}
-}
-},
-lowerBound: {
-label: "Lower bound",
-dataName: "LowerBound",
-controlType: controlTypes.textbox.name,
-disabled: true
-},
-upperBound: {
-label: "Upper bound",
-dataName: "UpperBound",
-controlType: controlTypes.textbox.name,
-disabled: true
-}
-}
-}
-}
-},
-compositionRule: {
-areas: {
-basicArea: {
-displayTitle: false,
-tableLayout: true,
-fields: {
-name: {
-label: "Name",
-dataName: "Name",
-controlType: controlTypes.textbox.name
-},
-description: {
-label: "Description",
-dataName: "Description",
-controlType: controlTypes.textarea.name
-},
-compositionRuleType: {
-label: "Composition type",
-dataName: "CompositionRuleType",
-controlType: controlTypes.dropdown.name,
-defaultOptions: systemDefaults.enums.compositionRuleTypes
-}
-}
-
-}
-}
-},
-customRule: {
-areas: {
-basicArea: {
-displayTitle: false,
-tableLayout: true,
-fields: {
-name: {
-label: "Name",
-dataName: "Name",
-controlType: controlTypes.textbox.name
-},
-description: {
-label: "Description",
-dataName: "Description",
-controlType: controlTypes.textarea.name
-}
-}
-},
-expressionArea: {
-displayTitle: "Expression",
-tableLayout: false,
-fields: {
-description: {
-label: "Expression",
-dataName: "Expression",
-controlType: controlTypes.textarea.name
-}
-}
-}
-}
-}
-};
-
-//Fields and variables
-var _container = container;
-var _diagramDataModel = diagramDataModelInstance;
-var _mainGUID = null, _mainBusinessObject = null, _currentClientObjectType = null;
-var _mainContainer = $(container).find("#MainContainer");
-var _headerLabel = $(container).find("#SetTypeLabel");
-var _thisPropertiesComponent = this;
-
-//Constructor/Initalizers
-this.Initialize = function () {
-
-//Handler for onFocus
-$(_mainContainer).bind("click", function (e) {
-_thisPropertiesComponent.Focus.RaiseEvent();
-});
-}
-
-//Helper methods
-var createControlTableRow = function (label, control) {
-
-//Standard html
-var row = $("<tr></tr>");
-var labelTD = $("<td></td>").appendTo(row);
-var label = $("<span class='Label-Small'>" + label + "</span>").appendTo(labelTD);
-var controlTD = $("<td></td>").appendTo(row);
-control.appendTo(controlTD);
-
-//
-return row;
-}
-var createSectionArea = function (displayTitle, createTable) {
-
-//Area html
-var area = $("<div class='AreaDiv'></div>").appendTo(_mainContainer);
-if (displayTitle != false) {
-var titleLabel = $("<span class='Label'>" + displayTitle + "</span>").appendTo(area);
-}
-var innerAreaContainer = $("<div class='InnerContainer'></div>").appendTo(area);
-var clearDiv = $("<div style='clear:both'></div>").appendTo(area);
-
-//InnerTable
-if (createTable == true) {
-var innerTable = $("<table class='InnerTable'></table>").appendTo(innerAreaContainer);
-var tbody = $("<tbody></tbody>").appendTo(innerTable);
-return tbody;
-} else if (createTable == false) {
-return innerAreaContainer;
-}
-}
-
-//Private fields and methods
-var loadUI = function () {
-
-//Go through each Area
-for (var areaKey in supportedClientObjects[_currentClientObjectType].areas) {
-
-//Create an html area
-var area = supportedClientObjects[_currentClientObjectType].areas[areaKey];
-var areaInnerContainer = createSectionArea(area.displayTitle, area.tableLayout);
-
-//Go through each field in the Area
-for (var fieldKey in area.fields) {
-
-//Create a control
-var field = area.fields[fieldKey];
-var control = controlTypes[field.controlType].createControlHTML(_mainBusinessObject, field.dataName, field, field.onDataFieldChanged);
-control.attr("fieldName", field.dataName).attr("id", field.dataName + "Control");
-
-//Disabled
-if (field.disabled)
-control.attr("disabled", "disabled");
-
-//Add it to the Area
-if (area.tableLayout == true) {
-var row = createControlTableRow(field.label, control);
-row.appendTo(areaInnerContainer);
-} else {
-control.appendTo(areaInnerContainer);
-}
-
-//Load data values into the control
-controlTypes[field.controlType].loadData(control, _mainBusinessObject, field.dataName, field, onDataChanged);
-
-}
-
-//Rego through fields and call onDataFieldLoaded handler if exists
-for (var fieldKey in area.fields) {
-
-//Get the field and control
-var field = area.fields[fieldKey];
-var control = $(areaInnerContainer).find("#" + field.dataName + "Control");
-if (field.onDataFieldLoaded != undefined) {
-field.onDataFieldLoaded(_mainBusinessObject[field.dataName], control);
-}
-}
-}
-
-//Special hack
-$(_mainContainer).children(".AreaDiv:gt(0)").css("margin-top", "10px");
-}
-var onDataChanged = function () {
-//Update DiagramDataModel using the _mainBusinessObject
-_diagramDataModel.UpdateClientObject(_mainGUID, _mainBusinessObject);
-}
-var clearUI = function () {
-$(_mainContainer).html("");
-$(_headerLabel).text("");
-}
-var loadData = function (guid) {
-
-//Variables
-var clientObject = _diagramDataModel.GetByGUID(guid);
-_mainGUID = guid;
-_currentClientObjectType = clientObject.GetType();
-_mainBusinessObject = clientObject.GetBusinessObjectCopy();
-
-//Setup UI
-clearUI();
-loadUI();
-$(_headerLabel).text("(" + _currentClientObjectType + ")");
-}
-clear = function () {
-
-//Reset variables
-_mainGUID = null;
-_mainBusinessObject = null;
-_currentClientObjectType = null;
-
-//Clear UI elements
-clearUI();
-}
-
-//Events
-this.Focus = new Event();
-
-//Eventhandlers
-this.OnClientObjectUpdated = function (guid) {
-//loadData(guid);
-}
-this.OnClientObjectDeleted = function (guid) {
-clear();
-}
-
-this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
-if (newState == systemDefaults.uiElementStates.selected && shift == false) {
-loadData(guid);
-} else {
-clear();
-}
-}
-this.OnRelatedViewSelectionCleared = function () {
-clear();
-}
-}
-*/
