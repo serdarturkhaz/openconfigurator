@@ -930,7 +930,7 @@ a:hover
     float: left;
     margin-bottom: 10px;
 }
-#PropertiesBox .AreaDiv .InnerContainer .ListDiv .NestedControl
+#PropertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement
 {
     box-sizing: border-box;
     float: left;
@@ -947,12 +947,12 @@ a:hover
     background-color: #FFEDA4;
     border: 1px solid #FFDB48;
 }
-#PropertiesBox .AreaDiv .InnerContainer .ListDiv .NestedControl:hover
+#PropertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement:hover
 {
     background-color: #FFEDA4;
     border: 1px solid #FFDB48;
 }
-#PropertiesBox .AreaDiv .InnerContainer .ListDiv .NestedControl .IconButton-Simple
+#PropertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement .IconButton-Simple
 {
     float: right;
 }
@@ -967,7 +967,7 @@ a:hover
     overflow: auto;
     background-color: #fff7d7;
 }
-#PropertiesBox .AreaDiv .InnerContainer .DetailsDiv .Composite
+#PropertiesBox .AreaDiv .InnerContainer .DetailsDiv .CompositeList
 {
     width: 100%;
 }
