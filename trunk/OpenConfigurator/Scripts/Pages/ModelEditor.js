@@ -576,6 +576,9 @@ ClientObjects.Feature = function (businessObject) {
     this.Attributes = _attributes;
 
     //Methods
+    this.GetBusinessObject = function () {
+        return _businessObject;
+    }
     this.GetBusinessObjectCopy = function () {
         var copy = jQuery.extend(true, {}, _businessObject);
         return copy;
@@ -614,6 +617,9 @@ ClientObjects.Attribute = function (businessObject) {
     this.Feature = _feature;
 
     //Methods
+    this.GetBusinessObject = function () {
+        return _businessObject;
+    }
     this.GetBusinessObjectCopy = function () {
         var copy = jQuery.extend(true, {}, _businessObject);
         return copy;
@@ -634,7 +640,7 @@ ClientObjects.Attribute = function (businessObject) {
         return _businessObject["ToBeDeleted"] == true;
     }
     this.SyncBusinessObject = function () {
-
+        _businessObject.FeatureID = this.Feature.GetField("ID");
     }
 
 }
@@ -654,6 +660,9 @@ ClientObjects.Relation = function (businessObject) {
     this.ChildFeature = _childFeature;
 
     //Methods
+    this.GetBusinessObject = function () {
+        return _businessObject;
+    }
     this.GetBusinessObjectCopy = function () {
         var copy = jQuery.extend(true, {}, _businessObject);
         return copy;
@@ -695,6 +704,9 @@ ClientObjects.GroupRelation = function (businessObject) {
     this.ChildFeatures = _childFeatures;
 
     //Methods
+    this.GetBusinessObject = function () {
+        return _businessObject;
+    }
     this.GetBusinessObjectCopy = function () {
         var copy = jQuery.extend(true, {}, _businessObject);
         return copy;
@@ -738,6 +750,9 @@ ClientObjects.CompositionRule = function (businessObject) {
     this.SecondFeature = _secondFeature;
 
     //Methods
+    this.GetBusinessObject = function () {
+        return _businessObject;
+    }
     this.GetBusinessObjectCopy = function () {
         var copy = jQuery.extend(true, {}, _businessObject);
         return copy;
@@ -775,6 +790,9 @@ ClientObjects.CustomRule = function (businessObject) {
     }
 
     //Methods
+    this.GetBusinessObject = function () {
+        return _businessObject;
+    }
     this.GetBusinessObjectCopy = function () {
         var copy = jQuery.extend(true, {}, _businessObject);
         return copy;
@@ -1371,12 +1389,13 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         Dropdown: null,
         CompositeList: null
     }
-    Controls.Textbox = function (fieldParent, fieldName, supportedClientObjectField, onDataFieldChanged, onDataFieldLoaded) {
+    Controls.Textbox = function (fieldParent, settingsField, saveDataFunction) {
 
         //Fields
         var _control = null;
-        var _fieldParent = fieldParent, _fieldName = fieldName;
-        var _supportedClientObjectField = supportedClientObjectField;
+        var _fieldParent = fieldParent;
+        var _fieldName = settingsField.dataName, _changedCallback = settingsField.onDataFieldChanged, _loadedCallback = settingsField.onDataFieldLoaded;
+        var _settingsField = settingsField;
 
         //Public methods
         this.CreateHTML = function () {
@@ -1384,10 +1403,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Create control
             _control = $("<input class='Textbox' type='text' />");
             _control.bind("change", onChanged).bind("keypress", onEnterPressed);
-            _control.attr("fieldName", fieldName);
+            _control.attr("fieldName", _fieldName);
 
             //Disabled
-            if (_supportedClientObjectField.disabled)
+            if (_settingsField.disabled)
                 _control.attr("disabled", "disabled");
 
             //
@@ -1398,8 +1417,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             _control.val(value);
         }
         this.CallOnDataFieldLoaded = function () {
-            if (onDataFieldLoaded != undefined) {
-                onDataFieldLoaded(_fieldParent[_fieldName], _control);
+            if (_loadedCallback != undefined) {
+                _loadedCallback(_fieldParent[_fieldName], _control);
             }
         }
 
@@ -1409,23 +1428,24 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             _fieldParent[_fieldName] = newVal;
 
             //Call handlers
-            if (onDataFieldChanged != undefined) {
-                onDataFieldChanged(newVal, _control);
+            if (_changedCallback != undefined) {
+                _changedCallback(newVal, _control);
             }
-            onDataChanged();
+            saveDataFunction(_fieldName);
         }
         var onEnterPressed = function (e) {
             if (e.which == 13) {
-                onTextboxChanged();
+                onChanged();
             }
         }
     }
-    Controls.Textarea = function (fieldParent, fieldName, supportedClientObjectField, onDataFieldChanged, onDataFieldLoaded) {
+    Controls.Textarea = function (fieldParent, settingsField, saveDataFunction) {
 
         //Fields
         var _control = null;
-        var _fieldParent = fieldParent, _fieldName = fieldName;
-        var _supportedClientObjectField = supportedClientObjectField;
+        var _fieldParent = fieldParent;
+        var _fieldName = settingsField.dataName, _changedCallback = settingsField.onDataFieldChanged, _loadedCallback = settingsField.onDataFieldLoaded;
+        var _settingsField = settingsField;
 
         //Public methods
         this.CreateHTML = function () {
@@ -1433,10 +1453,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Create control
             _control = $("<textarea class='Textarea'></textarea>");
             _control.bind("change", onChanged);
-            _control.attr("fieldName", fieldName);
+            _control.attr("fieldName", _fieldName);
 
             //Disabled
-            if (_supportedClientObjectField.disabled)
+            if (_settingsField.disabled)
                 _control.attr("disabled", "disabled");
 
             //
@@ -1449,8 +1469,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             $(_control).autoGrow();
         }
         this.CallOnDataFieldLoaded = function () {
-            if (onDataFieldLoaded != undefined) {
-                onDataFieldLoaded(_fieldParent[_fieldName], _control);
+            if (_loadedCallback != undefined) {
+                _loadedCallback(_fieldParent[_fieldName], _control);
             }
         }
 
@@ -1460,18 +1480,19 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             _fieldParent[_fieldName] = newVal;
 
             //Call handlers
-            if (onDataFieldChanged != undefined) {
-                onDataFieldChanged(newVal, _control);
+            if (_changedCallback != undefined) {
+                _changedCallback(newVal, _control);
             }
-            onDataChanged();
+            saveDataFunction(_fieldName);
         }
     }
-    Controls.Checkbox = function (fieldParent, fieldName, supportedClientObjectField, onDataFieldChanged, onDataFieldLoaded) {
+    Controls.Checkbox = function (fieldParent, settingsField, saveDataFunction) {
 
         //Fields
         var _control = null;
-        var _fieldParent = fieldParent, _fieldName = fieldName;
-        var _supportedClientObjectField = supportedClientObjectField;
+        var _fieldParent = fieldParent;
+        var _fieldName = settingsField.dataName, _changedCallback = settingsField.onDataFieldChanged, _loadedCallback = settingsField.onDataFieldLoaded;
+        var _settingsField = settingsField;
 
         //Public methods
         this.CreateHTML = function () {
@@ -1479,10 +1500,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Create control
             _control = $("<input class='Checkbox' type='checkbox' />");
             _control.bind("change", onChanged);
-            _control.attr("fieldName", fieldName);
+            _control.attr("fieldName", _fieldName);
 
             //Disabled
-            if (_supportedClientObjectField.disabled)
+            if (_settingsField.disabled)
                 _control.attr("disabled", "disabled");
 
             //
@@ -1493,8 +1514,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             _control.attr("checked", value);
         }
         this.CallOnDataFieldLoaded = function () {
-            if (onDataFieldLoaded != undefined) {
-                onDataFieldLoaded(_fieldParent[_fieldName], _control);
+            if (_loadedCallback != undefined) {
+                _loadedCallback(_fieldParent[_fieldName], _control);
             }
         }
 
@@ -1504,18 +1525,19 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             _fieldParent[_fieldName] = newVal;
 
             //Call handlers
-            if (onDataFieldChanged != undefined) {
-                onDataFieldChanged(newVal, _control);
+            if (_changedCallback != undefined) {
+                _changedCallback(newVal, _control);
             }
-            onDataChanged();
+            saveDataFunction(_fieldName);
         }
     }
-    Controls.Dropdown = function (fieldParent, fieldName, supportedClientObjectField, onDataFieldChanged, onDataFieldLoaded) {
+    Controls.Dropdown = function (fieldParent, settingsField, saveDataFunction) {
 
         //Fields
         var _control = null;
-        var _fieldParent = fieldParent, _fieldName = fieldName;
-        var _supportedClientObjectField = supportedClientObjectField;
+        var _fieldParent = fieldParent;
+        var _fieldName = settingsField.dataName, _changedCallback = settingsField.onDataFieldChanged, _loadedCallback = settingsField.onDataFieldLoaded;
+        var _settingsField = settingsField;
 
         //Public methods
         this.CreateHTML = function () {
@@ -1523,10 +1545,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Create control
             _control = $("<select class='Dropdown' />");
             _control.bind("change", onChanged);
-            _control.attr("fieldName", fieldName);
+            _control.attr("fieldName", _fieldName);
 
             //Disabled
-            if (_supportedClientObjectField.disabled)
+            if (_settingsField.disabled)
                 _control.attr("disabled", "disabled");
 
             //
@@ -1535,9 +1557,9 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         this.LoadData = function () {
 
             //Create default options
-            if (supportedClientObjectField.defaultOptions != undefined) {
-                for (var key in supportedClientObjectField.defaultOptions) {
-                    var enumEntry = supportedClientObjectField.defaultOptions[key];
+            if (settingsField.defaultOptions != undefined) {
+                for (var key in settingsField.defaultOptions) {
+                    var enumEntry = settingsField.defaultOptions[key];
                     var option = $("<option value='" + enumEntry.id + "'>" + enumEntry.label + "</option>").appendTo(_control);
                 }
             }
@@ -1547,8 +1569,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             _control.val(value);
         }
         this.CallOnDataFieldLoaded = function () {
-            if (onDataFieldLoaded != undefined) {
-                onDataFieldLoaded(_fieldParent[_fieldName], _control);
+            if (_loadedCallback != undefined) {
+                _loadedCallback(_fieldParent[_fieldName], _control);
             }
         }
 
@@ -1558,32 +1580,33 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             _fieldParent[_fieldName] = newVal;
 
             //Call handlers
-            if (onDataFieldChanged != undefined) {
-                onDataFieldChanged(newVal, _control);
+            if (_changedCallback != undefined) {
+                _changedCallback(newVal, _control);
             }
-            onDataChanged();
+            saveDataFunction(_fieldName);
         }
     }
-    Controls.CompositeList = function (fieldParent, fieldName, supportedClientObjectField, onDataFieldChanged, onDataFieldLoaded) {
+    Controls.CompositeList = function (fieldParent, settingsField, saveDataFunction) {
 
         //Inner classes
-        var ListElement = function (clientObject, onListElementDeleted) {
+        var ListElement = function (clientObject, onListElementDeleted, onListElementClicked) {
 
             //Fields
-            var _innerControl = null;
-            var _businessObject = clientObject.GetBusinessObjectCopy();
+            var _innerControl = null, _controlLabel = null;
+            var _businessObject = clientObject.GetBusinessObject();
             var _clientObject = clientObject;
+            var _selected = false;
             var _thisListElement = this;
 
             //Methods
-            this.GetIndex = function () {
-                var index = $(_listContainer).find(".ListElement").index($(_innerControl));
-                return index;
-            }
             this.CreateHTML = function () {
 
                 _innerControl = $("<div class='ListElement'></div>");
-                var controlLabel = $("<span class='Label-Small'>" + _businessObject.Name + "</span>").appendTo(_innerControl);
+                _innerControl.bind("click", function () {
+                    onListElementClicked(_thisListElement.GetIndex());
+
+                });
+                _controlLabel = $("<span class='Label-Small'>" + _businessObject.Name + "</span>").appendTo(_innerControl);
                 var deleteButton = $("<div id='DeleteButton' class='IconButton-Simple'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").appendTo(_innerControl);
                 deleteButton.bind("click", function () {
                     var index = _thisListElement.GetIndex();
@@ -1592,20 +1615,45 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
                 return _innerControl;
             }
+            this.RefreshLabel = function () {
+                _controlLabel.text(_businessObject.Name);
+            }
+            this.GetClientObject = function () {
+                return _clientObject;
+            }
+            this.GetControl = function () {
+                return _innerControl;
+            }
+            this.GetIndex = function () {
+                var index = $(_listContainer).find(".ListElement").index($(_innerControl));
+                return index;
+            }
+            this.SetSelectedState = function (newState) {
+                _selected = newState;
+                if (newState == true && !_innerControl.hasClass("Selected")) {
+                    _innerControl.addClass("Selected");
+                } else {
+                    _innerControl.removeClass("Selected");
+                }
+            }
+            this.IsSelected = function () {
+                return _selected == true;
+            }
         }
 
         //Fields
         var _control = null;
         var _listElements = [];
-        var _fieldParent = fieldParent, _fieldName = fieldName;
-        var _supportedClientObjectField = supportedClientObjectField;
+        var _fieldParent = fieldParent;
+        var _fieldName = settingsField.dataName, _changedCallback = settingsField.onDataFieldChanged, _loadedCallback = settingsField.onDataFieldLoaded;
+        var _settingsField = settingsField;
         var _listContainer = null, _detailsContainer = null;
 
         //Private methods
         var addListElement = function (clientObject) {
 
             //Create the ListElement
-            var listElement = new ListElement(clientObject, onListElementDeleted);
+            var listElement = new ListElement(clientObject, onListElementDeleted, onListElementClicked);
             _listElements.push(listElement);
 
             //Create the HTML
@@ -1615,12 +1663,74 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //
             return listElement;
         }
+        var deselectAll = function () {
+            for (var i = 0; i < _listElements.length; i++) {
+                _listElements[i].SetSelectedState(false);
+            }
+        }
+        var toggleSelected = function (listElement) {
+
+            //Deselect if already selected
+            if (listElement.IsSelected()) {
+                deselectAll();
+                clearListElementData();
+                return false;
+            }
+            //Select if not selected
+            else {
+                deselectAll();
+                listElement.SetSelectedState(true);
+                return true;
+            }
+        }
+        var loadListElementData = function (index) {
+
+            //Variables
+            var subControlInstances = []
+            var clientObject = _listElements[index].GetClientObject();
+            var businessObject = clientObject.GetBusinessObject();
+
+            //Clear and show the detailsContainer
+            $(_detailsContainer).find("tbody").html("");
+            $(_detailsContainer).css("display", "block")
+
+            //Loop through subFields
+            for (var subFieldKey in settingsField.subFields) {
+                var settingsSubField = settingsField.subFields[subFieldKey];
+
+                //Create a subControl
+                var onListElementDataChanged = function (fieldName) {
+                    _diagramDataModel.UpdateClientObject(clientObject.GUID, businessObject);
+                    _listElements[index].RefreshLabel();
+                }
+                var subControlInstance = new settingsSubField.controlType(businessObject, settingsSubField, onListElementDataChanged);
+                var htmlSubControl = subControlInstance.CreateHTML();
+                subControlInstance.LoadData();
+                subControlInstances.push(subControlInstance);
+
+                //Create a row
+                var row = createControlTableRow(settingsSubField.label, htmlSubControl);
+                row.appendTo($(_detailsContainer).find("tbody"));
+            }
+
+            //Rego through subControlInstances and call _loadedCallback handler
+            for (var i = 0; i < subControlInstances.length; i++) {
+                subControlInstances[i].CallOnDataFieldLoaded();
+            }
+        }
+        var clearListElementData = function () {
+
+            //Clear and hide the detailsContainer
+            $(_detailsContainer).find("tbody").html("");
+            $(_detailsContainer).css("display", "none");
+        }
 
         //Public methods
         this.CreateHTML = function () {
 
             //Outer control
             var _control = $("<div class='CompositeList''></div>");
+            _control.attr("fieldName", _fieldName);
 
             //List
             var listDiv = $("<div class='ListDiv'></div>").appendTo(_control);
@@ -1641,7 +1751,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         this.LoadData = function () {
 
             //Create list elements
-            var clientObjectCollection = fieldParent[fieldName];
+            var clientObjectCollection = _fieldParent[_fieldName];
             for (var i = 0; i < clientObjectCollection.length; i++) {
                 addListElement(clientObjectCollection[i]);
             }
@@ -1649,184 +1759,41 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
         //Event handlers
         this.CallOnDataFieldLoaded = function () {
-            if (onDataFieldLoaded != undefined) {
-                onDataFieldLoaded(_fieldParent[_fieldName], _control);
+            if (_loadedCallback != undefined) {
+                _loadedCallback(_fieldParent[_fieldName], _control);
             }
         }
         var onAddButtonClick = function () {
 
             //Create a new clientObject in the DataModel
-            var newClientObject = diagramDataModelInstance.AddNewClientObject(supportedClientObjectField.clientObjectType);
-            fieldParent[fieldName].push(newClientObject);
+            var initialClientValues = {};
+            initialClientValues[settingsField.parentClientRefField] = fieldParent;
+            var newClientObject = diagramDataModelInstance.AddNewClientObject(settingsField.clientObjectType, null, initialClientValues);
+            fieldParent[_fieldName].push(newClientObject);
 
             //Create and add a new ListElement
             addListElement(newClientObject);
         }
         var onListElementDeleted = function (control, index) {
-            var guid = fieldParent[fieldName][index].GUID;
+            var guid = fieldParent[_fieldName][index].GUID;
             $(control).remove();
             _listElements.splice(index, 1);
 
             //Delete from DataModel and parent collection
-            fieldParent[fieldName].splice(index, 1);
+            fieldParent[_fieldName].splice(index, 1);
             _diagramDataModel.DeleteClientObject(guid);
+            clearListElementData();
         }
-    }
-
-
-    var controlTypes = {
-        composite: {
-            name: "composite",
-            createControlHTML: function (dataObjParent, dataObjFieldName, objectTypeField, onDataFieldChanged) {
-
-                //Outer control
-                var _this = this;
-                var control = $("<div class='CompositeList''></div>");
-
-                //List
-                var listContainer = $("<div class='ListDiv'></div>").appendTo(control);
-                var listActionsDiv = $("<div class='ListActionsDiv'></div>").appendTo(listContainer);
-                var listInnerContainer = $("<div class='ListInnerContainer'></div>").appendTo(listContainer);
-                var addButton = $("<div class='Button-Thin'></div>").append("<img src='../../Content/themes/base/images/Icons/Add.png' />").append("<span>Add new</span>").appendTo(listActionsDiv);
-                addButton.bind("click", function () {
-                    var newDefaultDataObj = diagramDataModelInstance.GetDefaultObject(objectTypeField.clientObjectType);
-                    var newIndex = dataObjParent[dataObjFieldName].length;
-                    dataObjParent[dataObjFieldName][newIndex] = newDefaultDataObj;
-
-                    //Create a new NestedObjectControl
-                    var label = dataObjParent[dataObjFieldName][newIndex].Name;
-                    var nestedObjectControl = _this.privateMethods.createNestedObject(label, dataObjParent, dataObjFieldName, newIndex, objectTypeField, listContainer, detailsContainer);
-                    nestedObjectControl.appendTo(listInnerContainer);
-
-                    //Call handler
-                    onDataChanged();
-                });
-
-                //Details
-                var detailsContainer = $("<div class='DetailsDiv'></div>").css("display", "none").appendTo(control);
-                var detailsInnerTableTbody = $("<table><tbody></tbody></table>").appendTo(detailsContainer).find("tbody");
-
-                //
-                return control;
-            },
-            loadData: function (control, dataObjParent, dataObjFieldName, objectTypeField, onDataFieldChanged) {
-                //
-                var listContainer = $(control).find(".ListDiv");
-                var listInnerContainer = $(listContainer).find(".ListInnerContainer");
-                var detailsContainer = $(control).find(".DetailsDiv");
-                var _this = this;
-
-                //Create nestedControls for nested Objects
-                for (var i = 0; i < dataObjParent[dataObjFieldName].length; i++) {
-                    if (dataObjParent[dataObjFieldName][i].ToBeDeleted != true) {
-                        var label = dataObjParent[dataObjFieldName][i].Name;
-                        var nestedObjectControl = this.privateMethods.createNestedObject(label, dataObjParent, dataObjFieldName, i, objectTypeField, listContainer, detailsContainer);
-                        nestedObjectControl.appendTo(listInnerContainer);
-                    }
-                }
-            },
-            privateMethods: {
-                createNestedObject: function (label, dataObjParent, dataObjFieldName, index, objectTypeField, listContainer, detailsContainer) {
-                    //Inner methods
-                    function deSelectAll() {
-                        var selectedNestedObjects = $(listContainer).find(".ListInnerContainer").children(".Selected");
-                        $(selectedNestedObjects).removeClass("Selected");
-                        $(detailsContainer).find("tbody").html("");
-                        $(detailsContainer).css("display", "none")
-                    }
-                    function toggleSelected(nestedObjectControl) {
-                        var selectedNestedObjects = $(listContainer).find(".ListInnerContainer").children(".Selected");
-
-                        //Deselect if already selected
-                        if ($(nestedObjectControl).hasClass("Selected")) {
-                            deSelectAll();
-                        }
-                        //Select if not selected
-                        else {
-                            $(selectedNestedObjects).removeClass("Selected");
-                            $(nestedObjectControl).addClass("Selected");
-                            $(detailsContainer).css("display", "block")
-                            $(detailsContainer).find("tbody").html("");
-
-                            //
-                            loadNestedObjectData(nestedObjectControl);
-                        }
-                    }
-                    function loadNestedObjectData(nestedObjectControl) {
-                        var nestedObjectIndex = $(listContainer).find(".ListElement").index(nestedObjectControl);
-                        var detailsInnerTableTbody = $(detailsContainer).find("tbody");
-
-                        //Create controls for SubFields in Details area
-                        for (var subFieldKey in objectTypeField.subFields) {
-                            var subField = objectTypeField.subFields[subFieldKey];
-
-                            var subFieldControl = null;
-                            if (subField.dataName == "Name") { //special handler for Name
-                                subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField, function (newVal, control) {
-                                    nestedObjectControl.find(".Label-Small").text(newVal);
-                                });
-
-                            } else {
-                                subFieldControl = controlTypes[subField.controlType].createControlHTML(dataObjParent[dataObjFieldName][index], subField.dataName, subField, subField.onDataFieldChanged);
-                            }
-                            subFieldControl.attr("subField", subField.dataName);
-                            var row = createControlTableRow(subField.label, subFieldControl);
-                            row.appendTo(detailsInnerTableTbody);
-                        }
-
-                        //Load data into SubFieldControls
-                        var defaultFieldName = null;
-                        for (var subFieldKey in objectTypeField.subFields) {
-                            var subField = objectTypeField.subFields[subFieldKey];
-                            var subFieldControl = $(detailsContainer).find("[subField='" + subField.dataName + "']");
-                            controlTypes[subField.controlType].loadData(subFieldControl, dataObjParent[dataObjFieldName][index], subField.dataName, subField);
-
-                            //Default select
-                            if (subField.defaultSelect == true)
-                                $(subFieldControl).select();
-                        }
-
-                        //Rego through fields and call onDataFieldLoaded handler if exists
-                        for (var subFieldKey in objectTypeField.subFields) {
-
-                            //Get the field and control
-                            var subField = objectTypeField.subFields[subFieldKey];
-                            var subFieldControl = $(detailsContainer).find("[subField='" + subField.dataName + "']");
-                            if (subField.onDataFieldLoaded != undefined) {
-                                subField.onDataFieldLoaded(dataObjParent[dataObjFieldName][index][subField.dataName], subFieldControl);
-                            }
-                        }
-                    }
-                    function deleteNestedObject(nestedObjectControl) {
-                        var nestedObjectIndex = $(nestedObjectControl).attr("nestedObjectIndex");
-                        dataObjParent[dataObjFieldName][index].ToBeDeleted = true;
-                        $(nestedObjectControl).remove();
-                        $(detailsContainer).find("tbody").html("");
-                        $(detailsContainer).css("display", "none")
-
-                        //
-                        onDataChanged();
-                    }
-
-                    //Create nestedObject control
-                    var nestedObjectControl = $("<div class='ListElement'></div>").attr("nestedObjectIndex", index);
-                    var controlLabel = $("<span class='Label-Small'>" + label + "</span>").appendTo(nestedObjectControl);
-                    var deleteButton = $("<div id='DeleteButton' class='IconButton-Simple'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").appendTo(nestedObjectControl);
-                    deleteButton.bind("click", function () {
-                        deleteNestedObject($(this).parents(".ListElement"));
-                        deSelectAll();
-                    });
-
-                    //Click handler
-                    nestedObjectControl.bind("click", function () {
-                        toggleSelected($(this));
-                    });
-
-                    return nestedObjectControl;
-                }
+        var onListElementClicked = function (index) {
+            var newState = toggleSelected(_listElements[index]);
+            if (newState == true) {
+                loadListElementData(index);
+                $(_detailsContainer).find("[fieldName='Name']").focus().select();
             }
         }
-    };
+
+    }
+
     var supportedClientObjects = {
         feature: {
             areas: {
@@ -1861,6 +1828,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             dataName: "Attributes",
                             useClientObject: true,
                             clientObjectType: "attribute",
+                            parentClientRefField: "Feature",
                             controlType: Controls.CompositeList,
                             subFields: {
                                 name: {
@@ -1874,13 +1842,20 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                     dataName: "Description",
                                     controlType: Controls.Textarea
                                 },
+                                datatype: {
+                                    label: "Data Type",
+                                    dataName: "AttributeDataType",
+                                    controlType: Controls.Dropdown,
+                                    defaultOptions: systemDefaults.enums.attributeDataTypes
+                                },
                                 type: {
                                     label: "Attribute Type",
                                     dataName: "AttributeType",
                                     controlType: Controls.Dropdown,
                                     defaultOptions: systemDefaults.enums.attributeTypes,
                                     onDataFieldChanged: function (newVal, control) {
-                                        var constantValueField = $(control).parents(".DetailsDiv").find("[subField='ConstantValue']");
+
+                                        var constantValueField = $(control).parents(".DetailsDiv").find("[fieldName='ConstantValue']");
                                         var attributeType = getEnumEntryByID(systemDefaults.enums.attributeTypes, parseFloat(newVal));
 
                                         if (attributeType == systemDefaults.enums.attributeTypes.constant) {
@@ -1894,7 +1869,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
                                     },
                                     onDataFieldLoaded: function (val, control) {
-                                        var constantValueField = $(control).parents(".DetailsDiv").find("[subField='ConstantValue']");
+                                        var constantValueField = $(control).parents(".DetailsDiv").find("[fieldName='ConstantValue']");
                                         var attributeType = getEnumEntryByID(systemDefaults.enums.attributeTypes, parseFloat(val));
 
                                         if (attributeType != systemDefaults.enums.attributeTypes.constant) {
@@ -1902,12 +1877,6 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                             constantValueField.parent().parent().hide();
                                         }
                                     }
-                                },
-                                datatype: {
-                                    label: "Data Type",
-                                    dataName: "AttributeDataType",
-                                    controlType: Controls.Dropdown,
-                                    defaultOptions: systemDefaults.enums.attributeDataTypes
                                 },
                                 constantValue: {
                                     label: "ConstantVal",
@@ -1932,8 +1901,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             controlType: Controls.Dropdown,
                             defaultOptions: systemDefaults.enums.relationTypes,
                             onDataFieldChanged: function (newVal, control) {
-                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[dataFieldName='LowerBound']");
-                                var upperBoundControl = $(control).parents(".AreaDiv").find("[dataFieldName='UpperBound']");
+                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
+                                var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
                                 var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(newVal));
 
                                 //
@@ -1951,8 +1920,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
                             },
                             onDataFieldLoaded: function (val, control) {
-                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[dataFieldName='LowerBound']");
-                                var upperBoundControl = $(control).parents(".AreaDiv").find("[dataFieldName='UpperBound']");
+                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
+                                var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
                                 var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(val));
 
                                 if (relationType.bounds.editable == true) {
@@ -1989,8 +1958,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             controlType: Controls.Dropdown,
                             defaultOptions: systemDefaults.enums.groupRelationTypes,
                             onDataFieldChanged: function (newVal, control) {
-                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[dataFieldName='LowerBound']");
-                                var upperBoundControl = $(control).parents(".AreaDiv").find("[dataFieldName='UpperBound']");
+                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
+                                var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
                                 var groupRelationType = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, parseFloat(newVal));
 
                                 //
@@ -2008,8 +1977,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
                             },
                             onDataFieldLoaded: function (val, control) {
-                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[dataFieldName='LowerBound']");
-                                var upperBoundControl = $(control).parents(".AreaDiv").find("[dataFieldName='UpperBound']");
+                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
+                                var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
                                 var groupRelationType = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, parseFloat(val));
 
                                 if (groupRelationType.bounds.editable == true) {
@@ -2179,9 +2148,9 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                 //Create a controlInstance
                 var controlInstance = null;
                 if (settingsField.useClientObject != true) {
-                    controlInstance = new settingsField.controlType(_mainBusinessObject, settingsField.dataName, settingsField, settingsField.onDataFieldChanged, settingsField.onDataFieldLoaded);
+                    controlInstance = new settingsField.controlType(_mainBusinessObject, settingsField, saveChangesToMainObject);
                 } else {
-                    controlInstance = new settingsField.controlType(_mainClientObject, settingsField.dataName, settingsField, settingsField.onDataFieldChanged, settingsField.onDataFieldLoaded);
+                    controlInstance = new settingsField.controlType(_mainClientObject, settingsField, null);
                 }
                 var htmlControl = controlInstance.CreateHTML();
                 controlInstance.LoadData();
@@ -2240,7 +2209,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
     this.OnRelatedViewSelectionCleared = function () {
         clear();
     }
-    var onDataChanged = function () {
+    var saveChangesToMainObject = function (fieldName) {
         _diagramDataModel.UpdateClientObject(_mainGUID, _mainBusinessObject);
     }
 }
