@@ -45,6 +45,9 @@
                 var newConfigID = addNewConfiguration(modelId);
                 window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
             });
+            $("#ZoomOutButton").bind("click", function () {
+                clientController.ZoomOut();
+            });
             $("#NewFeatureButton").bind("click", function () {
                 clientController.CreateNewFeature();
             });
@@ -124,7 +127,11 @@
             <img src="../../Content/themes/base/images/Icons/configure-toolbar.png" />
             <span>Configure</span>
         </div>
-       
+       <div class="Button-Toolbar" id="ZoomOutButton">
+            <img src="../../Content/themes/base/images/Icons/configure-toolbar.png" />
+            <span>Zoom out</span>
+        </div>
+
     </div>
 }
 <div class="LeftColumn">
