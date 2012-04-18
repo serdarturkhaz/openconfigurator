@@ -1378,6 +1378,9 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
                 break;
         }
     }
+    this.ZoomOut = function () {
+        _diagramContext.ZoomOut();
+    }
 }
 var PropertiesComponent = function (container, diagramDataModelInstance) {
 
@@ -1775,14 +1778,18 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             addListElement(newClientObject);
         }
         var onListElementDeleted = function (control, index) {
+
+            //
             var guid = fieldParent[_fieldName][index].GUID;
             $(control).remove();
+            if (_listElements[index].IsSelected())
+                clearListElementData();
             _listElements.splice(index, 1);
 
             //Delete from DataModel and parent collection
             fieldParent[_fieldName].splice(index, 1);
             _diagramDataModel.DeleteClientObject(guid);
-            clearListElementData();
+
         }
         var onListElementClicked = function (index) {
             var newState = toggleSelected(_listElements[index]);
@@ -2191,7 +2198,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
     //Eventhandlers
     this.OnClientObjectUpdated = function (guid) {
-        //loadData(guid);
+        var type = _diagramDataModel.GetByGUID(guid).GetType();
+        if (type == "feature") {
+            loadData(guid);
+        }
     }
     this.OnClientObjectDeleted = function (guid) {
         var type = _diagramDataModel.GetByGUID(guid).GetType();
@@ -2454,11 +2464,33 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         this.GetPos = function () {
             return { x: _x, y: _y };
         }
-
         this.InnerElements = _innerElements;
         this.RelatedCompositeElements = _relatedCompositeElements;
 
         //Private methods
+        var refresh = function () {
+
+            //
+            _innerElements.box.attr({
+                x: _x,
+                y: _y
+            });
+            _innerElements.box.scale(0.75, 0.75);
+
+            //
+            _innerElements.text.attr({
+                x: boxWidth / 2 + _x,
+                y: boxHeight / 2 + _y
+            });
+            _innerElements.text.scale(0.75, 0.75);
+
+            //
+            _outerElement.attr({
+                x: _x,
+                y: _y
+            });
+            _outerElement.scale(0.75, 0.75);
+        }
         var makeSelectable = function () {
 
             //Selectable
@@ -2617,10 +2649,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _currentState = state;
             _innerElements.box.attr(UIObjectStyles.feature.states[state].box.attr);
         }
-        this.Update = function (newName) {
+        this.Update = function (newName, newXPos, newYPos) {
+
             //Set text
             _name = newName;
             _innerElements.text.attr({ text: newName });
+
+            //Set position
+            _x = newXPos;
+            _y = newYPos;
+            refresh();
+
         }
         this.Delete = function () {
             if (!_inlineEditMode) {
@@ -2759,6 +2798,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Setup
             makeSelectable();
+        }
+        this.RefreshGraphicalRepresentation = function () {
+            refresh();
         }
         this.ChangeState = function (state) {
             _currentState = state;
@@ -2900,7 +2942,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             if (_innerElements.cardinalityElement != null)
                 _innerElements.cardinalityElement.RefreshGraphicalRepresentation();
         }
-
         function getCardinalityElemPosition() {
             var cardinalityDistance = systemDefaults.orientations[settings.diagramContext.fixedOrientation].cardinalityDistances.groupRelation;
             var line = _innerElements.connections[0].InnerElements.line;
@@ -2975,6 +3016,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Setup
             makeSelectable();
+        }
+        this.RefreshGraphicalRepresentation = function () {
+            refresh();
         }
         this.ChangeState = function (state) {
             _currentState = state;
@@ -3125,6 +3169,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Setup
             makeSelectable();
+        }
+        this.RefreshGraphicalRepresentation = function () {
+            refresh();
         }
         this.ChangeState = function (state) {
             _currentState = state;
@@ -3721,7 +3768,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         //Perform update according to type
         switch (clientObjectType) {
             case "feature":
-                UIElement.Update(clientObject.GetField("Name"));
+                UIElement.Update(clientObject.GetField("Name"), clientObject.GetField("XPos"), clientObject.GetField("YPos"));
                 break;
             case "relation":
                 UIElement.Update(clientObject.GetField("RelationType"), clientObject.GetField("LowerBound"), clientObject.GetField("UpperBound"));
@@ -3824,6 +3871,32 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             case "compositionRule":
                 createCompositionRule();
                 break;
+        }
+    }
+    this.ZoomOut = function () {
+
+        //Scale Features
+        for (var guidKey in _diagramDataModel.ClientObjects.features) {
+            var clientObject = _diagramDataModel.ClientObjects.features[guidKey];
+
+            //
+            var newXPos = clientObject.GetField("XPos") * 0.75;
+            var newYPos = clientObject.GetField("YPos") * 0.75;
+            _diagramDataModel.UpdateClientObjectFields(guidKey, ["XPos", "YPos"], [newXPos, newYPos]);
+        }
+
+        //Refresh connections
+        for (var guidKey in _diagramDataModel.ClientObjects.relations) {
+            var UIElement = _UIElements[guidKey];
+            UIElement.RefreshGraphicalRepresentation();
+        }
+        for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
+            var UIElement = _UIElements[guidKey];
+            UIElement.RefreshGraphicalRepresentation();
+        }
+        for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
+            var UIElement = _UIElements[guidKey];
+            UIElement.RefreshGraphicalRepresentation();
         }
     }
 
