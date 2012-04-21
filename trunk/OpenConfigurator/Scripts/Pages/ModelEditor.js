@@ -63,8 +63,8 @@ var UIObjectStyles = {
         general: {
             box: {
                 dimensions: {
-                    width: 100,
-                    height: 30
+                    width: 90,
+                    height: 26
                 }
             }
         },
@@ -1251,12 +1251,12 @@ var DiagramDataModel = function (modelID, modelName) {
         registerOperation(operation);
     }
 }
-var ClientController = function (diagramContainer, propertiesContainer, explorerContainer, modelNameTextbox, diagramDataModelInstance) {
+var ClientController = function (diagramContainer, propertiesContainer, explorerContainer, modelNameTextbox, zoomLevelIndicator, diagramDataModelInstance) {
 
     //Fields and variables
     var _diagramDataModel = diagramDataModelInstance;
     var _diagramContext, _propertiesComponent, _modelExplorer;
-    var _modelNameTextbox = modelNameTextbox;
+    var _modelNameTextbox = modelNameTextbox, _zoomLevelIndicator = zoomLevelIndicator;
     var _thisClientController = this;
     var _currentControlFocus = null; //variable to keep track of where the user executed the last action (clicking)
 
@@ -1379,7 +1379,12 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
         }
     }
     this.ZoomOut = function () {
-        _diagramContext.ZoomOut();
+        var newZoomLevel = _diagramContext.ZoomOut();
+        $(_zoomLevelIndicator).text(newZoomLevel * 100 + "%");
+    }
+    this.ZoomIn = function () {
+        var newZoomLevel = _diagramContext.ZoomIn();
+        $(_zoomLevelIndicator).text(newZoomLevel * 100 + "%");
     }
 }
 var PropertiesComponent = function (container, diagramDataModelInstance) {
@@ -2428,6 +2433,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var _canvas = null, _canvasContainer = canvasContainer;
     var _selectedElements = new Array();
     var _createFeatureMode = false, _inlineEditMode = false, _draggingMode = false;
+    var _zoomLevel = 1.00;
     var _UIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
     var _thisDiagramContext = this;
     var _supportedTypes = {
@@ -2464,33 +2470,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         this.GetPos = function () {
             return { x: _x, y: _y };
         }
+        this.SetPos = function (newX, newY) {
+            _x = newX;
+            _y = newY;
+        }
         this.InnerElements = _innerElements;
         this.RelatedCompositeElements = _relatedCompositeElements;
 
         //Private methods
-        var refresh = function () {
-
-            //
-            _innerElements.box.attr({
-                x: _x,
-                y: _y
-            });
-            _innerElements.box.scale(0.75, 0.75);
-
-            //
-            _innerElements.text.attr({
-                x: boxWidth / 2 + _x,
-                y: boxHeight / 2 + _y
-            });
-            _innerElements.text.scale(0.75, 0.75);
-
-            //
-            _outerElement.attr({
-                x: _x,
-                y: _y
-            });
-            _outerElement.scale(0.75, 0.75);
-        }
         var makeSelectable = function () {
 
             //Selectable
@@ -2591,8 +2578,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     position: "absolute",
                     left: bb1.x + xoffset,
                     top: bb1.y + yoffset,
-                    width: 90,
-                    height: 20
+                    width: boxWidth - 10,
+                    height: boxHeight - 10
                 }).bind("change", function () {
                     //
                     var newName = $(this).val();
@@ -2645,21 +2632,38 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             makeDraggable();
             makeEditable();
         }
+        this.Scale = function (scaleFactor) {
+            //
+            _innerElements.box.attr({
+                x: _x * scaleFactor,
+                y: _y * scaleFactor
+            });
+
+            _innerElements.box.attr({});
+
+            //
+            _innerElements.text.attr({
+                x: boxWidth / 2 + _x,
+                y: boxHeight / 2 + _y
+            });
+            _innerElements.text.scale(0.75, 0.75);
+
+            //
+            _outerElement.attr({
+                x: _x,
+                y: _y
+            });
+            _outerElement.scale(0.75, 0.75);
+        }
         this.ChangeState = function (state) {
             _currentState = state;
             _innerElements.box.attr(UIObjectStyles.feature.states[state].box.attr);
         }
-        this.Update = function (newName, newXPos, newYPos) {
+        this.Update = function (newName) {
 
             //Set text
             _name = newName;
             _innerElements.text.attr({ text: newName });
-
-            //Set position
-            _x = newXPos;
-            _y = newYPos;
-            refresh();
-
         }
         this.Delete = function () {
             if (!_inlineEditMode) {
@@ -3768,7 +3772,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         //Perform update according to type
         switch (clientObjectType) {
             case "feature":
-                UIElement.Update(clientObject.GetField("Name"), clientObject.GetField("XPos"), clientObject.GetField("YPos"));
+                UIElement.Update(clientObject.GetField("Name"));
                 break;
             case "relation":
                 UIElement.Update(clientObject.GetField("RelationType"), clientObject.GetField("LowerBound"), clientObject.GetField("UpperBound"));
@@ -3873,30 +3877,46 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 break;
         }
     }
+    this.ZoomIn = function () {
+        if (_zoomLevel < 2) {
+            return _zoomLevel += 0.25;
+        }
+        else {
+            return _zoomLevel;
+        }
+    }
     this.ZoomOut = function () {
 
-        //Scale Features
-        for (var guidKey in _diagramDataModel.ClientObjects.features) {
-            var clientObject = _diagramDataModel.ClientObjects.features[guidKey];
+        //        //Scale Features
+        //        for (var guidKey in _diagramDataModel.ClientObjects.features) {
+        //            var clientObject = _diagramDataModel.ClientObjects.features[guidKey];
 
-            //
-            var newXPos = clientObject.GetField("XPos") * 0.75;
-            var newYPos = clientObject.GetField("YPos") * 0.75;
-            _diagramDataModel.UpdateClientObjectFields(guidKey, ["XPos", "YPos"], [newXPos, newYPos]);
-        }
+        //            //
+        //            var newXPos = clientObject.GetField("XPos") * 0.75;
+        //            var newYPos = clientObject.GetField("YPos") * 0.75;
+        //            _diagramDataModel.UpdateClientObjectFields(guidKey, ["XPos", "YPos"], [newXPos, newYPos]);
+        //        }
 
-        //Refresh connections
-        for (var guidKey in _diagramDataModel.ClientObjects.relations) {
-            var UIElement = _UIElements[guidKey];
-            UIElement.RefreshGraphicalRepresentation();
+        //        //Refresh connections
+        //        for (var guidKey in _diagramDataModel.ClientObjects.relations) {
+        //            var UIElement = _UIElements[guidKey];
+        //            UIElement.RefreshGraphicalRepresentation();
+        //        }
+        //        for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
+        //            var UIElement = _UIElements[guidKey];
+        //            UIElement.RefreshGraphicalRepresentation();
+        //        }
+        //        for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
+        //            var UIElement = _UIElements[guidKey];
+        //            UIElement.RefreshGraphicalRepresentation();
+        //        }
+
+        //
+        if (_zoomLevel > 0.25) {
+            return _zoomLevel -= 0.25;
         }
-        for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
-            var UIElement = _UIElements[guidKey];
-            UIElement.RefreshGraphicalRepresentation();
-        }
-        for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
-            var UIElement = _UIElements[guidKey];
-            UIElement.RefreshGraphicalRepresentation();
+        else {
+            return _zoomLevel;
         }
     }
 

@@ -151,6 +151,52 @@ body
     height: 23px;
     padding: 5px 5px 5px 10px;
 }
+
+/*ViewToolBar*/
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar
+{
+    float: right;
+    width:300px;
+    padding-top:7px;
+    margin-top:-4px;
+}
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .ZoomLabel
+{
+    float: right;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: white;
+    height: 17px;
+    margin-left:3px;
+    border: 1px solid #676767;
+    margin-top:-3px;
+    padding:4px 2px 2px 2px;
+    width:40px;
+    text-align:right;
+   
+    background: #4B5254;
+}
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .Button-Toolbar
+{
+    float:right;
+    margin-top:-3px;
+    cursor:pointer;
+    border: 1px solid #676767;
+   
+    background: #4B5254;
+    padding-left:3px;
+}
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .Button-Toolbar:hover
+{
+    float: right;
+    margin-top: -3px;
+    cursor: pointer;
+    background: #A68500;
+    border: 1px solid #E1B500;
+}
+
 .RoundedBox .BoxContent
 {
     box-sizing: border-box;
@@ -464,13 +510,12 @@ html > body .ui-pnotify
 }
 .simpleTree li.row .node .innerNode:hover
 {
-    background-color: #EFEFEF;
-    border: solid 1px transparent;
+    background-color: #E8E8FF;
 }
 .simpleTree li.row .node[selected] .innerNode
 {
-    background-color: #FFF0B7;
-    border: 1px solid #FFE375;
+    background-color: #e1e9ff;
+    border: solid 1px black;
 }
 
 .simpleTree li.row .node .innerNode div.icon
@@ -808,6 +853,7 @@ a:hover
 {
     height: 20px;
     float: left;
+    width:70%;
 }
 .OuterLowerMenuArea .InnerLowerMenuArea .SubMenuSpecialBar .Textbox
 {

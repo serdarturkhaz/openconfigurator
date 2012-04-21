@@ -48,6 +48,9 @@
             $("#ZoomOutButton").bind("click", function () {
                 clientController.ZoomOut();
             });
+            $("#ZoomInButton").bind("click", function () {
+                clientController.ZoomIn();
+            });
             $("#NewFeatureButton").bind("click", function () {
                 clientController.CreateNewFeature();
             });
@@ -102,23 +105,21 @@
                 //Instantiate/Initialize controls
                 diagramDataModel = new DiagramDataModel(modelId);
                 diagramDataModel.Initialize();
-                clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"), $("#ModelNameTextbox"), diagramDataModel);
+                clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"), $("#ModelNameTextbox"), $("#ZoomLevelIndicator"), diagramDataModel);
                 clientController.Initialize();
             });
         });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     </script>
 }
-
 @section RootBreadCrumb {
-    Edit Model 
+Edit Model
 }
 @section SubMenuSpecialBar{
-    <div class="MenuItemSeparator">></div>
+    <div class="MenuItemSeparator">
+        ></div>
     <div class="SubMenuSpecialBar">
-        
         <input id="ModelNameTextbox" class="Textbox" type="text" value="Please wait..." />
-
         <div class="Button-Toolbar" id="SaveButton">
             <img src="../../Content/themes/base/images/Icons/save.png" />
             <span>Save</span>
@@ -127,11 +128,6 @@
             <img src="../../Content/themes/base/images/Icons/configure-toolbar.png" />
             <span>Configure</span>
         </div>
-       <div class="Button-Toolbar" id="ZoomOutButton">
-            <img src="../../Content/themes/base/images/Icons/configure-toolbar.png" />
-            <span>Zoom out</span>
-        </div>
-
     </div>
 }
 <div class="LeftColumn">
@@ -191,8 +187,6 @@
         <div class="BoxHeader">
             <div class="BoxInnerHeader">
                 <span class="HeaderLabel">Properties - <span id="SetTypeLabel"></span></span>
-
-                
             </div>
         </div>
         <div class="BoxContent">
@@ -211,8 +205,18 @@
         <div class="BoxHeader">
             <div class="BoxInnerHeader">
                 <span class="HeaderLabel">Model Diagram</span>
-
-                
+                <div class="ViewToolBar">
+                    <div class="ZoomLabel" id="ZoomLevelIndicator">
+                        100%
+                    </div>
+                    <div class="Button-Toolbar" id="ZoomOutButton">
+                        <img src="../../Content/themes/base/images/Icons/Toolbar/zoom-out.png" />
+                    </div>
+                    <div class="Button-Toolbar" id="ZoomInButton">
+                        <img src="../../Content/themes/base/images/Icons/Toolbar/zoom-in.png" />
+                    </div>
+                    
+                </div>
             </div>
         </div>
         <div class="BoxContent">
