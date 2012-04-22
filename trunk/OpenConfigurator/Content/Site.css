@@ -158,7 +158,7 @@ body
     float: right;
     width:300px;
     padding-top:7px;
-    margin-top:-4px;
+    margin-top:-6px;
 }
 .RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .ZoomLabel
 {
@@ -168,7 +168,7 @@ body
     font-size: 13px;
     font-weight: bold;
     color: white;
-    height: 17px;
+    height: 18px;
     margin-left:3px;
     border: 1px solid #676767;
     margin-top:-3px;
@@ -184,9 +184,13 @@ body
     margin-top:-3px;
     cursor:pointer;
     border: 1px solid #676767;
-   
+    height:24px;
     background: #4B5254;
     padding-left:3px;
+}
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .Button-Toolbar img
+{
+    margin-top:0;   
 }
 .RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .Button-Toolbar:hover
 {
