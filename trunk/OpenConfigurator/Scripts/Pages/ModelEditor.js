@@ -1,7 +1,6 @@
 ﻿//Settings and defaults
 var settings = {
     diagramContext: {
-        fixedOrientation: "vertical", //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
         drawCurves: true, //determines whether curves should be used for drawing relations - options: true / false
         dynamicRefresh: true, //determines whether refresh (redraw) operations are executed real-time or after a move event is completed
         displayCardinalities: "partial" //determines how many cardinalities to display - options : none / partial (only cloneable and cardinal groups) / all (all relations and groupRelations)
@@ -66,6 +65,9 @@ var UIObjectStyles = {
                     width: 90,
                     height: 26
                 }
+            },
+            text: {
+                "font-size": 12
             }
         },
         states: {
@@ -1256,7 +1258,7 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
     //Fields and variables
     var _diagramDataModel = diagramDataModelInstance;
     var _diagramContext, _propertiesComponent, _modelExplorer;
-    var _modelNameTextbox = modelNameTextbox, _zoomLevelIndicator = zoomLevelIndicator;
+    var _modelNameTextbox = modelNameTextbox, _scaleModifierIndicator = zoomLevelIndicator;
     var _thisClientController = this;
     var _currentControlFocus = null; //variable to keep track of where the user executed the last action (clicking)
 
@@ -1380,11 +1382,11 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
     }
     this.ZoomOut = function () {
         var newZoomLevel = _diagramContext.ZoomOut();
-        $(_zoomLevelIndicator).text(newZoomLevel * 100 + "%");
+        $(_scaleModifierIndicator).text(newZoomLevel * 100 + "%");
     }
     this.ZoomIn = function () {
         var newZoomLevel = _diagramContext.ZoomIn();
-        $(_zoomLevelIndicator).text(newZoomLevel * 100 + "%");
+        $(_scaleModifierIndicator).text(newZoomLevel * 100 + "%");
     }
 }
 var PropertiesComponent = function (container, diagramDataModelInstance) {
@@ -2433,7 +2435,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var _canvas = null, _canvasContainer = canvasContainer;
     var _selectedElements = new Array();
     var _createFeatureMode = false, _inlineEditMode = false, _draggingMode = false;
-    var _zoomLevel = 1.00;
+    var _scaleModifier = 1.00, _fixedOrientation = "vertical"; //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
     var _UIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
     var _thisDiagramContext = this;
     var _supportedTypes = {
@@ -2444,18 +2446,23 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     }
 
     //UIObjects & Defaults/Settings
-    var UIFeature = function (clientObjectGUID, name, x, y) {
+    var UIFeature = function (clientObjectGUID, name, absoluteX, absoluteY) {
 
         //Fields
-        var _outerElement = null;
+        var _outerElement = null, _glow = null;
         var _innerElements = {
             box: null,
             text: null
         };
         var _currentState = systemDefaults.uiElementStates.unselected;
-        var _glow = null;
-        var _name = name, _x = x, _y = y;
-        var boxWidth = UIObjectStyles.feature.general.box.dimensions.width, boxHeight = UIObjectStyles.feature.general.box.dimensions.height;
+        var _name = name;
+        var _absolutePos = {
+            x: absoluteX, y: absoluteY
+        }
+        var _screenPos = {
+            x: absoluteX * _scaleModifier, y: absoluteY * _scaleModifier
+        }
+        var _boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier, _boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
         var _relatedCompositeElements = [];
         var _thisUIFeature = this;
 
@@ -2468,11 +2475,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             return "feature";
         }
         this.GetPos = function () {
-            return { x: _x, y: _y };
-        }
-        this.SetPos = function (newX, newY) {
-            _x = newX;
-            _y = newY;
+            return { x: _absolutePos.x, y: _absolutePos.y };
         }
         this.InnerElements = _innerElements;
         this.RelatedCompositeElements = _relatedCompositeElements;
@@ -2520,20 +2523,20 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 }
             };
             move = function (dx, dy) {
-                //Variables
-                wasMoved = true;
-                _draggingMode = true;
 
-                //Remove glow while dragging
+                //Variables
+                wasMoved = true; _draggingMode = true;
                 if (_glow != null) {
                     _glow.remove();
                     _glow = null;
                 }
 
-                //Update x & y and move outerElement 
-                _x = _outerElement.originalx + dx;
-                _y = _outerElement.originaly + dy;
-                _outerElement.attr({ x: _outerElement.originalx + dx, y: _outerElement.originaly + dy });
+                //Update position
+                _screenPos.x = (_outerElement.originalx + dx);
+                _screenPos.y = (_outerElement.originaly + dy);
+                _absolutePos.x = _screenPos.x / _scaleModifier;
+                _absolutePos.y = _screenPos.y / _scaleModifier;
+                _outerElement.attr({ x: _screenPos.x, y: _screenPos.y });
 
                 //Move child elements
                 for (var innerElemKey in _innerElements) {
@@ -2541,8 +2544,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     innerElem.attr({ x: innerElem.originalx + dx, y: innerElem.originaly + dy });
                 }
 
+                //Notify related CompositeElements
                 if (settings.diagramContext.dynamicRefresh == true) {
-                    //Notify related CompositeElements
                     for (var j = 0; j < _relatedCompositeElements.length; j++) {
                         _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
                     }
@@ -2578,8 +2581,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     position: "absolute",
                     left: bb1.x + xoffset,
                     top: bb1.y + yoffset,
-                    width: boxWidth - 10,
-                    height: boxHeight - 10
+                    width: _boxWidth - 10,
+                    height: _boxHeight - 10
                 }).bind("change", function () {
                     //
                     var newName = $(this).val();
@@ -2612,48 +2615,56 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 toggleElementSelect(_thisUIFeature, e.shiftKey, true);
             });
         }
+        var refresh = function () {
+            //
+            _innerElements.box.attr({
+                x: _screenPos.x,
+                y: _screenPos.y,
+                width: _boxWidth,
+                height: _boxHeight
+            });
+            //
+            _outerElement.attr({
+                x: _screenPos.x,
+                y: _screenPos.y,
+                width: _boxWidth,
+                height: _boxHeight
+            });
+
+            //
+            _innerElements.text.attr({
+                x: _boxWidth / 2 + _screenPos.x,
+                y: _boxHeight / 2 + _screenPos.y,
+                "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
+            });
+        }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
-            //Variables
-            var box = null, text = null;
-            x = x == undefined ? 40.5 : x;
-            y = y == undefined ? 40.5 : y;
 
             //Create inner elements            
-            _innerElements.box = _canvas.rect(x, y, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states[_currentState].box.attr);
-            _innerElements.text = _canvas.text(boxWidth / 2 + x, boxHeight / 2 + y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
+            _innerElements.box = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight, 0).attr(UIObjectStyles.feature.states[_currentState].box.attr);
+            _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
+            _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
 
             //Create the main outer element
-            _outerElement = _canvas.rect(x, y, boxWidth, boxHeight).attr(systemDefaults.common.outerElement.attr);
+            _outerElement = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight).attr(systemDefaults.common.outerElement.attr);
 
             //Setup 
             makeSelectable();
             makeDraggable();
             makeEditable();
         }
-        this.Scale = function (scaleFactor) {
-            //
-            _innerElements.box.attr({
-                x: _x * scaleFactor,
-                y: _y * scaleFactor
-            });
-
-            _innerElements.box.attr({});
+        this.RefreshGraphicalRepresentation = function () {
 
             //
-            _innerElements.text.attr({
-                x: boxWidth / 2 + _x,
-                y: boxHeight / 2 + _y
-            });
-            _innerElements.text.scale(0.75, 0.75);
+            _screenPos.x = _absolutePos.x * _scaleModifier;
+            _screenPos.y = _absolutePos.y * _scaleModifier;
+            _boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier;
+            _boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
 
             //
-            _outerElement.attr({
-                x: _x,
-                y: _y
-            });
-            _outerElement.scale(0.75, 0.75);
+            refresh();
         }
         this.ChangeState = function (state) {
             _currentState = state;
@@ -2742,7 +2753,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             }
         }
         function getCardinalityElemPosition() {
-            var cardinalityDistance = systemDefaults.orientations[settings.diagramContext.fixedOrientation].cardinalityDistances.relation;
+            var cardinalityDistance = systemDefaults.orientations[_fixedOrientation].cardinalityDistances.relation;
             var line = _innerElements.connection.InnerElements.line;
             var labelPoint = line.getPointAtLength(line.getTotalLength() - cardinalityDistance);
             return labelPoint;
@@ -2911,7 +2922,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             var pointB = lastConnection.InnerElements.line.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length);
 
             //Get arc modifiers
-            var currentOrientation = settings.diagramContext.fixedOrientation;
+            var currentOrientation = _fixedOrientation;
             var rx = systemDefaults.orientations[currentOrientation].arcModifiers.rx;
             var ry = systemDefaults.orientations[currentOrientation].arcModifiers.ry;
             var arcSweep = null;
@@ -2947,7 +2958,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 _innerElements.cardinalityElement.RefreshGraphicalRepresentation();
         }
         function getCardinalityElemPosition() {
-            var cardinalityDistance = systemDefaults.orientations[settings.diagramContext.fixedOrientation].cardinalityDistances.groupRelation;
+            var cardinalityDistance = systemDefaults.orientations[_fixedOrientation].cardinalityDistances.groupRelation;
             var line = _innerElements.connections[0].InnerElements.line;
             var labelPoint = line.getPointAtLength(cardinalityDistance);
             return labelPoint;
@@ -3265,8 +3276,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Determine the orientation
             var currentOrientation = null;
-            if (settings.diagramContext.fixedOrientation != false) {
-                currentOrientation = settings.diagramContext.fixedOrientation; //use default fixed orientation without calculating angle
+            if (_fixedOrientation != false) {
+                currentOrientation = _fixedOrientation; //use default fixed orientation without calculating angle
             }
             else {
                 var centerdx = objBcenter.x - objAcenter.x, centerdy = objBcenter.y - objAcenter.y;
@@ -3645,17 +3656,22 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _createFeatureMode = true;
 
             //Create wireframe
+            var boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier;
+            var boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
             $(_canvasContainer).css("cursor", "crosshair");
-            var boxWidth = UIObjectStyles.feature.general.box.dimensions.width, boxHeight = UIObjectStyles.feature.general.box.dimensions.height;
             var wireframebox = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states.wireframe.box.attr);
+
+            //Setup mouse move handler
             var mousemoveHandler = function (e) {
-                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2;
-                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2;
+
+                //Mouse move
+                var screenPosX = (e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2);
+                var screenPosY = (e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2);
                 if (wireframebox == null) {
-                    wireframebox = _canvas.rect(posx, posy, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
+                    wireframebox = _canvas.rect(screenPosX, screenPosY, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
                 }
                 else {
-                    wireframebox.attr({ x: posx, y: posy });
+                    wireframebox.attr({ x: screenPosX, y: screenPosY });
                 }
             };
             $(_canvasContainer).bind("mousemove", mousemoveHandler);
@@ -3664,8 +3680,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             var clickHandler = function (e) {
 
                 //Get the position
-                var posx = e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2;
-                var posy = e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2;
+                var absolutePosX = (e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2) / _scaleModifier;
+                var absolutePosY = (e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2) / _scaleModifier;
 
                 //Remove wireframe
                 $(_canvasContainer).unbind("click", clickHandler);
@@ -3676,8 +3692,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 //Create a new clientObject in the diagramDataModel
                 var initialValues = {
                     ModelID: _diagramDataModel.ModelID,
-                    XPos: posx,
-                    YPos: posy
+                    XPos: absolutePosX,
+                    YPos: absolutePosY
                 }
                 var clientFeatureObject = _diagramDataModel.AddNewClientObject("feature", initialValues);
 
@@ -3878,46 +3894,73 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
     }
     this.ZoomIn = function () {
-        if (_zoomLevel < 2) {
-            return _zoomLevel += 0.25;
+
+        //Modify scale
+        if (_scaleModifier < 2) {
+            _scaleModifier += 0.25;
+
+            //Refresh features
+            for (var guidKey in _diagramDataModel.ClientObjects.features) {
+                var UIFeature = _UIElements[guidKey];
+                if (UIFeature != undefined)
+                    UIFeature.RefreshGraphicalRepresentation();
+            }
+
+            //Refresh relations, groupRelations and compositionRules
+            for (var guidKey in _diagramDataModel.ClientObjects.relations) {
+                var UIElement = _UIElements[guidKey];
+                if (UIElement != undefined)
+                    UIElement.RefreshGraphicalRepresentation();
+            }
+            for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
+                var UIElement = _UIElements[guidKey];
+                if (UIElement != undefined)
+                    UIElement.RefreshGraphicalRepresentation();
+            }
+            for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
+                var UIElement = _UIElements[guidKey];
+                if (UIElement != undefined)
+                    UIElement.RefreshGraphicalRepresentation();
+            }
         }
-        else {
-            return _zoomLevel;
-        }
+
+
+        //
+        return _scaleModifier;
     }
     this.ZoomOut = function () {
 
-        //        //Scale Features
-        //        for (var guidKey in _diagramDataModel.ClientObjects.features) {
-        //            var clientObject = _diagramDataModel.ClientObjects.features[guidKey];
+        //Modify scale
+        if (_scaleModifier >= 0.50) {
+            _scaleModifier -= 0.25;
 
-        //            //
-        //            var newXPos = clientObject.GetField("XPos") * 0.75;
-        //            var newYPos = clientObject.GetField("YPos") * 0.75;
-        //            _diagramDataModel.UpdateClientObjectFields(guidKey, ["XPos", "YPos"], [newXPos, newYPos]);
-        //        }
+            //Refresh features
+            for (var guidKey in _diagramDataModel.ClientObjects.features) {
+                var UIFeature = _UIElements[guidKey];
+                if (UIFeature != undefined)
+                    UIFeature.RefreshGraphicalRepresentation();
+            }
 
-        //        //Refresh connections
-        //        for (var guidKey in _diagramDataModel.ClientObjects.relations) {
-        //            var UIElement = _UIElements[guidKey];
-        //            UIElement.RefreshGraphicalRepresentation();
-        //        }
-        //        for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
-        //            var UIElement = _UIElements[guidKey];
-        //            UIElement.RefreshGraphicalRepresentation();
-        //        }
-        //        for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
-        //            var UIElement = _UIElements[guidKey];
-        //            UIElement.RefreshGraphicalRepresentation();
-        //        }
+            //Refresh relations, groupRelations and compositionRules
+            for (var guidKey in _diagramDataModel.ClientObjects.relations) {
+                var UIElement = _UIElements[guidKey];
+                if (UIElement != undefined)
+                    UIElement.RefreshGraphicalRepresentation();
+            }
+            for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
+                var UIElement = _UIElements[guidKey];
+                if (UIElement != undefined)
+                    UIElement.RefreshGraphicalRepresentation();
+            }
+            for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
+                var UIElement = _UIElements[guidKey];
+                if (UIElement != undefined)
+                    UIElement.RefreshGraphicalRepresentation();
+            }
+        }
 
         //
-        if (_zoomLevel > 0.25) {
-            return _zoomLevel -= 0.25;
-        }
-        else {
-            return _zoomLevel;
-        }
+        return _scaleModifier;
     }
 
     //Events
