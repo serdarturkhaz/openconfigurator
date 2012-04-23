@@ -255,7 +255,7 @@ namespace BLL.RuleParser
 
                     public override IEvalResult[] Eval(IEvalResult[] parameters)
                     {
-                        //Get parameters
+                        //Evaluate parameters
                         List<BLL.BusinessObjects.Feature> featureReferences = new List<BusinessObjects.Feature>();
                         foreach (IEvalResult parameter in parameters)
                         {
@@ -270,7 +270,7 @@ namespace BLL.RuleParser
                             }
                         }
 
-                        //Children selector
+                        //Children selector****************************************************************************************************
                         if (_syntaxString.Contains("children"))
                         {
                             //Get the child Features
@@ -297,6 +297,11 @@ namespace BLL.RuleParser
 
                             return returnRef.ToArray();
                         }
+                        //*********************************************************************************************************************
+                        //Children selector****************************************************************************************************
+
+
+                        //*********************************************************************************************************************
 
 
                         return null;

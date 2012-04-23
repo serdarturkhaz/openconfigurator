@@ -47,75 +47,25 @@ namespace BLL.Services
             List<ISolverStatement> statementsList = new List<ISolverStatement>();
             foreach (BLL.BusinessObjects.Relation relation in model.Relations)
             {
-                context.AddConstraint(relationsCategory, GetStatement(context, relation));
+                context.AddConstraint(relationsCategory, CreateStatement(context, relation));
             }
 
             //Loop through GroupRelations
             foreach (BLL.BusinessObjects.GroupRelation groupRelation in model.GroupRelations)
             {
-                context.AddConstraint(groupRelationsCategory, GetStatement(context, groupRelation));
+                context.AddConstraint(groupRelationsCategory, CreateStatement(context, groupRelation));
             }
 
             //Loop through CompositionRules
             foreach (BLL.BusinessObjects.CompositionRule compositionRule in model.CompositionRules)
             {
-                context.AddConstraint(compositionRulesCategory, GetStatement(context, compositionRule));
+                context.AddConstraint(compositionRulesCategory, CreateStatement(context, compositionRule));
             }
 
 
             //Create an initial point
             context.CreateInitialRestorePoint();
             return context;
-        }
-        private static ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
-        {
-            ISolverStatement returnStatement = null;
-            switch (relation.RelationType)
-            {
-                case BusinessObjects.RelationTypes.Mandatory:
-                    returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, relation.ParentFeatureID.ToString(), relation.ChildFeatureID.ToString());
-                    break;
-                case BusinessObjects.RelationTypes.Optional:
-                    returnStatement = context.CreateStatement(StatementTypes.Implies, featuresCategory, relation.ChildFeatureID.ToString(), relation.ParentFeatureID.ToString());
-                    break;
-            }
-            return returnStatement;
-        }
-        private static ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.GroupRelation groupRelation)
-        {
-            ISolverStatement returnStatement = null;
-            switch (groupRelation.GroupRelationType)
-            {
-                case BusinessObjects.GroupRelationTypes.OR:
-                    ISolverStatement innerOr1 = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                    returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), innerOr1);
-                    break;
-                case BusinessObjects.GroupRelationTypes.XOR:
-                    ISolverStatement orStatement = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                    ISolverStatement negatedAnds = context.CreateStatement(StatementTypes.NotAndCombinations, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                    ISolverStatement equivalence2 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement);
-                    returnStatement = context.CreateStatement(StatementTypes.And, equivalence2, negatedAnds);
-                    break;
-                
-            }
-            return returnStatement;
-        }
-        private static ISolverStatement GetStatement(ISolverContext context, BLL.BusinessObjects.CompositionRule compositionRule)
-        {
-            ISolverStatement returnStatement = null;
-            switch (compositionRule.CompositionRuleType)
-            {
-                case BusinessObjects.CompositionRuleTypes.Dependency:
-                    returnStatement = context.CreateStatement(StatementTypes.Implies, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-                    break;
-                case BusinessObjects.CompositionRuleTypes.MutualDependency:
-                    returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-                    break;
-                case BusinessObjects.CompositionRuleTypes.MutualExclusion:
-                    returnStatement = context.CreateStatement(StatementTypes.Excludes, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-                    break;
-            }
-            return returnStatement;
         }
         private bool ExecuteCustomRule(ref ConfiguratorSession configSession, string Expression)
         {
@@ -163,11 +113,62 @@ namespace BLL.Services
             {
                 ExecuteCustomRule(ref configSession, customRule.Expression);
             }
-            
+
 
             //
             return true;
 
+        }
+
+        private static ISolverStatement CreateStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
+        {
+            ISolverStatement returnStatement = null;
+            switch (relation.RelationType)
+            {
+                case BusinessObjects.RelationTypes.Mandatory:
+                    returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, relation.ParentFeatureID.ToString(), relation.ChildFeatureID.ToString());
+                    break;
+                case BusinessObjects.RelationTypes.Optional:
+                    returnStatement = context.CreateStatement(StatementTypes.Implies, featuresCategory, relation.ChildFeatureID.ToString(), relation.ParentFeatureID.ToString());
+                    break;
+            }
+            return returnStatement;
+        }
+        private static ISolverStatement CreateStatement(ISolverContext context, BLL.BusinessObjects.GroupRelation groupRelation)
+        {
+            ISolverStatement returnStatement = null;
+            switch (groupRelation.GroupRelationType)
+            {
+                case BusinessObjects.GroupRelationTypes.OR:
+                    ISolverStatement innerOr1 = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                    returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), innerOr1);
+                    break;
+                case BusinessObjects.GroupRelationTypes.XOR:
+                    ISolverStatement orStatement = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                    ISolverStatement negatedAnds = context.CreateStatement(StatementTypes.NotAndCombinations, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                    ISolverStatement equivalence2 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement);
+                    returnStatement = context.CreateStatement(StatementTypes.And, equivalence2, negatedAnds);
+                    break;
+                
+            }
+            return returnStatement;
+        }
+        private static ISolverStatement CreateStatement(ISolverContext context, BLL.BusinessObjects.CompositionRule compositionRule)
+        {
+            ISolverStatement returnStatement = null;
+            switch (compositionRule.CompositionRuleType)
+            {
+                case BusinessObjects.CompositionRuleTypes.Dependency:
+                    returnStatement = context.CreateStatement(StatementTypes.Implies, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+                    break;
+                case BusinessObjects.CompositionRuleTypes.MutualDependency:
+                    returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+                    break;
+                case BusinessObjects.CompositionRuleTypes.MutualExclusion:
+                    returnStatement = context.CreateStatement(StatementTypes.Excludes, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+                    break;
+            }
+            return returnStatement;
         }
 
         //Public methods  

@@ -1388,6 +1388,9 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
         var newZoomLevel = _diagramContext.ZoomIn();
         $(_scaleModifierIndicator).text(newZoomLevel * 100 + "%");
     }
+    this.ToggleOrientation = function () {
+        _diagramContext.ToggleOrientation();
+    }
 }
 var PropertiesComponent = function (container, diagramDataModelInstance) {
 
@@ -2575,14 +2578,15 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _outerElement.dblclick(function (e) {
                 _inlineEditMode = true;
                 var bb1 = this.getBBox();
-                var canvasOffsets = $(_canvasContainer).offset();
-                var xoffset = canvasOffsets.left + 3, yoffset = canvasOffsets.top + 3;
-                var textinput = $("<input class='Inputbox' type='text' />").appendTo("body").css({
-                    position: "absolute",
-                    left: bb1.x + xoffset,
-                    top: bb1.y + yoffset,
+                var textinput = $("<input class='Inputbox' type='text' />").prependTo("#SVGCanvasWrapper").css({
+                    position: "relative",
+                    left: bb1.x  +3,
+                    top: bb1.y + _boxHeight + 3,
                     width: _boxWidth - 10,
-                    height: _boxHeight - 10
+                    height: _boxHeight - 10,
+                    float: "left",
+                    marginTop: -_boxHeight,
+                    zIndex: 999
                 }).bind("change", function () {
                     //
                     var newName = $(this).val();
@@ -2665,6 +2669,18 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //
             refresh();
+        }
+        this.ReverseCoordinates = function () {
+
+            //Reverse absolute position
+            var holder = _absolutePos.x;
+            _absolutePos.x = _absolutePos.y;
+            _absolutePos.y = holder;
+
+            //
+            holder = _screenPos.x;
+            _screenPos.x = _screenPos.y;
+            _screenPos.y = holder;
         }
         this.ChangeState = function (state) {
             _currentState = state;
@@ -3924,7 +3940,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             }
         }
 
-
         //
         return _scaleModifier;
     }
@@ -3961,6 +3976,42 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //
         return _scaleModifier;
+    }
+    this.ToggleOrientation = function () {
+
+        //Toggle orientation
+        if (_fixedOrientation == "vertical") {
+            _fixedOrientation = "horizontal";
+        } else {
+            _fixedOrientation = "vertical";
+        }
+
+        //Refresh features
+        for (var guidKey in _diagramDataModel.ClientObjects.features) {
+            var UIFeature = _UIElements[guidKey];
+            if (UIFeature != undefined) {
+                UIFeature.ReverseCoordinates();
+                UIFeature.RefreshGraphicalRepresentation();
+            }
+
+        }
+
+        //Refresh relations, groupRelations and compositionRules
+        for (var guidKey in _diagramDataModel.ClientObjects.relations) {
+            var UIElement = _UIElements[guidKey];
+            if (UIElement != undefined)
+                UIElement.RefreshGraphicalRepresentation();
+        }
+        for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
+            var UIElement = _UIElements[guidKey];
+            if (UIElement != undefined)
+                UIElement.RefreshGraphicalRepresentation();
+        }
+        for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
+            var UIElement = _UIElements[guidKey];
+            if (UIElement != undefined)
+                UIElement.RefreshGraphicalRepresentation();
+        }
     }
 
     //Events
