@@ -1232,10 +1232,10 @@ a:hover
 #StandardViewBox .Entry > .GroupControl
 {
     float: right;
-    border: 1px solid #D8D8D8;
+    border: 5px solid #EEEEEE;
     padding: 5px;
     padding-top: 0px;
-    background: #F9F9F9;
+    background:white;
 }
 #StandardViewBox .Entry > .GroupControl > .ChildFeaturesArea > .Entry > .Connector
 {
