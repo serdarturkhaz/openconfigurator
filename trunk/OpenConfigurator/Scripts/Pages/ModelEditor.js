@@ -127,7 +127,7 @@ var UIObjectStyles = {
                         raphaelType: "circle",
                         dimensionModifier: 0,
                         dimensions: {
-                            radius: 6
+                            r: 7 //radius
                         }
                     }
                 }
@@ -180,7 +180,7 @@ var UIObjectStyles = {
                     "stroke-width": 1
                 },
                 dimensions: {
-                    length: 30
+                    length: 35
                 }
             },
             connection: {
@@ -189,8 +189,8 @@ var UIObjectStyles = {
                         raphaelType: "rect",
                         dimensionModifier: 5, //used to center rect
                         dimensions: {
-                            width: 10,
-                            height: 10
+                            width: 11,
+                            height: 11
                         }
                     }
                 }
@@ -269,14 +269,14 @@ var UIObjectStyles = {
                         raphaelType: "circle",
                         dimensionModifier: 0,
                         dimensions: {
-                            radius: 3
+                            r: 4 //radius
                         }
                     },
                     startConnector: {
                         raphaelType: "circle",
                         dimensionModifier: 0,
                         dimensions: {
-                            radius: 3
+                            r: 4 //radius
                         }
                     }
                 }
@@ -517,7 +517,7 @@ var systemDefaults = {
                 }
             },
             connections: [["left", "right"], ["right", "left"]],
-            curveModifiers: [{ x: -30, y: 0 }, { x: +30, y: 0}],
+            curveModifiers: [{ x: -40, y: 0 }, { x: +40, y: 0}],
             angleIntervals: [{ min: 0, max: 45 }, { min: 136, max: 224 }, { min: 316, max: 359}]
         },
         vertical: {
@@ -547,7 +547,7 @@ var systemDefaults = {
                 }
             },
             connections: [["top", "bottom"], ["bottom", "top"]],
-            curveModifiers: [{ x: 0, y: -30 }, { x: 0, y: +30}],
+            curveModifiers: [{ x: 0, y: -40 }, { x: 0, y: +40}],
             angleIntervals: [{ min: 46, max: 135 }, { min: 225, max: 315}]
         }
     }
@@ -2282,6 +2282,22 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
             _thisModelExplorer.ElementSelectToggled.RaiseEvent([guid, shift, newState]);
         }
     }
+    var addNewElement = function (guid) {
+
+        //Variables
+        var clientObject = _diagramDataModel.GetByGUID(guid);
+        var name = clientObject.GetField("Name");
+        var type = clientObject.GetType();
+
+        //Add a new element to the tree
+        var newDataRow = {
+            ID: guid,
+            Name: name,
+            typeName: type
+        };
+        var parentNode = $(_tree).getNode(type + "sNode");
+        var newNode = $(parentNode).addChildNode(newDataRow, true);
+    }
 
     //Constructor/Initalizers
     this.Initialize = function () {
@@ -2371,7 +2387,9 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
             typeName: type
         };
         var parentNode = $(_tree).getNode(type + "sNode");
-        $(parentNode).addChildNode(newDataRow);
+        var newNode = $(parentNode).addChildNode(newDataRow);
+
+        return newNode;
     }
     var updateElement = function (guid) {
         //Variables
@@ -2396,13 +2414,24 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
 
     //Eventhandlers
     this.OnClientObjectsLoaded = function () {
-        for (var guidKey in _diagramDataModel.ClientObjects.all) {
-            var clientObject = _diagramDataModel.GetByGUID(guidKey);
-            var type = clientObject.GetType();
+        for (var supportedType in _supportedTypes) {
 
-            //
-            if (_supportedTypes[type] != undefined) {
-                addElement(guidKey);
+            //Get clientObjects and sort them
+            var sortedObjects = [];
+            for (var guidKey in _diagramDataModel.ClientObjects[supportedType + "s"]) {
+                var clientObject = _diagramDataModel.GetByGUID(guidKey);
+                sortedObjects.push(clientObject);
+            }
+            sortedObjects.sort(function (a, b) {
+                var aName = a.GetField("Name").toLowerCase();
+                var bName = b.GetField("Name").toLowerCase();
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+
+            });
+
+            //Add client objects to tree
+            for (var i = 0; i < sortedObjects.length; i++) {
+                addElement(sortedObjects[i].GUID);
             }
         }
     }
@@ -2412,11 +2441,18 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
 
         //
         if (_supportedTypes[type] != undefined) {
-            addElement(guid);
+            var newNode = addNewElement(guid);
         }
     }
     this.OnClientObjectUpdated = function (guid) {
-        updateElement(guid);
+        var clientObject = _diagramDataModel.GetByGUID(guid);
+        var type = clientObject.GetType();
+
+        //
+        if (_supportedTypes[type] != undefined) {
+            updateElement(guid);
+        }
+        
     }
     this.OnClientObjectDeleted = function (guid) {
         deleteElement(guid);
@@ -2580,7 +2616,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 var bb1 = this.getBBox();
                 var textinput = $("<input class='Inputbox' type='text' />").prependTo("#SVGCanvasWrapper").css({
                     position: "relative",
-                    left: bb1.x  +3,
+                    left: bb1.x + 3,
                     top: bb1.y + _boxHeight + 3,
                     width: _boxWidth - 10,
                     height: _boxHeight - 10,
@@ -2934,8 +2970,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Get points
             var rootPoint = firstConnection.InnerElements.line.getPointAtLength(0);
-            var pointA = firstConnection.InnerElements.line.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length);
-            var pointB = lastConnection.InnerElements.line.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length);
+            var pointA = firstConnection.InnerElements.line.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length * _scaleModifier);
+            var pointB = lastConnection.InnerElements.line.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length * _scaleModifier);
 
             //Get arc modifiers
             var currentOrientation = _fixedOrientation;
@@ -3344,10 +3380,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             if (settings.diagramContext.drawCurves == true) {
                 path = [["M", closestConnection.x1.toFixed(1), closestConnection.y1.toFixed(1)],
                 ["C",
-                closestConnection.x1 + closestConnection.curveModifier.x,
-                closestConnection.y1 + closestConnection.curveModifier.y,
-                closestConnection.x2 - closestConnection.curveModifier.x,
-                closestConnection.y2 - closestConnection.curveModifier.y,
+                closestConnection.x1 + closestConnection.curveModifier.x * _scaleModifier,
+                closestConnection.y1 + closestConnection.curveModifier.y * _scaleModifier,
+                closestConnection.x2 - closestConnection.curveModifier.x * _scaleModifier,
+                closestConnection.y2 - closestConnection.curveModifier.y * _scaleModifier,
                 closestConnection.x2.toFixed(1), closestConnection.y2.toFixed(1)]];
             } else {
                 path = ["M", closestConnection.x1.toFixed(3), closestConnection.y1.toFixed(3), "L", closestConnection.x2.toFixed(3), closestConnection.y2.toFixed(3)].join(","); //line
@@ -3518,17 +3554,35 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //Private methods
         function refresh() {
-            var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.dimensionModifier, yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.dimensionModifier;
+
+            //
+            var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.dimensionModifier * _scaleModifier, yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.dimensionModifier * _scaleModifier;
             _innerElements.raphaelElem.attr({ cx: xPos, cy: yPos, x: xPos, y: yPos });
+
+            //
+            var scaledDimensions = $.extend(true, {}, raphaelConnectorType.dimensions);
+            for (var dimensionKey in scaledDimensions) {
+                var originalValue = scaledDimensions[dimensionKey];
+                scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+            }
+            _innerElements.raphaelElem.attr(scaledDimensions);
         }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
 
             //Create raphaelElem
-            var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.dimensionModifier, yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.dimensionModifier; //position for endConnector
-            _innerElements.raphaelElem = eval("_canvas." + raphaelConnectorType.raphaelType + "(xPos, yPos" + paramsToString(raphaelConnectorType.dimensions) + ")");
+            var scaledDimensions = $.extend(true, {}, raphaelConnectorType.dimensions);
+            for (var dimensionKey in scaledDimensions) {
+                var originalValue = scaledDimensions[dimensionKey];
+                scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+            }
+
+            var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.dimensionModifier * _scaleModifier, yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.dimensionModifier * _scaleModifier; //position for endConnector
+            _innerElements.raphaelElem = eval("_canvas." + raphaelConnectorType.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
             _innerElements.raphaelElem.attr(connectorStyle);
+
+
         }
         this.RefreshGraphicalRepresentation = function () {
             refresh();

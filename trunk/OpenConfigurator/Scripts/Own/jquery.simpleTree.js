@@ -1,7 +1,7 @@
 (function ($) {
+
     //Global variables
     var internalNodeIDCounter = 0;
-
     var treeDefaultSettings = {
         nodeSystemTypes: {
             parent: "parent",
@@ -101,7 +101,7 @@
         return row;
     }
 
-    var appendChildRow = function (childRow, destinationRow) {
+    var appendChildRow = function (childRow, destinationRow, pos) {
 
         //Variables
         var destinationNode = $(destinationRow).children(".node");
@@ -113,26 +113,30 @@
 
         //Reinitialize destinationRow
         switch (destinationNodeSystemType) {
-            //Old type = Parent                                                       
+            //Old type = Parent                                                                                                                    
             case treeDefaultSettings.nodeSystemTypes.parent:
                 childrenContainer = $(destinationRow).children(".childrenContainer");
 
-                childRow.appendTo(childrenContainer);
                 break;
-            //Old type = Leaf                                                       
+            //Old type = Leaf                                                                                                                    
             case treeDefaultSettings.nodeSystemTypes.leaf:
                 $(destinationNode).attr("nodeSystemType", treeDefaultSettings.nodeSystemTypes.parent);
                 $(destinationNode).attr("nodeDisplayState", treeDefaultSettings.nodeDisplayStates.expanded);
-
                 childrenContainer = $("<ul class='childrenContainer level0'></ul>").appendTo(destinationRow);
 
                 //Show expander & collapse
                 var expander = $(destinationNode).children(".expander");
                 expander.css("visibility", "visible");
-                //childrenContainer.hide();
 
-                childRow.appendTo(childrenContainer);
                 break;
+        }
+
+        //Append row
+        if (pos == undefined) {
+            childRow.appendTo(childrenContainer);
+        } else {
+            var indexNode = $(childrenContainer).find(".row:eq(" + pos.index + ")");
+            eval("indexNode." + pos.relative + "(childRow)");
         }
     }
     var getParentNode = function (node) {
@@ -140,6 +144,53 @@
         var tree = $(node).parents(".simpleTree");
         var parentNode = getNode(tree, row.attr("parentDataID"));
         return parentNode;
+    }
+    var getChildNodes = function (node) {
+        var childrenContainer = $(node).parent().children(".childrenContainer");
+        var childNodes = $(childrenContainer).find("li.row");
+
+        return childNodes;
+    }
+    var findInsertPos = function (val, array, getField) {//Finds the position for a new value within an alphabetically sorted array (ASC)
+
+        //Variables
+        var returnPos = {
+            index: 0,
+            relative: "before" //before or after
+        }
+
+        //Verify 1st and last pos
+        var compareVal = val.toLowerCase();
+        if (compareVal < getField(array[0]).toLowerCase()) {
+            returnPos.index = 0;
+            returnPos.relative = "before";
+            return returnPos;
+        } else if (compareVal >= getField(array[array.length - 1]).toLowerCase()) {
+            returnPos.index = array.length - 1;
+            returnPos.relative = "after";
+            return returnPos;
+        }
+
+        //Verify other positions
+        for (var i = 0; i < array.length - 1; i++) {
+            var leftVal = getField(array[i]).toLowerCase();
+            var rightVal = getField(array[i + 1]).toLowerCase();
+
+            if (compareVal >= leftVal && compareVal < rightVal) {
+                returnPos.index = i;
+                returnPos.relative = "after";
+                return returnPos;
+            }
+        }
+    }
+    var getNodeSortedPos = function (name, parentNode) {
+        var siblings = getChildNodes(parentNode);
+        var pos = findInsertPos(name, siblings, function (row) {
+            var name = $(row).find(".innerNode .name").text();
+            return name;
+        });
+
+        return pos;
     }
     var getNode = function (tree, dataId) {
         var node = $(tree).find(".row[dataId='" + dataId + "']").children(".node");
@@ -202,7 +253,23 @@
     }
 
     var updateNodeName = function (node, newName) {
-        $(node).children(".innerNode").children(".name").text(newName);
+
+        var oldName = $(node).children(".innerNode").children(".name").text();
+        if (oldName != newName) {
+
+            //Setup variables and remove the row
+            var parentNode = getParentNode(node);
+            var row = $(node).parent();
+            var parentRow = $(parentNode).parent();
+            $(row).remove();
+
+            //Get the position
+            var pos = getNodeSortedPos(newName, parentNode);
+
+            //Update the position and name
+            appendChildRow(row, parentRow, pos);
+            $(node).children(".innerNode").children(".name").text(newName);
+        }
     }
     var deleteNode = function (node) {
         //Variables
@@ -230,16 +297,27 @@
         var node = getNode(tree, dataId);
         return node;
     }
-    $.fn.addChildNode = function (dataRow) {
-        //Variables
-        var destinationRow = $(this).parent();
-        var opts = $(destinationRow).parents(".simpleTree").data("options");
+    $.fn.addChildNode = function (dataRow, useSort) {
 
-        //
+        //Get the destination node and options
+        var parentNode = $(this);
+        var parentRow = $(parentNode).parent();
+        var opts = $(parentRow).parents(".simpleTree").data("options");
+
+        //Create and append a new row
         var newRow = createRow(dataRow, opts.types[dataRow.typeName], dataRow.typeName, opts.onNodeClicked);
-        appendChildRow(newRow, destinationRow);
-    }
+        if (useSort == true) {
 
+            //Append to the correct position
+            var pos = getNodeSortedPos(dataRow.Name, parentNode);
+            appendChildRow(newRow, parentRow, pos);
+
+        } else {
+            //Append to the end
+            appendChildRow(newRow, parentRow);
+        }
+
+    }
     $.fn.setNodeSelected = function () {
         var node = $(this);
         setSelected(node);
@@ -278,6 +356,5 @@
         var node = $(this);
         return getDataID(node);
     }
-    
     //*********************************************************************************************************************************
 })(jQuery);

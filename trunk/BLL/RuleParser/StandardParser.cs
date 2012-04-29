@@ -255,7 +255,7 @@ namespace BLL.RuleParser
 
                     public override IEvalResult[] Eval(IEvalResult[] parameters)
                     {
-                        //Evaluate parameters
+                        //Setup parameters and variables
                         List<BLL.BusinessObjects.Feature> featureReferences = new List<BusinessObjects.Feature>();
                         foreach (IEvalResult parameter in parameters)
                         {
@@ -269,42 +269,43 @@ namespace BLL.RuleParser
                                 throw new SyntaxIncorrectException();
                             }
                         }
+                        List<BLL.BusinessObjects.Feature> selectedFeatures = new List<BusinessObjects.Feature>();
 
-                        //Children selector****************************************************************************************************
+                        //Select features
                         if (_syntaxString.Contains("children"))
                         {
-                            //Get the child Features
-                            List<BLL.BusinessObjects.Feature> childFeatures = new List<BusinessObjects.Feature>();
+                            //Children selector
                             foreach (BLL.BusinessObjects.Feature featureRef in featureReferences)
                             {
-                                childFeatures.AddRange(_configSession.Model.GetChildFeatures(featureRef));
+                                selectedFeatures.AddRange(_configSession.Model.GetChildFeatures(featureRef));
                             }
-
-                            //Return a list of references pointing to the each of the childFeatures 
-                            List<IEvalResult> returnRef = new List<IEvalResult>(); ;
-                            foreach (BLL.BusinessObjects.Feature childFeature in childFeatures)
-                            {
-                                //Only childFeatures which are selected in the configuration
-                                BLL.BusinessObjects.FeatureSelection featureSelection = _configSession.Configuration.GetFeatureSelectionByFeatureID(childFeature.ID);
-                                if (featureSelection.SelectionState == BusinessObjects.FeatureSelectionStates.Selected)
-                                {
-                                    //
-                                    object target = (object)childFeature;
-                                    ObjectReference objRef = new ObjectReference(ref target);
-                                    returnRef.Add(objRef);
-                                }
-                            }
-
-                            return returnRef.ToArray();
                         }
-                        //*********************************************************************************************************************
-                        //Children selector****************************************************************************************************
+                        else if (_syntaxString.Contains("descendants"))
+                        {
+                            //Descendants selector
+                            foreach (BLL.BusinessObjects.Feature featureRef in featureReferences)
+                            {
+                                selectedFeatures.AddRange(_configSession.Model.GetDescendantFeatures(featureRef));
+                            }
+                        }
 
 
-                        //*********************************************************************************************************************
+                        //Return a list of references pointing the selected features 
+                        List<IEvalResult> returnRef = new List<IEvalResult>();
+                        foreach (BLL.BusinessObjects.Feature childFeature in selectedFeatures)
+                        {
+                            //Only childFeatures which are selected in the configuration
+                            BLL.BusinessObjects.FeatureSelection featureSelection = _configSession.Configuration.GetFeatureSelectionByFeatureID(childFeature.ID);
+                            if (featureSelection.SelectionState == BusinessObjects.FeatureSelectionStates.Selected)
+                            {
+                                //
+                                object target = (object)childFeature;
+                                ObjectReference objRef = new ObjectReference(ref target);
+                                returnRef.Add(objRef);
+                            }
+                        }
 
-
-                        return null;
+                        return returnRef.ToArray();
                     }
                 }
                 public class AbsoluteAttributeSelector : ParserStatement
@@ -335,7 +336,7 @@ namespace BLL.RuleParser
                             //Get the Attribute
                             string attributeName = _syntaxString.Replace("_", " ");
                             BusinessObjects.Attribute attribute = _configSession.Model.GetAttributeByName(featureRef, attributeName);
-                            if (attribute != null)
+                            if (attribute != null) //if the feature doesn't have the Attribute, it is ignored
                             {
                                 //Get the AttributeValue
                                 BusinessObjects.AttributeValue attributeValue = _configSession.Configuration.GetAttributeValueByAttributeID(attribute.ID);

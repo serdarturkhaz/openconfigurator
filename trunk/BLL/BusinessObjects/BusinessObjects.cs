@@ -195,14 +195,28 @@ namespace BLL.BusinessObjects
         //Methods
         public List<BLL.BusinessObjects.Feature> GetChildFeatures(BLL.BusinessObjects.Feature targetFeature)
         {
-            //Get all Features for which there exists a Relation which has them as a child and the targetFeature is the parent
+            //Return child Features part of Relations and GroupRelations
             List<BLL.BusinessObjects.Feature> childrenFromRelations = Features.FindAll(f => Relations.FirstOrDefault(r => r.ParentFeatureID == targetFeature.ID && r.ChildFeatureID == f.ID) != null);
-
-            //Get all Features for which there exists a Relation which has them as a child and the targetFeature is the parent
             List<BLL.BusinessObjects.Feature> childrenFromGroupRelations = Features.FindAll(f => GroupRelations.FirstOrDefault(r => r.ParentFeatureID == targetFeature.ID && r.ChildFeatureIDs.Contains(f.ID)) != null);
         
             //
             return childrenFromRelations.Union(childrenFromGroupRelations).ToList();
+        }
+        public List<BLL.BusinessObjects.Feature> GetDescendantFeatures(BLL.BusinessObjects.Feature targetFeature)
+        {
+            //Variables
+            List<BLL.BusinessObjects.Feature> descendants = new List<Feature>();
+            BLL.BusinessObjects.Feature feature = targetFeature;
+
+            //Recursively get children
+            List<BLL.BusinessObjects.Feature> children = GetChildFeatures(feature);
+            descendants.AddRange(children);
+            foreach (BLL.BusinessObjects.Feature childFeature in children)
+            {
+                descendants.AddRange(GetDescendantFeatures(childFeature));
+            }
+
+            return descendants;
         }
         public BLL.BusinessObjects.Feature GetRootFeature()
         {
