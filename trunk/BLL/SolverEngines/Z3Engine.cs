@@ -9,7 +9,6 @@ using System.Collections.Specialized;
 
 namespace BLL.SolverEngines
 {
-
     public class Z3Context : ISolverContext
     {
         //Fields
@@ -444,7 +443,6 @@ namespace BLL.SolverEngines
         }
     }
 
-
     //Helper classes
     public class Z3Variable
     {
@@ -515,5 +513,4 @@ namespace BLL.SolverEngines
             _equalsTerm = equalsTerm;
         }
     }
-
 }

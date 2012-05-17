@@ -132,7 +132,7 @@
         }
 
         //Append row
-        if (pos == undefined) {
+        if (pos == undefined || $(childrenContainer).find(".row").length == 0) {
             childRow.appendTo(childrenContainer);
         } else {
             var indexNode = $(childrenContainer).find(".row:eq(" + pos.index + ")");
@@ -261,7 +261,7 @@
             var parentNode = getParentNode(node);
             var row = $(node).parent();
             var parentRow = $(parentNode).parent();
-            $(row).remove();
+            $(row).detach();
 
             //Get the position
             var pos = getNodeSortedPos(newName, parentNode);

@@ -414,7 +414,9 @@ var systemDefaults = {
                 id: 1,
                 bounds: {
                     lowerBound: 0,
-                    upperBound: 1
+                    upperBound: function (clientObject) {
+                        return clientObject.ChildFeatures.length;
+                    }
                 }
             },
             xor: {
@@ -433,7 +435,9 @@ var systemDefaults = {
                 bounds: {
                     editable: true,
                     lowerBound: 0,
-                    upperBound: 0
+                    upperBound: function (clientObject) {
+                        return clientObject.ChildFeatures.length;
+                    }
                 }
             }
         },
@@ -1975,14 +1979,25 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             controlType: Controls.Dropdown,
                             defaultOptions: systemDefaults.enums.groupRelationTypes,
                             onDataFieldChanged: function (newVal, control) {
+
+                                //Variables
                                 var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
                                 var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
                                 var groupRelationType = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, parseFloat(newVal));
+                                var lowerBound, upperBound;
 
-                                //
-                                lowerBoundControl.val(groupRelationType.bounds.lowerBound).trigger("change");
-                                upperBoundControl.val(groupRelationType.bounds.upperBound).trigger("change");
+                                //Get lower and upper bounds
+                                lowerBound = groupRelationType.bounds.lowerBound;
+                                upperBound = groupRelationType.bounds.upperBound;
+                                if (typeof upperBound === 'function') {
+                                    upperBound = upperBound(_mainClientObject);
+                                }
 
+                                //Trigger onchange for controls so the BusinessObject is updated accordingly
+                                lowerBoundControl.val(lowerBound).trigger("change");
+                                upperBoundControl.val(upperBound).trigger("change");
+
+                                //Disable
                                 if (groupRelationType.bounds.editable == true) {
                                     lowerBoundControl.removeAttr("disabled");
                                     upperBoundControl.removeAttr("disabled");
@@ -1994,17 +2009,27 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
                             },
                             onDataFieldLoaded: function (val, control) {
+                                //Variables
                                 var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
                                 var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
                                 var groupRelationType = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, parseFloat(val));
+                                var lowerBound, upperBound;
 
+                                //Get lower and upper bounds
+                                lowerBound = groupRelationType.bounds.lowerBound;
+                                upperBound = groupRelationType.bounds.upperBound;
+                                if (typeof upperBound === 'function') {
+                                    upperBound = upperBound(_mainClientObject);
+                                }
+
+                                //Disable
                                 if (groupRelationType.bounds.editable == true) {
                                     lowerBoundControl.removeAttr("disabled");
                                     upperBoundControl.removeAttr("disabled");
 
                                 } else {
-                                    lowerBoundControl.val(groupRelationType.bounds.lowerBound);
-                                    upperBoundControl.val(groupRelationType.bounds.upperBound);
+                                    lowerBoundControl.val(lowerBound);
+                                    upperBoundControl.val(upperBound);
                                 }
                             }
                         },
@@ -2452,7 +2477,7 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
         if (_supportedTypes[type] != undefined) {
             updateElement(guid);
         }
-        
+
     }
     this.OnClientObjectDeleted = function (guid) {
         deleteElement(guid);
