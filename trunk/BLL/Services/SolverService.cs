@@ -203,8 +203,7 @@ namespace BLL.Services
 
             //
             return decisionIsValid;
-        }
-        
+        }        
     }
     public class ConfiguratorSession
     {
