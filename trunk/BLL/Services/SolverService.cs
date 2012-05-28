@@ -30,40 +30,21 @@ namespace BLL.Services
             //Return val
             ISolverContext context = new Z3Context();
 
-
-            //Loop through Features
+            //Handle Features and Attributes
             foreach (BLL.BusinessObjects.Feature feature in model.Features)
             {
                 context.AddVariable(feature.Name, feature.ID.ToString(), featuresCategory, VariableDataTypes.Boolean);
 
-                //Loop through Attributes
-                foreach (BLL.BusinessObjects.Attribute attribute in feature.Attributes)
-                {
-                    context.AddVariable(attribute.Name, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer);
-                }
+                //Handle Attributes
+                feature.Attributes.ForEach(attribute => context.AddVariable(attribute.Name, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer));
             }
 
-            //Loop through Relations
-            List<ISolverStatement> statementsList = new List<ISolverStatement>();
-            foreach (BLL.BusinessObjects.Relation relation in model.Relations)
-            {
-                context.AddConstraint(relationsCategory, CreateStatement(context, relation));
-            }
+            //Handle Relations, GroupRelations and CompositionRules
+            model.Relations.ForEach(rel => context.AddConstraint(relationsCategory, CreateStatement(context, rel)));
+            model.GroupRelations.ForEach(groupRel => context.AddConstraint(groupRelationsCategory, CreateStatement(context, groupRel)));
+            model.CompositionRules.ForEach(compositionRule => context.AddConstraint(compositionRulesCategory, CreateStatement(context, compositionRule)));
 
-            //Loop through GroupRelations
-            foreach (BLL.BusinessObjects.GroupRelation groupRelation in model.GroupRelations)
-            {
-                context.AddConstraint(groupRelationsCategory, CreateStatement(context, groupRelation));
-            }
-
-            //Loop through CompositionRules
-            foreach (BLL.BusinessObjects.CompositionRule compositionRule in model.CompositionRules)
-            {
-                context.AddConstraint(compositionRulesCategory, CreateStatement(context, compositionRule));
-            }
-
-
-            //Create an initial point
+            //Create an initial restore point
             context.CreateInitialRestorePoint();
             return context;
         }
@@ -148,6 +129,9 @@ namespace BLL.Services
                     ISolverStatement negatedAnds = context.CreateStatement(StatementTypes.NotAndCombinations, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
                     ISolverStatement equivalence2 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement);
                     returnStatement = context.CreateStatement(StatementTypes.And, equivalence2, negatedAnds);
+                    break;
+                case BusinessObjects.GroupRelationTypes.Cardinal:
+
                     break;
                 
             }
