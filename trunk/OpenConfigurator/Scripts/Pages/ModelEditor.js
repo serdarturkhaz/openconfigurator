@@ -40,13 +40,13 @@ var commonStyles = {
     cardinalityLabel: {
         text: {
             attr: {
-                "font-size": 9
+                "font-size": 12
             }
         },
         box: {
             dimensions: {
-                width: 30,
-                height: 15
+                width: 40,
+                height: 20
             },
             attr: {
                 opacity: 1,
@@ -3035,7 +3035,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 _innerElements.cardinalityElement.RefreshGraphicalRepresentation();
         }
         function getCardinalityElemPosition() {
-            var cardinalityDistance = systemDefaults.orientations[_fixedOrientation].cardinalityDistances.groupRelation;
+            var cardinalityDistance = systemDefaults.orientations[_fixedOrientation].cardinalityDistances.groupRelation * _scaleModifier;
             var line = _innerElements.connections[0].InnerElements.line;
             var labelPoint = line.getPointAtLength(cardinalityDistance);
             return labelPoint;
@@ -3052,7 +3052,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     _innerElements.cardinalityElement.Update(_lowerBound, _upperBound);
                     break;
                 case "partial":
-                    //only show for cardinal
+                    //only show for cardinal groups
                     if (_groupRelationType == systemDefaults.enums.groupRelationTypes.cardinal.id) {
                         if (_innerElements.cardinalityElement == null) {
                             _innerElements.cardinalityElement = new UICardinalityLabel(_lowerBound, _upperBound, getCardinalityElemPosition);
@@ -3629,6 +3629,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         };
         var _outerElement = null;
         var _firstNumber = firstNumber, _secondNumber = secondNumber;
+        var _boxWidth = commonStyles.cardinalityLabel.box.dimensions.width * _scaleModifier, _boxHeight = commonStyles.cardinalityLabel.box.dimensions.height * _scaleModifier;
         var _thisUICardinalityLabel = this;
 
         //Properties
@@ -3636,29 +3637,29 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //Private methods
         function refresh() {
-            //Setup styles
-            var commonStyle = commonStyles.cardinalityLabel;
-            var currentStyle = commonStyle;
+
+            //Scale
+            _boxWidth = commonStyles.cardinalityLabel.box.dimensions.width * _scaleModifier;
+            _boxHeight = commonStyles.cardinalityLabel.box.dimensions.height * _scaleModifier
+            _innerElements.box.attr({ width: _boxWidth, height: _boxHeight });
+            _innerElements.text.attr({ "font-size": parseFloat(commonStyles.cardinalityLabel.text.attr["font-size"]) * _scaleModifier });
 
             //
             var labelPoint = calculatePositionFunction();
-            _innerElements.box.attr({ x: labelPoint.x - currentStyle.box.dimensions.width / 2, y: labelPoint.y - currentStyle.box.dimensions.height / 2 });
+            _innerElements.box.attr({ x: labelPoint.x - _boxWidth / 2, y: labelPoint.y - _boxHeight / 2 });
             _innerElements.text.attr({ x: labelPoint.x, y: labelPoint.y });
 
         }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
-            //Setup styles
-            var commonStyle = commonStyles.cardinalityLabel;
-            var currentStyle = commonStyle;
 
             //Create box and text
             var labelPoint = calculatePositionFunction();
-            _innerElements.box = _canvas.rect(labelPoint.x - currentStyle.box.dimensions.width / 2, labelPoint.y - currentStyle.box.dimensions.height / 2, currentStyle.box.dimensions.width, currentStyle.box.dimensions.height, 0);
-            _innerElements.box.attr(currentStyle.box.attr);
+            _innerElements.box = _canvas.rect(labelPoint.x - _boxWidth / 2, labelPoint.y - _boxHeight / 2, _boxWidth, _boxHeight, 0);
+            _innerElements.box.attr(commonStyles.cardinalityLabel.box.attr);
             _innerElements.text = _canvas.text(labelPoint.x, labelPoint.y, "[" + _firstNumber + ".." + _secondNumber + "]");
-            _innerElements.text.attr(currentStyle.text.attr);
+            _innerElements.text.attr({ "font-size": parseFloat(commonStyles.cardinalityLabel.text.attr["font-size"]) * _scaleModifier });
         }
         this.RefreshGraphicalRepresentation = function () {
             refresh();
