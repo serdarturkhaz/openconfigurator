@@ -25,6 +25,15 @@ namespace BLL.SolverEngines
             _config = new Config();
             _config.SetParamValue("MODEL", "true"); // corresponds to /m switch 
             _context = new Context(_config);
+
+            //Setup custom conversion method (boolean -> integer)
+            FuncDecl boolToInt = _context.MkFuncDecl("BoolToInt", _context.MkBoolSort(), _context.MkIntSort());
+            Term x = _context.MkConst("x", _context.MkBoolSort()); //f
+            Term fx = _context.MkApp(boolToInt, x); //f(x)
+            Term fDef= _context.MkIte(x, _context.MkIntNumeral(1), _context.MkIntNumeral(0)); // x == true => 1, x == false => 0
+            _context.AssertCnstr(_context.MkEq(fx, fDef));
+            
+            //Term functionDef = _context.MkImplies(b
         }
 
         //Private methods

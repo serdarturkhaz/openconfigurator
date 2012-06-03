@@ -10,6 +10,7 @@
         var diagramDataModel = null, clientController = null;
 
         function calcWidth() {
+
             //Set width for ModelsBox
             var containerWidth = $(".OuterContentArea .InnerContentArea").width();
             var marginWidth = 31;
@@ -19,6 +20,7 @@
             $('#ModelDiagramBox').css("width", modelsBoxWidth + "px");
         }
         function addNewConfiguration(modelID) {
+
             //Create new Configuration in DB
             var id = null;
             $.ajax({
