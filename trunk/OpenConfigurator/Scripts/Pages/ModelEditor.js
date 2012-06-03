@@ -382,8 +382,8 @@ var systemDefaults = {
                 label: "Mandatory",
                 id: 1,
                 bounds: {
-                    lowerBound: 1,
-                    upperBound: 1
+                    defaultLowerBound: 1,
+                    defaultUpperBound: 1
                 }
             },
             optional: {
@@ -391,8 +391,8 @@ var systemDefaults = {
                 label: "Optional",
                 id: 2,
                 bounds: {
-                    lowerBound: 0,
-                    upperBound: 1
+                    defaultLowerBound: 0,
+                    defaultUpperBound: 1
 
                 }
             },
@@ -402,8 +402,8 @@ var systemDefaults = {
                 id: 3,
                 bounds: {
                     editable: true,
-                    lowerBound: 0,
-                    upperBound: 0
+                    defaultLowerBound: 0,
+                    defaultUpperBound: 0
                 }
             }
         },
@@ -413,8 +413,8 @@ var systemDefaults = {
                 label: "OR",
                 id: 1,
                 bounds: {
-                    lowerBound: 0,
-                    upperBound: function (clientObject) {
+                    defaultLowerBound: 0,
+                    defaultUpperBound: function (clientObject) {
                         return clientObject.ChildFeatures.length;
                     }
                 }
@@ -424,8 +424,8 @@ var systemDefaults = {
                 label: "XOR",
                 id: 2,
                 bounds: {
-                    lowerBound: 1,
-                    upperBound: 1
+                    defaultLowerBound: 1,
+                    defaultUpperBound: 1
                 }
             },
             cardinal: {
@@ -434,8 +434,8 @@ var systemDefaults = {
                 id: 3,
                 bounds: {
                     editable: true,
-                    lowerBound: 0,
-                    upperBound: function (clientObject) {
+                    defaultLowerBound: 0,
+                    defaultUpperBound: function (clientObject) {
                         return clientObject.ChildFeatures.length;
                     }
                 }
@@ -553,6 +553,12 @@ var systemDefaults = {
             connections: [["top", "bottom"], ["bottom", "top"]],
             curveModifiers: [{ x: 0, y: -40 }, { x: 0, y: +40}],
             angleIntervals: [{ min: 46, max: 135 }, { min: 225, max: 315}]
+        }
+    },
+    validationExpressions: {
+        required: "\w+",
+        numeric: {
+            naturalNumbers: "^[0-9]\\d*\\.?[0]*$"
         }
     }
 }
@@ -1441,14 +1447,43 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
         //Event handlers
         var onChanged = function () {
-            var newVal = _control.val();
-            _fieldParent[_fieldName] = newVal;
 
-            //Call handlers
-            if (_changedCallback != undefined) {
-                _changedCallback(newVal, _control);
+            //Variables
+            var newVal = _control.val();
+            var oldVal = _fieldParent[_fieldName];
+
+            //Perform validation
+            var valid = true;
+            if (settingsField.validation != undefined) {
+
+                //Loop through validations
+                for (var i = 0; i < settingsField.validation.length; i++) {
+                    var validationEntry = settingsField.validation[i];
+                    if (typeof (validationEntry) == "function") {
+                        valid = validationEntry(newVal, oldVal, _control); //call custom validation function
+                    } else if (typeof (validationEntry) == "string") {
+                        valid = new RegExp(validationEntry).test(newVal);
+                    }
+                    if (valid == false)
+                        break;
+                }
             }
-            saveDataFunction(_fieldName);
+
+            //Validation ok
+            if (valid == true) {
+
+                //Set value and call handlers
+                _control.removeAttr("invalid");
+                _fieldParent[_fieldName] = newVal;
+                if (_changedCallback != undefined) {
+                    _changedCallback(newVal, oldVal, _control);
+                }
+                saveDataFunction(_fieldName);
+            }
+            //Validation failed
+            else {
+                _control.attr("invalid", "true");
+            }
         }
         var onEnterPressed = function (e) {
             if (e.which == 13) {
@@ -1493,14 +1528,43 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
         //Event handlers
         var onChanged = function () {
-            var newVal = _control.val();
-            _fieldParent[_fieldName] = newVal;
 
-            //Call handlers
-            if (_changedCallback != undefined) {
-                _changedCallback(newVal, _control);
+            //Variables
+            var newVal = _control.val();
+            var oldVal = _fieldParent[_fieldName];
+
+            //Perform validation
+            var valid = true;
+            if (settingsField.validation != undefined) {
+
+                //Loop through validations
+                for (var i = 0; i < settingsField.validation.length; i++) {
+                    var validationEntry = settingsField.validation[i];
+                    if (typeof (validationEntry) == "function") {
+                        valid = validationEntry(newVal, oldVal, _control); //call custom validation function
+                    } else if (typeof (validationEntry) == "string") {
+                        valid = new RegExp(validationEntry).test(newVal);
+                    }
+                    if (valid == false)
+                        break;
+                }
             }
-            saveDataFunction(_fieldName);
+
+            //Validation ok
+            if (valid == true) {
+
+                //Set value and call handlers
+                _control.removeAttr("invalid");
+                _fieldParent[_fieldName] = newVal;
+                if (_changedCallback != undefined) {
+                    _changedCallback(newVal, oldVal, _control);
+                }
+                saveDataFunction(_fieldName);
+            }
+            //Validation failed
+            else {
+                _control.attr("invalid", "true");
+            }
         }
     }
     Controls.Checkbox = function (fieldParent, settingsField, saveDataFunction) {
@@ -1538,12 +1602,14 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
         //Event handlers
         var onChanged = function () {
+            //
             var newVal = _control.attr("checked");
+            var oldVal = _fieldParent[_fieldName];
             _fieldParent[_fieldName] = newVal;
 
             //Call handlers
             if (_changedCallback != undefined) {
-                _changedCallback(newVal, _control);
+                _changedCallback(newVal, oldVal, _control);
             }
             saveDataFunction(_fieldName);
         }
@@ -1593,12 +1659,14 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
         //Event handlers
         var onChanged = function () {
+            //
             var newVal = $(_control).find("option:selected").attr("value");
+            var oldVal = _fieldParent[_fieldName];
             _fieldParent[_fieldName] = newVal;
 
             //Call handlers
             if (_changedCallback != undefined) {
-                _changedCallback(newVal, _control);
+                _changedCallback(newVal, oldVal, _control);
             }
             saveDataFunction(_fieldName);
         }
@@ -1814,7 +1882,6 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         }
 
     }
-
     var supportedClientObjects = {
         feature: {
             areas: {
@@ -1874,7 +1941,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                     dataName: "AttributeType",
                                     controlType: Controls.Dropdown,
                                     defaultOptions: systemDefaults.enums.attributeTypes,
-                                    onDataFieldChanged: function (newVal, control) {
+                                    onDataFieldChanged: function (newVal, oldVal, control) {
 
                                         var constantValueField = $(control).parents(".DetailsDiv").find("[fieldName='ConstantValue']");
                                         var attributeType = getEnumEntryByID(systemDefaults.enums.attributeTypes, parseFloat(newVal));
@@ -1921,14 +1988,14 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             dataName: "RelationType",
                             controlType: Controls.Dropdown,
                             defaultOptions: systemDefaults.enums.relationTypes,
-                            onDataFieldChanged: function (newVal, control) {
+                            onDataFieldChanged: function (newVal, oldVal, control) {
                                 var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
                                 var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
                                 var relationType = getEnumEntryByID(systemDefaults.enums.relationTypes, parseFloat(newVal));
 
                                 //
-                                lowerBoundControl.val(relationType.bounds.lowerBound).trigger("change");
-                                upperBoundControl.val(relationType.bounds.upperBound).trigger("change");
+                                lowerBoundControl.val(relationType.bounds.defaultLowerBound).trigger("change");
+                                upperBoundControl.val(relationType.bounds.defaultUpperBound).trigger("change");
 
                                 if (relationType.bounds.editable == true) {
                                     lowerBoundControl.removeAttr("disabled");
@@ -1978,7 +2045,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             dataName: "GroupRelationType",
                             controlType: Controls.Dropdown,
                             defaultOptions: systemDefaults.enums.groupRelationTypes,
-                            onDataFieldChanged: function (newVal, control) {
+                            onDataFieldChanged: function (newVal, oldVal, control) {
 
                                 //Variables
                                 var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
@@ -1987,8 +2054,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                 var lowerBound, upperBound;
 
                                 //Get lower and upper bounds
-                                lowerBound = groupRelationType.bounds.lowerBound;
-                                upperBound = groupRelationType.bounds.upperBound;
+                                lowerBound = groupRelationType.bounds.defaultLowerBound;
+                                upperBound = groupRelationType.bounds.defaultUpperBound;
                                 if (typeof upperBound === 'function') {
                                     upperBound = upperBound(_mainClientObject);
                                 }
@@ -2009,6 +2076,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
                             },
                             onDataFieldLoaded: function (val, control) {
+
                                 //Variables
                                 var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
                                 var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
@@ -2016,8 +2084,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                 var lowerBound, upperBound;
 
                                 //Get lower and upper bounds
-                                lowerBound = groupRelationType.bounds.lowerBound;
-                                upperBound = groupRelationType.bounds.upperBound;
+                                lowerBound = groupRelationType.bounds.defaultLowerBound;
+                                upperBound = groupRelationType.bounds.defaultUpperBound;
                                 if (typeof upperBound === 'function') {
                                     upperBound = upperBound(_mainClientObject);
                                 }
@@ -2037,13 +2105,58 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             label: "Lower bound",
                             dataName: "LowerBound",
                             controlType: Controls.Textbox,
-                            disabled: true
+                            disabled: true,
+                            validation: [systemDefaults.validationExpressions.numeric.naturalNumbers,
+                                            function (newVal, oldVal, control) {
+
+                                                //Variables 
+                                                var isValid = true;
+                                                var upperBoundControl = $(control).parents(".AreaDiv").find("[fieldName='UpperBound']");
+
+                                                //Lowerbound cannot be greater than upperBound
+                                                var upperBoundVal = $(upperBoundControl).val();
+                                                if (newVal > upperBoundVal) {
+                                                    return false;
+                                                }
+
+                                                //
+                                                return isValid;
+
+                                            } ]
                         },
                         upperBound: {
                             label: "Upper bound",
                             dataName: "UpperBound",
                             controlType: Controls.Textbox,
-                            disabled: true
+                            disabled: true,
+                            validation: [systemDefaults.validationExpressions.numeric.naturalNumbers,
+                                            function (newVal, oldVal, control) {
+
+                                                //Variables 
+                                                var isValid = true;
+                                                var lowerBoundControl = $(control).parents(".AreaDiv").find("[fieldName='LowerBound']");
+                                                var groupRelationTypeControl = $(control).parents(".AreaDiv").find("[fieldName='GroupRelationType']");
+                                                var groupRelationType = getEnumEntryByID(systemDefaults.enums.groupRelationTypes, parseFloat(groupRelationTypeControl.val()));
+
+                                                //Upperbound cannot be less than lowerBound
+                                                var lowerBoundVal = $(lowerBoundControl).val();
+                                                if (newVal < lowerBoundVal) {
+                                                    return false;
+                                                }
+
+                                                //Upperbound cannot be greater than the defaultUpperBound
+                                                var defaultUpperBound = groupRelationType.bounds.defaultUpperBound;
+                                                if (typeof defaultUpperBound === 'function') {
+                                                    defaultUpperBound = defaultUpperBound(_mainClientObject);
+                                                }
+                                                if (newVal > defaultUpperBound) {
+                                                    return false;
+                                                }
+
+                                                //
+                                                return isValid;
+
+                                            } ]
                         }
                     }
                 }

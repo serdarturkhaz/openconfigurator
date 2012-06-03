@@ -587,6 +587,10 @@ html > body .ui-pnotify
     padding: 5px;
     width: 215px;
 }
+.Textbox[invalid]
+{
+    border: 1px solid red;
+}
 .Dropdown
 {
     border: 1px solid #E6E6E6;

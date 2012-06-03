@@ -33,9 +33,10 @@ namespace BLL.Services
             //Handle Features and Attributes
             foreach (BLL.BusinessObjects.Feature feature in model.Features)
             {
+                //Add variable for Feature
                 context.AddVariable(feature.Name, feature.ID.ToString(), featuresCategory, VariableDataTypes.Boolean);
 
-                //Handle Attributes
+                //Add variables for its Attributes
                 feature.Attributes.ForEach(attribute => context.AddVariable(attribute.Name, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer));
             }
 
