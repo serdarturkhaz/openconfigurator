@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "~/Views/Master/_Master.cshtml";
+}
+@section headerscripts{
+    @RenderSection("headerscripts", false)
+}
+<div class="OuterHeaderArea">
+    <div class="InnerHeaderArea">
+        <div id="LogoElement" class="LogoText">
+            OpenConfigurator &copy;</div>
+        <div id="SettingsArea">
+            @RenderSection("SettingsArea", false)
+        </div>
+        <div class="TopMenuBar">
+            @RenderSection("TopMenuBar", false)
+        </div>
+       
+    </div>
+</div>
+<div class="OuterLowerMenuArea">
+    <div class="InnerLowerMenuArea">
+        @RenderSection("SubMenuBar", false)
+    </div>
+</div>
+<div class="OuterContentArea">
+    <div class="InnerContentArea">
+        &nbsp
+        @RenderBody()
+    </div>
+</div>

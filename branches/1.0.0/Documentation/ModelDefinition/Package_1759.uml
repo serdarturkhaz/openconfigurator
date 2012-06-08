@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="2af11e99-3e8d-4927-9216-2d3e4de8393d"
+  name="ParserInterfaces" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <packagedElements>
+    <packageHasNamedElement>
+      <class
+        Id="35807ba8-8269-452a-92be-40adc0f4b63e"
+        name="IParser"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="cdf8f69f-105f-48dc-aabb-ef20ddc453c1"
+            name="ExecuteSyntax"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="40152f6b-900e-4d51-9bba-3c66ca69c2e3"
+                  name="ref ConfiguratorSession configSession"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="788f40a0-6837-4453-a204-4157b27ea653"
+                  name="string RuleSyntax"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="0b456808-82e6-4ba9-b61c-0159b988df6e"
+        name="ParserStatement"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="0a05fe88-7f68-4f17-946f-779213ebe5cc">
+            <interfaceMoniker
+              Id="9bb13f41-a438-4d08-ab35-34f3db67e4eb"
+              LastKnownName="IEvalResult"
+              LastKnownLocation="Package_1759.uml" />
+          </dependency>
+        </suppliersInternal>
+        <ownedAttributesInternal>
+          <property
+            Id="38b73544-9526-4f29-a4fc-ca54ec54e107"
+            name="_syntaxString"
+            visibility="Protected"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="592fa1f0-f0ea-4b1c-b5ec-4045a05d9c16"
+            name="_innerStatements"
+            visibility="Protected"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="50e7b068-3d00-4a53-867f-5e4bbebb03ce"
+            name="_configSession"
+            visibility="Protected"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="8353dc20-1ba7-4ec4-b8d5-13c7788618b7"
+            name="CreateInstance"
+            isLeaf="false"
+            isStatic="true"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="2ce58207-baad-456b-970d-d030153915ff"
+            name="Eval"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="df11b3de-7a37-4e15-89ce-a7be1f482381"
+                  direction="Return">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="1dd880a5-c1a4-48e1-8129-dcf6f1dc20ae"
+                      LastKnownName="IEvalResult[]"
+                      LastKnownLocation="Package_1759.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="6c98780f-7176-447f-8471-f32ab0a3edd1"
+            name="AddInnerStatement"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="154a37e7-8351-4386-8750-deb997b51a01"
+            name="Eval"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="068a99db-f66c-4af3-bf58-0a15b7985b94"
+                  direction="Return"
+                  isUnique="false">
+                  <type_NamedElement>
+                    <undefinedTypeMoniker
+                      Id="1dd880a5-c1a4-48e1-8129-dcf6f1dc20ae"
+                      LastKnownName="IEvalResult[]"
+                      LastKnownLocation="Package_1759.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="de76b54a-390c-4c00-9829-941d6ed3fc6f"
+                  name="IEvalResult[] parameters"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="9bb13f41-a438-4d08-ab35-34f3db67e4eb"
+        name="IEvalResult"
+        isAbstract="false"
+        isLeaf="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="06e8d3b8-e37b-4ba1-b13c-eec51d5bf159"
+        name="ValueResult"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="8a010d9a-c5da-4b5c-9e16-35d922851552">
+            <interfaceMoniker
+              Id="9bb13f41-a438-4d08-ab35-34f3db67e4eb"
+              LastKnownName="IEvalResult"
+              LastKnownLocation="Package_1759.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="218c9d7d-7b56-4026-8075-49c2ded59232"
+        name="FieldReference"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="9c0d40cc-77c6-48d9-8180-181a34ecb700">
+            <interfaceMoniker
+              Id="9bb13f41-a438-4d08-ab35-34f3db67e4eb"
+              LastKnownName="IEvalResult"
+              LastKnownLocation="Package_1759.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f60cc2fb-9f31-42c3-b162-8e42ce36a168"
+        name="ObjectReference"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="35f4541e-1b9e-491f-ae74-948f8a5a887a">
+            <interfaceMoniker
+              Id="9bb13f41-a438-4d08-ab35-34f3db67e4eb"
+              LastKnownName="IEvalResult"
+              LastKnownLocation="Package_1759.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="da9686ed-30bc-4841-9e19-4e43ab4d5c44"
+        name="OutComeResult"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="b8378445-620a-4914-be81-ced2ae9ba981">
+            <interfaceMoniker
+              Id="9bb13f41-a438-4d08-ab35-34f3db67e4eb"
+              LastKnownName="IEvalResult"
+              LastKnownLocation="Package_1759.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <undefinedType
+        Id="1dd880a5-c1a4-48e1-8129-dcf6f1dc20ae"
+        name="IEvalResult[]" />
+    </packageHasNamedElement>
+  </packagedElements>
+</package>
