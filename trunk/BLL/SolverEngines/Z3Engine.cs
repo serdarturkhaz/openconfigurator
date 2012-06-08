@@ -17,6 +17,7 @@ namespace BLL.SolverEngines
         Dictionary<string, Dictionary<string, Z3Variable>> _variables = new Dictionary<string, Dictionary<string, Z3Variable>>();
         Dictionary<string, List<Z3Constraint>> _constraints = new Dictionary<string, List<Z3Constraint>>();
         Dictionary<string, Dictionary<string, Z3ValueAssumption>> _assumptions = new Dictionary<string, Dictionary<string, Z3ValueAssumption>>();
+        Dictionary<string, Z3Function> _functions = new Dictionary<string, Z3Function>();
 
         //Constructor
         public Z3Context()
@@ -26,14 +27,7 @@ namespace BLL.SolverEngines
             _config.SetParamValue("MODEL", "true"); // corresponds to /m switch 
             _context = new Context(_config);
 
-            //Setup custom conversion method (boolean -> integer)
-            FuncDecl boolToInt = _context.MkFuncDecl("BoolToInt", _context.MkBoolSort(), _context.MkIntSort());
-            Term x = _context.MkConst("x", _context.MkBoolSort()); //f
-            Term fx = _context.MkApp(boolToInt, x); //f(x)
-            Term fDef= _context.MkIte(x, _context.MkIntNumeral(1), _context.MkIntNumeral(0)); // x == true => 1, x == false => 0
-            _context.AssertCnstr(_context.MkEq(fx, fDef));
             
-            //Term functionDef = _context.MkImplies(b
         }
 
         //Private methods
@@ -60,7 +54,7 @@ namespace BLL.SolverEngines
             assumption.EqualsTerm = _context.MkEq(assumption.VariableTerm, assumption.ValueTerm);
             _context.AssertCnstr(assumption.EqualsTerm);
         }
-        private Term GetValueTerm(VariableDataTypes dataType, object value)
+        private Term CreateValueTerm(VariableDataTypes dataType, object value)
         {
             //Create a term for the new value in Z3
             Term newValue = null;
@@ -90,7 +84,7 @@ namespace BLL.SolverEngines
         private Z3ValueAssumption AssertValueAssumption(Term variableTerm, VariableDataTypes dataType, object value)
         {
             //Assertion
-            Term newValue = GetValueTerm(dataType, value);
+            Term newValue = CreateValueTerm(dataType, value);
             Term statement = _context.MkEq(variableTerm, newValue);
             _context.AssertCnstr(statement);
 
@@ -138,7 +132,6 @@ namespace BLL.SolverEngines
         {
             _context.Push();
         }
-
         public void AddVariable(string name, string identifier, string categoryName, VariableDataTypes dataType)
         {
             //Create the variable in the Z3 context
@@ -201,13 +194,14 @@ namespace BLL.SolverEngines
             {
                 throw new Exception("An assumption already exists for the given variable!");
             }
+
             //Check if the dataType is correct
             if (varWrapper.DataType != dataType)
             {
                 throw new Exception("Variable is of a different data type than " + dataType.ToString() + "!");
             }
 
-            //Assertion
+            //Create the assertion
             Z3ValueAssumption assumption = AssertValueAssumption(variableTerm, dataType, value);
 
             //Keep track of the assumption added
@@ -220,8 +214,6 @@ namespace BLL.SolverEngines
                 _assumptions[categoryName] = new Dictionary<string, Z3ValueAssumption>();
                 _assumptions[categoryName].Add(variableID, assumption);
             }
-
-
         }
         public void RemoveValueAssumption(string variableID, string categoryName)
         {
@@ -240,7 +232,6 @@ namespace BLL.SolverEngines
                 RecreateContext();
             }
         }
-
         public ISolverStatement CreateStatement(StatementTypes type, string categoryName, params string[] variableIDs)
         {
             //Get the Terms corresponding to the varIDs
@@ -256,12 +247,17 @@ namespace BLL.SolverEngines
             ISolverStatement statement = null;
             switch (type)
             {
+                //AND
                 case StatementTypes.And:
                     statement = new Z3Statement(_context.MkAnd(terms.ToArray()));
                     break;
+
+                //OR
                 case StatementTypes.Or:
                     statement = new Z3Statement(_context.MkOr(terms.ToArray()));
                     break;
+
+                //NOT AND combinations
                 case StatementTypes.NotAndCombinations:
                     List<Term> negatedAnds = new List<Term>();
                     for (int i = 0; i < terms.Count; i++)
@@ -276,18 +272,23 @@ namespace BLL.SolverEngines
                     else
                         statement = new Z3Statement(negatedAnds[0]);
                     break;
+
+                //IMPLIES
                 case StatementTypes.Implies:
                     statement = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
                     break;
+
+                //EXCLUDES
                 case StatementTypes.Excludes:
                     statement = new Z3Statement(_context.MkNot(_context.MkAnd(terms[0], terms[1])));
                     break;
+
+                //EQUIVALENCE
                 case StatementTypes.Equivalence:
                     Z3Statement substatement1 = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
                     Z3Statement substatement2 = new Z3Statement(_context.MkImplies(terms[1], terms[0]));
                     statement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
                     break;
-
             }
 
             return statement;
@@ -310,10 +311,12 @@ namespace BLL.SolverEngines
                 case StatementTypes.And:
                     statement = new Z3Statement(_context.MkAnd(terms.ToArray()));
                     break;
+
                 //OR
                 case StatementTypes.Or:
                     statement = new Z3Statement(_context.MkOr(terms.ToArray()));
                     break;
+
                 //All possible combinations of Not OR
                 case StatementTypes.NotAndCombinations:
                     List<Term> negatedAnds = new List<Term>();
@@ -325,27 +328,45 @@ namespace BLL.SolverEngines
                         }
                     }
                     if (negatedAnds.Count > 1)
+                    {
                         statement = new Z3Statement(_context.MkAnd(negatedAnds.ToArray()));
+                    }
                     else
+                    {
                         statement = new Z3Statement(negatedAnds[0]);
+                    }
                     break;
+
                 //NOT
                 case StatementTypes.Not:
                     statement = new Z3Statement(_context.MkNot(terms[0]));
                     break;
+
                 //Implication
                 case StatementTypes.Implies:
                     statement = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
                     break;
+
                 //Exclusion
                 case StatementTypes.Excludes:
                     statement = new Z3Statement(_context.MkNot(_context.MkAnd(terms[0], terms[1])));
                     break;
+
                 //Equivalence
                 case StatementTypes.Equivalence:
                     Z3Statement substatement1 = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
                     Z3Statement substatement2 = new Z3Statement(_context.MkImplies(terms[1], terms[0]));
                     statement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
+                    break;
+
+                //GreaterOrEqual
+                case StatementTypes.GreaterOrEqual:
+                    statement = new Z3Statement(_context.MkGe(terms[0], terms[1]));
+                    break;
+
+                //LesserOrEqual
+                case StatementTypes.LesserOrEqual:
+                    statement = new Z3Statement(_context.MkLe(terms[0], terms[1]));
                     break;
             }
 
@@ -361,28 +382,56 @@ namespace BLL.SolverEngines
             ISolverStatement statement = null;
             switch (type)
             {
+                //AND
                 case StatementTypes.And:
                     statement = new Z3Statement(_context.MkAnd(varTerm, rightStatementTerm));
                     break;
+
+                //OR
                 case StatementTypes.Or:
                     statement = new Z3Statement(_context.MkOr(varTerm, rightStatementTerm));
                     break;
 
+                //IMPLIES
                 case StatementTypes.Implies:
                     statement = new Z3Statement(_context.MkImplies(varTerm, rightStatementTerm));
                     break;
+
+                //EXCLUDES
                 case StatementTypes.Excludes:
                     statement = new Z3Statement(_context.MkNot(_context.MkAnd(varTerm, rightStatementTerm)));
                     break;
+
+                //Equivalence
                 case StatementTypes.Equivalence:
                     Z3Statement substatement1 = new Z3Statement(_context.MkImplies(varTerm, rightStatementTerm));
                     Z3Statement substatement2 = new Z3Statement(_context.MkImplies(rightStatementTerm, varTerm));
                     statement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
                     break;
-
             }
 
             return statement;
+        }
+        public ISolverStatement BoolToInt(string variableID, string categoryName)
+        {
+            //Get the variable 
+            Z3Variable variable = _variables[categoryName][variableID];
+            Term variableTerm = variable.Term;
+
+            //Get the BoolToInt function
+            Z3Function function = _functions["BoolToInt"];
+            FuncDecl functionDecl = function.Function;
+
+            //Create the functionCall
+            Term funcCall = _context.MkApp(functionDecl, variableTerm);
+
+            //
+            return new Z3Statement(funcCall);
+        }
+        public ISolverStatement CreateNumeral(int val)
+        {
+            Term numeral = _context.MkNumeral(val, _context.MkIntSort());
+            return new Z3Statement(numeral);
         }
     }
     public class Z3Solution : ISolverSolution
@@ -449,6 +498,24 @@ namespace BLL.SolverEngines
         public Z3Statement(Term term)
         {
             _term = term;
+        }
+    }
+    public class Z3Function : ISolverFunction
+    {
+        //Fields
+        FuncDecl _function;
+
+        //Properties
+        public FuncDecl Function
+        {
+            get { return _function; }
+            set { _function = value; }
+        }
+
+        //Constructor
+        public Z3Function(FuncDecl function)
+        {
+            _function = function;
         }
     }
 

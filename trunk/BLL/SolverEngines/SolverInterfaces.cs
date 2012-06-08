@@ -19,6 +19,9 @@ namespace BLL.SolverEngines
         ISolverStatement CreateStatement(StatementTypes type, params ISolverStatement[] innerStatement);
         ISolverStatement CreateStatement(StatementTypes type, string categoryName, string varID, ISolverStatement rightStatement);
 
+        ISolverStatement BoolToInt(string variableID, string categoryName);
+        ISolverStatement CreateNumeral(int val);
+
         ISolverSolution GetSolution();
         bool CheckSolutionExists(string variableID, string categoryName, VariableDataTypes dataType, object valueToTest);
     }
@@ -30,7 +33,10 @@ namespace BLL.SolverEngines
     {
        
     }
+    public interface ISolverFunction
+    {
 
+    }
 
     //Enums
     public enum StatementTypes
@@ -41,7 +47,10 @@ namespace BLL.SolverEngines
         NotAndCombinations,
         Implies,
         Excludes,
-        Equivalence
+        Equivalence,
+        FunctionCall,
+        GreaterOrEqual,
+        LesserOrEqual
     }
     public enum VariableDataTypes
     {

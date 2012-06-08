@@ -41,9 +41,9 @@ namespace BLL.Services
             }
 
             //Handle Relations, GroupRelations and CompositionRules
-            model.Relations.ForEach(rel => context.AddConstraint(relationsCategory, CreateStatement(context, rel)));
-            model.GroupRelations.ForEach(groupRel => context.AddConstraint(groupRelationsCategory, CreateStatement(context, groupRel)));
-            model.CompositionRules.ForEach(compositionRule => context.AddConstraint(compositionRulesCategory, CreateStatement(context, compositionRule)));
+            model.Relations.ForEach(rel => context.AddConstraint(relationsCategory, TransformToStatement(context, rel)));
+            model.GroupRelations.ForEach(groupRel => context.AddConstraint(groupRelationsCategory, TransformToStatement(context, groupRel)));
+            model.CompositionRules.ForEach(compositionRule => context.AddConstraint(compositionRulesCategory, TransformToStatement(context, compositionRule)));
 
             //Create an initial restore point
             context.CreateInitialRestorePoint();
@@ -102,7 +102,7 @@ namespace BLL.Services
 
         }
 
-        private static ISolverStatement CreateStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
+        private static ISolverStatement TransformToStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
         {
             ISolverStatement returnStatement = null;
             switch (relation.RelationType)
@@ -116,7 +116,7 @@ namespace BLL.Services
             }
             return returnStatement;
         }
-        private static ISolverStatement CreateStatement(ISolverContext context, BLL.BusinessObjects.GroupRelation groupRelation)
+        private static ISolverStatement TransformToStatement(ISolverContext context, BLL.BusinessObjects.GroupRelation groupRelation)
         {
             ISolverStatement returnStatement = null;
             switch (groupRelation.GroupRelationType)
@@ -125,20 +125,33 @@ namespace BLL.Services
                     ISolverStatement innerOr1 = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
                     returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), innerOr1);
                     break;
+
                 case BusinessObjects.GroupRelationTypes.XOR:
                     ISolverStatement orStatement = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
                     ISolverStatement negatedAnds = context.CreateStatement(StatementTypes.NotAndCombinations, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
                     ISolverStatement equivalence2 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement);
                     returnStatement = context.CreateStatement(StatementTypes.And, equivalence2, negatedAnds);
                     break;
-                case BusinessObjects.GroupRelationTypes.Cardinal:
 
+                case BusinessObjects.GroupRelationTypes.Cardinal:
+                    List<ISolverStatement> intConversions = new List<ISolverStatement>();
+                    foreach (int childFeatureID in groupRelation.ChildFeatureIDs)
+                    {
+                        ISolverStatement intConversion = context.BoolToInt(childFeatureID.ToString(), featuresCategory);
+                        intConversions.Add(intConversion);
+                    }
+                    ISolverStatement sum = context.CreateStatement(StatementTypes.And, intConversions.ToArray());
+                    ISolverStatement sumGreaterThan = context.CreateStatement(StatementTypes.GreaterOrEqual, sum, context.CreateNumeral((int)groupRelation.LowerBound));
+                    ISolverStatement sumLesserThan = context.CreateStatement(StatementTypes.LesserOrEqual, sum, context.CreateNumeral((int)groupRelation.UpperBound));
+                    ISolverStatement equivalence01 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), sumGreaterThan);
+                    ISolverStatement equivalence02 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), sumLesserThan);
+                    returnStatement = context.CreateStatement(StatementTypes.And, equivalence01, equivalence02);
                     break;
-                
+
             }
             return returnStatement;
         }
-        private static ISolverStatement CreateStatement(ISolverContext context, BLL.BusinessObjects.CompositionRule compositionRule)
+        private static ISolverStatement TransformToStatement(ISolverContext context, BLL.BusinessObjects.CompositionRule compositionRule)
         {
             ISolverStatement returnStatement = null;
             switch (compositionRule.CompositionRuleType)
@@ -188,7 +201,7 @@ namespace BLL.Services
 
             //
             return decisionIsValid;
-        }        
+        }
     }
     public class ConfiguratorSession
     {
