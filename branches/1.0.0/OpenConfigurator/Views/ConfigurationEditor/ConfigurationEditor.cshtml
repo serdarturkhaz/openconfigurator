@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "ConfigurationEditor";
+    Layout = "~/Views/Master/_LoggedInLayout.cshtml";
+}
+@section headerscripts{
+    <script type="text/javascript" src="../../Scripts/Pages/ConfigurationEditor.js"></script>
+    <script type="text/javascript">
+        
+        //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        var configurationID = '@(ViewBag.ConfigurationId)';
+        var configurationDataModel = null, clientController = null;
+
+        function calcWidth() {
+            var containerWidth = $(".OuterContentArea .InnerContentArea").width();
+            var marginWidth = 31;
+            var explorerBoxWidth = $("#ConfigurationExplorerBox").width();
+            var standardViewBoxWidth = containerWidth - marginWidth - explorerBoxWidth;
+            $('#StandardViewBox').css("width", standardViewBoxWidth + "px");
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        $(document).ready(function () {
+            //Event handlers-------------------------------------------------------------------
+            
+            //Button handlers
+            $("#SaveButton").bind("click", function () {
+                clientController.SaveData();
+            });
+
+            //---------------------------------------------------------------------------------
+
+            //Initialize
+            calcWidth();
+            $(window).resize(function () {
+                calcWidth();
+                calcWidth();
+            });
+            $("#ConfigurationsMenuItem").attr("selected", "selected");
+
+            //Load data
+            $.timer(300, function () {
+
+                //Instantiate/Initialize controls
+                configurationDataModel = new ConfigurationDataModel(configurationID);
+                configurationDataModel.Initialize();
+
+                clientController = new ClientController($("#InnerViewArea"), $("#ConfigurationNameTextbox"), configurationDataModel);
+                clientController.Initialize();
+            });
+        });
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    </script>
+}
+@section SubMenuSpecialBar{
+    <div class="MenuItemSeparator">
+        ></div>
+    <div class="SubMenuSpecialBar">
+        <input id="ConfigurationNameTextbox" class="Textbox" type="text" value="Please wait..." />
+        <div class="Button-Toolbar" id="SaveButton">
+            <img src="../../Content/themes/base/images/Icons/save.png" />
+            <span>Save</span>
+        </div>
+        @*<div class="Button-Toolbar" id="UndoButton">
+            <img src="../../Content/themes/base/images/Icons/undo-toolbar.png" />
+            <span>Undo</span>
+        </div>*@
+    </div>
+}
+@section RootBreadCrumb {
+Edit Configuration
+}
+<div class="LeftColumn">
+    @*ConfigurationExplorerBox*@
+    <div id="ConfigurationExplorerBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Configuration Explorer</span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div class="TreeArea">
+                <div id="ConfigurationExplorerTree">
+                </div>
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="RightColumn">
+    @*StandardView*@
+    <div id="StandardViewBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Configure Model</span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div id="InnerViewArea">
+                <div style="clear: both">
+                </div>
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+</div>
