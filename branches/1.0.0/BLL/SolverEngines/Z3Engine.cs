@@ -27,7 +27,60 @@ namespace BLL.SolverEngines
             _config.SetParamValue("MODEL", "true"); // corresponds to /m switch 
             _context = new Context(_config);
 
-            
+            ////Setup custom conversion method BoolToInt (boolean -> integer)----------------------------------------------------------------
+            //FuncDecl f = _context.MkFuncDecl("BoolToInt", _context.MkBoolSort(), _context.MkIntSort());
+            //Term x = _context.MkConst("x", _context.MkBoolSort());
+            //Term fx = _context.MkApp(f, x);
+            //Term fDef = _context.MkIte(_context.MkEq(x, _context.MkTrue()), _context.MkIntNumeral(1), _context.MkIntNumeral(0)); // x == true => 1, x == false => 0
+            //Term func = _context.MkEq(fx, fDef);
+            //_context.AssertCnstr(func);
+
+
+            ////
+            //Term a = _context.MkConst("a", _context.MkBoolSort());
+            //_context.AssertCnstr(_context.MkEq(a, _context.MkFalse()));
+            //Term b = _context.MkConst("b", _context.MkBoolSort());
+            //_context.AssertCnstr(_context.MkEq(b, _context.MkTrue()));
+            //Term c = _context.MkConst("c", _context.MkBoolSort());
+            //_context.AssertCnstr(_context.MkEq(c, _context.MkTrue()));
+
+            ////
+            ////Term sumResult = _context.MkConst("sum", _context.MkIntSort());
+            ////Term sum = _context.MkAdd(new Term[] { _context.MkApp(f, a), _context.MkApp(f, b) }); ;//_context.MkApp(f, a);//_context.MkAdd(new Term[] { _context.MkApp(f, a), _context.MkApp(f, b) });
+            ////Term eq = _context.MkEq(sumResult, sum);
+            ////_context.AssertCnstr(eq);
+
+            ////
+            //Term aInt = _context.MkConst("aInt", _context.MkIntSort());
+            //Term eq1 = _context.MkEq(aInt, _context.MkApp(f, a));
+            //_context.AssertCnstr(eq1);
+
+            //Term bInt = _context.MkConst("bInt", _context.MkIntSort());
+            //Term eq2 = _context.MkEq(bInt, _context.MkApp(f, b));
+            //_context.AssertCnstr(eq2);
+
+            //Term cInt = _context.MkConst("cInt", _context.MkIntSort());
+            //Term eq3 = _context.MkEq(cInt, _context.MkApp(f, c));
+            //_context.AssertCnstr(eq3);
+
+            ////
+            ////Term sumResult = _context.MkConst("sumResult", _context.MkIntSort());
+            ////Term sum = _context.MkAdd(new Term[] { aInt, bInt, cInt }); ;
+            ////Term eq00 = _context.MkEq(sumResult, sum);
+            ////_context.AssertCnstr(eq00);
+
+            //Term sumResult = _context.MkConst("sumResult", _context.MkIntSort());
+            //Term sum = _context.MkAdd(new Term[] { aInt, bInt, cInt }); ;
+            //Term eq00 = _context.MkEq(sumResult, sum);
+            //_context.AssertCnstr(eq00);
+
+            ////
+            //Model m = null;
+            //_context.CheckAndGetModel(out m);
+
+            ////
+            ////_functions.Add("BoolToInt", new Z3Function(f));
+            ////-----------------------------------------------------------------------------------------------------------------------------
         }
 
         //Private methods
@@ -91,6 +144,18 @@ namespace BLL.SolverEngines
             //
             Z3ValueAssumption assumption = new Z3ValueAssumption(variableTerm, newValue, statement);
             return assumption;
+        }
+        private List<Term> FindVariableTerms(string categoryName, string[] variableIDs)
+        {
+            List<Term> terms = new List<Term>();
+            for (int i = 0; i < variableIDs.Length; i++)
+            {
+                string variableID = variableIDs[i];
+                Term variable = _variables[categoryName][variableID].Term;
+                terms.Add(variable);
+            }
+
+            return terms;
         }
 
         //Public methods
@@ -232,186 +297,6 @@ namespace BLL.SolverEngines
                 RecreateContext();
             }
         }
-        public ISolverStatement CreateStatement(StatementTypes type, string categoryName, params string[] variableIDs)
-        {
-            //Get the Terms corresponding to the varIDs
-            List<Term> terms = new List<Term>();
-            for (int i = 0; i < variableIDs.Length; i++)
-            {
-                string variableID = variableIDs[i];
-                Term variable = _variables[categoryName][variableID].Term;
-                terms.Add(variable);
-            }
-
-            //Create a new Statement
-            ISolverStatement statement = null;
-            switch (type)
-            {
-                //AND
-                case StatementTypes.And:
-                    statement = new Z3Statement(_context.MkAnd(terms.ToArray()));
-                    break;
-
-                //OR
-                case StatementTypes.Or:
-                    statement = new Z3Statement(_context.MkOr(terms.ToArray()));
-                    break;
-
-                //NOT AND combinations
-                case StatementTypes.NotAndCombinations:
-                    List<Term> negatedAnds = new List<Term>();
-                    for (int i = 0; i < terms.Count; i++)
-                    {
-                        for (int j = i + 1; j < terms.Count; j++)
-                        {
-                            negatedAnds.Add(_context.MkNot(_context.MkAnd(terms[i], terms[j])));
-                        }
-                    }
-                    if (negatedAnds.Count > 1)
-                        statement = new Z3Statement(_context.MkAnd(negatedAnds.ToArray()));
-                    else
-                        statement = new Z3Statement(negatedAnds[0]);
-                    break;
-
-                //IMPLIES
-                case StatementTypes.Implies:
-                    statement = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
-                    break;
-
-                //EXCLUDES
-                case StatementTypes.Excludes:
-                    statement = new Z3Statement(_context.MkNot(_context.MkAnd(terms[0], terms[1])));
-                    break;
-
-                //EQUIVALENCE
-                case StatementTypes.Equivalence:
-                    Z3Statement substatement1 = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
-                    Z3Statement substatement2 = new Z3Statement(_context.MkImplies(terms[1], terms[0]));
-                    statement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
-                    break;
-            }
-
-            return statement;
-        }
-        public ISolverStatement CreateStatement(StatementTypes type, params ISolverStatement[] innerStatements)
-        {
-            //Get the Terms corresponding to the innerStatements
-            List<Term> terms = new List<Term>();
-            foreach (ISolverStatement innerStatement in innerStatements)
-            {
-                terms.Add(((Z3Statement)innerStatement).Term);
-            }
-
-            //Create a new statement
-            ISolverStatement statement = null;
-            switch (type)
-            {
-
-                //AND
-                case StatementTypes.And:
-                    statement = new Z3Statement(_context.MkAnd(terms.ToArray()));
-                    break;
-
-                //OR
-                case StatementTypes.Or:
-                    statement = new Z3Statement(_context.MkOr(terms.ToArray()));
-                    break;
-
-                //All possible combinations of Not OR
-                case StatementTypes.NotAndCombinations:
-                    List<Term> negatedAnds = new List<Term>();
-                    for (int i = 0; i < terms.Count; i++)
-                    {
-                        for (int j = i + 1; j < terms.Count; j++)
-                        {
-                            negatedAnds.Add(_context.MkNot(_context.MkAnd(terms[i], terms[j])));
-                        }
-                    }
-                    if (negatedAnds.Count > 1)
-                    {
-                        statement = new Z3Statement(_context.MkAnd(negatedAnds.ToArray()));
-                    }
-                    else
-                    {
-                        statement = new Z3Statement(negatedAnds[0]);
-                    }
-                    break;
-
-                //NOT
-                case StatementTypes.Not:
-                    statement = new Z3Statement(_context.MkNot(terms[0]));
-                    break;
-
-                //Implication
-                case StatementTypes.Implies:
-                    statement = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
-                    break;
-
-                //Exclusion
-                case StatementTypes.Excludes:
-                    statement = new Z3Statement(_context.MkNot(_context.MkAnd(terms[0], terms[1])));
-                    break;
-
-                //Equivalence
-                case StatementTypes.Equivalence:
-                    Z3Statement substatement1 = new Z3Statement(_context.MkImplies(terms[0], terms[1]));
-                    Z3Statement substatement2 = new Z3Statement(_context.MkImplies(terms[1], terms[0]));
-                    statement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
-                    break;
-
-                //GreaterOrEqual
-                case StatementTypes.GreaterOrEqual:
-                    statement = new Z3Statement(_context.MkGe(terms[0], terms[1]));
-                    break;
-
-                //LesserOrEqual
-                case StatementTypes.LesserOrEqual:
-                    statement = new Z3Statement(_context.MkLe(terms[0], terms[1]));
-                    break;
-            }
-
-            return statement;
-        }
-        public ISolverStatement CreateStatement(StatementTypes type, string categoryName, string varID, ISolverStatement rightStatement)
-        {
-            //Get the terms 
-            Term varTerm = _variables[categoryName][varID].Term;
-            Term rightStatementTerm = ((Z3Statement)rightStatement).Term;
-
-            //Create a new Statement
-            ISolverStatement statement = null;
-            switch (type)
-            {
-                //AND
-                case StatementTypes.And:
-                    statement = new Z3Statement(_context.MkAnd(varTerm, rightStatementTerm));
-                    break;
-
-                //OR
-                case StatementTypes.Or:
-                    statement = new Z3Statement(_context.MkOr(varTerm, rightStatementTerm));
-                    break;
-
-                //IMPLIES
-                case StatementTypes.Implies:
-                    statement = new Z3Statement(_context.MkImplies(varTerm, rightStatementTerm));
-                    break;
-
-                //EXCLUDES
-                case StatementTypes.Excludes:
-                    statement = new Z3Statement(_context.MkNot(_context.MkAnd(varTerm, rightStatementTerm)));
-                    break;
-
-                //Equivalence
-                case StatementTypes.Equivalence:
-                    Z3Statement substatement1 = new Z3Statement(_context.MkImplies(varTerm, rightStatementTerm));
-                    Z3Statement substatement2 = new Z3Statement(_context.MkImplies(rightStatementTerm, varTerm));
-                    statement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
-                    break;
-            }
-
-            return statement;
-        }
         public ISolverStatement BoolToInt(string variableID, string categoryName)
         {
             //Get the variable 
@@ -432,6 +317,206 @@ namespace BLL.SolverEngines
         {
             Term numeral = _context.MkNumeral(val, _context.MkIntSort());
             return new Z3Statement(numeral);
+        }
+
+        //Statements
+        private ISolverStatement MakeAnd(List<Term> terms)
+        {
+            return new Z3Statement(_context.MkAnd(terms.ToArray())); ;
+        }
+        public ISolverStatement MakeAnd(string categoryName, params string[] variableIDs)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            List<Term> variableTerms = FindVariableTerms(categoryName, variableIDs);
+
+            //
+            finalStatement = MakeAnd(variableTerms);
+            return finalStatement;
+        }
+        public ISolverStatement MakeAnd(ISolverStatement leftStatement, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            List<Term> terms = new List<Term>();
+            terms.Add(((Z3Statement)leftStatement).Term);
+            terms.Add(((Z3Statement)rightStatement).Term);
+
+            //
+            finalStatement = MakeAnd(terms);
+            return finalStatement;
+        }
+        private ISolverStatement MakeOr(List<Term> terms)
+        {
+            return new Z3Statement(_context.MkOr(terms.ToArray())); ;
+        }
+        public ISolverStatement MakeOr(string categoryName, params string[] variableIDs)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            List<Term> variableTerms = FindVariableTerms(categoryName, variableIDs);
+
+            //
+            finalStatement = MakeOr(variableTerms);
+            return finalStatement;
+        }
+        public ISolverStatement MakeNot(ISolverStatement innerStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term term = ((Z3Statement)innerStatement).Term;
+
+            //
+            finalStatement = new Z3Statement(_context.MkNot(term));
+            return finalStatement;
+        }
+        public ISolverStatement MakeImplies(string categoryName, string leftVarID, string rightVarID)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = _variables[categoryName][leftVarID].Term;
+            Term rightTerm = _variables[categoryName][rightVarID].Term;
+
+            //
+            finalStatement = new Z3Statement(_context.MkImplies(leftTerm, rightTerm));
+            return finalStatement;
+        }
+        public ISolverStatement MakeImplies(ISolverStatement leftStatement, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = ((Z3Statement)leftStatement).Term;
+            Term rightTerm = ((Z3Statement)rightStatement).Term;
+
+            //
+            finalStatement = new Z3Statement(_context.MkImplies(leftTerm, rightTerm));
+            return finalStatement;
+        }
+        public ISolverStatement MakeImplies(string categoryName, string leftVarID, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = _variables[categoryName][leftVarID].Term;
+            Term rightTerm = ((Z3Statement)rightStatement).Term;
+
+            //
+            finalStatement = new Z3Statement(_context.MkImplies(leftTerm, rightTerm));
+            return finalStatement;
+        }
+        public ISolverStatement MakeGreaterOrEqual(ISolverStatement leftStatement, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = ((Z3Statement)leftStatement).Term;
+            Term rightTerm = ((Z3Statement)rightStatement).Term;
+
+            //
+            finalStatement = new Z3Statement(_context.MkGe(leftTerm, rightTerm));
+            return finalStatement;
+        }
+        public ISolverStatement MakeLowerOrEqual(ISolverStatement leftStatement, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = ((Z3Statement)leftStatement).Term;
+            Term rightTerm = ((Z3Statement)rightStatement).Term;
+
+            //
+            finalStatement = new Z3Statement(_context.MkLe(leftTerm, rightTerm));
+            return finalStatement;
+        }
+        private ISolverStatement MakeNotAndCombinations(List<Term> terms)
+        {
+            //Variables
+            List<Term> negatedAnds = new List<Term>();
+            ISolverStatement finalStatement = null;
+
+            //
+            for (int i = 0; i < terms.Count; i++)
+            {
+                for (int j = i + 1; j < terms.Count; j++)
+                {
+                    negatedAnds.Add(_context.MkNot(_context.MkAnd(terms[i], terms[j])));
+                }
+            }
+            if (negatedAnds.Count > 1)
+                finalStatement = new Z3Statement(_context.MkAnd(negatedAnds.ToArray()));
+            else
+                finalStatement = new Z3Statement(negatedAnds[0]);
+
+            //
+            return finalStatement;
+        }
+        public ISolverStatement MakeNotAndCombinations(string categoryName, params string[] variableIDs)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            List<Term> variableTerms = FindVariableTerms(categoryName, variableIDs);
+
+            //
+            finalStatement = MakeNotAndCombinations(variableTerms);
+            return finalStatement;
+        }
+        public ISolverStatement MakeEquivalence(ISolverStatement leftStatement, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = ((Z3Statement)leftStatement).Term;
+            Term rightTerm = ((Z3Statement)rightStatement).Term;
+
+            //
+            Z3Statement substatement1 = new Z3Statement(_context.MkImplies(leftTerm, rightTerm));
+            Z3Statement substatement2 = new Z3Statement(_context.MkImplies(rightTerm, leftTerm));
+            finalStatement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
+            return finalStatement;
+        }
+        public ISolverStatement MakeEquivalence(string categoryName, string leftVarID, string rightVarID)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = _variables[categoryName][leftVarID].Term;
+            Term rightTerm = _variables[categoryName][rightVarID].Term;
+
+            //
+            Z3Statement substatement1 = new Z3Statement(_context.MkImplies(leftTerm, rightTerm));
+            Z3Statement substatement2 = new Z3Statement(_context.MkImplies(rightTerm, leftTerm));
+            finalStatement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
+            return finalStatement;
+        }
+        public ISolverStatement MakeEquivalence(string categoryName, string leftVarID, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = _variables[categoryName][leftVarID].Term;
+            Term rightTerm = ((Z3Statement)rightStatement).Term;
+
+            //
+            Z3Statement substatement1 = new Z3Statement(_context.MkImplies(leftTerm, rightTerm));
+            Z3Statement substatement2 = new Z3Statement(_context.MkImplies(rightTerm, leftTerm));
+            finalStatement = new Z3Statement(_context.MkAnd(substatement1.Term, substatement2.Term));
+            return finalStatement;
+        }
+        public ISolverStatement MakeExcludes(ISolverStatement leftStatement, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = ((Z3Statement)leftStatement).Term;
+            Term rightTerm = ((Z3Statement)rightStatement).Term;
+
+            //
+            finalStatement = new Z3Statement(_context.MkNot(_context.MkAnd(leftTerm, rightTerm)));
+            return finalStatement;
+        }
+        public ISolverStatement MakeExcludes(string categoryName, string leftVarID, string rightVarID)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = _variables[categoryName][leftVarID].Term;
+            Term rightTerm = _variables[categoryName][rightVarID].Term;
+
+            //
+            finalStatement = new Z3Statement(_context.MkNot(_context.MkAnd(leftTerm, rightTerm)));
+            return finalStatement;
         }
     }
     public class Z3Solution : ISolverSolution
