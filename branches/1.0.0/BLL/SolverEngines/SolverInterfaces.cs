@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BLL.SolverEngines
 {
-    
+
     public interface ISolverContext
     {
         void CreateInitialRestorePoint();
@@ -15,9 +15,21 @@ namespace BLL.SolverEngines
         void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
         void RemoveValueAssumption(string varID, string categoryName);
 
-        ISolverStatement CreateStatement(StatementTypes type, string categoryName, params string[] variableIDs);
-        ISolverStatement CreateStatement(StatementTypes type, params ISolverStatement[] innerStatement);
-        ISolverStatement CreateStatement(StatementTypes type, string categoryName, string varID, ISolverStatement rightStatement);
+        ISolverStatement MakeAnd(string categoryName, params string[] variableIDs);
+        ISolverStatement MakeAnd(ISolverStatement leftStatement, ISolverStatement rightStatement);
+        ISolverStatement MakeOr(string categoryName, params string[] variableIDs);
+        ISolverStatement MakeNot(ISolverStatement innerStatement);
+        ISolverStatement MakeImplies(ISolverStatement leftStatement, ISolverStatement rightStatement);
+        ISolverStatement MakeImplies(string categoryName, string leftVarID, string rightVarID);
+        ISolverStatement MakeImplies(string categoryName, string leftVarID, ISolverStatement rightStatement);
+        ISolverStatement MakeGreaterOrEqual(ISolverStatement leftStatement, ISolverStatement rightStatement);
+        ISolverStatement MakeLowerOrEqual(ISolverStatement leftStatement, ISolverStatement rightStatement);
+        ISolverStatement MakeNotAndCombinations(string categoryName, params string[] variableIDs);
+        ISolverStatement MakeEquivalence(ISolverStatement leftStatement, ISolverStatement rightStatement);
+        ISolverStatement MakeEquivalence(string categoryName, string leftVarID, string rightVarID);
+        ISolverStatement MakeEquivalence(string categoryName, string leftVarID, ISolverStatement rightStatement);
+        ISolverStatement MakeExcludes(ISolverStatement leftStatement, ISolverStatement rightStatement);
+        ISolverStatement MakeExcludes(string categoryName, string leftVarID, string rightVarID);
 
         ISolverStatement BoolToInt(string variableID, string categoryName);
         ISolverStatement CreateNumeral(int val);
@@ -31,7 +43,7 @@ namespace BLL.SolverEngines
     }
     public interface ISolverStatement
     {
-       
+
     }
     public interface ISolverFunction
     {
@@ -58,5 +70,5 @@ namespace BLL.SolverEngines
         Boolean
     }
 
-    
+
 }
