@@ -2153,6 +2153,11 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                                     return false;
                                                 }
 
+                                                //Upperbound cannot be 0
+                                                if (newVal == 0) {
+                                                    return false;
+                                                }
+
                                                 //
                                                 return isValid;
 

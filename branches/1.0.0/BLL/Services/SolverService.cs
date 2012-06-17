@@ -109,13 +109,9 @@ namespace BLL.Services
             {
                 case BusinessObjects.RelationTypes.Mandatory:
                     returnStatement = context.MakeEquivalence(featuresCategory, relation.ParentFeatureID.ToString(), relation.ChildFeatureID.ToString());
-
-                    //returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, relation.ParentFeatureID.ToString(), relation.ChildFeatureID.ToString());
                     break;
                 case BusinessObjects.RelationTypes.Optional:
                     returnStatement = context.MakeImplies(featuresCategory, relation.ChildFeatureID.ToString(), relation.ParentFeatureID.ToString());
-
-                    //returnStatement = context.CreateStatement(StatementTypes.Implies, featuresCategory, relation.ChildFeatureID.ToString(), relation.ParentFeatureID.ToString());
                     break;
             }
             return returnStatement;
@@ -128,38 +124,28 @@ namespace BLL.Services
                 case BusinessObjects.GroupRelationTypes.OR:
                     ISolverStatement innerOr1 = context.MakeOr(featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
                     returnStatement = context.MakeEquivalence(featuresCategory, groupRelation.ParentFeatureID.ToString(), innerOr1);
-
-                    //ISolverStatement innerOr1 = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                    //returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), innerOr1);
                     break;
-
                 case BusinessObjects.GroupRelationTypes.XOR:
                     ISolverStatement orStatement = context.MakeOr(featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
                     ISolverStatement negatedAnds = context.MakeNotAndCombinations(featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
                     ISolverStatement equivalence2 = context.MakeEquivalence(featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement);
                     returnStatement = context.MakeAnd(equivalence2, negatedAnds);
-
-                    //ISolverStatement orStatement = context.CreateStatement(StatementTypes.Or, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                    //ISolverStatement negatedAnds = context.CreateStatement(StatementTypes.NotAndCombinations, featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
-                    //ISolverStatement equivalence2 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement);
-                    //returnStatement = context.CreateStatement(StatementTypes.And, equivalence2, negatedAnds);
                     break;
-
                 case BusinessObjects.GroupRelationTypes.Cardinal:
-                    //List<ISolverStatement> intConversions = new List<ISolverStatement>();
-                    //foreach (int childFeatureID in groupRelation.ChildFeatureIDs)
-                    //{
-                    //    ISolverStatement intConversion = context.BoolToInt(childFeatureID.ToString(), featuresCategory);
-                    //    intConversions.Add(intConversion);
-                    //}
-                    //ISolverStatement sum = context.CreateStatement(StatementTypes.And, intConversions.ToArray());
-                    //ISolverStatement sumGreaterThan = context.CreateStatement(StatementTypes.GreaterOrEqual, sum, context.CreateNumeral((int)groupRelation.LowerBound));
-                    //ISolverStatement sumLesserThan = context.CreateStatement(StatementTypes.LesserOrEqual, sum, context.CreateNumeral((int)groupRelation.UpperBound));
-                    //ISolverStatement equivalence01 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), sumGreaterThan);
-                    //ISolverStatement equivalence02 = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, groupRelation.ParentFeatureID.ToString(), sumLesserThan);
-                    //returnStatement = context.CreateStatement(StatementTypes.And, equivalence01, equivalence02);
-                    break;
 
+                    //Sum value constraint statement :  >= lowerbound AND <= upperbound
+                    List<ISolverStatement> intConversions = new List<ISolverStatement>();
+                    groupRelation.ChildFeatureIDs.ForEach(childFeatureID => intConversions.Add(context.MakeBoolToInt(childFeatureID.ToString(), featuresCategory)));
+                    ISolverStatement sumLesserThan = context.MakeLowerOrEqual(context.MakeAdd(intConversions.ToArray()), context.MakeNumeral((int)groupRelation.UpperBound));
+                    ISolverStatement sumGreaterThan = context.MakeGreaterOrEqual(context.MakeAdd(intConversions.ToArray()), context.MakeNumeral((int)groupRelation.LowerBound));
+                    //ISolverStatement sumValStatement = context.MakeAnd(sumLesserThan, sumGreaterThan);
+
+                    //
+                    ISolverStatement orStatement2 = context.MakeOr(featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
+                    ISolverStatement equivalence3 = context.MakeEquivalence(featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement2);
+
+                    returnStatement = context.MakeAnd(equivalence3, sumLesserThan);
+                    break;
             }
             return returnStatement;
         }
@@ -170,19 +156,12 @@ namespace BLL.Services
             {
                 case BusinessObjects.CompositionRuleTypes.Dependency:
                     returnStatement = context.MakeImplies(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-
-                    //returnStatement = context.CreateStatement(StatementTypes.Implies, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
                     break;
                 case BusinessObjects.CompositionRuleTypes.MutualDependency:
                     returnStatement = context.MakeEquivalence(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-
-                    //returnStatement = context.CreateStatement(StatementTypes.Equivalence, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
                     break;
                 case BusinessObjects.CompositionRuleTypes.MutualExclusion:
-
                     returnStatement = context.MakeExcludes(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-
-                    //returnStatement = context.CreateStatement(StatementTypes.Excludes, featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
                     break;
             }
             return returnStatement;
@@ -215,7 +194,7 @@ namespace BLL.Services
                     break;
             }
 
-            //Check whether the model is still satisfiable
+            //Make changes so that the user cannot break the validity of the model in the next change
             bool decisionIsValid = GetValidSelections(ref configSession);
 
             //
