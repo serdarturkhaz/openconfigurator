@@ -25,16 +25,15 @@ namespace BLL.SolverEngines
             //Initialize Config and Context
             _config = new Config();
             _config.SetParamValue("MODEL", "true"); // corresponds to /m switch 
+            _config.SetParamValue("MACRO_FINDER", "true"); 
             _context = new Context(_config);
 
-            ////Setup custom conversion method BoolToInt (boolean -> integer)----------------------------------------------------------------
-            //FuncDecl f = _context.MkFuncDecl("BoolToInt", _context.MkBoolSort(), _context.MkIntSort());
-            //Term x = _context.MkConst("x", _context.MkBoolSort());
-            //Term fx = _context.MkApp(f, x);
-            //Term fDef = _context.MkIte(_context.MkEq(x, _context.MkTrue()), _context.MkIntNumeral(1), _context.MkIntNumeral(0)); // x == true => 1, x == false => 0
-            //Term func = _context.MkEq(fx, fDef);
-            //_context.AssertCnstr(func);
-
+            //Setup custom conversion method BoolToInt (boolean -> integer)----------------------------------------------------------------
+            FuncDecl boolToInt = _context.MkFuncDecl("BoolToInt", _context.MkBoolSort(), _context.MkIntSort());
+            Term i = _context.MkConst("i", _context.MkBoolSort());
+            Term fDef = _context.MkIte(_context.MkEq(i, _context.MkTrue()), _context.MkIntNumeral(1), _context.MkIntNumeral(0)); // x == true => 1, x == false => 0
+            Term fStatement = _context.MkForall(0, new Term[] { i }, null, _context.MkEq(_context.MkApp(boolToInt, i), fDef));
+            _context.AssertCnstr(fStatement);
 
             ////
             //Term a = _context.MkConst("a", _context.MkBoolSort());
@@ -43,35 +42,10 @@ namespace BLL.SolverEngines
             //_context.AssertCnstr(_context.MkEq(b, _context.MkTrue()));
             //Term c = _context.MkConst("c", _context.MkBoolSort());
             //_context.AssertCnstr(_context.MkEq(c, _context.MkTrue()));
-
+            
             ////
-            ////Term sumResult = _context.MkConst("sum", _context.MkIntSort());
-            ////Term sum = _context.MkAdd(new Term[] { _context.MkApp(f, a), _context.MkApp(f, b) }); ;//_context.MkApp(f, a);//_context.MkAdd(new Term[] { _context.MkApp(f, a), _context.MkApp(f, b) });
-            ////Term eq = _context.MkEq(sumResult, sum);
-            ////_context.AssertCnstr(eq);
-
-            ////
-            //Term aInt = _context.MkConst("aInt", _context.MkIntSort());
-            //Term eq1 = _context.MkEq(aInt, _context.MkApp(f, a));
-            //_context.AssertCnstr(eq1);
-
-            //Term bInt = _context.MkConst("bInt", _context.MkIntSort());
-            //Term eq2 = _context.MkEq(bInt, _context.MkApp(f, b));
-            //_context.AssertCnstr(eq2);
-
-            //Term cInt = _context.MkConst("cInt", _context.MkIntSort());
-            //Term eq3 = _context.MkEq(cInt, _context.MkApp(f, c));
-            //_context.AssertCnstr(eq3);
-
-            ////
-            ////Term sumResult = _context.MkConst("sumResult", _context.MkIntSort());
-            ////Term sum = _context.MkAdd(new Term[] { aInt, bInt, cInt }); ;
-            ////Term eq00 = _context.MkEq(sumResult, sum);
-            ////_context.AssertCnstr(eq00);
-
             //Term sumResult = _context.MkConst("sumResult", _context.MkIntSort());
-            //Term sum = _context.MkAdd(new Term[] { aInt, bInt, cInt }); ;
-            //Term eq00 = _context.MkEq(sumResult, sum);
+            //Term eq00 = _context.MkEq(sumResult, _context.MkAdd(new Term[] { _context.MkApp(boolToInt, a), _context.MkApp(boolToInt, b), _context.MkApp(boolToInt, c) }));
             //_context.AssertCnstr(eq00);
 
             ////
@@ -79,8 +53,8 @@ namespace BLL.SolverEngines
             //_context.CheckAndGetModel(out m);
 
             ////
-            ////_functions.Add("BoolToInt", new Z3Function(f));
-            ////-----------------------------------------------------------------------------------------------------------------------------
+            _functions.Add("BoolToInt", new Z3Function(boolToInt));
+            //-----------------------------------------------------------------------------------------------------------------------------
         }
 
         //Private methods
@@ -297,29 +271,22 @@ namespace BLL.SolverEngines
                 RecreateContext();
             }
         }
-        public ISolverStatement BoolToInt(string variableID, string categoryName)
-        {
-            //Get the variable 
-            Z3Variable variable = _variables[categoryName][variableID];
-            Term variableTerm = variable.Term;
-
-            //Get the BoolToInt function
-            Z3Function function = _functions["BoolToInt"];
-            FuncDecl functionDecl = function.Function;
-
-            //Create the functionCall
-            Term funcCall = _context.MkApp(functionDecl, variableTerm);
-
-            //
-            return new Z3Statement(funcCall);
-        }
-        public ISolverStatement CreateNumeral(int val)
-        {
-            Term numeral = _context.MkNumeral(val, _context.MkIntSort());
-            return new Z3Statement(numeral);
-        }
 
         //Statements
+        public ISolverStatement MakeAdd(ISolverStatement[] innerStatements)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            List<Term> terms = new List<Term>();
+            foreach (ISolverStatement innerStatement in innerStatements)
+            {
+                terms.Add(((Z3Statement)innerStatement).Term);
+            }
+            
+            //
+            finalStatement = new Z3Statement(_context.MkAdd(terms.ToArray()));
+            return finalStatement;
+        }
         private ISolverStatement MakeAnd(List<Term> terms)
         {
             return new Z3Statement(_context.MkAnd(terms.ToArray())); ;
@@ -517,6 +484,26 @@ namespace BLL.SolverEngines
             //
             finalStatement = new Z3Statement(_context.MkNot(_context.MkAnd(leftTerm, rightTerm)));
             return finalStatement;
+        }
+        public ISolverStatement MakeNumeral(int val)
+        {
+            Term numeral = _context.MkNumeral(val, _context.MkIntSort());
+            return new Z3Statement(numeral);
+        }
+        public ISolverStatement MakeBoolToInt(string variableID, string categoryName)
+        {
+            //Get the variable 
+            Term variableTerm = _variables[categoryName][variableID].Term;
+
+            //Get the BoolToInt function
+            Z3Function function = _functions["BoolToInt"];
+            FuncDecl functionDecl = function.Function;
+
+            //Create the functionCall
+            Term funcCall = _context.MkApp(functionDecl, variableTerm);
+
+            //
+            return new Z3Statement(funcCall);
         }
     }
     public class Z3Solution : ISolverSolution

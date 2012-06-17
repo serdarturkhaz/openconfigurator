@@ -15,6 +15,7 @@ namespace BLL.SolverEngines
         void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
         void RemoveValueAssumption(string varID, string categoryName);
 
+        ISolverStatement MakeAdd(ISolverStatement[] innerStatements);
         ISolverStatement MakeAnd(string categoryName, params string[] variableIDs);
         ISolverStatement MakeAnd(ISolverStatement leftStatement, ISolverStatement rightStatement);
         ISolverStatement MakeOr(string categoryName, params string[] variableIDs);
@@ -31,8 +32,8 @@ namespace BLL.SolverEngines
         ISolverStatement MakeExcludes(ISolverStatement leftStatement, ISolverStatement rightStatement);
         ISolverStatement MakeExcludes(string categoryName, string leftVarID, string rightVarID);
 
-        ISolverStatement BoolToInt(string variableID, string categoryName);
-        ISolverStatement CreateNumeral(int val);
+        ISolverStatement MakeBoolToInt(string variableID, string categoryName);
+        ISolverStatement MakeNumeral(int val);
 
         ISolverSolution GetSolution();
         bool CheckSolutionExists(string variableID, string categoryName, VariableDataTypes dataType, object valueToTest);
