@@ -15,10 +15,12 @@ namespace BLL.SolverEngines
         void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
         void RemoveValueAssumption(string varID, string categoryName);
 
+        ISolverStatement MakeEquals(ISolverStatement leftStatement, ISolverStatement rightStatement);
         ISolverStatement MakeAdd(ISolverStatement[] innerStatements);
         ISolverStatement MakeAnd(string categoryName, params string[] variableIDs);
         ISolverStatement MakeAnd(ISolverStatement leftStatement, ISolverStatement rightStatement);
         ISolverStatement MakeOr(string categoryName, params string[] variableIDs);
+        ISolverStatement MakeOr(ISolverStatement leftStatement, ISolverStatement rightStatement);
         ISolverStatement MakeNot(ISolverStatement innerStatement);
         ISolverStatement MakeImplies(ISolverStatement leftStatement, ISolverStatement rightStatement);
         ISolverStatement MakeImplies(string categoryName, string leftVarID, string rightVarID);

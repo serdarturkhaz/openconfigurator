@@ -273,6 +273,17 @@ namespace BLL.SolverEngines
         }
 
         //Statements
+        public ISolverStatement MakeEquals(ISolverStatement leftStatement, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            Term leftTerm = ((Z3Statement)leftStatement).Term;
+            Term rightTerm = ((Z3Statement)rightStatement).Term;
+
+            //
+            finalStatement = new Z3Statement(_context.MkEq(leftTerm, rightTerm));
+            return finalStatement;
+        }
         public ISolverStatement MakeAdd(ISolverStatement[] innerStatements)
         {
             //Variables
@@ -325,6 +336,18 @@ namespace BLL.SolverEngines
 
             //
             finalStatement = MakeOr(variableTerms);
+            return finalStatement;
+        }
+        public ISolverStatement MakeOr(ISolverStatement leftStatement, ISolverStatement rightStatement)
+        {
+            //Variables
+            ISolverStatement finalStatement = null;
+            List<Term> terms = new List<Term>();
+            terms.Add(((Z3Statement)leftStatement).Term);
+            terms.Add(((Z3Statement)rightStatement).Term);
+
+            //
+            finalStatement = MakeOr(terms);
             return finalStatement;
         }
         public ISolverStatement MakeNot(ISolverStatement innerStatement)

@@ -413,7 +413,7 @@ var systemDefaults = {
                 label: "OR",
                 id: 1,
                 bounds: {
-                    defaultLowerBound: 0,
+                    defaultLowerBound: 1,
                     defaultUpperBound: function (clientObject) {
                         return clientObject.ChildFeatures.length;
                     }
