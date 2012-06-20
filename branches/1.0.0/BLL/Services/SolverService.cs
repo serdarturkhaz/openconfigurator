@@ -138,13 +138,14 @@ namespace BLL.Services
                     groupRelation.ChildFeatureIDs.ForEach(childFeatureID => intConversions.Add(context.MakeBoolToInt(childFeatureID.ToString(), featuresCategory)));
                     ISolverStatement sumLesserThan = context.MakeLowerOrEqual(context.MakeAdd(intConversions.ToArray()), context.MakeNumeral((int)groupRelation.UpperBound));
                     ISolverStatement sumGreaterThan = context.MakeGreaterOrEqual(context.MakeAdd(intConversions.ToArray()), context.MakeNumeral((int)groupRelation.LowerBound));
-                    //ISolverStatement sumValStatement = context.MakeAnd(sumLesserThan, sumGreaterThan);
+                    ISolverStatement sumEqualsZero = context.MakeEquals(context.MakeAdd(intConversions.ToArray()), context.MakeNumeral(0));
+                    ISolverStatement sumValStatement = context.MakeAnd(sumLesserThan, context.MakeOr(sumGreaterThan, sumEqualsZero));
 
                     //
                     ISolverStatement orStatement2 = context.MakeOr(featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
                     ISolverStatement equivalence3 = context.MakeEquivalence(featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement2);
 
-                    returnStatement = context.MakeAnd(equivalence3, sumLesserThan);
+                    returnStatement = context.MakeAnd(equivalence3, sumValStatement);
                     break;
             }
             return returnStatement;
