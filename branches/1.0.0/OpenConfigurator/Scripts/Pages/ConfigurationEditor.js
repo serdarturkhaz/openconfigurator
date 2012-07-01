@@ -55,7 +55,7 @@
             }
         }
     }
-}
+};
 
 //ClientObjects***************************************************************************************************
 var ClientObjects = {
@@ -64,7 +64,7 @@ var ClientObjects = {
     FeatureSelection: null,
     Attribute: null,
     AttributeValue: null
-}
+};
 
 ClientObjects.Feature = function (businessObject) {
 
@@ -855,12 +855,12 @@ var StandardView = function (container, configurationDataModelInstance) {
             //Create HTML
             _outerElement = $("<div class='Attribute' title='" + _description + "'>" + _name + "</div>").appendTo(parentContainer);
             switch (dataTypeName) {
-                //Integer  
+                //Integer   
                 case systemDefaults.enums.attributeDataTypes.integer.name:
                     _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
                     $(_innerElements.innerControl).val(value);
                     break;
-                //Boolean  
+                //Boolean   
                 case systemDefaults.enums.attributeDataTypes.boolean.name:
                     _innerElements.innerControl = $("<input type='checkbox' class='InnerCheckbox' />").appendTo(_outerElement);
                     if (value == true || value == "True") {
@@ -872,7 +872,7 @@ var StandardView = function (container, configurationDataModelInstance) {
                         return $(control).is(':checked');
                     }
                     break;
-                //String  
+                //String   
                 case systemDefaults.enums.attributeDataTypes.string.name:
                     _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
                     $(_innerElements.innerControl).val(value);
@@ -975,25 +975,25 @@ var StandardView = function (container, configurationDataModelInstance) {
         var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
         switch (currentSelectionState) {
 
-            //Unselected -> Selected                                                                                                                                                                                               
+            //Unselected -> Selected                                                                                                                                                                                                
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
                 break;
 
-            //Selected -> Unselected                          
+            //Selected -> Deselected                           
             case systemDefaults.enums.featureSelectionStates.selected.name:
-                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
+                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.deselected.id);
                 break;
 
-            //Deselected -> Selected                          
+            //Deselected -> Unselected                            
             case systemDefaults.enums.featureSelectionStates.deselected.name:
-                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
+                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
                 break;
         }
     }
 
     //Sync with data model
-    updateElement = function (guid) {
+    var updateElement = function (guid) {
 
         //Variables
         var clientObject = _configurationDataModel.GetByGUID(guid);

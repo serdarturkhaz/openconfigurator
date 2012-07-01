@@ -150,7 +150,7 @@
     <Folder Include="Architecture" />
     <Folder Include="UI" />
     <Folder Include="Use Cases" />
-    <Folder Include="Use Cases\Document" />
+    <Folder Include="Use Cases\Documents" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

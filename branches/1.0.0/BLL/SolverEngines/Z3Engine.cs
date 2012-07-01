@@ -25,7 +25,7 @@ namespace BLL.SolverEngines
             //Initialize Config and Context
             _config = new Config();
             _config.SetParamValue("MODEL", "true"); // corresponds to /m switch 
-            _config.SetParamValue("MACRO_FINDER", "true"); 
+            _config.SetParamValue("MACRO_FINDER", "true");
             _context = new Context(_config);
 
             //Setup custom conversion method BoolToInt (boolean -> integer)----------------------------------------------------------------
@@ -34,23 +34,6 @@ namespace BLL.SolverEngines
             Term fDef = _context.MkIte(_context.MkEq(i, _context.MkTrue()), _context.MkIntNumeral(1), _context.MkIntNumeral(0)); // x == true => 1, x == false => 0
             Term fStatement = _context.MkForall(0, new Term[] { i }, null, _context.MkEq(_context.MkApp(boolToInt, i), fDef));
             _context.AssertCnstr(fStatement);
-
-            ////
-            //Term a = _context.MkConst("a", _context.MkBoolSort());
-            //_context.AssertCnstr(_context.MkEq(a, _context.MkFalse()));
-            //Term b = _context.MkConst("b", _context.MkBoolSort());
-            //_context.AssertCnstr(_context.MkEq(b, _context.MkTrue()));
-            //Term c = _context.MkConst("c", _context.MkBoolSort());
-            //_context.AssertCnstr(_context.MkEq(c, _context.MkTrue()));
-            
-            ////
-            //Term sumResult = _context.MkConst("sumResult", _context.MkIntSort());
-            //Term eq00 = _context.MkEq(sumResult, _context.MkAdd(new Term[] { _context.MkApp(boolToInt, a), _context.MkApp(boolToInt, b), _context.MkApp(boolToInt, c) }));
-            //_context.AssertCnstr(eq00);
-
-            ////
-            //Model m = null;
-            //_context.CheckAndGetModel(out m);
 
             ////
             _functions.Add("BoolToInt", new Z3Function(boolToInt));
@@ -108,17 +91,6 @@ namespace BLL.SolverEngines
 
             return newValue;
         }
-        private Z3ValueAssumption AssertValueAssumption(Term variableTerm, VariableDataTypes dataType, object value)
-        {
-            //Assertion
-            Term newValue = CreateValueTerm(dataType, value);
-            Term statement = _context.MkEq(variableTerm, newValue);
-            _context.AssertCnstr(statement);
-
-            //
-            Z3ValueAssumption assumption = new Z3ValueAssumption(variableTerm, newValue, statement);
-            return assumption;
-        }
         private List<Term> FindVariableTerms(string categoryName, string[] variableIDs)
         {
             List<Term> terms = new List<Term>();
@@ -130,6 +102,17 @@ namespace BLL.SolverEngines
             }
 
             return terms;
+        }
+        private Z3ValueAssumption AssertValueAssumption(Term variableTerm, VariableDataTypes dataType, object value)
+        {
+            //Assertion
+            Term newValue = CreateValueTerm(dataType, value);
+            Term statement = _context.MkEq(variableTerm, newValue);
+            _context.AssertCnstr(statement);
+
+            //
+            Z3ValueAssumption assumption = new Z3ValueAssumption(variableTerm, newValue, statement);
+            return assumption;
         }
 
         //Public methods
@@ -224,7 +207,7 @@ namespace BLL.SolverEngines
         }
         public void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value)
         {
-            //Get the variable 
+            //Variables
             Z3Variable varWrapper = _variables[categoryName][variableID];
             Term variableTerm = varWrapper.Term;
 
@@ -271,6 +254,22 @@ namespace BLL.SolverEngines
                 RecreateContext();
             }
         }
+        public void AddOrModifyValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value)
+        {
+            //Variables
+            Z3Variable varWrapper = _variables[categoryName][variableID];
+            Term variableTerm = varWrapper.Term;
+
+            //If previous assumption already exists for the variable
+            if (_assumptions.ContainsKey(categoryName) && _assumptions[categoryName].ContainsKey(variableID))
+            {
+                //Remove it
+                RemoveValueAssumption(variableID, categoryName);
+            }
+
+            //Add the new assumption
+            AddValueAssumption(variableID, categoryName, dataType, value);
+        }
 
         //Statements
         public ISolverStatement MakeEquals(ISolverStatement leftStatement, ISolverStatement rightStatement)
@@ -293,7 +292,7 @@ namespace BLL.SolverEngines
             {
                 terms.Add(((Z3Statement)innerStatement).Term);
             }
-            
+
             //
             finalStatement = new Z3Statement(_context.MkAdd(terms.ToArray()));
             return finalStatement;

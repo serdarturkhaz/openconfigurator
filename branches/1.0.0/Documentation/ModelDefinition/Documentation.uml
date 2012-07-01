@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -52,6 +52,17 @@ User Input
           LastKnownName="Attribute_Types"
           LastKnownLocation="Documentation.uml" />
       </annotatedElements>
+    </comment>
+    <comment
+      Id="7b165163-cbaf-4fae-a5cd-8d75717070c1">
+      <body>Existing use cases
+</body>
+    </comment>
+    <comment
+      Id="eff2361a-3c30-42f9-815a-52615eb26142">
+      <body>New/modified
+ use cases in 1.0.0
+</body>
     </comment>
   </ownedCommentsInternal>
   <profileInstances>
@@ -2213,7 +2224,7 @@ User Input
             Id="5e5a00cc-f9de-4fc6-bf3d-7cfb5eb7c551">
             <useCaseMoniker
               Id="f9b796ae-b02a-45f9-ad8c-efedccb6aad9"
-              LastKnownName="Select/Deselect Feature"
+              LastKnownName="Toggle selection state for Feature"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -3856,7 +3867,7 @@ User Input
     <packageHasNamedElement>
       <useCase
         Id="f9b796ae-b02a-45f9-ad8c-efedccb6aad9"
-        name="Select/Deselect Feature"
+        name="Toggle selection state for Feature"
         isAbstract="false"
         isLeaf="false">
         <subjects>
@@ -3892,7 +3903,7 @@ User Input
             Id="260b79f9-b5d9-40cd-8359-d9b100d1d5d0">
             <useCaseMoniker
               Id="f9b796ae-b02a-45f9-ad8c-efedccb6aad9"
-              LastKnownName="Select/Deselect Feature"
+              LastKnownName="Toggle selection state for Feature"
               LastKnownLocation="Documentation.uml" />
           </extend>
           <extend
