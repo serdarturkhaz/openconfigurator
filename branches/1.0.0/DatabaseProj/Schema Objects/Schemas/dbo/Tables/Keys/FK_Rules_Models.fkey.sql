@@ -1,0 +1,3 @@
+﻿ALTER TABLE [dbo].[CustomRules]
+    ADD CONSTRAINT [FK_Rules_Models] FOREIGN KEY ([ModelID]) REFERENCES [dbo].[Models] ([ID]) ON DELETE CASCADE ON UPDATE CASCADE;
+

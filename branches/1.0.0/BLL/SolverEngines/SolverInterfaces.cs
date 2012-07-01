@@ -14,6 +14,7 @@ namespace BLL.SolverEngines
         void AddConstraint(string categoryName, params ISolverStatement[] statements);
         void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
         void RemoveValueAssumption(string varID, string categoryName);
+        void AddOrModifyValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
 
         ISolverStatement MakeEquals(ISolverStatement leftStatement, ISolverStatement rightStatement);
         ISolverStatement MakeAdd(ISolverStatement[] innerStatements);

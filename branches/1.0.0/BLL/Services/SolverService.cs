@@ -183,12 +183,17 @@ namespace BLL.Services
             //Set the bool value in the context and in the appropriate FeatureSelection
             switch (newState)
             {
-                case BusinessObjects.FeatureSelectionStates.Selected: //Assert-decision
-                    configSession.Context.AddValueAssumption(FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
+                case BusinessObjects.FeatureSelectionStates.Selected: //Assert-decision  :Selected
+                    configSession.Context.AddOrModifyValueAssumption(FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
                     fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
                     fSelection.ToggledByUser = true;
                     break;
-                case BusinessObjects.FeatureSelectionStates.Unselected: //Retract-decision
+                case BusinessObjects.FeatureSelectionStates.Deselected: //Assert-decision  :Deselected
+                    configSession.Context.AddOrModifyValueAssumption(FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, false);
+                    fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Deselected;
+                    fSelection.ToggledByUser = true;
+                    break;
+                case BusinessObjects.FeatureSelectionStates.Unselected: //Retract-decision  :Unselected
                     configSession.Context.RemoveValueAssumption(FeatureID.ToString(), featuresCategory);
                     fSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
                     fSelection.ToggledByUser = false;
