@@ -55,79 +55,128 @@ namespace BLL.RuleParser
     }
 
 
-    public interface IEvalResult
+    public interface IEvalResult : ICloneable
     {
-
+        object GetGenericReturnValue();
+        void SetGenericReturnValue(object obj);
+        object Clone();
     }
     public class ValueResult : IEvalResult
     {
         //Fields
-        object _value;
-
+        protected object _value;
         //Constructor
         public ValueResult(object value)
         {
-            _value = value;
+            this._value = value;
         }
-
-        //Methods
-        public object GetValue()
+        public object GetGenericReturnValue()
         {
             return _value;
+        }
+        public void SetGenericReturnValue(object obj)
+        {
+            this._value = obj;
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+    }
+    public class ValueResult<T> : ValueResult
+    {
+        //Fields
+        protected T _value;
+        //Constructor
+        public ValueResult(T value) : base(value) { }
+        public void SetValue(T obj)
+        {
+            SetGenericReturnValue(obj);
+        }
+        public T GetValue()
+        {
+            return (T)GetGenericReturnValue();
+        }
+    }
+    public class OutcomeResult : ValueResult<bool>
+    {
+        public OutcomeResult(bool value) : base(value) {}
+
+        public bool GetOutcome()
+        {
+            return GetValue();
+        }
+    }
+    public class StringResult : ValueResult<string>
+    {
+        public StringResult(string value) : base(value) { }
+
+        public string GetString()
+        {
+            return GetValue();
+        }
+    }
+    public class NumberResult : ValueResult<int>
+    {
+        public NumberResult(int value) : base(value) { }
+
+        public int GetNumber()
+        {
+            return GetValue();
         }
     }
     public class FieldReference : IEvalResult
     {
         //Fields
-        object _objectReference;
-        string _fieldName;
+        protected object _objectReference;
+        protected string _fieldName;
+        protected PropertyInfo _field;
 
         //Constructor
-        public FieldReference(ref object instance, string fieldName)
+        public FieldReference(object instance, string fieldName)
         {
             _objectReference = instance;
             _fieldName = fieldName;
-        }
-
-        //Methods
-        private static object ConvertValue(object valToConvert, Type destinationType)
-        {
-            //Get the current type
-            Type currentType = valToConvert.GetType();
-
-            //Int to String
-            if (currentType.Name == "Int32" && destinationType.Name == "String")
-            {
-                return valToConvert.ToString();
-            }
-
-            //String to String
-            if (currentType.Name == "String" && destinationType.Name == "String")
-            {
-                return valToConvert;
-            }
-
-            return null;
-        }
-        public object GetValue()
-        {
-            PropertyInfo field = _objectReference.GetType().GetProperty(_fieldName);
-            Type fieldType = field.PropertyType;
-
-            return field.GetValue(_objectReference, null);
-        }
-        public void SetValue(object newValue)
-        {
-            PropertyInfo field = _objectReference.GetType().GetProperty(_fieldName);
-            Type fieldType = field.PropertyType;
-
-            field.SetValue(_objectReference, (string)ConvertValue(newValue, fieldType), null);
+            _field = _objectReference.GetType().GetProperty(_fieldName);
         }
         public object GetReference()
         {
             return _objectReference;
         }
-    }
+        public object GetGenericReturnValue()
+        {
+            return _field.GetValue(_objectReference, null);
+        }
+        public void SetGenericReturnValue(object obj)
+        {
+            PropertyInfo field = _objectReference.GetType().GetProperty(_fieldName);
+            Type fieldType = field.PropertyType;
+
+            field.SetValue(_objectReference, obj.ToString(), null);
+        }
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+    } // attribute/property referece referece
+    public class FieldReference<T> : FieldReference
+    {
+        //Constructor
+        public FieldReference(object instance, string fieldName) : base(instance, fieldName)
+        {
+            if (_field.PropertyType != typeof(T))
+                throw new ArgumentException("The field reference type {0} does not match actual type of {}");
+        }
+        public void SetValue(T newValue)
+        {
+            SetGenericReturnValue(newValue);
+        }
+        public T GetValue()
+        {
+            return (T)GetGenericReturnValue();
+        }
+    } // attribute/property referece referece
     public class ObjectReference : IEvalResult
     {
         //Fields
@@ -136,32 +185,27 @@ namespace BLL.RuleParser
         //Constructor
         public ObjectReference(ref object instance)
         {
+            // TODO: remove the ref
             _objectReference = instance;
         }
-
         //Methods
         public object GetReference()
         {
             return _objectReference;
         }
-    }
-    public class OutcomeResult : IEvalResult
-    {
-        //Fields
-        bool _outcome;
-
-        //Constructor
-        public OutcomeResult(bool outcome)
+        public object GetGenericReturnValue()
         {
-            _outcome = outcome;
+            return GetReference();
         }
-
-        //Methods
-        public bool GetOutcome()
+        public void SetGenericReturnValue(object obj)
         {
-            return _outcome;
+            _objectReference = obj;
         }
-    }
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+    } // feature/node referece
    
     //Exceptions
     public class ElementNotFoundException : Exception
