@@ -35,6 +35,7 @@ namespace BLL.RuleParser
                 return new List<Type>()
                 {
                     typeof(Manipulation),
+                    typeof(Comparisons), // JAH: add Comparisons, use OutcomeResult ot return the value of the rule
                     typeof(Functions),
                     typeof(Primitives),
                     typeof(Selectors)
@@ -52,14 +53,13 @@ namespace BLL.RuleParser
                     {
                         typeof(Assignment)
                     };
-
                 }
 
                 //StatementTypes
                 public class Assignment : ParserStatement
                 {
-                    //
-                    public static string IdentifyRegex = "^.*=.*$", SplitRegex = "=";
+                    // the regex which makes sure there is only 1 = sign in a row (excludes >=, <=, ==, =<, =>)
+                    public static string IdentifyRegex = "^.*[^<>=]=[^<>=].*$", SplitRegex = "=";
                     public override IEvalResult[] Eval()
                     {
                         //Evaluate left side
@@ -74,26 +74,86 @@ namespace BLL.RuleParser
                             throw new SyntaxIncorrectException();
                         }
 
+                        // set the value
+                        IEvalResult rightSide = base.innerStatements[1].Eval()[0];
+                        leftSideRef.SetGenericReturnValue(rightSide.GetGenericReturnValue());
 
-                        //Evaluate right side and perform assignment
+                        return new IEvalResult[] { (IEvalResult)rightSide.Clone() };
+
+                        #region Old
+                        ////Evaluate left side
+                        //IEvalResult[] leftSide = base.innerStatements[0].Eval();
+                        //FieldReference leftSideRef = null;
+                        //if (leftSide.Length == 1 && leftSide[0].GetType() == typeof(FieldReference))
+                        //{
+                        //    leftSideRef = (FieldReference)leftSide[0];
+                        //}
+                        //else
+                        //{
+                        //    throw new SyntaxIncorrectException();
+                        //}
+
+
+                        ////Evaluate right side and perform assignment
+                        //IEvalResult[] rightSide = base.innerStatements[1].Eval();
+                        //if (rightSide.Length == 1 && rightSide[0].GetType() == typeof(FieldReference))
+                        //{
+                        //    FieldReference rightSideRef = (FieldReference)rightSide[0];
+                        //    leftSideRef.SetValue(rightSideRef.GetValue());
+
+                        //    //Return the reference, for chain functionality
+                        //    return new IEvalResult[] { leftSideRef };
+                        //}
+                        //else if (rightSide.Length == 1 && rightSide[0].GetType() == typeof(ValueResult))
+                        //{
+                        //    ValueResult rightSideValue = (ValueResult)rightSide[0];
+                        //    leftSideRef.SetValue(rightSideValue.GetValue());
+
+                        //    // return value to allow multiple assignment
+                        //    return new IEvalResult[] { new ValueResult(rightSideValue.GetValue()) };
+                        //}
+                        //else
+                        //{
+                        //    throw new SyntaxIncorrectException();
+                        //} 
+                        #endregion
+                    }
+                }
+            }
+            public static class Comparisons
+            {
+                //Methods
+                public static List<Type> GetStatementTypes()
+                {
+                    return new List<Type>()
+                    {
+                        typeof(EqualsComparison)
+                    };
+                }
+
+                //StatementTypes
+                public class EqualsComparison : ParserStatement
+                {
+                    // regex that takes two or more equal signs. could be improved
+                    public static string IdentifyRegex = @"^.+==.+$", SplitRegex = @"==";
+                    public override IEvalResult[] Eval()
+                    {
+                        OutcomeResult retVal = new OutcomeResult(false);
+
+                        // Evaluate the child elements, left and right 
+                        IEvalResult[] leftSide = base.innerStatements[0].Eval();
                         IEvalResult[] rightSide = base.innerStatements[1].Eval();
-                        if (rightSide.Length == 1 && rightSide[0].GetType() == typeof(FieldReference))
+                        if (leftSide.Length == 1 && 
+                            rightSide.Length == 1)
                         {
-                            FieldReference rightSideRef = (FieldReference)rightSide[0];
-                            leftSideRef.SetValue(rightSideRef.GetValue());
-                        }
-                        else if (rightSide.Length == 1 && rightSide[0].GetType() == typeof(ValueResult))
-                        {
-                            ValueResult rightSideValue = (ValueResult)rightSide[0];
-                            leftSideRef.SetValue(rightSideValue.GetValue());
+                            retVal.SetValue(leftSide.Equals(rightSide));
                         }
                         else
                         {
                             throw new SyntaxIncorrectException();
                         }
 
-                        //Return outcome
-                        return new IEvalResult[] { new OutcomeResult(true) };
+                        return new IEvalResult[] { retVal };
                     }
                 }
             }
@@ -326,7 +386,7 @@ namespace BLL.RuleParser
                 public class AbsoluteAttributeSelector : ParserStatement
                 {
                     //Fields
-                    public static string IdentifyRegex = "^[A-z,0-9]*$", SplitRegex = null; //example : "FeatureName"
+                    public static string IdentifyRegex = "^[A-z,0-9]+$", SplitRegex = null; //example : "FeatureName"
                     public override IEvalResult[] Eval(IEvalResult[] parameters)
                     {
                         //Get parameters
@@ -357,15 +417,13 @@ namespace BLL.RuleParser
                                 BusinessObjects.AttributeValue attributeValue = _configSession.Configuration.GetAttributeValueByAttributeID(attribute.ID);
                                 attributeValues.Add(attributeValue);
                             }
-
-
                         }
                         //Return a list of references pointing to the each of the childFeatures
                         List<IEvalResult> returnRef = new List<IEvalResult>();
                         foreach (BLL.BusinessObjects.AttributeValue attrValue in attributeValues)
                         {
                             object target = (object)attrValue;
-                            FieldReference objRef = new FieldReference(ref target, "Value");
+                            FieldReference objRef = new FieldReference(target, "Value");
                             returnRef.Add(objRef);
                         }
                         return returnRef.ToArray();
