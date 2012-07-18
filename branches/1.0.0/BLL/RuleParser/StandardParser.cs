@@ -58,8 +58,16 @@ namespace BLL.RuleParser
                 //StatementTypes
                 public class Assignment : ParserStatement
                 {
-                    // the regex which makes sure there is only 1 = sign in a row (excludes >=, <=, ==, =<, =>)
-                    public static string IdentifyRegex = "^.*[^<>=]=[^<>=].*$", SplitRegex = "=";
+                    /// <summary>
+                    /// the regex which makes sure there is only 1 = sign in a row (excludes >=, <=, ==, =<, =>)
+                    /// </summary>
+                    public static string IdentifyRegex = "^.*[^<>=]=[^<>=].*$";
+
+                    /// <summary>
+                    /// splits the rule by a single = sign (ignores ==, >= <=)
+                    /// </summary>
+                    public static string SplitRegex = "[^<>=]=[^<>=]";
+
                     public override IEvalResult[] Eval()
                     {
                         //Evaluate left side
@@ -127,7 +135,11 @@ namespace BLL.RuleParser
                 {
                     return new List<Type>()
                     {
-                        typeof(EqualsComparison)
+                        typeof(EqualsComparison),
+                        typeof(GreaterEqualsComparison),
+                        typeof(GreaterComparison),
+                        typeof(SmallerEqualsComparison),
+                        typeof(SmallerComparison)
                     };
                 }
 
@@ -143,10 +155,16 @@ namespace BLL.RuleParser
                         // Evaluate the child elements, left and right 
                         IEvalResult[] leftSide = base.innerStatements[0].Eval();
                         IEvalResult[] rightSide = base.innerStatements[1].Eval();
-                        if (leftSide.Length == 1 && 
+                        if (leftSide.Length == 1 &&
                             rightSide.Length == 1)
                         {
-                            retVal.SetValue(leftSide.Equals(rightSide));
+
+                            var comparisonResult = leftSide[0].GetGenericReturnValue().Equals(rightSide[0].GetGenericReturnValue());
+                            retVal.SetValue(comparisonResult);
+
+                            // TODO: use overriden .Equals function for the 
+                            // or IEvalResult : ICloneable, IComparable
+                            //retVal.SetValue(leftSide.Equals(rightSide));
                         }
                         else
                         {
@@ -154,6 +172,54 @@ namespace BLL.RuleParser
                         }
 
                         return new IEvalResult[] { retVal };
+                    }
+                }
+                public class GreaterEqualsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                {
+                    // regex that takes two or more equal signs. could be improved
+                    public static string IdentifyRegex = @"^.+>=.+$";
+                    public static string SplitRegex = @">=";
+
+                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    {
+                        OutcomeResult retVal = new OutcomeResult(false);
+
+                        retVal.SetValue(leftSide.GetNumber() >= rightSide.GetNumber());
+
+                        return retVal;
+                    }
+                }
+                public class GreaterComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                {
+                    // regex that takes two or more equal signs. could be improved
+                    public static string IdentifyRegex = @"^.+>[^=].*$";
+                    public static string SplitRegex = @">";
+
+                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    {
+                        return new OutcomeResult(leftSide.GetNumber() > rightSide.GetNumber());
+                    }
+                }
+                public class SmallerEqualsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                {
+                    // regex that takes two or more equal signs. could be improved
+                    public static string IdentifyRegex = @"^.+<=.+$";
+                    public static string SplitRegex = @"<=";
+
+                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    {
+                        return new OutcomeResult(leftSide.GetNumber() <= rightSide.GetNumber());
+                    }
+                }
+                public class SmallerComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                {
+                    // regex that takes two or more equal signs. could be improved
+                    public static string IdentifyRegex = @"^.+<[^=].+$";
+                    public static string SplitRegex = @"<";
+
+                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    {
+                        return new OutcomeResult(leftSide.GetNumber() < rightSide.GetNumber());
                     }
                 }
             }
@@ -216,7 +282,7 @@ namespace BLL.RuleParser
                     public override IEvalResult[] Eval()
                     {
                         bool val = System.Boolean.Parse(base._syntaxString);
-                        return new IEvalResult[] { (IEvalResult)new ValueResult(val) };
+                        return new IEvalResult[] { new OutcomeResult(val) };
                     }
                 }
                 public class String : ParserStatement
@@ -225,8 +291,8 @@ namespace BLL.RuleParser
                     public static string IdentifyRegex = "^\"[A-z]+\"$", SplitRegex = null;
                     public override IEvalResult[] Eval()
                     {
-                        object str = base._syntaxString.Replace("\"", "");
-                        return new IEvalResult[] { (IEvalResult)new ValueResult(str) };
+                        string str = base._syntaxString.Replace("\"", "");
+                        return new IEvalResult[] { new StringResult(str) };
                     }
                 }
                 public class Integer : ParserStatement
@@ -236,7 +302,7 @@ namespace BLL.RuleParser
                     public override IEvalResult[] Eval()
                     {
                         int val = System.Int32.Parse(base._syntaxString);
-                        return new IEvalResult[] { (IEvalResult)new ValueResult(val) };
+                        return new IEvalResult[] { new NumberResult(val) };
                     }
                 }
             }
@@ -294,7 +360,7 @@ namespace BLL.RuleParser
                 public class AbsoluteFeatureSelector : ParserStatement
                 {
                     //Fields
-                    public static string IdentifyRegex = "^(#[A-z,0-9]*|>root)$", SplitRegex = null; //example : "#FeatureName"
+                    public static string IdentifyRegex = "^(#[A-z,0-9]*|root)$", SplitRegex = null; //example : "#FeatureName" or "root"
                     public override IEvalResult[] Eval()
                     {
                         //Root selector
@@ -326,7 +392,7 @@ namespace BLL.RuleParser
                 public class RelativeFeatureSelector : ParserStatement
                 {
                     //Fields
-                    public static string IdentifyRegex = "^>children|>descendants$", SplitRegex = null; //example : ">descendants"
+                    public static string IdentifyRegex = "^children|descendants$", SplitRegex = null; //example : "descendants"
 
                     public override IEvalResult[] Eval(IEvalResult[] parameters)
                     {
@@ -443,14 +509,13 @@ namespace BLL.RuleParser
             string splitRegex = (string)GetStaticField(StatementType, "SplitRegex");
             if (splitRegex != null)
             {
-                string[] subStrings = Regex.Split(str, splitRegex);
+                // split the regexa nd only take none empty elements
+                string[] subStrings = Regex.Split(str, splitRegex).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+
                 foreach (string subString in subStrings)
                 {
-                    if (subString != "")
-                    {
-                        ParserStatement innerStatement = ParseString(ref configSession, subString);
-                        instance.AddInnerStatement(innerStatement);
-                    }
+                    ParserStatement innerStatement = ParseString(ref configSession, subString);
+                    instance.AddInnerStatement(innerStatement);
                 }
             }
 

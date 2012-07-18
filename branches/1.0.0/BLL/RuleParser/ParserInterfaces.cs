@@ -53,7 +53,46 @@ namespace BLL.RuleParser
             return instance;
         }
     }
+    public abstract class SingleValueResultParserStatement : ParserStatement
+    {
+        public override IEvalResult[] Eval()
+        {
+            IEvalResult retVal = null;
 
+            // Evaluate the child elements, left and right 
+            IEvalResult[] leftSide = base.innerStatements[0].Eval();
+            IEvalResult[] rightSide = base.innerStatements[1].Eval();
+            if (leftSide.Length == 1 &&
+                rightSide.Length == 1)
+            {
+                retVal = this.SingleEval(leftSide[0], rightSide[0]);
+            }
+            else
+            {
+                throw new SyntaxIncorrectException();
+            }
+
+            return new IEvalResult[] { retVal };
+        }
+
+        public abstract IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide);
+    }
+    public abstract class SingleStronglyTypedValueResultParserStatement<TLeftSide, TRightSide> : SingleValueResultParserStatement
+        where TLeftSide : class, IEvalResult
+        where TRightSide : class, IEvalResult
+    {
+        public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
+        {
+            if (leftSide is TLeftSide && rightSide is TRightSide)
+            {
+                return SingleEvalStronglyTyped(leftSide as TLeftSide, rightSide as TRightSide);
+            }
+            // else
+            throw new SyntaxIncorrectException();
+        }
+
+        public abstract IEvalResult SingleEvalStronglyTyped(TLeftSide leftSide, TRightSide rightSide);
+    }
 
     public interface IEvalResult : ICloneable
     {
@@ -81,7 +120,8 @@ namespace BLL.RuleParser
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            //return this.MemberwiseClone();
+            return new ValueResult(_value);
         }
     }
     public class ValueResult<T> : ValueResult
@@ -101,7 +141,7 @@ namespace BLL.RuleParser
     }
     public class OutcomeResult : ValueResult<bool>
     {
-        public OutcomeResult(bool value) : base(value) {}
+        public OutcomeResult(bool value) : base(value) { }
 
         public bool GetOutcome()
         {
@@ -163,7 +203,8 @@ namespace BLL.RuleParser
     public class FieldReference<T> : FieldReference
     {
         //Constructor
-        public FieldReference(object instance, string fieldName) : base(instance, fieldName)
+        public FieldReference(object instance, string fieldName)
+            : base(instance, fieldName)
         {
             if (_field.PropertyType != typeof(T))
                 throw new ArgumentException("The field reference type {0} does not match actual type of {}");
@@ -206,7 +247,7 @@ namespace BLL.RuleParser
             return this.MemberwiseClone();
         }
     } // feature/node referece
-   
+
     //Exceptions
     public class ElementNotFoundException : Exception
     {
