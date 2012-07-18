@@ -58,15 +58,50 @@ namespace BLL.RuleParser
                 //StatementTypes
                 public class Assignment : ParserStatement
                 {
+                    public static Dictionary<string, string> DependentReplacedString =
+                        new Dictionary<string, string>
+                            {
+                                {">=", ">@"},
+                                {"<=", "<@"},
+                                {"==", "@@"},
+                                {"!=", "!@"}
+                            };
+
                     /// <summary>
                     /// the regex which makes sure there is only 1 = sign in a row (excludes >=, <=, ==, =<, =>)
                     /// </summary>
-                    public static string IdentifyRegex = "^.*[^<>=]=[^<>=].*$";
+                    public static string IdentifyRegex = "^.*[^!<>=]=[^<>=].*$";
 
                     /// <summary>
                     /// splits the rule by a single = sign (ignores ==, >= <=)
                     /// </summary>
                     public static string SplitRegex = "=";
+
+                    public static bool Identify(string command)
+                    {
+                        return Regex.IsMatch(command, IdentifyRegex);
+                    }
+
+                    public static string[] Split(string command)
+                    {
+                        // replace overlapping characters
+                        string parsedCommand = command;
+
+                        foreach (var replace in DependentReplacedString)
+                            parsedCommand = parsedCommand.Replace(replace.Key, replace.Value);
+
+                        // run the split
+                        string[] retVal = Regex.Split(parsedCommand, SplitRegex);
+
+                        // correct all the strings in the split command, revesring the split
+                        for(int i = 0; i < retVal.Length; i++)
+                        {
+                            foreach (var replace in DependentReplacedString)
+                                retVal[i] = retVal[i].Replace(replace.Value, replace.Key);    
+                        }
+
+                        return retVal;
+                    }
 
                     public override IEvalResult[] Eval()
                     {
@@ -136,6 +171,7 @@ namespace BLL.RuleParser
                     return new List<Type>()
                     {
                         typeof(EqualsComparison),
+                        typeof(UnequalsComparison),
                         typeof(GreaterEqualsComparison),
                         typeof(GreaterComparison),
                         typeof(SmallerEqualsComparison),
@@ -148,6 +184,7 @@ namespace BLL.RuleParser
                 {
                     // regex that takes two or more equal signs. could be improved
                     public static string IdentifyRegex = @"^.+==.+$", SplitRegex = @"==";
+
                     public override IEvalResult[] Eval()
                     {
                         OutcomeResult retVal = new OutcomeResult(false);
@@ -174,9 +211,23 @@ namespace BLL.RuleParser
                         return new IEvalResult[] { retVal };
                     }
                 }
+                public class UnequalsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                {
+                    public static string IdentifyRegex = @"^.+!=.+$";
+                    public static string SplitRegex = @"!=";
+
+                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    {
+                        OutcomeResult retVal = new OutcomeResult(false);
+
+                        retVal.SetValue(leftSide.GetNumber() != rightSide.GetNumber());
+
+                        return retVal;
+                    }
+                }
+                
                 public class GreaterEqualsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
                 {
-                    // regex that takes two or more equal signs. could be improved
                     public static string IdentifyRegex = @"^.+>=.+$";
                     public static string SplitRegex = @">=";
 
@@ -191,7 +242,6 @@ namespace BLL.RuleParser
                 }
                 public class GreaterComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
                 {
-                    // regex that takes two or more equal signs. could be improved
                     public static string IdentifyRegex = @"^.+>[^=].*$";
                     public static string SplitRegex = @">";
 
@@ -202,7 +252,6 @@ namespace BLL.RuleParser
                 }
                 public class SmallerEqualsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
                 {
-                    // regex that takes two or more equal signs. could be improved
                     public static string IdentifyRegex = @"^.+<=.+$";
                     public static string SplitRegex = @"<=";
 
@@ -213,8 +262,12 @@ namespace BLL.RuleParser
                 }
                 public class SmallerComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
                 {
-                    // regex that takes two or more equal signs. could be improved
-                    public static string IdentifyRegex = @"^.+<[^=].+$";
+                    //public static bool Identify(string command)
+                    //{
+                    //    return Regex.IsMatch(command, IdentifyRegex);
+                    //}
+
+                    public static string IdentifyRegex = @"^.+<[^=].*$";
                     public static string SplitRegex = @"<";
 
                     public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
@@ -501,23 +554,38 @@ namespace BLL.RuleParser
         //Private Methods
         private ParserStatement ParseString(ref ConfiguratorSession configSession, string str)
         {
-            //Identify the string and creating a corresponding ParserStatement
+            // trim before the identification, allowing spaces in the code
+            str = str.Trim();
+
+            // Identify the string and creating a corresponding ParserStatement
             Type StatementType = IdentifyString(str);
             ParserStatement instance = (ParserStatement)ExecuteStaticMethod(StatementType, "CreateInstance", (object)StatementType, configSession, (object)str);
 
-            //Parse inner statements and add them to the parent
-            string splitRegex = (string)GetStaticField(StatementType, "SplitRegex");
-            if (splitRegex != null)
-            {
-                // split the regexa nd only take none empty elements
-                string[] subStrings = Regex.Split(str, splitRegex).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+            string[] subStrings = null;
 
+            // if defined, split using the Split method
+            var splitResult = ExecuteStaticMethod(StatementType, "Split", str);
+            if (splitResult != null)
+                subStrings = (string[])splitResult;
+            else
+            // else use the regex to split
+            {
+                var splitRegex = (string)GetStaticField(StatementType, "SplitRegex");
+
+                if (splitRegex != null)
+                {
+                    // split the regexa nd only take none empty elements
+                    subStrings = Regex.Split(str, splitRegex).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+                }
+            }
+
+            // if the string was split, then parse inner statements and add them to the parent
+            if (subStrings != null)
                 foreach (string subString in subStrings)
                 {
                     ParserStatement innerStatement = ParseString(ref configSession, subString);
                     instance.AddInnerStatement(innerStatement);
                 }
-            }
 
             return instance;
         }
@@ -532,11 +600,21 @@ namespace BLL.RuleParser
                 //Loop through all statement types in the Category
                 foreach (Type StatementType in statementTypes)
                 {
-                    //Verify
-                    string regexExpression = (string)GetStaticField(StatementType, "IdentifyRegex");
-                    if (Regex.IsMatch(str, regexExpression, RegexOptions.None))
+                    // see if it has the Identify method, if it does then use it for identification
+                    var IdentifyResult = ExecuteStaticMethod(StatementType, "Identify", str);
+                    if (IdentifyResult != null)
                     {
-                        return StatementType;
+                        if ((bool)IdentifyResult)
+                            return StatementType;
+                    }
+                    else
+                    {
+                        // use the regex pattern for the identification
+                        string regexExpression = (string)GetStaticField(StatementType, "IdentifyRegex");
+                        if (Regex.IsMatch(str, regexExpression, RegexOptions.None))
+                        {
+                            return StatementType;
+                        }
                     }
                 }
             }
@@ -547,16 +625,28 @@ namespace BLL.RuleParser
         {
             return ExecuteStaticMethod(baseClass, methodName, null);
         }
+
+        /// <summary>
+        /// Excetures a static method. If the static method does not exists, it returns null
+        /// </summary>
+        /// <param name="baseClass"></param>
+        /// <param name="methodName"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         private static object ExecuteStaticMethod(Type baseClass, string methodName, params object[] parameters)
         {
             MethodInfo method = baseClass.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
-            return method.Invoke(null, parameters);
+
+            return method != null
+                       ? method.Invoke(null, parameters)
+                       : null;
         }
         private static object GetStaticField(Type baseClass, string fieldName)
         {
             FieldInfo field = baseClass.GetField(fieldName);
             return field.GetValue(null);
         }
+
 
         //Public Methods
         public bool ExecuteSyntax(ref ConfiguratorSession configSession, string RuleSyntax)
