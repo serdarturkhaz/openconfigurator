@@ -66,7 +66,7 @@ namespace BLL.RuleParser
                     /// <summary>
                     /// splits the rule by a single = sign (ignores ==, >= <=)
                     /// </summary>
-                    public static string SplitRegex = "[^<>=]=[^<>=]";
+                    public static string SplitRegex = "=";
 
                     public override IEvalResult[] Eval()
                     {
