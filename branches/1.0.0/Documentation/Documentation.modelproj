@@ -52,6 +52,13 @@
       <SubType>Content</SubType>
       <DependentUpon>Database\DBDiagram.classdiagram</DependentUpon>
     </Content>
+    <Content Include="DomainModel\DomainModelv10.classdiagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="DomainModel\DomainModelv10.classdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>DomainModel\DomainModelv10.classdiagram</DependentUpon>
+    </Content>
     <Content Include="ModelDefinition\Package1_0113.uml">
       <SubType>Content</SubType>
     </Content>
@@ -115,10 +122,13 @@
     <Content Include="ModelDefinition\Package_2143.uml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="ModelDefinition\Package_2216.uml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ModelDefinition\Package_2300.uml">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="UI\Login.bmml">
+    <Content Include="UI\UITemplateEditor.bmml">
       <SubType>Content</SubType>
     </Content>
     <Content Include="UI\ModelEditor.bmml">

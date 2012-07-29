@@ -1,15 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
   <ownedCommentsInternal>
     <comment Id="0d6de620-19bb-4de1-b113-2b59f2bfc952">
       <elementDefinition Id="7b165163-cbaf-4fae-a5cd-8d75717070c1" />
       <body>Existing use cases
-</body>
-    </comment>
-    <comment Id="7f0fb72b-4d47-45c6-90e2-9716ddc07a31">
-      <elementDefinition Id="eff2361a-3c30-42f9-815a-52615eb26142" />
-      <body>New/modified
- use cases in 1.0.0
 </body>
     </comment>
   </ownedCommentsInternal>
@@ -39,37 +33,21 @@
             </relationshipOwnedElementsInternal>
             <elementDefinition Id="f54bfe97-6855-4288-b9ac-791ceffe1bc1" />
           </association>
-          <association Id="9073d56a-4017-4f62-9b27-2588a5735b11" isDerived="false" sourceEndRoleName="Tech user" targetEndRoleName="Manage configurations (CREDO)" isLeaf="false" isAbstract="false">
-            <useCaseMoniker Id="0855ce31-6aed-45cc-aa62-ba2180ef5b6a" LastKnownName="Manage configurations (CREDO)" />
+          <association Id="b893e98c-818f-4dc9-bf16-e9c18158117e" isDerived="false" sourceEndRoleName="Tech user" targetEndRoleName="Manage UISetups (CREDO)" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="Manage UI Templates(CREDO)" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
-                <memberEnd Id="684e9460-be95-4662-be42-e0b8720fcd53" name="Tech user" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
-                  <elementDefinition Id="9cbcdd83-aeb6-4982-ad3d-b466740bcf10" />
+                <memberEnd Id="35d7df85-8140-4d10-b3df-d816623d6a1f" name="Tech user" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="b8413e79-b86f-4cd8-96af-7b01981d6e1e" />
                 </memberEnd>
               </associationHasOwnedEnds>
               <associationHasOwnedEnds>
-                <memberEnd Id="4d82aeeb-9409-4196-9fe6-0a6090f2b299" name="Manage configurations (CREDO)" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                  <elementDefinition Id="5c8716ad-03fa-4848-a00b-3bf489dda4bf" />
+                <memberEnd Id="0d3d4529-260c-4e68-ae37-f6cb7eef5029" name="Manage UISetups (CREDO)" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="42451262-1631-46fe-8f28-92ec173a5354" />
                 </memberEnd>
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
-            <elementDefinition Id="ee8b5d9d-536b-4411-82e0-d5e6819ffe2e" />
-          </association>
-          <association Id="21f8cd3a-edf3-4dbd-af03-38aa9a9924b5" isDerived="false" sourceEndRoleName="Tech user" targetEndRoleName="Login" isLeaf="false" isAbstract="false">
-            <useCaseMoniker Id="c78fbcd2-e8c6-4d92-9d6c-923a7ae8db69" LastKnownName="Login" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd Id="ab6e8a7c-d944-45c4-97a9-7d40ae52c2ed" name="Tech user" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
-                  <elementDefinition Id="ff9799cb-6c90-4423-ba08-3c94e2f14cb2" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd Id="a783c6a8-7b69-4bd6-8168-c9f2bc202f88" name="Login" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                  <elementDefinition Id="39c85898-8922-4645-9ce6-9c57c9c26ae2" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-            <elementDefinition Id="c07284f1-dc35-4b57-831e-47b5a8740b5b" />
+            <elementDefinition Id="0f01167c-6737-4b2e-8d2e-55e8604c8122" />
           </association>
         </targetEnds>
       </actor>
@@ -125,30 +103,20 @@
       </actor>
     </useCaseModelRootHasTypes>
     <packageHasNamedElement>
-      <useCase Id="0855ce31-6aed-45cc-aa62-ba2180ef5b6a" name="Manage configurations (CREDO)" isAbstract="false" isLeaf="false">
-        <elementDefinition Id="b4d16304-2e52-4c6f-b84f-fe2b77e1f20c" />
-        <additions>
-          <include Id="950af437-ca59-4073-87b7-179b9abf9e57">
-            <useCaseMoniker Id="157e08e7-3960-48c7-b9d6-0e714e41d97f" LastKnownName="Create/Edit Configuration instance" />
-            <elementDefinition Id="6546547b-c5b6-464e-aef1-3b3c479723cb" />
-          </include>
-        </additions>
-        <subjects>
-          <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
-        </subjects>
-      </useCase>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
       <useCase Id="157e08e7-3960-48c7-b9d6-0e714e41d97f" name="Create/Edit Configuration instance" isAbstract="false" isLeaf="false">
         <elementDefinition Id="b3818ff1-d175-4194-97b4-7c10cd427d62" />
         <additions>
-          <include Id="cb6d1179-ef85-4bec-9ca5-7897bbac5172">
-            <useCaseMoniker Id="8e692968-ed9c-4ecc-93e1-a13655d9c54a" LastKnownName="Enter Attribute values" />
-            <elementDefinition Id="4d7ac794-a613-4972-8753-1bf94f1ee4f2" />
+          <include Id="6c33430c-4c6f-48ec-a3e8-a985043af077">
+            <useCaseMoniker Id="1516b3f0-a79d-48e8-b166-8a1352103f9d" LastKnownName="Choose a Model" />
+            <elementDefinition Id="41221fbc-d250-441c-aac8-18129d6e303e" />
           </include>
-          <include Id="1f1837e7-5c84-4b17-8e22-113d6e575d50">
-            <useCaseMoniker Id="7435737a-d41b-4dc7-92b3-0c6d3379764c" LastKnownName="Toggle selection state for Feature" />
-            <elementDefinition Id="5e5a00cc-f9de-4fc6-bf3d-7cfb5eb7c551" />
+          <include Id="d5e52535-9584-46b8-9c5f-e93e2450a393">
+            <useCaseMoniker Id="434a6a7d-03e2-4832-8051-6f32243dcc67" LastKnownName="Choose a UI Template" />
+            <elementDefinition Id="4a9cfa60-d8f8-4afe-9944-6a67184d5f18" />
+          </include>
+          <include Id="82affb34-0830-4f2d-a910-f35dcf2045f7">
+            <useCaseMoniker Id="b762dd24-7381-4768-b24c-cad9c7614750" LastKnownName="Perform configuration of data by toggling/entering control values" />
+            <elementDefinition Id="00ae9855-7705-4e27-9a37-44000cb2f53f" />
           </include>
         </additions>
         <subjects>
@@ -256,44 +224,133 @@
       </actor>
     </useCaseModelRootHasTypes>
     <packageHasNamedElement>
-      <useCase Id="7435737a-d41b-4dc7-92b3-0c6d3379764c" name="Toggle selection state for Feature" isAbstract="false" isLeaf="false">
-        <elementDefinition Id="f9b796ae-b02a-45f9-ad8c-efedccb6aad9" />
-        <subjects>
-          <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
-        </subjects>
-      </useCase>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
-      <useCase Id="8e692968-ed9c-4ecc-93e1-a13655d9c54a" name="Enter Attribute values" isAbstract="false" isLeaf="false">
-        <elementDefinition Id="ce974fd5-18e7-448d-b41b-e005a77a5ce2" />
-        <subjects>
-          <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
-        </subjects>
-      </useCase>
-    </packageHasNamedElement>
-    <packageHasNamedElement>
       <useCase Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" name="Compute and display consequences" isAbstract="false" isLeaf="false">
         <elementDefinition Id="7cbd6dbe-50c7-4be8-9468-8a25ee31dec8" />
+        <subjects>
+          <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <useCaseModelRootHasTypes>
+      <subsystem Id="5b0fddd8-9162-417e-abea-8e793515ae9f" name="UI Builder" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="0e8a828b-f122-423c-8232-f9f160fc6d7f" />
+      </subsystem>
+    </useCaseModelRootHasTypes>
+    <packageHasNamedElement>
+      <useCase Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" name="Manage UI Templates(CREDO)" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="5ebe50b5-1562-4ad2-b33a-975a0304de1d" />
+        <subjects>
+          <subsystemMoniker Id="5b0fddd8-9162-417e-abea-8e793515ae9f" LastKnownName="UI Builder" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="53351aba-8ff8-41f4-b01b-ea7b95c6ae5b" name="Define/Manipulate UI Template" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="6bfa5121-dd04-41b7-b0c4-28b1035f3f41" />
+        <generalsInternal>
+          <generalization Id="a6c329b9-e9e8-43cd-b1bb-97b7ce097f07" isSubstitutable="false">
+            <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="Manage UI Templates(CREDO)" />
+            <elementDefinition Id="6c0bdec3-3b27-499c-823b-f1244ef7f3ac" />
+          </generalization>
+        </generalsInternal>
+        <additions>
+          <include Id="0968577d-7a5f-408d-8c29-96ee8ea50ce8">
+            <useCaseMoniker Id="1c919322-99ac-45a7-a0a8-6764febe5627" LastKnownName="Add/Edit UI Control Instances" />
+            <elementDefinition Id="6ca6b415-2d25-457b-b49a-e1f5dc4fa99d" />
+          </include>
+          <include Id="e1c66b0c-11ef-473d-9046-69d0775b6e6b">
+            <useCaseMoniker Id="6202351e-9509-4236-b696-3c750fd77190" LastKnownName="Define layout and appearance" />
+            <elementDefinition Id="f21a5bed-2eba-4356-a361-9b59bf1196e8" />
+          </include>
+        </additions>
+        <subjects>
+          <subsystemMoniker Id="5b0fddd8-9162-417e-abea-8e793515ae9f" LastKnownName="UI Builder" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="1c919322-99ac-45a7-a0a8-6764febe5627" name="Add/Edit UI Control Instances" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="6b28675d-301b-4da4-8caf-691738422708" />
+        <subjects>
+          <subsystemMoniker Id="5b0fddd8-9162-417e-abea-8e793515ae9f" LastKnownName="UI Builder" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="85aef12b-4542-437e-8bcb-995b98f6afbd" name="Bind to Model" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="281d296b-cd7f-4037-9935-d4a03e252f8e" />
         <extendedCases>
-          <extend Id="e14ccc32-83fa-433a-8b2f-39a179d58cfb">
-            <useCaseMoniker Id="7435737a-d41b-4dc7-92b3-0c6d3379764c" LastKnownName="Toggle selection state for Feature" />
-            <elementDefinition Id="260b79f9-b5d9-40cd-8359-d9b100d1d5d0" />
-          </extend>
-          <extend Id="c71f179e-7971-421f-9e08-ab1d2054a81a">
-            <useCaseMoniker Id="8e692968-ed9c-4ecc-93e1-a13655d9c54a" LastKnownName="Enter Attribute values" />
-            <elementDefinition Id="e04867b7-5fe6-4a83-9f90-e46e959a2736" />
+          <extend Id="3fc7a4c9-3c95-4be5-8e31-388d96bf0a17">
+            <useCaseMoniker Id="1c919322-99ac-45a7-a0a8-6764febe5627" LastKnownName="Add/Edit UI Control Instances" />
+            <elementDefinition Id="7e7294d9-5c4d-4d23-82f6-2d6b9f20b766" />
           </extend>
         </extendedCases>
         <subjects>
+          <subsystemMoniker Id="5b0fddd8-9162-417e-abea-8e793515ae9f" LastKnownName="UI Builder" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="1516b3f0-a79d-48e8-b166-8a1352103f9d" name="Choose a Model" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="26b2504f-5973-4bf5-8555-695e5d9e2a2d" />
+        <subjects>
           <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
         </subjects>
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="c78fbcd2-e8c6-4d92-9d6c-923a7ae8db69" name="Login" isAbstract="false" isLeaf="false">
-        <elementDefinition Id="1c053af6-dba9-495e-8768-7499720c7a11" />
+      <useCase Id="434a6a7d-03e2-4832-8051-6f32243dcc67" name="Choose a UI Template" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="428d4dec-fff0-4f92-b377-139ca0344325" />
         <subjects>
-          <subsystemMoniker Id="545efce8-f4b2-48ee-90cf-d78746a78c4f" LastKnownName="Product modeler" />
+          <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="c415ba5e-fe33-4e1e-a13b-64a57f318874" name="Delete UI Template" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="32648385-6b8d-4bc3-af48-91f3977b8b24" />
+        <generalsInternal>
+          <generalization Id="a061b92d-fb78-4e95-ac8e-ef823c0a1a2a" isSubstitutable="false">
+            <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="Manage UI Templates(CREDO)" />
+            <elementDefinition Id="7a505d3f-dc3a-456a-a58f-a8b5b37720c7" />
+          </generalization>
+        </generalsInternal>
+        <subjects>
+          <subsystemMoniker Id="5b0fddd8-9162-417e-abea-8e793515ae9f" LastKnownName="UI Builder" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="6202351e-9509-4236-b696-3c750fd77190" name="Define layout and appearance" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="17212d2c-21f9-43b9-9fc8-e47243f8e457" />
+        <subjects>
+          <subsystemMoniker Id="5b0fddd8-9162-417e-abea-8e793515ae9f" LastKnownName="UI Builder" />
+        </subjects>
+      </useCase>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase Id="b762dd24-7381-4768-b24c-cad9c7614750" name="Perform configuration of data by toggling/entering control values" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="d83ceef8-2fc2-4428-abeb-56113374b0d9" />
+        <targetEnds>
+          <association Id="b296bf15-b901-43b8-92b4-40fd55408603" isDerived="false" sourceEndRoleName="Perform configuration of data by toggling/entering control values" targetEndRoleName="Compute and display consequences" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="9aaa0c85-0b73-411a-90bd-5ed4164eaa5d" LastKnownName="Compute and display consequences" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="08f842dc-5d97-41d4-a123-06a6df259644" name="Perform configuration of data by toggling/entering control values" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="be3324f0-735d-4b07-9578-9019bd629895" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="aa74181e-717e-46ae-a622-fc62a12ff7ac" name="Compute and display consequences" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="f6923727-4c7e-4dc1-8fc5-e2aebdf81394" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="6c9cacad-774f-4906-b568-d4f94c7b6f94" />
+          </association>
+        </targetEnds>
+        <subjects>
+          <subsystemMoniker Id="e744f6d4-54be-4540-a875-f4dd89917137" LastKnownName="Configurator" />
         </subjects>
       </useCase>
     </packageHasNamedElement>

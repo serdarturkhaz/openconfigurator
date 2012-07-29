@@ -1,13 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="23e816ca-a77b-4928-8d06-fff138697a42"
   name="Configurator" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <ownedCommentsInternal>
+    <comment
+      Id="98b13716-2244-4c96-a3cd-ea9bc2d0f7fc">
+      <body>Unselected
+Selected
+Deselected</body>
+      <annotatedElements>
+        <classMoniker
+          Id="a1331b14-f266-47c4-9dff-564b46b8d70c"
+          LastKnownName="FeatureSelection"
+          LastKnownLocation="Package_1609.uml" />
+      </annotatedElements>
+    </comment>
+  </ownedCommentsInternal>
   <packagedElements>
     <packageHasNamedElement>
       <class
         Id="d74fd63b-783c-41b4-bec3-35c7bf3c7b7d"
-        name="Configuration"
+        name="Configuration Instance"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -69,7 +83,7 @@
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
-            name="Based on"
+            name="Data based on"
             isAbstract="false">
             <classMoniker
               Id="6a433e17-2eab-40d9-a334-4c9b9c3fb27c"
@@ -86,11 +100,75 @@
                   isDerivedUnion="false"
                   aggregation="None"
                   isComposite="false"
-                  isNavigableOwned="false" />
+                  isNavigableOwned="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="6e38e57d-8cb3-4113-90c1-80449a4cf252"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="791c9d4a-dea5-4672-9c0f-fa2fa1fd6c2f"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
               </associationHasOwnedEnds>
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="f52ed560-4264-4643-adaa-7453fc5720ee"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="0316bdcd-de5c-4ebc-84af-7ee1e3db7920"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            name="User interface based on"
+            isAbstract="false">
+            <classMoniker
+              Id="b06d9a5c-8d79-4b58-8e56-657500a5e67c"
+              LastKnownName="UI Template"
+              LastKnownLocation="Package_2216.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4effd284-d81b-4eed-b451-871b8655a3fd"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="c33981e9-898a-4444-81ee-e6ff6017ffad"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="04dedd99-090e-477a-afc4-3f04f8dfcf93"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="180fa157-c6cd-481c-88f8-4513a7dc4837"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -131,6 +209,7 @@
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
+            name="Corresponds to"
             isAbstract="false">
             <classMoniker
               Id="d672e971-e6d7-44ad-bc5d-7fd0f4181270"
@@ -374,6 +453,14 @@
             name="Unselected" />
         </ownedLiterals>
       </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="b1883b3a-27a3-4f09-a6d6-65d63ce569c0"
+        name="UI Setup Instance"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
     </packageHasNamedElement>
   </packagedElements>
 </package>
