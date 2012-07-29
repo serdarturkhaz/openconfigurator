@@ -42,7 +42,10 @@ namespace BLL.Services
                     u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && u.Password.Equals(password, StringComparison.InvariantCultureIgnoreCase));
             }
             //
-            return (BLL.BusinessObjects.User)BLL.BusinessObjects.User.FromDataEntity(user);
+            if (user != null)
+                return (BLL.BusinessObjects.User)BLL.BusinessObjects.User.FromDataEntity(user);
+            else
+                return null;
         }
         public BLL.BusinessObjects.User GetByID(int id)
         {

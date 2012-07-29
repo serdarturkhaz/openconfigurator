@@ -1,8 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel"
   dslVersion="1.0.0.0"
   Id="ca2ee2c6-47ef-4107-9922-70067e636121"
   name="Modeller" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <ownedCommentsInternal>
+    <comment
+      Id="1e6613f4-1d91-48ab-8491-dd145d35c919">
+      <body>Mandatory [1...1]
+Optional [0...1]
+Cloneable [0...*]</body>
+      <annotatedElements>
+        <classMoniker
+          Id="9baf16b4-2b12-4a02-ae52-b1875616ac99"
+          LastKnownName="Relation"
+          LastKnownLocation="Package_1512.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="f0c37b0d-9851-4871-9a4c-7d5f2d94fe6f">
+      <body>Dependency
+Mutual Dependency
+Mutual Exclusion</body>
+      <annotatedElements>
+        <classMoniker
+          Id="cfd13f4c-1b58-413a-aaf7-81e40581ec52"
+          LastKnownName="Composition Rule"
+          LastKnownLocation="Package_1512.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="a38993a0-f900-416b-90f3-ed5ff8f29d4d">
+      <body>Or [1...*]
+XOR [1...1]
+Cardinal [*...*]</body>
+      <annotatedElements>
+        <classMoniker
+          Id="873e5a97-73e5-4788-8b77-443dd2b26e14"
+          LastKnownName="Group Relation"
+          LastKnownLocation="Package_1512.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="64850c79-4a2a-415c-942e-6f0994572619">
+      <body>Computation
+Constraint
+Consequence</body>
+      <annotatedElements>
+        <classMoniker
+          Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
+          LastKnownName="Custom Rule"
+          LastKnownLocation="Package_1512.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="61f6db02-56e7-4056-afcc-78072876fd3a">
+      <body>Global: 
+  FeatureSelection  toggled event
+  AttributeValue  modified event
+
+Custom:
+  User defined</body>
+      <annotatedElements>
+        <classMoniker
+          Id="328d88d3-67b1-41c7-9443-4add8a52b9d2"
+          LastKnownName="Model Event"
+          LastKnownLocation="Package_1512.uml" />
+      </annotatedElements>
+    </comment>
+  </ownedCommentsInternal>
   <packagedElements>
     <packageHasNamedElement>
       <class
@@ -26,7 +91,7 @@
             sourceEndRoleName=""
             targetEndRoleName=""
             isLeaf="false"
-            name="Described by"
+            name="Has"
             isAbstract="false">
             <classMoniker
               Id="d672e971-e6d7-44ad-bc5d-7fd0f4181270"
@@ -135,6 +200,17 @@
           <property
             Id="08ce6c8e-ac1b-4c6a-8b54-9a0a32e26422"
             name="FeatureType"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="2afdaf03-c8d8-4668-abbd-b87337ea879c"
+            name="DefaultState"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -292,6 +368,17 @@
             isDerivedUnion="false"
             aggregation="None"
             isComposite="false" />
+          <property
+            Id="ae3a9b74-7464-473d-bcc1-9b7589b34dc1"
+            name="DefaultValue"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
         </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
@@ -317,7 +404,7 @@
     <packageHasNamedElement>
       <class
         Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
-        name="Complex Rule"
+        name="Custom Rule"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -360,6 +447,44 @@
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="49a30e7d-defd-4ef2-aa5f-dfabc78ccd85"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            name="Bound to"
+            isAbstract="false">
+            <classMoniker
+              Id="328d88d3-67b1-41c7-9443-4add8a52b9d2"
+              LastKnownName="Model Event"
+              LastKnownLocation="Package_1512.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="f9ab8ce3-e27c-4819-9bc5-8201240c2926"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6922d51f-214d-49af-a16f-f2119adc7dcc"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
         <ownedAttributesInternal>
           <property
@@ -387,6 +512,17 @@
           <property
             Id="c948b66e-a291-49ae-ac62-aa55fd2cd3de"
             name="Type"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="74ccc14d-4b46-44ce-b419-95f6796153bd"
+            name="Priority"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -616,7 +752,7 @@
             isAbstract="false">
             <classMoniker
               Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
-              LastKnownName="Complex Rule"
+              LastKnownName="Custom Rule"
               LastKnownLocation="Package_1512.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -650,6 +786,56 @@
                   <upperValueInternal>
                     <literalString
                       Id="2dbe5965-f11b-4829-8fb1-300e1df3ba14"
+                      name="Upper"
+                      value=".*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="1d78d598-c7fd-4a15-8c54-7857f1a36b2c"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="328d88d3-67b1-41c7-9443-4add8a52b9d2"
+              LastKnownName="Model Event"
+              LastKnownLocation="Package_1512.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="a6db4b20-ba8a-4faf-a139-2b31f1f74110"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="3240eb66-6908-4ba6-9085-25fcf48e9160"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="00db7343-122c-4c79-b59c-d2f5562c851a"
+                      name="Lower"
+                      value="2" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="4331dead-b19c-4c7e-ac83-2c0095ecabb4"
                       name="Upper"
                       value=".*" />
                   </upperValueInternal>
@@ -1038,6 +1224,14 @@
             name="Constant" />
         </ownedLiterals>
       </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="328d88d3-67b1-41c7-9443-4add8a52b9d2"
+        name="Model Event"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
     </packageHasNamedElement>
   </packagedElements>
 </package>
