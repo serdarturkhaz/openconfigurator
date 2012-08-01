@@ -361,6 +361,12 @@
     <Build Include="Schema Objects\Database Level Objects\Security\Users\opencon_radu1984.user.sql">
       <SubType>Code</SubType>
     </Build>
+    <Build Include="Schema Objects\Database Level Objects\Storage\Files\OpenConfiguratorDEV_1.0.0_log.sqlfile.sql">
+      <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Database Level Objects\Storage\Files\OpenConfiguratorDEV_1.0.0.sqlfile.sql">
+      <SubType>Code</SubType>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <NotInBuild Include="Schema Comparisons\SchemaComparison1.scmp">

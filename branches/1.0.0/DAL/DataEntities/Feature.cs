@@ -71,6 +71,12 @@ namespace DAL.DataEntities
             get;
             set;
         }
+    
+        public virtual string Identifier
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Navigation Properties

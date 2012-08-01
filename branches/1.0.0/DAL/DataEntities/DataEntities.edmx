@@ -123,6 +123,7 @@
           <Property Name="FeatureID" Type="int" Nullable="false" />
           <Property Name="AttributeTypeID" Type="int" Nullable="false" />
           <Property Name="DataTypeID" Type="int" Nullable="false" />
+          <Property Name="Identifier" Type="nvarchar" MaxLength="50" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="ConstantValue" Type="nvarchar" MaxLength="50" />
@@ -171,6 +172,7 @@
           </Key>
           <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="ModelID" Type="int" Nullable="false" />
+          <Property Name="Identifier" Type="nvarchar" MaxLength="50" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="Expression" Type="nvarchar(max)" />
           <Property Name="Description" Type="nvarchar(max)" />
@@ -181,6 +183,7 @@
           </Key>
           <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="ModelID" Type="int" Nullable="false" />
+          <Property Name="Identifier" Type="nvarchar" MaxLength="50" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="IsRoot" Type="bit" />
@@ -647,6 +650,7 @@
           <NavigationProperty Name="Attribute_Type" Relationship="OpenConfigurator_Model.FK_Attributes_Attribute_Types" FromRole="Attribute" ToRole="Attribute_Types" />
           <NavigationProperty Name="AttributeValues" Relationship="OpenConfigurator_Model.FK_AttributeValues_Attributes" FromRole="Attribute" ToRole="AttributeValue" />
           <Property Type="String" Name="ConstantValue" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Identifier" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Feature">
           <Key>
@@ -663,6 +667,7 @@
           <Property Type="Double" Name="XPos" />
           <Property Type="Double" Name="YPos" />
           <NavigationProperty Name="FeatureSelections" Relationship="OpenConfigurator_Model.FK_FeatureSelections_Features" FromRole="Feature" ToRole="FeatureSelection" />
+          <Property Type="String" Name="Identifier" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Model">
           <Key>
@@ -950,6 +955,7 @@
           <Property Type="String" Name="Expression" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Model" Relationship="OpenConfigurator_Model.FK_Rules_Models1" FromRole="CustomRule" ToRole="Model" />
+          <Property Type="String" Name="Identifier" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Rules_Models1">
           <End Type="OpenConfigurator_Model.Model" Role="Model" Multiplicity="1" />
@@ -1092,7 +1098,8 @@
             <ScalarProperty Name="Name" ColumnName="Name" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Attributes"><EntityTypeMapping TypeName="OpenConfigurator_Model.Attribute"><MappingFragment StoreEntitySet="Attributes">
-            <ScalarProperty Name="ConstantValue" ColumnName="ConstantValue" />
+            <ScalarProperty Name="Identifier" ColumnName="Identifier" />
+                <ScalarProperty Name="ConstantValue" ColumnName="ConstantValue" />
                 <ScalarProperty Name="AttributeTypeID" ColumnName="AttributeTypeID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
             <ScalarProperty Name="FeatureID" ColumnName="FeatureID" />
@@ -1101,7 +1108,8 @@
             <ScalarProperty Name="Description" ColumnName="Description" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Features"><EntityTypeMapping TypeName="OpenConfigurator_Model.Feature"><MappingFragment StoreEntitySet="Features">
-            <ScalarProperty Name="YPos" ColumnName="YPos" />
+            <ScalarProperty Name="Identifier" ColumnName="Identifier" />
+                <ScalarProperty Name="YPos" ColumnName="YPos" />
                 <ScalarProperty Name="XPos" ColumnName="XPos" />
                 <ScalarProperty Name="IsRoot" ColumnName="IsRoot" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
@@ -1207,6 +1215,7 @@
           <EntitySetMapping Name="CustomRules">
             <EntityTypeMapping TypeName="OpenConfigurator_Model.CustomRule">
               <MappingFragment StoreEntitySet="CustomRules">
+                <ScalarProperty Name="Identifier" ColumnName="Identifier" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Expression" ColumnName="Expression" />
                 <ScalarProperty Name="Name" ColumnName="Name" />

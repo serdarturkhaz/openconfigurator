@@ -351,6 +351,17 @@ namespace BLL.BusinessObjects
                 _innerEntity.Name = value;
             }
         }
+        public string Identifier
+        {
+            get
+            {
+                return _innerEntity.Identifier;
+            }
+            set
+            {
+                _innerEntity.Identifier = value;
+            }
+        }
         public string Description
         {
             get
@@ -487,6 +498,17 @@ namespace BLL.BusinessObjects
             set
             {
                 _innerEntity.ModelID = value;
+            }
+        }
+        public string Identifier
+        {
+            get
+            {
+                return _innerEntity.Identifier;
+            }
+            set
+            {
+                _innerEntity.Identifier = value;
             }
         }
         public string Name
@@ -1076,6 +1098,17 @@ namespace BLL.BusinessObjects
             }
         }
 
+        public string Identifier
+        {
+            get
+            {
+                return _innerEntity.Identifier;
+            }
+            set
+            {
+                _innerEntity.Identifier = value;
+            }
+        }
         public string Name
         {
             get

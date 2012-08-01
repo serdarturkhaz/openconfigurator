@@ -10,6 +10,7 @@ $.pnotify.defaults.pnotify_closer = true;
 $.pnotify.defaults.pnotify_notice_icon = "pnotifyNoticeIcon";
 $.pnotify.defaults.pnotify_error_icon = "pnotifyErrorIcon";
 $.pnotify.defaults.pnotify_history = false;
+$.pnotify.defaults.pnotify_opacity = 1;
 
 //
 
