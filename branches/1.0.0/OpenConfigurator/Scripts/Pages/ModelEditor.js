@@ -1939,11 +1939,16 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                     displayTitle: false,
                     tableLayout: true,
                     fields: {
-                        rootFeature: {
+                        /*rootFeature: {
                             label: "Root Feature",
                             dataName: "IsRoot",
                             controlType: Controls.Checkbox,
                             disabled: true
+                        },*/ //Commented out, not necessary for now
+                        identifier: {
+                            label: "Identifier",
+                            dataName: "Identifier",
+                            controlType: Controls.Textbox
                         },
                         name: {
                             label: "Name",
@@ -1969,6 +1974,11 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             parentClientRefField: "Feature",
                             controlType: Controls.CompositeList,
                             subFields: {
+                                identifier: {
+                                    label: "Identifier",
+                                    dataName: "Identifier",
+                                    controlType: Controls.Textbox
+                                },
                                 name: {
                                     label: "Name",
                                     dataName: "Name",
@@ -2250,6 +2260,11 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                     displayTitle: false,
                     tableLayout: true,
                     fields: {
+                        identifier: {
+                            label: "Identifier",
+                            dataName: "Identifier",
+                            controlType: Controls.Textbox
+                        },
                         name: {
                             label: "Name",
                             dataName: "Name",
