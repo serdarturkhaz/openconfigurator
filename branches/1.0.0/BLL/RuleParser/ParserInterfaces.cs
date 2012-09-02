@@ -93,6 +93,24 @@ namespace BLL.RuleParser
 
         public abstract IEvalResult SingleEvalStronglyTyped(TLeftSide leftSide, TRightSide rightSide);
     }
+    public abstract class SingleValueResultIntParserStatement : SingleValueResultParserStatement
+    {
+        public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
+        {
+            int left, right;
+            var leftString = leftSide.GetGenericReturnValue().ToString();
+            var rightString = rightSide.GetGenericReturnValue().ToString();
+
+            if (int.TryParse(leftString, out left) && int.TryParse(rightString, out right))
+            {
+                return SingleEvalInt(left, right);
+            }
+            // else
+            throw new SyntaxIncorrectException();
+        }
+
+        public abstract IEvalResult SingleEvalInt(int leftSide, int rightSide);
+    }
 
     public interface IEvalResult : ICloneable
     {
