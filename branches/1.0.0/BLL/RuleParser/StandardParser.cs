@@ -35,6 +35,7 @@ namespace BLL.RuleParser
                 return new List<Type>()
                 {
                     typeof(Manipulation),
+                    typeof(Operations),
                     typeof(Comparisons), // JAH: add Comparisons, use OutcomeResult ot return the value of the rule
                     typeof(Functions),
                     typeof(Primitives),
@@ -163,6 +164,98 @@ namespace BLL.RuleParser
                     }
                 }
             }
+            public static class Operations
+            {
+                //Methods
+                public static List<Type> GetStatementTypes()
+                {
+                    return new List<Type>()
+                    {
+                        typeof(Power),
+                        typeof(Multiplication),
+                        typeof(Division),
+                        typeof(Addition),
+                        typeof(Substraction),
+                    };
+                }
+
+                //StatementTypes
+                public class Power : SingleValueResultIntParserStatement
+                {
+                    public static string IdentifyRegex = @"^.+\^.+$";
+                    public static string SplitRegex = @"\^";
+
+                    public override IEvalResult SingleEvalInt(int leftSide, int rightSide)
+                    {
+                        return new NumberResult((int)Math.Pow(leftSide, rightSide));
+                    }
+                }
+                public class Multiplication : SingleValueResultParserStatement
+                {
+                    public static string IdentifyRegex = @"^.+\*.+$";
+                    public static string SplitRegex = @"\*";
+
+                    public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
+                    {
+                        var leftString = leftSide.GetGenericReturnValue().ToString();
+                        int left = Convert.ToInt32(leftString);
+
+                        var rightString = rightSide.GetGenericReturnValue().ToString();
+                        int right = Convert.ToInt32(rightString);
+
+                        return new NumberResult(left * right);
+                    }
+                }
+                public class Division : SingleValueResultParserStatement
+                {
+                    public static string IdentifyRegex = @"^.+/.+$";
+                    public static string SplitRegex = @"/";
+
+                    public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
+                    {
+                        var leftString = leftSide.GetGenericReturnValue().ToString();
+                        int left = Convert.ToInt32(leftString);
+
+                        var rightString = rightSide.GetGenericReturnValue().ToString();
+                        int right = Convert.ToInt32(rightString);
+
+                        return new NumberResult(left / right);
+                    }
+                }
+
+                public class Addition : SingleValueResultParserStatement
+                {
+                    public static string IdentifyRegex = @"^.+\+.+$";
+                    public static string SplitRegex = @"\+";
+
+                    public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
+                    {
+                        var leftString = leftSide.GetGenericReturnValue().ToString();
+                        int left = Convert.ToInt32(leftString);
+
+                        var rightString = rightSide.GetGenericReturnValue().ToString();
+                        int right = Convert.ToInt32(rightString);
+
+                        return new NumberResult(left + right);
+                    }
+                }
+                public class Substraction : SingleValueResultParserStatement
+                {
+                    public static string IdentifyRegex = @"^.+-.*$";
+                    public static string SplitRegex = @"-";
+
+                    public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
+                    {
+                        var leftString = leftSide.GetGenericReturnValue().ToString();
+                        int left = Convert.ToInt32(leftString);
+
+                        var rightString = rightSide.GetGenericReturnValue().ToString();
+                        int right = Convert.ToInt32(rightString);
+
+                        return new NumberResult(left - right);
+                    }
+                }
+            }
             public static class Comparisons
             {
                 //Methods
@@ -211,56 +304,105 @@ namespace BLL.RuleParser
                         return new IEvalResult[] { retVal };
                     }
                 }
-                public class UnequalsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                //public class UnequalsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                public class UnequalsComparison : SingleValueResultParserStatement
                 {
                     public static string IdentifyRegex = @"^.+!=.+$";
                     public static string SplitRegex = @"!=";
 
-                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    //public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    //{
+                    //    OutcomeResult retVal = new OutcomeResult(false);
+
+                    //    retVal.SetValue(leftSide.GetNumber() != rightSide.GetNumber());
+
+                    //    return retVal;
+                    //}
+
+                    public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
                     {
-                        OutcomeResult retVal = new OutcomeResult(false);
+                        var leftString = leftSide.GetGenericReturnValue().ToString();
+                        int left = Convert.ToInt32(leftString);
 
-                        retVal.SetValue(leftSide.GetNumber() != rightSide.GetNumber());
+                        var rightString = rightSide.GetGenericReturnValue().ToString();
+                        int right = Convert.ToInt32(rightString);
 
-                        return retVal;
+                        return new OutcomeResult(left != right);
                     }
                 }
                 
-                public class GreaterEqualsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                //public class GreaterEqualsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                public class GreaterEqualsComparison : SingleValueResultParserStatement
                 {
                     public static string IdentifyRegex = @"^.+>=.+$";
                     public static string SplitRegex = @">=";
 
-                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    //public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    //{
+                    //    OutcomeResult retVal = new OutcomeResult(false);
+
+                    //    retVal.SetValue(leftSide.GetNumber() >= rightSide.GetNumber());
+
+                    //    return retVal;
+                    //}
+
+                    public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
                     {
-                        OutcomeResult retVal = new OutcomeResult(false);
+                        var leftString = leftSide.GetGenericReturnValue().ToString();
+                        int left = Convert.ToInt32(leftString);
 
-                        retVal.SetValue(leftSide.GetNumber() >= rightSide.GetNumber());
+                        var rightString = rightSide.GetGenericReturnValue().ToString();
+                        int right = Convert.ToInt32(rightString);
 
-                        return retVal;
+                        return new OutcomeResult(left >= right);
                     }
                 }
-                public class GreaterComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                //public class GreaterComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                public class GreaterComparison : SingleValueResultParserStatement
                 {
                     public static string IdentifyRegex = @"^.+>[^=].*$";
                     public static string SplitRegex = @">";
 
-                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    //public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    //{
+                    //    return new OutcomeResult(leftSide.GetNumber() > rightSide.GetNumber());
+                    //}
+
+                    public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
                     {
-                        return new OutcomeResult(leftSide.GetNumber() > rightSide.GetNumber());
+                        var leftString = leftSide.GetGenericReturnValue().ToString();
+                        int left = Convert.ToInt32(leftString);
+
+                        var rightString = rightSide.GetGenericReturnValue().ToString();
+                        int right = Convert.ToInt32(rightString);
+
+                        return new OutcomeResult(left > right);
                     }
                 }
-                public class SmallerEqualsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                //public class SmallerEqualsComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                public class SmallerEqualsComparison : SingleValueResultParserStatement
                 {
                     public static string IdentifyRegex = @"^.+<=.+$";
                     public static string SplitRegex = @"<=";
 
-                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    //public override IEvalResult SingleEvalStronglyTyped(IEvalResult leftSide, IEvalResult rightSide)
+                    //{
+                    //    return new OutcomeResult(leftSide.GetNumber() <= rightSide.GetNumber());
+                    //}
+
+                    public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
                     {
-                        return new OutcomeResult(leftSide.GetNumber() <= rightSide.GetNumber());
+                        var leftString = leftSide.GetGenericReturnValue().ToString();
+                        int left = Convert.ToInt32(leftString);
+
+                        var rightString = rightSide.GetGenericReturnValue().ToString();
+                        int right = Convert.ToInt32(rightString);
+
+                        return new OutcomeResult(left <= right);
                     }
                 }
-                public class SmallerComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                //public class SmallerComparison : SingleStronglyTypedValueResultParserStatement<NumberResult, NumberResult>
+                public class SmallerComparison : SingleValueResultParserStatement
                 {
                     //public static bool Identify(string command)
                     //{
@@ -270,9 +412,20 @@ namespace BLL.RuleParser
                     public static string IdentifyRegex = @"^.+<[^=].*$";
                     public static string SplitRegex = @"<";
 
-                    public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    //public override IEvalResult SingleEvalStronglyTyped(NumberResult leftSide, NumberResult rightSide)
+                    //{
+                    //    return new OutcomeResult(leftSide.GetNumber() < rightSide.GetNumber());
+                    //}
+
+                    public override IEvalResult SingleEval(IEvalResult leftSide, IEvalResult rightSide)
                     {
-                        return new OutcomeResult(leftSide.GetNumber() < rightSide.GetNumber());
+                        var leftString = leftSide.GetGenericReturnValue().ToString();
+                        int left = Convert.ToInt32(leftString);
+
+                        var rightString = rightSide.GetGenericReturnValue().ToString();
+                        int right = Convert.ToInt32(rightString);
+
+                        return new OutcomeResult(left < right);
                     }
                 }
             }
