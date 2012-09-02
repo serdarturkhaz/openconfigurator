@@ -81,7 +81,8 @@ var UIObjectStyles = {
             box: {
                 dimensions: {
                     width: 90,
-                    height: 26
+                    height: 26,
+                    maxWidth: 150
                 }
             },
             text: {
@@ -580,7 +581,7 @@ var systemDefaults = {
         }
     }
 }
-var buttonState = {
+var innerState = {
     ready: 0,
     dragging: 1,
     inlineEdit: 2,
@@ -1306,11 +1307,11 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
         $.timer(300, function () {
 
             //Instantiate/Initialize controls
-            _diagramContext = new DiagramContext($("#SVGCanvas")[0], _diagramDataModel);
+            _diagramContext = new DiagramContext(diagramContainer, _diagramDataModel);
             _diagramContext.Initialize();
-            _propertiesComponent = new PropertiesComponent($("#PropertiesBox"), _diagramDataModel);
+            _propertiesComponent = new PropertiesComponent(propertiesContainer, _diagramDataModel);
             _propertiesComponent.Initialize();
-            _modelExplorer = new ModelExplorer($("#ModelExplorerTree"), _diagramDataModel);
+            _modelExplorer = new ModelExplorer(explorerContainer, _diagramDataModel);
             _modelExplorer.Initialize();
 
             //Modelexplorer eventhandlers
@@ -1338,27 +1339,37 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
             _diagramDataModel.ClientObjectDeleted.Add(new EventHandler(_propertiesComponent.OnClientObjectDeleted));
 
             // Button change handlers
-            _diagramContext.ButtonsModeChange.Add(new EventHandler(function (mode) {
+            _diagramContext.InnerModeChange.Add(new EventHandler(function (mode) {
                 // Reset states
                 $("#NewRelationButton").removeClass('Button-Normal-Focus');
                 $("#NewGroupRelationButton").removeClass('Button-Normal-Focus');
                 $("#NewCompositionRuleButton").removeClass('Button-Normal-Focus');
                 $("#SVGCanvas").css("cursor", "auto");
                 switch (mode) {
-                    case buttonState.featureLock:
+                    case innerState.featureLock:
                         $("#SVGCanvas").css("cursor", "crosshair");
                         break;
-                    case buttonState.relationLock:
+                    case innerState.relationLock:
+                        $("#SVGCanvas").css("cursor", "crosshair");
                         $("#NewRelationButton").addClass('Button-Normal-Focus');
                         break;
-                    case buttonState.groupRelationLock:
+                    case innerState.groupRelationLock:
+                        $("#SVGCanvas").css("cursor", "crosshair");
                         $("#NewGroupRelationButton").addClass('Button-Normal-Focus');
                         break;
-                    case buttonState.compositionRuleLock:
+                    case innerState.compositionRuleLock:
+                        $("#SVGCanvas").css("cursor", "crosshair");
                         $("#NewCompositionRuleButton").addClass('Button-Normal-Focus');
                         break;
                 }
             }));
+
+            // Key handlers
+            $("body").bind("keyup", function (e) {
+                if (e.which === 27) {
+                    _diagramContext.ResetInnerState();
+                }
+            });
 
             //Focus handlers
             _diagramContext.Focus.Add(new EventHandler(function () {
@@ -2681,7 +2692,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var _diagramDataModel = diagramDataModelInstance;
     var _canvas = null, _canvasContainer = canvasContainer;
     var _selectedElements = new Array();
-    var _buttonMode = buttonState.ready;
+    var _innerMode = innerState.ready;
     var _scaleModifier = 1.00, _fixedOrientation = "vertical"; //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
     var _UIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
     var _thisDiagramContext = this;
@@ -2692,7 +2703,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         compositionRule: true
     }
     // Keeps the generated events references
-    var _wireframebox = null;
+    var _wireframebox = null, _bulletWireframe = null;
     var _mousemoveHandler = null;
     var _clickHandler = null;
     var _hoverElement = null;
@@ -2714,6 +2725,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var _screenPos = {
             x: absoluteX * _scaleModifier, y: absoluteY * _scaleModifier
         }
+        var _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width, _originalBoxHeight = UIObjectStyles.feature.general.box.dimensions.height;
         var _boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier, _boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
         var _relatedCompositeElements = [];
         var _thisUIFeature = this;
@@ -2737,15 +2749,15 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Selectable
             _outerElement.click(function (e) {
-                if (_buttonMode == buttonState.relationLock) {
+                if (_innerMode == innerState.relationLock) {
                     toggleElementSelect(_thisUIFeature, true, true);
                     createRelation();
                 }
-                else if (_buttonMode == buttonState.groupRelationLock) {
+                else if (_innerMode == innerState.groupRelationLock) {
                     //                    toggleElementSelect(_thisUIFeature, true, true);
                     //                    createGroupRelation();
                 }
-                else if (_buttonMode == buttonState.compositionRuleLock) {
+                else if (_innerMode == innerState.compositionRuleLock) {
                     toggleElementSelect(_thisUIFeature, true, true);
                     createCompositionRule();
                 }
@@ -2757,10 +2769,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Hoverable
             _outerElement.mouseover(function (e) {
-                if (_buttonMode != buttonState.dragging) {
-                    if (_buttonMode == buttonState.relationLock ||
-                        _buttonMode == buttonState.groupRelationLock ||
-                        _buttonMode == buttonState.compositionRuleLock) {
+                if (_innerMode != innerState.dragging) {
+                    if (_innerMode == innerState.relationLock ||
+                        _innerMode == innerState.groupRelationLock ||
+                        _innerMode == innerState.compositionRuleLock) {
                         _hoverElement = _thisUIFeature;
                     }
 
@@ -2770,15 +2782,15 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     }
                 }
             }).mouseout(function (e) {
-                if (_buttonMode != buttonState.dragging) {
-                    if ((_buttonMode == buttonState.relationLock ||
-                        _buttonMode == buttonState.groupRelationLock ||
-                        _buttonMode == buttonState.compositionRuleLock) &&
+                if (_innerMode != innerState.dragging) {
+                    if ((_innerMode == innerState.relationLock ||
+                        _innerMode == innerState.groupRelationLock ||
+                        _innerMode == innerState.compositionRuleLock) &&
                         _hoverElement == _thisUIFeature) {
                         _hoverElement = null;
                     }
 
-                    if (_buttonMode != buttonState.dragging) {
+                    if (_innerMode != innerState.dragging) {
                         if (_glow != null) {
                             _glow.remove();
                             _glow = null;
@@ -2793,8 +2805,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Drag and droppable
             var start = function () {
-                // When in create-relation mode, do not drag and drop
-                if (_buttonMode != buttonState.ready && _buttonMode != buttonState.dragging)
+                // When in another mode, do not drag and drop
+                if (_innerMode != innerState.ready && _innerMode != innerState.dragging)
                     return;
 
                 _outerElement.originalx = _outerElement.attr("x");
@@ -2808,12 +2820,12 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             };
             move = function (dx, dy) {
                 // When in create-relation mode, do not drag and drop
-                if (_buttonMode != buttonState.ready && _buttonMode != buttonState.dragging)
+                if (_innerMode != innerState.ready && _innerMode != innerState.dragging)
                     return;
 
                 //Variables
                 wasMoved = true;
-                _buttonMode = buttonState.dragging;
+                _innerMode = innerState.dragging;
                 if (_glow != null) {
                     _glow.remove();
                     _glow = null;
@@ -2840,12 +2852,12 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 }
             };
             up = function () {
-                if (_buttonMode != buttonState.dragging)
+                if (_innerMode != innerState.dragging)
                     return;
 
                 if (wasMoved == true) {
                     //Variables
-                    resetModeButtons();
+                    resetInnerMode();
 
                     //Update X and Y variables
                     internalUIFeatureMoved.RaiseEvent(_thisUIFeature);
@@ -2857,6 +2869,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                         }
                     }
 
+                    // _thisUIFeature.RefreshGraphicalRepresentation();
                     wasMoved = false;
                 }
             };
@@ -2864,7 +2877,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
         var makeEditable = function () {
             _outerElement.dblclick(function (e) {
-                _buttonMode = buttonState.inlineEdit;
+                _innerMode = innerState.inlineEdit;
                 var bb1 = this.getBBox();
                 var textinput = $("<input class='Inputbox' type='text' />").prependTo("#SVGCanvasWrapper").css({
                     position: "relative",
@@ -2879,28 +2892,29 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     //
                     var newName = $(this).val();
                     $(this).remove();
-                    resetModeButtons();
+                    resetInnerMode();
 
                     //Update dataModel
                     _diagramDataModel.UpdateClientObjectFields(_thisUIFeature.GUID, ["Name"], [newName]);
+                    _thisUIFeature.RefreshGraphicalRepresentation();
                 }).bind("keypress", function (e) {
                     if (e.which == 13) { //Enter
                         //
                         var newName = $(this).val();
                         $(this).remove();
-                        resetModeButtons();
+                        resetInnerMode();
 
                         //Update dataModel
                         _diagramDataModel.UpdateClientObjectFields(_thisUIFeature.GUID, ["Name"], [newName]);
-                        // _boxWidth = _innerElements.text.clientWidth;
+                        _thisUIFeature.RefreshGraphicalRepresentation();
                     }
                     else if (e.which == 27) { //Escape
                         $(this).remove();
-                        resetModeButtons();
+                        resetInnerMode();
                     }
                 }).bind("blur", function (e) {
                     $(this).remove();
-                    resetModeButtons();
+                    resetInnerMode();
                 });
                 $(textinput).val(_name).select();
 
@@ -2909,6 +2923,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             });
         }
         var refresh = function () {
+
             //
             _innerElements.box.attr({
                 x: _screenPos.x,
@@ -2931,6 +2946,19 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
             });
         }
+        var calculateVisibleText = function () {
+            var textBBox = _innerElements.text.getBBox();
+            if (textBBox.width > UIObjectStyles.feature.general.box.dimensions.maxWidth) {
+                var txt = _name;
+                while (textBBox.width > UIObjectStyles.feature.general.box.dimensions.maxWidth) {
+                    txt = txt.replace(/\s*[a-z0-9]+(\.\.\.)?\s*$/gi, "...");
+                    _innerElements.text.attr({
+                        text: txt
+                    });
+                    textBBox = _innerElements.text.getBBox();
+                }
+            }
+        }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
@@ -2939,6 +2967,27 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _innerElements.box = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight, 0).attr(UIObjectStyles.feature.states[_currentState].box.attr);
             _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
             _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
+
+            // Fit the textbox
+            var textBBox = _innerElements.text.getBBox();
+            if (textBBox.width > UIObjectStyles.feature.general.box.dimensions.width) {
+                calculateVisibleText();
+
+                textBBox = _innerElements.text.getBBox();
+                _absolutePos.x = textBBox.x;
+                _originalBoxWidth = textBBox.width;
+                _screenPos.x = _absolutePos.x * _scaleModifier;
+                _screenPos.y = _absolutePos.y * _scaleModifier;
+                _boxWidth = _originalBoxWidth * _scaleModifier;
+                _boxHeight = _originalBoxHeight * _scaleModifier;
+
+                _innerElements.box.attr({
+                    x: _screenPos.x,
+                    y: _screenPos.y,
+                    width: _boxWidth,
+                    height: _boxHeight
+                });
+            }
 
             //Create the main outer element
             _outerElement = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight).attr(systemDefaults.common.outerElement.attr);
@@ -2950,13 +2999,29 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
         this.RefreshGraphicalRepresentation = function () {
 
-            //
+            // Fit the textbox
+            var textBBox = _innerElements.text.getBBox();
+            if (textBBox.width > UIObjectStyles.feature.general.box.dimensions.width) {
+                // Check for text truncation
+                calculateVisibleText();
+
+                textBBox = _innerElements.text.getBBox();
+                _absolutePos.x = textBBox.x;
+                _originalBoxWidth = textBBox.width;
+            }
+            else {
+                // Has to fix the x using the old width
+                _absolutePos.x += (_originalBoxWidth - UIObjectStyles.feature.general.box.dimensions.width) / 2;
+                _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width;
+            }
+
+            // Rescale variables
             _screenPos.x = _absolutePos.x * _scaleModifier;
             _screenPos.y = _absolutePos.y * _scaleModifier;
-            _boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier;
-            _boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
+            _boxWidth = _originalBoxWidth * _scaleModifier;
+            _boxHeight = _originalBoxHeight * _scaleModifier;
 
-            //
+            // Refresh the canvas
             refresh();
         }
         this.ReverseCoordinates = function () {
@@ -2976,13 +3041,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _innerElements.box.attr(UIObjectStyles.feature.states[state].box.attr);
         }
         this.Update = function (newName) {
-
-            //Set text
+            // Set new name of feature
             _name = newName;
+
             _innerElements.text.attr({ text: newName });
+            calculateVisibleText();
         }
         this.Delete = function () {
-            if (_buttonMode != buttonState.inlineEdit) {
+            if (_innerMode != innerState.inlineEdit) {
 
                 //Remove Raphael objects
                 _outerElement.remove();
@@ -3034,12 +3100,12 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     toggleElementSelect(_thisUIRelation, e.shiftKey, true);
                 },
                 onMouseOver: function (e) {
-                    if (_buttonMode != buttonState.dragging) {
+                    if (_innerMode != innerState.dragging) {
                         _innerElements.connection.ShowGlow();
                     }
                 },
                 onMouseOut: function (e) {
-                    if (_buttonMode != buttonState.dragging) {
+                    if (_innerMode != innerState.dragging) {
                         _innerElements.connection.HideGlow();
                     }
                 }
@@ -3195,14 +3261,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     toggleElementSelect(_thisUIGroupRelation, e.shiftKey, true);
                 },
                 onMouseOver: function (e) {
-                    if (_buttonMode != buttonState.dragging) {
+                    if (_innerMode != innerState.dragging) {
                         for (var i = 0; i < _innerElements.connections.length; i++) {
                             _innerElements.connections[i].ShowGlow();
                         }
                     }
                 },
                 onMouseOut: function (e) {
-                    if (_buttonMode != buttonState.dragging) {
+                    if (_innerMode != innerState.dragging) {
                         for (var i = 0; i < _innerElements.connections.length; i++) {
                             _innerElements.connections[i].HideGlow();
                         }
@@ -3455,12 +3521,12 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     toggleElementSelect(_thisUICompositionRule, e.shiftKey, true);
                 },
                 onMouseOver: function (e) {
-                    if (_buttonMode != buttonState.dragging) {
+                    if (_innerMode != innerState.dragging) {
                         _innerElements.connection.ShowGlow();
                     }
                 },
                 onMouseOut: function (e) {
-                    if (_buttonMode != buttonState.dragging) {
+                    if (_innerMode != innerState.dragging) {
                         _innerElements.connection.HideGlow();
                     }
                 }
@@ -4132,17 +4198,19 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     };
 
     //Private methods
-    var resetModeButtons = function () {
+    var resetInnerMode = function () {
         if (_clickHandler)
             $(_canvasContainer).unbind("click", _clickHandler);
         if (_mousemoveHandler)
             $(_canvasContainer).unbind("mousemove", _mousemoveHandler);
         if (_wireframebox)
             _wireframebox.remove();
+        if (_bulletWireframe)
+            _bulletWireframe.remove();
 
         _hoverElement = null;
-        _buttonMode = buttonState.ready;
-        _thisDiagramContext.ButtonsModeChange.RaiseEvent(_buttonMode);
+        _innerMode = innerState.ready;
+        _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
     }
     var setElementSelected = function (UIElement) {
         if (UIElement.IsSelected() != true) {
@@ -4192,10 +4260,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         _UIElements[UIElement.GUID] = null;
     }
     var createFeature = function () {
-        if (_buttonMode != buttonState.featureLock) {
-            resetModeButtons();
-            _buttonMode = buttonState.featureLock;
-            _thisDiagramContext.ButtonsModeChange.RaiseEvent(_buttonMode);
+        if (_innerMode != innerState.featureLock) {
+            resetInnerMode();
+            _innerMode = innerState.featureLock;
+            _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
 
             //Create wireframe
             var boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier;
@@ -4204,14 +4272,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Setup mouse move handler
             _mousemoveHandler = function (e) {
-                if (_buttonMode != buttonState.featureLock) {
-                    resetModeButtons();
+                if (_innerMode != innerState.featureLock) {
+                    resetInnerMode();
                     return;
                 }
 
                 //Mouse move
-                var screenPosX = (e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2);
-                var screenPosY = (e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2);
+                var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2);
+                var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2);
                 if (_wireframebox == null) {
                     _wireframebox = _canvas.rect(screenPosX, screenPosY, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
                 }
@@ -4225,8 +4293,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _clickHandler = function (e) {
 
                 //Get the position
-                var absolutePosX = (e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2) / _scaleModifier;
-                var absolutePosY = (e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2) / _scaleModifier;
+                var absolutePosX = (e.pageX - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2) / _scaleModifier;
+                var absolutePosY = (e.pageY - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2) / _scaleModifier;
 
                 //Create a new clientObject in the diagramDataModel
                 var initialValues = {
@@ -4236,7 +4304,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 }
                 var clientFeatureObject = _diagramDataModel.AddNewClientObject("feature", initialValues);
 
-                resetModeButtons();
+                resetInnerMode();
             };
             $(_canvasContainer).bind("click", _clickHandler);
         }
@@ -4254,27 +4322,39 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 ChildFeature: childFeature
             }
             var clientRelationObject = _diagramDataModel.AddNewClientObject("relation", initialValues, initialClientValues);
-            resetModeButtons();
+            resetInnerMode();
         }
         else if (_selectedElements.length < 2) {
-            if (_buttonMode != buttonState.relationLock) {
+            if (_innerMode != innerState.relationLock) {
                 // Lock the relation element and allow the user to drag and drop selections to relation
-                resetModeButtons();
-                _buttonMode = buttonState.relationLock;
-                _thisDiagramContext.ButtonsModeChange.RaiseEvent(_buttonMode);
+                resetInnerMode();
+                _innerMode = innerState.relationLock;
+                _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
 
                 // Drag and drop for the selected element
                 _mousemoveHandler = function (e) {
                     if (_selectedElements.length === 0) {
                         if (_wireframebox)
                             _wireframebox.remove();
+                        if (_bulletWireframe)
+                            _bulletWireframe.remove();
                     }
                     else if (_selectedElements.length === 1) {
                         //Mouse move
-                        var screenPosX = (e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5);
-                        var screenPosY = (e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5);
+                        var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
+                        var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
                         if (_wireframebox)
                             _wireframebox.remove();
+                        if (_bulletWireframe)
+                            _bulletWireframe.remove();
+
+                        var style = (function getStyle() {
+                            var commonStyle = commonStyles.connection.states.unselected;
+                            var generalStyle = UIObjectStyles.relation.general.connection;
+                            var subTypeStyle = UIObjectStyles.relation.subTypes.mandatory.connection;
+                            var currentStyle = $.extend(true, {}, commonStyle, generalStyle, subTypeStyle);
+                            return currentStyle;
+                        })();
 
                         if (_hoverElement !== null && _selectedElements[0] !== _hoverElement)
                             _currentPath = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _hoverElement.InnerElements.box);
@@ -4282,6 +4362,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                             _currentPath = getPathFromFeatureToPoint(_selectedElements[0].InnerElements.box, screenPosX, screenPosY);
 
                         _wireframebox = _canvas.path(_currentPath.path);
+                        _wireframebox.attr(style.line.attr);
+
+                        var rct = style.connectors.endConnector;
+                        var scaledDimensions = $.extend(true, {}, rct.dimensions);
+                        for (var dimensionKey in scaledDimensions) {
+                            var originalValue = scaledDimensions[dimensionKey];
+                            scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+                        }
+                        var xPos = _currentPath.endPoint.x - rct.dimensionModifier * _scaleModifier, yPos = _currentPath.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
+                        _bulletWireframe = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                        _bulletWireframe.attr(rct.attr);
                     }
                 };
 
@@ -4289,21 +4380,21 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
                 _clickHandler = function (e) {
                     if (_selectedElements.length === 0) {
-                        resetModeButtons();
+                        resetInnerMode();
                     }
                 };
                 $(_canvasContainer).bind("click", _clickHandler);
             }
         }
         else {
-            resetModeButtons();
+            resetInnerMode();
         }
     }
     var createGroupRelation = function () {
         if (_selectedElements.length > 2) {
-            resetModeButtons();
-            _buttonMode = buttonState.groupRelationLock;
-            _thisDiagramContext.ButtonsModeChange.RaiseEvent(_buttonMode);
+            resetInnerMode();
+            _innerMode = innerState.groupRelationLock;
+            _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
             //Create a new clientObject in the diagramDataModel
             var parentFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
             var childFeatures = [];
@@ -4319,17 +4410,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 ChildFeatures: childFeatures
             }
             var clientGroupRelationObject = _diagramDataModel.AddNewClientObject("groupRelation", initialValues, initialClientValues);
-            resetModeButtons();
+            resetInnerMode();
         }
         else {
-            resetModeButtons();
+            resetInnerMode();
         }
     }
     var createCompositionRule = function () {
         if (_selectedElements.length == 2) {
-            resetModeButtons();
-            _buttonMode = buttonState.compositionRuleLock;
-            _thisDiagramContext.ButtonsModeChange.RaiseEvent(_buttonMode);
+            resetInnerMode();
+            _innerMode = innerState.compositionRuleLock;
+            _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
             //Create a new clientObject in the diagramDataModel
             var firstFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
             var secondFeature = _diagramDataModel.GetByGUID(_selectedElements[1].GUID);
@@ -4341,33 +4432,58 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 SecondFeature: secondFeature
             }
             var clientRelationObject = _diagramDataModel.AddNewClientObject("compositionRule", initialValues, initialClientValues);
-            resetModeButtons();
+            resetInnerMode();
         }
         else if (_selectedElements.length < 2) {
-            if (_buttonMode != buttonState.compositionRuleLock) {
+            if (_innerMode != innerState.compositionRuleLock) {
                 // Lock the composition element and allow the user to drag and drop selections to relation
-                resetModeButtons();
-                _buttonMode = buttonState.compositionRuleLock;
-                _thisDiagramContext.ButtonsModeChange.RaiseEvent(_buttonMode);
+                resetInnerMode();
+                _innerMode = innerState.compositionRuleLock;
+                _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
 
                 // Drag and drop for the selected element
                 _mousemoveHandler = function (e) {
                     if (_selectedElements.length === 0) {
                         if (_wireframebox)
                             _wireframebox.remove();
+                        if (_bulletWireframe)
+                            _bulletWireframe.remove();
                     }
                     else if (_selectedElements.length === 1) {
                         //Mouse move
-                        var screenPosX = (e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5);
-                        var screenPosY = (e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5);
+                        var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
+                        var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
+
                         if (_wireframebox)
                             _wireframebox.remove();
+                        if (_bulletWireframe)
+                            _bulletWireframe.remove();
+
+                        var style = (function getStyle() {
+                            var commonStyle = commonStyles.connection.states.unselected;
+                            var generalStyle = UIObjectStyles.compositionRule.general.connection;
+                            var subTypeStyle = UIObjectStyles.compositionRule.subTypes.dependency.connection;
+                            var currentStyle = $.extend(true, {}, commonStyle, generalStyle, subTypeStyle);
+                            return currentStyle;
+                        })();
 
                         if (_hoverElement !== null && _selectedElements[0] !== _hoverElement)
                             _currentPath = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _hoverElement.InnerElements.box);
                         else
                             _currentPath = getPathFromFeatureToPoint(_selectedElements[0].InnerElements.box, screenPosX, screenPosY);
+
                         _wireframebox = _canvas.path(_currentPath.path);
+                        _wireframebox.attr(style.line.attr);
+
+                        var rct = style.connectors.endConnector;
+                        var scaledDimensions = $.extend(true, {}, rct.dimensions);
+                        for (var dimensionKey in scaledDimensions) {
+                            var originalValue = scaledDimensions[dimensionKey];
+                            scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+                        }
+                        var xPos = _currentPath.endPoint.x - rct.dimensionModifier * _scaleModifier, yPos = _currentPath.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
+                        _bulletWireframe = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                        _bulletWireframe.attr(rct.attr);
                     }
                 };
 
@@ -4375,14 +4491,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
                 _clickHandler = function (e) {
                     if (_selectedElements.length === 0) {
-                        resetModeButtons();
+                        resetInnerMode();
                     }
                 };
                 $(_canvasContainer).bind("click", _clickHandler);
             }
         }
         else {
-            resetModeButtons();
+            resetInnerMode();
         }
     }
 
@@ -4500,7 +4616,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
     //Public methods (triggered by ModelController)
     this.DeleteSelectedElements = function () {
-        if (_buttonMode != buttonState.inlineEdit) {
+        if (_innerMode != innerState.inlineEdit) {
             var elementsToBeDeleted = _selectedElements.slice(0);
             for (var i = 0; i < elementsToBeDeleted.length; i++) {
                 _diagramDataModel.DeleteClientObject(elementsToBeDeleted[i].GUID);
@@ -4627,15 +4743,18 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 UIElement.RefreshGraphicalRepresentation();
         }
     }
-    this.GetButtonState = function () {
-        return _buttonMode;
+    this.ResetInnerState = function () {
+        resetInnerMode();
+    }
+    this.GetInnerState = function () {
+        return _innerMode;
     }
 
     //Events
     this.ElementSelectToggled = new Event();
     this.SelectionCleared = new Event();
     this.Focus = new Event();
-    this.ButtonsModeChange = new Event();
+    this.InnerModeChange = new Event();
 
     // Private events
     var internalUIElementCascadedDelete = new Event();
