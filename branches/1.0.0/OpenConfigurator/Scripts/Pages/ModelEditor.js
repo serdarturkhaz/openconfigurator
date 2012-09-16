@@ -81,7 +81,8 @@ var UIObjectStyles = {
                 dimensions: {
                     width: 90,
                     height: 26,
-                    maxWidth: 150
+                    maxWidth: 150,
+                    paddingLeftRight: 10
                 }
             },
             text: {
@@ -1435,9 +1436,7 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
 
             // Key handlers
             $("body").bind("keyup", function (e) {
-                if (e.which === 27) {
-                    _diagramContext.ResetInnerState();
-                }
+                _diagramContext.OnKeyUp(e);
             });
 
             //Focus handlers
@@ -2549,8 +2548,8 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
             _thisModelExplorer.SelectionCleared.RaiseEvent();
         }
     }
-    var toggleElementSelect = function (node, shift, raiseEvents) {
-        if (shift != true) {
+    var toggleElementSelect = function (node, ctrl, raiseEvents) {
+        if (ctrl != true) {
             clearSelection();
         }
 
@@ -2568,7 +2567,7 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
         //Raise events
         if (raiseEvents == true) {
             var guid = $(node).getNodeDataID();
-            _thisModelExplorer.ElementSelectToggled.RaiseEvent([guid, shift, newState]);
+            _thisModelExplorer.ElementSelectToggled.RaiseEvent([guid, ctrl, newState]);
         }
     }
     var addNewElement = function (guid) {
@@ -2643,8 +2642,8 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                     selectable: true
                 }
             },
-            onNodeClicked: function (node, shift) {
-                toggleElementSelect(node, shift, true);
+            onNodeClicked: function (node, ctrl) {
+                toggleElementSelect(node, ctrl, true);
             }
         }
         _tree = $(container).simpleTree(options);
@@ -2746,10 +2745,10 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
     this.OnClientObjectDeleted = function (guid) {
         deleteElement(guid);
     }
-    this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
+    this.OnRelatedViewElementSelectToggled = function (guid, ctrl, newState) {
         var node = $(_tree).getNode(guid);
         if (node != null) {
-            toggleElementSelect(node, shift);
+            toggleElementSelect(node, ctrl);
         }
     }
     this.OnRelatedViewSelectionCleared = function () {
@@ -2774,7 +2773,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     }
 
     //Keeps the generated events references
-    var _wireframebox = null, _bulletWireframe = null;
+    var _wireframeboxes = [];
     var _mousemoveHandler = null;
     var _clickHandler = null;
     var _hoverElement = null;
@@ -2799,7 +2798,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width, _originalBoxHeight = UIObjectStyles.feature.general.box.dimensions.height;
         var _boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier, _boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
         var _relatedCompositeElements = [];
+        var _attributeElements = [];
         var _thisUIFeature = this;
+        var _wLetterWidthNumber = 0;
+        var _lettersCalculatedForTitle = 0;
 
         //Properties
         this.GUID = clientObjectGUID;
@@ -2814,6 +2816,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
         this.InnerElements = _innerElements;
         this.RelatedCompositeElements = _relatedCompositeElements;
+        this.AttributeElements = _attributeElements;
 
         //Private methods
         var makeSelectable = function () {
@@ -2824,16 +2827,16 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     toggleElementSelect(_thisUIFeature, true, true);
                     createRelation();
                 }
-                else if (_innerMode == innerState.groupRelationLock) {
-                    //                    toggleElementSelect(_thisUIFeature, true, true);
-                    //                    createGroupRelation();
+                else if (_innerMode == innerState.groupRelationLock && e.ctrlKey) {
+                    toggleElementSelect(_thisUIFeature, true, true);
+                    createGroupRelation(true);
                 }
                 else if (_innerMode == innerState.compositionRuleLock) {
                     toggleElementSelect(_thisUIFeature, true, true);
                     createCompositionRule();
                 }
                 else {
-                    toggleElementSelect(_thisUIFeature, e.shiftKey, true);
+                    toggleElementSelect(_thisUIFeature, e.ctrlKey, true);
                 }
 
             });
@@ -3018,10 +3021,11 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             });
         }
         var calculateVisibleText = function () {
+            var scaledWidth = UIObjectStyles.feature.general.box.dimensions.maxWidth * _scaleModifier;
             var textBBox = _innerElements.text.getBBox();
-            if (textBBox.width > UIObjectStyles.feature.general.box.dimensions.maxWidth) {
+            if (textBBox.width > scaledWidth) {
                 var txt = _name;
-                while (textBBox.width > UIObjectStyles.feature.general.box.dimensions.maxWidth) {
+                while (textBBox.width > scaledWidth) {
                     txt = txt.replace(/\s*[a-z0-9]+(\.\.\.)?\s*$/gi, "...");
                     _innerElements.text.attr({
                         text: txt
@@ -3029,6 +3033,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     textBBox = _innerElements.text.getBBox();
                 }
             }
+        }
+        var calculateCharactersForWidth = function () {
+            // Create a 'w' text and get the width if has not been calculated before
+            if (_wLetterWidthNumber == 0) {
+
+            }
+
+            _lettersCalculatedForTitle = Math.floor((UIObjectStyles.feature.general.box.dimensions.width - UIObjectStyles.feature.general.box.dimensions.paddingLeftRight) / _wLetterWidthNumber);
         }
 
         //Public methods
@@ -3039,14 +3051,16 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
             _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
 
-            //Fit the textbox
+            // Create the attributes and find the maximum width size
+
+            // Fit the textbox
             var textBBox = _innerElements.text.getBBox();
-            if (textBBox.width > UIObjectStyles.feature.general.box.dimensions.width) {
+            if (textBBox.width > UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier) {
                 calculateVisibleText();
 
                 textBBox = _innerElements.text.getBBox();
-                _absolutePos.x = textBBox.x;
-                _originalBoxWidth = textBBox.width;
+                _absolutePos.x = textBBox.x / _scaleModifier;
+                _originalBoxWidth = textBBox.width / _scaleModifier;
                 _screenPos.x = _absolutePos.x * _scaleModifier;
                 _screenPos.y = _absolutePos.y * _scaleModifier;
                 _boxWidth = _originalBoxWidth * _scaleModifier;
@@ -3068,22 +3082,39 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             makeDraggable();
             makeEditable();
         }
-        this.RefreshGraphicalRepresentation = function () {
+        this.RefreshGraphicalRepresentation = function (options) {
+
+            // Text is needed for calculations, so set the font now
+            _innerElements.text.attr({
+                "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
+            });
+
+            // If true the related composite elements should be refreshed after we have changed this representation.
+            var refreshRelatedCompositeElements = false;
+            var isZooming = typeof (options) !== "undefined" && options.isZooming ? true : false;
 
             // Fit the textbox
             var textBBox = _innerElements.text.getBBox();
-            if (textBBox.width > UIObjectStyles.feature.general.box.dimensions.width) {
+            if (isZooming || (textBBox.width > UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier)) {
                 // Check for text truncation
                 calculateVisibleText();
 
                 textBBox = _innerElements.text.getBBox();
-                _absolutePos.x = textBBox.x;
-                _originalBoxWidth = textBBox.width;
+                if (!isZooming) // If the UI is zooming then the textbox will have the previous scaled placement (hasn't been positioned yet)
+                    _absolutePos.x = textBBox.x / _scaleModifier;
+                _originalBoxWidth = textBBox.width / _scaleModifier;
+
+                // While zooming there might be the case that the textbox width is smaller than the box's width
+                if (isZooming && (textBBox.width < UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier))
+                    _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width;
+
+                refreshRelatedCompositeElements = true;
             }
-            else {
+            else if (_originalBoxWidth != UIObjectStyles.feature.general.box.dimensions.width) {
                 // Has to fix the x using the old width
-                _absolutePos.x += (_originalBoxWidth - UIObjectStyles.feature.general.box.dimensions.width) / 2;
+                _absolutePos.x += (_originalBoxWidth - UIObjectStyles.feature.general.box.dimensions.width) * _scaleModifier / 2;
                 _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width;
+                refreshRelatedCompositeElements = true;
             }
 
             // Rescale variables
@@ -3094,6 +3125,13 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             // Refresh the canvas
             refresh();
+
+            // Refresh attached objects if needed
+            if (refreshRelatedCompositeElements && settings.diagramContext.dynamicRefresh == true) {
+                for (var j = 0; j < _relatedCompositeElements.length; j++) {
+                    _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
+                }
+            }
         }
         this.ReverseCoordinates = function () {
 
@@ -3151,9 +3189,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         this.GUID = clientObjectGUID;
         this.IsSelected = function () {
             return _currentState == systemDefaults.uiElementStates.selected;
-        }
-        this.GetDataObj = function () {
-            return _dataObj;
         }
         this.GetType = function () {
             return "relation";
@@ -4042,6 +4077,93 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
     }
 
+    ///// UIAttribute TEST >>
+    var UIAttribute = function (clientObjectGUID, attributeName, parentFeature) {
+
+        //Fields
+        var _innerElements = {
+            text: null
+        };
+        var _thisUIAttribute = this;
+        var _attributeName = attributeName;
+
+        //Properties
+        this.GUID = clientObjectGUID;
+        this.IsSelected = function () {
+            return _currentState == systemDefaults.uiElementStates.selected;
+        }
+        this.GetType = function () {
+            return "attribute";
+        }
+
+        //Private methods
+        //        function makeSelectable() {
+        //            //
+        //            var handlers = {
+        //                onClick: function (e) {
+        //                    toggleElementSelect(_thisUIRelation, e.shiftKey, true);
+        //                },
+        //                onMouseOver: function (e) {
+        //                    if (_innerMode != innerState.dragging) {
+        //                        _innerElements.connection.ShowGlow();
+        //                    }
+        //                },
+        //                onMouseOut: function (e) {
+        //                    if (_innerMode != innerState.dragging) {
+        //                        _innerElements.connection.HideGlow();
+        //                    }
+        //                }
+        //            }
+        //            _innerElements.connection.MakeSelectable(handlers);
+        //        }
+        function refresh() {
+        }
+        function removeFromFeature(UIFeature) {
+            var index = $(UIFeature.RelatedCompositeElements).index(_thisUIRelation);
+            if (index != -1) {
+                UIFeature.RelatedCompositeElements.splice(index, 1);
+            }
+        }
+
+        //Public methods
+        this.CreateGraphicalRepresentation = function () {
+
+            // Get the parent dimensions plus text and set up the raphael object
+            _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
+            _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
+
+            //Add references
+            parentFeature.AttributeElements.push(_thisUIAttribute);
+        }
+        this.RefreshGraphicalRepresentation = function () {
+            refresh();
+        }
+        //        this.Update = function (newRelationType, newLowerBound, newUpperBound) {
+        //            _relationType = newRelationType;
+        //            _lowerBound = newLowerBound;
+        //            _upperBound = newUpperBound;
+
+        //            //Update visuals
+        //            _innerElements.connection.Update(_thisUIRelation.GetSubTypeName());
+        //            toggleCardinalityElement(); //cardinalityElement
+        //        }
+        this.Delete = function () {
+
+            //Remove cardinality element
+            if (_innerElements.text != null) {
+                _innerElements.text.Delete();
+                _innerElements.text = null;
+            }
+
+            //Remove references
+            removeFromFeature(parentFeature);
+        }
+
+        //Event handlers
+        // this.OnAttributeEdited
+    }
+    ///// UIAttribute TEST <<
+
     // Utilities
     //Reuse getPath method (copied from UIConnection methods)
     var getPathFromFeatureToPoint = function (objA, x, y) {
@@ -4274,14 +4396,24 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             $(_canvasContainer).unbind("click", _clickHandler);
         if (_mousemoveHandler)
             $(_canvasContainer).unbind("mousemove", _mousemoveHandler);
-        if (_wireframebox)
-            _wireframebox.remove();
-        if (_bulletWireframe)
-            _bulletWireframe.remove();
+        removeWireframes();
 
         _hoverElement = null;
         _innerMode = innerState.ready;
         _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
+    }
+    var removeWireframes = function () {
+        for (var i = 0; i < _wireframeboxes.length; ++i) {
+            if (_wireframeboxes[i] != null)
+                _wireframeboxes[i].remove();
+        }
+        _wireframeboxes = [];
+    }
+    var sendWireframesOnBackground = function () {
+        for (var i = 0; i < _wireframeboxes.length; ++i) {
+            if (_wireframeboxes[i] != null)
+                $(_wireframeboxes[i].node).insertBefore($(_wireframeboxes[i].node).parent().children()[4]);
+        }
     }
     var setElementSelected = function (UIElement) {
         if (UIElement.IsSelected() != true) {
@@ -4306,8 +4438,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _thisDiagramContext.SelectionCleared.RaiseEvent();
         }
     }
-    var toggleElementSelect = function (UIElement, shift, raiseEvents) {
-        if (shift != true) {
+    var toggleElementSelect = function (UIElement, ctrl, raiseEvents) {
+        if (ctrl != true) {
             clearSelection();
         }
 
@@ -4322,7 +4454,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //Raise events
         if (raiseEvents == true) {
-            _thisDiagramContext.ElementSelectToggled.RaiseEvent([UIElement.GUID, shift, newState]);
+            _thisDiagramContext.ElementSelectToggled.RaiseEvent([UIElement.GUID, ctrl, newState]);
         }
     }
     var deleteElement = function (UIElement) {
@@ -4339,7 +4471,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //Create wireframe
             var boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier;
             var boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
-            _wireframebox = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states.wireframe.box.attr);
+            _wireframeboxes.push(_canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states.wireframe.box.attr));
 
             //Setup mouse move handler
             _mousemoveHandler = function (e) {
@@ -4351,12 +4483,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 //Mouse move
                 var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2);
                 var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2);
-                if (_wireframebox == null) {
-                    _wireframebox = _canvas.rect(screenPosX, screenPosY, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
-                }
-                else {
-                    _wireframebox.attr({ x: screenPosX, y: screenPosY });
-                }
+                _wireframeboxes[0].attr({ x: screenPosX, y: screenPosY });
             };
             $(_canvasContainer).bind("mousemove", _mousemoveHandler);
 
@@ -4408,19 +4535,13 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 // Drag and drop for the selected element
                 _mousemoveHandler = function (e) {
                     if (_selectedElements.length === 0) {
-                        if (_wireframebox)
-                            _wireframebox.remove();
-                        if (_bulletWireframe)
-                            _bulletWireframe.remove();
+                        removeWireframes();
                     }
                     else if (_selectedElements.length === 1) {
                         //Mouse move
                         var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
                         var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
-                        if (_wireframebox)
-                            _wireframebox.remove();
-                        if (_bulletWireframe)
-                            _bulletWireframe.remove();
+                        removeWireframes();
 
                         var style = (function getStyle() {
                             var commonStyle = commonStyles.connection.states.unselected;
@@ -4430,13 +4551,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                             return currentStyle;
                         })();
 
-                        if (_hoverElement !== null && _selectedElements[0] !== _hoverElement)
+                        var _currentPath = null;
+                        var shouldDrawWireframeBehind = true;
+                        if (_hoverElement !== null && _selectedElements[0] !== _hoverElement) {
                             _currentPath = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _hoverElement.InnerElements.box);
+                            shouldDrawWireframeBehind = false;
+                        }
                         else
                             _currentPath = getPathFromFeatureToPoint(_selectedElements[0].InnerElements.box, screenPosX, screenPosY);
 
-                        _wireframebox = _canvas.path(_currentPath.path);
-                        _wireframebox.attr(style.line.attr);
+                        _wireframeboxes[0] = _canvas.path(_currentPath.path);
+                        _wireframeboxes[0].attr(style.line.attr);
 
                         var rct = style.connectors.endConnector;
                         var scaledDimensions = $.extend(true, {}, rct.dimensions);
@@ -4445,8 +4570,11 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                             scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
                         }
                         var xPos = _currentPath.endPoint.x - rct.dimensionModifier * _scaleModifier, yPos = _currentPath.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
-                        _bulletWireframe = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
-                        _bulletWireframe.attr(rct.attr);
+                        _wireframeboxes[1] = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                        _wireframeboxes[1].attr(rct.attr);
+
+                        if (shouldDrawWireframeBehind)
+                            sendWireframesOnBackground();
                     }
                 };
 
@@ -4464,30 +4592,114 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             resetInnerMode();
         }
     }
-    var createGroupRelation = function () {
+    var createGroupRelation = function (isSelectMode) {
         if (_selectedElements.length > 2) {
+            if (!isSelectMode) {
+                // Start creating the group relation
+                resetInnerMode();
+                _innerMode = innerState.groupRelationLock;
+                _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
+                // Create a new clientObject in the diagramDataModel
+                var parentFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
+                var childFeatures = [];
+                var childUIFeatures = _selectedElements.slice(1);
+                for (var i = 0; i < childUIFeatures.length; i++) {
+                    childFeatures.push(_diagramDataModel.GetByGUID(childUIFeatures[i].GUID));
+                }
+                var initialValues = {
+                    ModelID: _diagramDataModel.ModelID
+                }
+                var initialClientValues = {
+                    ParentFeature: parentFeature,
+                    ChildFeatures: childFeatures
+                }
+                var clientGroupRelationObject = _diagramDataModel.AddNewClientObject("groupRelation", initialValues, initialClientValues);
+                resetInnerMode();
+            }
+        }
+        else if (_innerMode != innerState.groupRelationLock) {
+            // Preview the group relation
             resetInnerMode();
             _innerMode = innerState.groupRelationLock;
             _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
-            //Create a new clientObject in the diagramDataModel
-            var parentFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
-            var childFeatures = [];
-            var childUIFeatures = _selectedElements.slice(1);
-            for (var i = 0; i < childUIFeatures.length; i++) {
-                childFeatures.push(_diagramDataModel.GetByGUID(childUIFeatures[i].GUID));
-            }
-            var initialValues = {
-                ModelID: _diagramDataModel.ModelID
-            }
-            var initialClientValues = {
-                ParentFeature: parentFeature,
-                ChildFeatures: childFeatures
-            }
-            var clientGroupRelationObject = _diagramDataModel.AddNewClientObject("groupRelation", initialValues, initialClientValues);
-            resetInnerMode();
-        }
-        else {
-            resetInnerMode();
+
+            // Drag and drop for the selected element
+            _mousemoveHandler = function (e) {
+                if (_selectedElements.length === 0) {
+                    removeWireframes();
+                }
+                else if (_selectedElements.length >= 0) {
+                    //Mouse move
+                    var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
+                    var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
+
+                    removeWireframes();
+
+                    var style = (function getStyle() {
+                        var commonStyle = commonStyles.connection.states.unselected;
+                        var generalStyle = UIObjectStyles.groupRelation.general.connection;
+                        var subTypeStyle = UIObjectStyles.groupRelation.subTypes.xor.connection;
+                        var currentStyle = $.extend(true, {}, commonStyle, generalStyle, subTypeStyle);
+                        return currentStyle;
+                    })();
+
+                    var rct = null;
+                    var scaledDimensions = null;
+                    for (var i = 1; i < _selectedElements.length; i++) {
+                        var _currentPathForFeatures = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _selectedElements[i].InnerElements.box);
+
+                        // This can be refactored
+                        _wireframeboxes[_wireframeboxes.length] = _canvas.path(_currentPathForFeatures.path);
+                        _wireframeboxes[_wireframeboxes.length - 1].attr(style.line.attr);
+
+                        rct = style.connectors.endConnector;
+                        scaledDimensions = $.extend(true, {}, rct.dimensions);
+                        for (var dimensionKey in scaledDimensions) {
+                            var originalValue = scaledDimensions[dimensionKey];
+                            scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+                        }
+                        var xPos = _currentPathForFeatures.endPoint.x - rct.dimensionModifier * _scaleModifier,
+                            yPos = _currentPathForFeatures.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
+                        _wireframeboxes[_wireframeboxes.length] = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                        _wireframeboxes[_wireframeboxes.length - 1].attr(rct.attr);
+                        // Until here
+                    }
+
+                    var _currentPath = null;
+                    var shouldDrawWireframeBehind = true;
+                    if (_hoverElement !== null && _selectedElements[0] !== _hoverElement) {
+                        _currentPath = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _hoverElement.InnerElements.box);
+                        shouldDrawWireframeBehind = false;
+                    }
+                    else
+                        _currentPath = getPathFromFeatureToPoint(_selectedElements[0].InnerElements.box, screenPosX, screenPosY);
+
+                    _wireframeboxes[_wireframeboxes.length] = _canvas.path(_currentPath.path);
+                    _wireframeboxes[_wireframeboxes.length - 1].attr(style.line.attr);
+
+                    rct = style.connectors.endConnector;
+                    scaledDimensions = $.extend(true, {}, rct.dimensions);
+                    for (var dimensionKey in scaledDimensions) {
+                        var originalValue = scaledDimensions[dimensionKey];
+                        scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+                    }
+                    var xPos = _currentPath.endPoint.x - rct.dimensionModifier * _scaleModifier, yPos = _currentPath.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
+                    _wireframeboxes[_wireframeboxes.length] = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                    _wireframeboxes[_wireframeboxes.length - 1].attr(rct.attr);
+
+                    if (shouldDrawWireframeBehind)
+                        sendWireframesOnBackground();
+                }
+            };
+
+            $(_canvasContainer).bind("mousemove", _mousemoveHandler);
+
+            _clickHandler = function (e) {
+                if (_selectedElements.length === 0) {
+                    resetInnerMode();
+                }
+            };
+            $(_canvasContainer).bind("click", _clickHandler);
         }
     }
     var createCompositionRule = function () {
@@ -4518,20 +4730,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 // Drag and drop for the selected element
                 _mousemoveHandler = function (e) {
                     if (_selectedElements.length === 0) {
-                        if (_wireframebox)
-                            _wireframebox.remove();
-                        if (_bulletWireframe)
-                            _bulletWireframe.remove();
+                        removeWireframes();
                     }
                     else if (_selectedElements.length === 1) {
                         //Mouse move
                         var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
                         var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
 
-                        if (_wireframebox)
-                            _wireframebox.remove();
-                        if (_bulletWireframe)
-                            _bulletWireframe.remove();
+                        removeWireframes();
 
                         var style = (function getStyle() {
                             var commonStyle = commonStyles.connection.states.unselected;
@@ -4541,13 +4747,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                             return currentStyle;
                         })();
 
-                        if (_hoverElement !== null && _selectedElements[0] !== _hoverElement)
+                        var _currentPath = null;
+                        var shouldDrawWireframeBehind = true;
+                        if (_hoverElement !== null && _selectedElements[0] !== _hoverElement) {
                             _currentPath = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _hoverElement.InnerElements.box);
+                            shouldDrawWireframeBehind = false;
+                        }
                         else
                             _currentPath = getPathFromFeatureToPoint(_selectedElements[0].InnerElements.box, screenPosX, screenPosY);
 
-                        _wireframebox = _canvas.path(_currentPath.path);
-                        _wireframebox.attr(style.line.attr);
+                        _wireframeboxes[0] = _canvas.path(_currentPath.path);
+                        _wireframeboxes[0].attr(style.line.attr);
 
                         var rct = style.connectors.endConnector;
                         var scaledDimensions = $.extend(true, {}, rct.dimensions);
@@ -4556,8 +4766,11 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                             scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
                         }
                         var xPos = _currentPath.endPoint.x - rct.dimensionModifier * _scaleModifier, yPos = _currentPath.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
-                        _bulletWireframe = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
-                        _bulletWireframe.attr(rct.attr);
+                        _wireframeboxes[1] = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                        _wireframeboxes[1].attr(rct.attr);
+
+                        if (shouldDrawWireframeBehind)
+                            sendWireframesOnBackground();
                     }
                 };
 
@@ -4713,35 +4926,38 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 break;
         }
     }
+    this.RefreshGraphicalRepresentation = function (options) {
+        //Refresh features
+        for (var guidKey in _diagramDataModel.ClientObjects.features) {
+            var UIFeature = _UIElements[guidKey];
+            if (UIFeature != undefined)
+                UIFeature.RefreshGraphicalRepresentation(options);
+        }
+
+        //Refresh relations, groupRelations and compositionRules
+        for (var guidKey in _diagramDataModel.ClientObjects.relations) {
+            var UIElement = _UIElements[guidKey];
+            if (UIElement != undefined)
+                UIElement.RefreshGraphicalRepresentation(options);
+        }
+        for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
+            var UIElement = _UIElements[guidKey];
+            if (UIElement != undefined)
+                UIElement.RefreshGraphicalRepresentation(options);
+        }
+        for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
+            var UIElement = _UIElements[guidKey];
+            if (UIElement != undefined)
+                UIElement.RefreshGraphicalRepresentation(options);
+        }
+    }
     this.ZoomIn = function () {
 
         //Modify scale
         if (_scaleModifier < 2) {
             _scaleModifier += 0.25;
 
-            //Refresh features
-            for (var guidKey in _diagramDataModel.ClientObjects.features) {
-                var UIFeature = _UIElements[guidKey];
-                if (UIFeature != undefined)
-                    UIFeature.RefreshGraphicalRepresentation();
-            }
-
-            //Refresh relations, groupRelations and compositionRules
-            for (var guidKey in _diagramDataModel.ClientObjects.relations) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
-            for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
-            for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
+            this.RefreshGraphicalRepresentation({ isZooming: true });
         }
 
         //
@@ -4753,29 +4969,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         if (_scaleModifier >= 0.50) {
             _scaleModifier -= 0.25;
 
-            //Refresh features
-            for (var guidKey in _diagramDataModel.ClientObjects.features) {
-                var UIFeature = _UIElements[guidKey];
-                if (UIFeature != undefined)
-                    UIFeature.RefreshGraphicalRepresentation();
-            }
-
-            //Refresh relations, groupRelations and compositionRules
-            for (var guidKey in _diagramDataModel.ClientObjects.relations) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
-            for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
-            for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
+            this.RefreshGraphicalRepresentation({ isZooming: true });
         }
 
         //
@@ -4823,6 +5017,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     this.GetInnerState = function () {
         return _innerMode;
     }
+    this.OnKeyUp = function (e) {
+        // If ESC has been pressed
+        if (e.which === 27) {
+            _thisDiagramContext.ResetInnerState();
+        }
+
+        // If CTRL has been pressed and group relation lock
+        if (e.which === 17 && _innerMode == innerState.groupRelationLock) {
+            createGroupRelation();
+        }
+    }
 
     //Events
     this.ElementSelectToggled = new Event();
@@ -4861,10 +5066,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
     }
 
-    this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
+    this.OnRelatedViewElementSelectToggled = function (guid, ctrl, newState) {
         var UIElement = _UIElements[guid];
         if (UIElement != undefined) {
-            toggleElementSelect(UIElement, shift);
+            toggleElementSelect(UIElement, ctrl);
         } else {
             clearSelection();
         }
@@ -4879,6 +5084,3 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         _diagramDataModel.UpdateClientObjectFields(UIFeature.GUID, ["XPos", "YPos"], [UIFeature.GetPos().x, UIFeature.GetPos().y]);
     }
 }
-
-
-
