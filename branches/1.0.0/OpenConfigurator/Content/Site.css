@@ -520,7 +520,7 @@ html > body .ui-pnotify
 {
     width: auto;
     float: left;
-    height: 16px;
+    min-height: 16px;
     cursor: default;
     padding: 2px 2px 2px 2px;
     border: solid 1px transparent;
@@ -548,7 +548,6 @@ html > body .ui-pnotify
     float: left;
     margin-top: 2px;
     margin-left: 3px;
-    height: 16px;
     vertical-align: middle;
     display: inline-block;
     cursor: default;
@@ -568,6 +567,8 @@ html > body .ui-pnotify
     letter-spacing: 0.3px;
     font-size: 10px;
     color: #2F3335;
+    max-width: 100px;
+    overflow: hidden;
 }
 
 /*Types*/
