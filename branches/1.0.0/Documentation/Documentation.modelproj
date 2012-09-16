@@ -52,12 +52,15 @@
       <SubType>Content</SubType>
       <DependentUpon>Database\DBDiagram.classdiagram</DependentUpon>
     </Content>
-    <Content Include="DomainModel\DomainModelv10.classdiagram">
+    <Content Include="DomainModel\DomainModel.classdiagram">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="DomainModel\DomainModelv10.classdiagram.layout">
+    <Content Include="DomainModel\DomainModel.classdiagram.layout">
       <SubType>Content</SubType>
-      <DependentUpon>DomainModel\DomainModelv10.classdiagram</DependentUpon>
+      <DependentUpon>DomainModel\DomainModel.classdiagram</DependentUpon>
+    </Content>
+    <Content Include="DomainModel\Glossary.doc">
+      <SubType>Content</SubType>
     </Content>
     <Content Include="ModelDefinition\Package1_0113.uml">
       <SubType>Content</SubType>
@@ -137,6 +140,15 @@
     <Content Include="UI\Models.bmml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Use Cases\Documents\UC01 Manage models.doc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Use Cases\Documents\UC02 Create or edit feature model.doc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Use Cases\Documents\UC03 Create or edit configuration.doc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Use Cases\Overview.usecasediagram">
       <SubType>Content</SubType>
     </Content>
@@ -145,13 +157,6 @@
       <DependentUpon>Use Cases\Overview.usecasediagram</DependentUpon>
     </Content>
     <Folder Include="ModelDefinition\" />
-    <Content Include="DomainModel\DomainModel.classdiagram">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="DomainModel\DomainModel.classdiagram.layout">
-      <SubType>Content</SubType>
-      <DependentUpon>DomainModel\DomainModel.classdiagram</DependentUpon>
-    </Content>
     <Content Include="ModelDefinition\Documentation.uml">
       <SubType>Content</SubType>
     </Content>

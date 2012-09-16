@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -82,6 +82,14 @@ Label</body>
           LastKnownName="Model Event"
           LastKnownLocation="Package_1512.uml" />
       </annotatedElements>
+    </comment>
+    <comment
+      Id="39728f18-1116-444d-805a-926d14c70be5">
+      <body>New in 1.0.0 </body>
+    </comment>
+    <comment
+      Id="7d75c148-7449-44ce-b900-6ddd7aa0f891">
+      <body>Modified in 1.0.0</body>
     </comment>
   </ownedCommentsInternal>
   <profileInstances>
@@ -502,7 +510,7 @@ Label</body>
             isAbstract="false">
             <useCaseMoniker
               Id="83a08245-a76f-4923-a2ba-9fad450502c9"
-              LastKnownName="Manage Feature models (CREDO)"
+              LastKnownName="UC01. Manage Feature Models (CREDO)"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -767,7 +775,7 @@ Label</body>
             Id="42019d2d-236a-4d9d-9721-7cc91d886ffc">
             <useCaseMoniker
               Id="9bc198e8-d70b-4f49-a3c7-a060067ecd67"
-              LastKnownName="Define/Manipulate  Model"
+              LastKnownName="UC02. Create/edit Feature  Model"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -797,7 +805,7 @@ Label</body>
             isAbstract="false">
             <useCaseMoniker
               Id="b3818ff1-d175-4194-97b4-7c10cd427d62"
-              LastKnownName="Create/Edit Configuration instance"
+              LastKnownName="UC03. Create/edit Configuration "
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -2004,7 +2012,7 @@ Label</body>
             Id="6546547b-c5b6-464e-aef1-3b3c479723cb">
             <useCaseMoniker
               Id="b3818ff1-d175-4194-97b4-7c10cd427d62"
-              LastKnownName="Create/Edit Configuration instance"
+              LastKnownName="UC03. Create/edit Configuration "
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -2222,7 +2230,7 @@ Label</body>
     <packageHasNamedElement>
       <useCase
         Id="b3818ff1-d175-4194-97b4-7c10cd427d62"
-        name="Create/Edit Configuration instance"
+        name="UC03. Create/edit Configuration "
         isAbstract="false"
         isLeaf="false">
         <additions>
@@ -2244,7 +2252,14 @@ Label</body>
             Id="00ae9855-7705-4e27-9a37-44000cb2f53f">
             <useCaseMoniker
               Id="d83ceef8-2fc2-4428-abeb-56113374b0d9"
-              LastKnownName="Perform configuration of data by toggling/entering control values"
+              LastKnownName="Toggle feature selections"
+              LastKnownLocation="Documentation.uml" />
+          </include>
+          <include
+            Id="d63f43e7-6bdd-4316-a969-10f1200c1d1c">
+            <useCaseMoniker
+              Id="6d272ae0-07b5-4998-a06d-02ab23ec1707"
+              LastKnownName="Enter/modify attribute values"
               LastKnownLocation="Documentation.uml" />
           </include>
         </additions>
@@ -3710,7 +3725,7 @@ Label</body>
     <packageHasNamedElement>
       <useCase
         Id="83a08245-a76f-4923-a2ba-9fad450502c9"
-        name="Manage Feature models (CREDO)"
+        name="UC01. Manage Feature Models (CREDO)"
         isAbstract="false"
         isLeaf="false">
         <subjects>
@@ -3724,7 +3739,7 @@ Label</body>
     <packageHasNamedElement>
       <useCase
         Id="9bc198e8-d70b-4f49-a3c7-a060067ecd67"
-        name="Define/Manipulate  Model"
+        name="UC02. Create/edit Feature  Model"
         isAbstract="false"
         isLeaf="false">
         <generalsInternal>
@@ -3733,7 +3748,7 @@ Label</body>
             isSubstitutable="false">
             <useCaseMoniker
               Id="83a08245-a76f-4923-a2ba-9fad450502c9"
-              LastKnownName="Manage Feature models (CREDO)"
+              LastKnownName="UC01. Manage Feature Models (CREDO)"
               LastKnownLocation="Documentation.uml" />
           </generalization>
         </generalsInternal>
@@ -6167,7 +6182,7 @@ Label</body>
     <packageHasNamedElement>
       <useCase
         Id="6bfa5121-dd04-41b7-b0c4-28b1035f3f41"
-        name="Define/Manipulate UI Template"
+        name="Create/edit UI Template"
         isAbstract="false"
         isLeaf="false">
         <generalsInternal>
@@ -6310,7 +6325,7 @@ Label</body>
     <packageHasNamedElement>
       <useCase
         Id="d83ceef8-2fc2-4428-abeb-56113374b0d9"
-        name="Perform configuration of data by toggling/entering control values"
+        name="Toggle feature selections"
         isAbstract="false"
         isLeaf="false">
         <targetEnds>
@@ -6485,6 +6500,20 @@ Label</body>
           </association>
         </targetEnds>
       </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <useCase
+        Id="6d272ae0-07b5-4998-a06d-02ab23ec1707"
+        name="Enter/modify attribute values"
+        isAbstract="false"
+        isLeaf="false">
+        <subjects>
+          <subsystemMoniker
+            Id="5079c949-412d-4716-8274-b6f587b4d3eb"
+            LastKnownName="Configurator"
+            LastKnownLocation="Documentation.uml" />
+        </subjects>
+      </useCase>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
