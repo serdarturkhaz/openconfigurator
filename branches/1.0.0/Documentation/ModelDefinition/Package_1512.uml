@@ -2,7 +2,7 @@
 <package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel"
   dslVersion="1.0.0.0"
   Id="ca2ee2c6-47ef-4107-9922-70067e636121"
-  name="Modeller" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  name="ModelEditor" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
   <ownedCommentsInternal>
     <comment
       Id="1e6613f4-1d91-48ab-8491-dd145d35c919">
@@ -189,17 +189,6 @@ Custom:
           <property
             Id="c30e5103-ad7b-46f3-8cdd-d556bd197773"
             name="Description"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="08ce6c8e-ac1b-4c6a-8b54-9a0a32e26422"
-            name="FeatureType"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -537,7 +526,7 @@ Custom:
     <packageHasNamedElement>
       <class
         Id="6a433e17-2eab-40d9-a334-4c9b9c3fb27c"
-        name="Model"
+        name="Feature Model"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">

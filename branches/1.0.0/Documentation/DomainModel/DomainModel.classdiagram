@@ -11,7 +11,7 @@
   </ownedCommentsInternal>
   <packagedElements>
     <logicalClassDesignerModelHasPackages>
-      <package Id="9cd8095a-96d4-4c31-a866-62043dc65ba0" name="Modeller">
+      <package Id="9cd8095a-96d4-4c31-a866-62043dc65ba0" name="ModelEditor">
         <ownedCommentsInternal>
           <comment Id="ed187fe2-7c37-49a2-b69c-a5dae878c96f">
             <elementDefinition Id="1e6613f4-1d91-48ab-8491-dd145d35c919" />
@@ -101,9 +101,6 @@ Custom:
                 </property>
                 <property Id="162fb9a7-f048-48d9-a412-77dda5463e83" name="Description" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
                   <elementDefinition Id="c30e5103-ad7b-46f3-8cdd-d556bd197773" />
-                </property>
-                <property Id="6d82cd1c-19d2-4e0c-b29a-f7c3d3e76824" name="FeatureType" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                  <elementDefinition Id="08ce6c8e-ac1b-4c6a-8b54-9a0a32e26422" />
                 </property>
                 <property Id="5808e93d-c1ba-43ff-9402-ef3e32063853" name="DefaultState" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
                   <elementDefinition Id="2afdaf03-c8d8-4668-abbd-b87337ea879c" />
@@ -215,7 +212,7 @@ Custom:
             </class>
           </packageHasNamedElement>
           <packageHasNamedElement>
-            <class Id="8d1bfc0d-f87e-409c-b95e-086106c9cbf4" name="Model" isAbstract="false" isLeaf="false" isActiveClass="false">
+            <class Id="8d1bfc0d-f87e-409c-b95e-086106c9cbf4" name="Feature Model" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="6a433e17-2eab-40d9-a334-4c9b9c3fb27c" />
               <targetEnds>
                 <association Id="6956b3a4-3575-407a-841b-91764c817d3b" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" name="Consists of" isAbstract="false">
@@ -446,7 +443,7 @@ Custom:
       </package>
     </logicalClassDesignerModelHasPackages>
     <logicalClassDesignerModelHasPackages>
-      <package Id="1220db0b-c7c2-4969-af0e-4cea01196503" name="Configurator">
+      <package Id="1220db0b-c7c2-4969-af0e-4cea01196503" name="ConfigurationEditor">
         <ownedCommentsInternal>
           <comment Id="0515ab99-a5c7-41c8-859f-ceaa2d115de5">
             <elementDefinition Id="98b13716-2244-4c96-a3cd-ea9bc2d0f7fc" />
@@ -491,7 +488,7 @@ Deselected</body>
                   <elementDefinition Id="d07a89f6-da79-4c42-8211-104098f761d9" />
                 </association>
                 <association Id="4f84bb04-79b7-4e02-9262-0bfacccf6145" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" name="Data based on" isAbstract="false">
-                  <classMoniker Id="8d1bfc0d-f87e-409c-b95e-086106c9cbf4" LastKnownName="Model" />
+                  <classMoniker Id="8d1bfc0d-f87e-409c-b95e-086106c9cbf4" LastKnownName="Feature Model" />
                   <relationshipOwnedElementsInternal>
                     <associationHasOwnedEnds>
                       <memberEnd Id="761823c0-8743-455f-93e7-ae8d1052e242" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
@@ -639,7 +636,7 @@ Deselected</body>
       </package>
     </logicalClassDesignerModelHasPackages>
     <logicalClassDesignerModelHasPackages>
-      <package Id="88cd0b73-034b-416d-b82f-795ef29886cd" name="UI Builder">
+      <package Id="88cd0b73-034b-416d-b82f-795ef29886cd" name="UITemplateEditor">
         <ownedCommentsInternal>
           <comment Id="75b36a8a-7eb1-4835-9c69-818cd16f8ddf">
             <elementDefinition Id="c60424dc-7828-432f-b397-525eda5e2b67" />
@@ -667,8 +664,13 @@ Toggleable</body>
 Dynamic binding
 Unbound</body>
             <annotatedElements>
-              <classMoniker Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" LastKnownName="Binding type" />
+              <classMoniker Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" LastKnownName="Binding mode" />
             </annotatedElements>
+          </comment>
+          <comment Id="215099b5-7546-4f8f-b39e-e39e47d70e24">
+            <elementDefinition Id="d306e369-dd2d-480d-ba3f-0135f4da4525" />
+            <body>Direct (Feature, Attribute, etc)
+Expression</body>
           </comment>
         </ownedCommentsInternal>
         <elementDefinition Id="85c86a5b-97fe-4ebe-b5d0-5ef0922076a7" />
@@ -721,60 +723,8 @@ Unbound</body>
                   </relationshipOwnedElementsInternal>
                   <elementDefinition Id="321299ba-0612-4e36-b745-48a0806d832a" />
                 </association>
-                <association Id="455772d2-9552-4c99-93f0-108a659dc4db" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
-                  <classMoniker Id="ee94a714-1d83-4730-aef2-b9e96f1611f3" LastKnownName="Feature" />
-                  <relationshipOwnedElementsInternal>
-                    <associationHasOwnedEnds>
-                      <memberEnd Id="5374af4b-1e7e-4da3-b909-a5b69f1cc876" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
-                        <elementDefinition Id="7720c4a3-b6d7-4b2b-8aad-5b3b2c3b7afd" />
-                      </memberEnd>
-                    </associationHasOwnedEnds>
-                    <associationHasOwnedEnds>
-                      <memberEnd Id="55f1f686-27bb-4a1a-b23e-34d7da423149" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                        <lowerValueInternal>
-                          <literalString Id="14a36db4-9661-4929-be42-2fcfcf6ea0c8" name="Lower" value="0">
-                            <elementDefinition Id="d9eba061-380d-44ad-a581-895c72e7510f" />
-                          </literalString>
-                        </lowerValueInternal>
-                        <upperValueInternal>
-                          <literalString Id="908d4b31-b0de-4769-b61a-5d97656f5188" name="Upper" value=".*">
-                            <elementDefinition Id="6a0c72c0-fbe7-4f67-adc5-3172a520b2a6" />
-                          </literalString>
-                        </upperValueInternal>
-                        <elementDefinition Id="b087e63d-9076-453b-8a4f-63b6080e09b2" />
-                      </memberEnd>
-                    </associationHasOwnedEnds>
-                  </relationshipOwnedElementsInternal>
-                  <elementDefinition Id="30096f27-5f2a-4e83-944d-9e29d4cd1732" />
-                </association>
-                <association Id="dfd6081f-ba2d-4d2c-ad3a-d57076106a32" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" name="Bound to" isAbstract="false">
-                  <classMoniker Id="2f9afe94-5593-46d2-b82d-76a2cbf79016" LastKnownName="Attribute" />
-                  <relationshipOwnedElementsInternal>
-                    <associationHasOwnedEnds>
-                      <memberEnd Id="1e35e496-0b89-4a95-9624-cd028b72581a" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
-                        <elementDefinition Id="3d2f3794-0c91-4714-ac7b-47af59f7eccc" />
-                      </memberEnd>
-                    </associationHasOwnedEnds>
-                    <associationHasOwnedEnds>
-                      <memberEnd Id="801ac09c-4f57-49ef-8dcb-fd95594e08fe" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                        <lowerValueInternal>
-                          <literalString Id="b3d1b290-9815-4e98-9ca5-88b58a88aa83" name="Lower" value="0">
-                            <elementDefinition Id="ddeb24b9-c81d-449f-8549-d9c47151056b" />
-                          </literalString>
-                        </lowerValueInternal>
-                        <upperValueInternal>
-                          <literalString Id="eb84044d-406c-41e6-8e9f-0412250a799c" name="Upper" value=".*">
-                            <elementDefinition Id="c9ce4690-199a-4e24-a714-28cd1cc6153a" />
-                          </literalString>
-                        </upperValueInternal>
-                        <elementDefinition Id="1ed3b2b8-a04c-46fc-9611-ba120f873553" />
-                      </memberEnd>
-                    </associationHasOwnedEnds>
-                  </relationshipOwnedElementsInternal>
-                  <elementDefinition Id="409ab4cd-f183-4a68-8002-0a844babd769" />
-                </association>
                 <association Id="8c3aab75-a8bb-4006-9a03-e48952939fdb" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
-                  <classMoniker Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" LastKnownName="Binding type" />
+                  <classMoniker Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" LastKnownName="Binding mode" />
                   <relationshipOwnedElementsInternal>
                     <associationHasOwnedEnds>
                       <memberEnd Id="701e5bd2-691e-42d5-b891-218acffc5f2e" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
@@ -803,8 +753,13 @@ Unbound</body>
             </class>
           </packageHasNamedElement>
           <packageHasNamedElement>
-            <class Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" name="Binding type" isAbstract="false" isLeaf="false" isActiveClass="false">
+            <class Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" name="Binding mode" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="0cfc1d7a-1e29-4823-ba76-f308f494652f" />
+            </class>
+          </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="8b907e9d-0480-4b1a-ac47-fa1259bb2bd1" name="Binding mode1" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <elementDefinition Id="56e841f9-897d-4adc-83b0-a76e2728d049" />
             </class>
           </packageHasNamedElement>
         </packagedElements>
@@ -815,7 +770,7 @@ Unbound</body>
         <elementDefinition Id="247d17c2-9c00-4a09-806b-4fede949b6d1" />
         <targetEnds>
           <association Id="77514113-5771-4982-98c0-4097eac5906c" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" name="Designs and creates" isAbstract="false">
-            <classMoniker Id="8d1bfc0d-f87e-409c-b95e-086106c9cbf4" LastKnownName="Model" />
+            <classMoniker Id="8d1bfc0d-f87e-409c-b95e-086106c9cbf4" LastKnownName="Feature Model" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="ac0619fa-82c1-481c-a34d-f3c1954226dc" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">

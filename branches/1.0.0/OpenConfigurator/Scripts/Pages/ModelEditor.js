@@ -1951,11 +1951,12 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                     tableLayout: true,
                     fields: {
                         /*rootFeature: {
-                            label: "Root Feature",
-                            dataName: "IsRoot",
-                            controlType: Controls.Checkbox,
-                            disabled: true
-                        },*/ //Commented out, not necessary for now
+                        label: "Root Feature",
+                        dataName: "IsRoot",
+                        controlType: Controls.Checkbox,
+                        disabled: true
+                        },*/
+                        //Commented out, not necessary for now
                         identifier: {
                             label: "Identifier",
                             dataName: "Identifier",
@@ -2693,7 +2694,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var _canvas = null, _canvasContainer = canvasContainer;
     var _selectedElements = new Array();
     var _innerMode = innerState.ready;
-    var _scaleModifier = 1.00, _fixedOrientation = "vertical"; //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
+    var _scaleModifier = 0.75, _fixedOrientation = "vertical"; //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
     var _UIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
     var _thisDiagramContext = this;
     var _supportedTypes = {
@@ -2702,7 +2703,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         groupRelation: true,
         compositionRule: true
     }
-    // Keeps the generated events references
+
+    //Keeps the generated events references
     var _wireframebox = null, _bulletWireframe = null;
     var _mousemoveHandler = null;
     var _clickHandler = null;
@@ -2968,7 +2970,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
             _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
 
-            // Fit the textbox
+            //Fit the textbox
             var textBBox = _innerElements.text.getBBox();
             if (textBBox.width > UIObjectStyles.feature.general.box.dimensions.width) {
                 calculateVisibleText();
@@ -3972,7 +3974,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     }
 
     // Utilities
-    // Reuse getPath method (copied from UIConnection methods)
+    //Reuse getPath method (copied from UIConnection methods)
     var getPathFromFeatureToPoint = function (objA, x, y) {
 
         //Variables
@@ -4756,7 +4758,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     this.Focus = new Event();
     this.InnerModeChange = new Event();
 
-    // Private events
+    //Private events
     var internalUIElementCascadedDelete = new Event();
     var internalUIFeatureMoved = new Event();
 

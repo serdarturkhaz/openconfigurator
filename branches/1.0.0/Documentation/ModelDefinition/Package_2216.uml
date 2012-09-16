@@ -2,7 +2,7 @@
 <package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel"
   dslVersion="1.0.0.0"
   Id="85c86a5b-97fe-4ebe-b5d0-5ef0922076a7"
-  name="UI Builder" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  name="UITemplateEditor" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
   <ownedCommentsInternal>
     <comment
       Id="c60424dc-7828-432f-b397-525eda5e2b67">
@@ -38,9 +38,14 @@ Unbound</body>
       <annotatedElements>
         <classMoniker
           Id="0cfc1d7a-1e29-4823-ba76-f308f494652f"
-          LastKnownName="Binding type"
+          LastKnownName="Binding mode"
           LastKnownLocation="Package_2216.uml" />
       </annotatedElements>
+    </comment>
+    <comment
+      Id="d306e369-dd2d-480d-ba3f-0135f4da4525">
+      <body>Direct (Feature, Attribute, etc)
+Expression</body>
     </comment>
   </ownedCommentsInternal>
   <packagedElements>
@@ -152,107 +157,6 @@ Unbound</body>
             </relationshipOwnedElementsInternal>
           </association>
           <association
-            Id="30096f27-5f2a-4e83-944d-9e29d4cd1732"
-            isDerived="false"
-            sourceEndRoleName=""
-            targetEndRoleName=""
-            isLeaf="false"
-            isAbstract="false">
-            <classMoniker
-              Id="db1ae515-64d0-48e4-a83d-3f98b9a2d3e7"
-              LastKnownName="Feature"
-              LastKnownLocation="Package_1512.uml" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="7720c4a3-b6d7-4b2b-8aad-5b3b2c3b7afd"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false"
-                  isNavigableOwned="false" />
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="b087e63d-9076-453b-8a4f-63b6080e09b2"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false">
-                  <lowerValueInternal>
-                    <literalString
-                      Id="d9eba061-380d-44ad-a581-895c72e7510f"
-                      name="Lower"
-                      value="0" />
-                  </lowerValueInternal>
-                  <upperValueInternal>
-                    <literalString
-                      Id="6a0c72c0-fbe7-4f67-adc5-3172a520b2a6"
-                      name="Upper"
-                      value=".*" />
-                  </upperValueInternal>
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-          </association>
-          <association
-            Id="409ab4cd-f183-4a68-8002-0a844babd769"
-            isDerived="false"
-            sourceEndRoleName=""
-            targetEndRoleName=""
-            isLeaf="false"
-            name="Bound to"
-            isAbstract="false">
-            <classMoniker
-              Id="d672e971-e6d7-44ad-bc5d-7fd0f4181270"
-              LastKnownName="Attribute"
-              LastKnownLocation="Package_1512.uml" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="3d2f3794-0c91-4714-ac7b-47af59f7eccc"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false"
-                  isNavigableOwned="false" />
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="1ed3b2b8-a04c-46fc-9611-ba120f873553"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false">
-                  <lowerValueInternal>
-                    <literalString
-                      Id="ddeb24b9-c81d-449f-8549-d9c47151056b"
-                      name="Lower"
-                      value="0" />
-                  </lowerValueInternal>
-                  <upperValueInternal>
-                    <literalString
-                      Id="c9ce4690-199a-4e24-a714-28cd1cc6153a"
-                      name="Upper"
-                      value=".*" />
-                  </upperValueInternal>
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-          </association>
-          <association
             Id="57d2964c-5e8a-472c-b9f2-9b5f1ee29b6b"
             isDerived="false"
             sourceEndRoleName=""
@@ -261,7 +165,7 @@ Unbound</body>
             isAbstract="false">
             <classMoniker
               Id="0cfc1d7a-1e29-4823-ba76-f308f494652f"
-              LastKnownName="Binding type"
+              LastKnownName="Binding mode"
               LastKnownLocation="Package_2216.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -332,7 +236,15 @@ Unbound</body>
     <packageHasNamedElement>
       <class
         Id="0cfc1d7a-1e29-4823-ba76-f308f494652f"
-        name="Binding type"
+        name="Binding mode"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="56e841f9-897d-4adc-83b0-a76e2728d049"
+        name="Binding mode1"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />
