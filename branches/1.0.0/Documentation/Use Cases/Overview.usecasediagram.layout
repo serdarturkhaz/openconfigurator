@@ -105,7 +105,7 @@
       <includeMoniker Id="b4ad49a8-efe6-45ce-9703-269a78693d3a" />
       <relativeChildShapes />
       <moveableDecoratorHostShapes>
-        <moveableDecoratorHostShape manuallyPlaced="true" absoluteBounds="6.5624999999999982, 2.5625000000000013, 0.52439594268798828, 0.14800345897674561" shapeFieldName="NameDecorator" />
+        <moveableDecoratorHostShape manuallyPlaced="true" absoluteBounds="6.5624999999999982, 2.5625000000000022, 0.52439594268798828, 0.14800345897674561" shapeFieldName="NameDecorator" />
       </moveableDecoratorHostShapes>
       <nodes>
         <useCaseShapeMoniker Id="6222f8ed-2b5c-4ea4-ae7d-14e98ec63530" />
@@ -237,11 +237,11 @@
       <subsystemMoniker Id="5b0fddd8-9162-417e-abea-8e793515ae9f" LastKnownName="UI Builder" />
       <nestedChildShapes>
         <useCaseShape Id="d5be26c1-e88c-45b5-b9bb-d8d8a0c80813" absoluteBounds="2.5, 7.125, 1.5, 0.5" customColor="255, 128, 0" heightOffset="0">
-          <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="Manage UI Templates(CREDO)" />
+          <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="UC03. Manage UI Templates(CREDO)" />
           <relativeChildShapes />
         </useCaseShape>
         <useCaseShape Id="261bfba8-28cb-46a9-89f2-3ea764079cc6" absoluteBounds="4.5, 6.625, 1.25, 0.5" customColor="255, 128, 0" heightOffset="0">
-          <useCaseMoniker Id="53351aba-8ff8-41f4-b01b-ea7b95c6ae5b" LastKnownName="Create/edit UI Template" />
+          <useCaseMoniker Id="53351aba-8ff8-41f4-b01b-ea7b95c6ae5b" LastKnownName="UC04.Create/edit UI Template" />
           <relativeChildShapes />
         </useCaseShape>
         <useCaseShape Id="87f8cd61-692d-414e-b981-d40f344df744" absoluteBounds="6.875, 8.25, 1.375, 0.5" customColor="255, 128, 0" heightOffset="0">

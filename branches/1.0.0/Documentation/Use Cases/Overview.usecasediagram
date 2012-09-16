@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="01717740-d843-4ae9-bc43-1a22daa6b773" name="Overview" linkedPackageId="0cbece95-b7d3-46b7-af65-435854507311" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
   <ownedCommentsInternal>
     <comment Id="0d6de620-19bb-4de1-b113-2b59f2bfc952">
       <elementDefinition Id="7b165163-cbaf-4fae-a5cd-8d75717070c1" />
@@ -42,7 +42,7 @@
             <elementDefinition Id="f54bfe97-6855-4288-b9ac-791ceffe1bc1" />
           </association>
           <association Id="b893e98c-818f-4dc9-bf16-e9c18158117e" isDerived="false" sourceEndRoleName="Tech user" targetEndRoleName="Manage UISetups (CREDO)" isLeaf="false" isAbstract="false">
-            <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="Manage UI Templates(CREDO)" />
+            <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="UC03. Manage UI Templates(CREDO)" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="35d7df85-8140-4d10-b3df-d816623d6a1f" name="Tech user" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
@@ -249,7 +249,7 @@
       </subsystem>
     </useCaseModelRootHasTypes>
     <packageHasNamedElement>
-      <useCase Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" name="Manage UI Templates(CREDO)" isAbstract="false" isLeaf="false">
+      <useCase Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" name="UC03. Manage UI Templates(CREDO)" isAbstract="false" isLeaf="false">
         <elementDefinition Id="5ebe50b5-1562-4ad2-b33a-975a0304de1d" />
         <subjects>
           <subsystemMoniker Id="5b0fddd8-9162-417e-abea-8e793515ae9f" LastKnownName="UI Builder" />
@@ -257,11 +257,11 @@
       </useCase>
     </packageHasNamedElement>
     <packageHasNamedElement>
-      <useCase Id="53351aba-8ff8-41f4-b01b-ea7b95c6ae5b" name="Create/edit UI Template" isAbstract="false" isLeaf="false">
+      <useCase Id="53351aba-8ff8-41f4-b01b-ea7b95c6ae5b" name="UC04.Create/edit UI Template" isAbstract="false" isLeaf="false">
         <elementDefinition Id="6bfa5121-dd04-41b7-b0c4-28b1035f3f41" />
         <generalsInternal>
           <generalization Id="a6c329b9-e9e8-43cd-b1bb-97b7ce097f07" isSubstitutable="false">
-            <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="Manage UI Templates(CREDO)" />
+            <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="UC03. Manage UI Templates(CREDO)" />
             <elementDefinition Id="6c0bdec3-3b27-499c-823b-f1244ef7f3ac" />
           </generalization>
         </generalsInternal>
@@ -323,7 +323,7 @@
         <elementDefinition Id="32648385-6b8d-4bc3-af48-91f3977b8b24" />
         <generalsInternal>
           <generalization Id="a061b92d-fb78-4e95-ac8e-ef823c0a1a2a" isSubstitutable="false">
-            <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="Manage UI Templates(CREDO)" />
+            <useCaseMoniker Id="c2a7a403-1069-4f35-b397-ba0c9ad357ea" LastKnownName="UC03. Manage UI Templates(CREDO)" />
             <elementDefinition Id="7a505d3f-dc3a-456a-a58f-a8b5b37720c7" />
           </generalization>
         </generalsInternal>

@@ -59,7 +59,10 @@
       <SubType>Content</SubType>
       <DependentUpon>DomainModel\DomainModel.classdiagram</DependentUpon>
     </Content>
-    <Content Include="DomainModel\Glossary.doc">
+    <Content Include="Glossary\General Glossary.doc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Glossary\Data Glossary.doc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="ModelDefinition\Package1_0113.uml">
@@ -146,7 +149,7 @@
     <Content Include="Use Cases\Documents\UC02 Create or edit feature model.doc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Use Cases\Documents\UC03 Create or edit configuration.doc">
+    <Content Include="Use Cases\Documents\UC04 Create or edit ui template.doc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Use Cases\Overview.usecasediagram">
@@ -163,6 +166,7 @@
     <Folder Include="DomainModel" />
     <Folder Include="Database" />
     <Folder Include="Architecture" />
+    <Folder Include="Glossary" />
     <Folder Include="UI" />
     <Folder Include="Use Cases" />
     <Folder Include="Use Cases\Documents" />

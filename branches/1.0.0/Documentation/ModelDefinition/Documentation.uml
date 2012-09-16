@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm9="http://schemas.microsoft.com/dsltools/UseCaseModel"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel"
   dslVersion="1.0.0.0"
   Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747"
   name="Documentation" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -588,7 +588,7 @@ Label</body>
             isAbstract="false">
             <useCaseMoniker
               Id="5ebe50b5-1562-4ad2-b33a-975a0304de1d"
-              LastKnownName="Manage UI Templates(CREDO)"
+              LastKnownName="UC03. Manage UI Templates(CREDO)"
               LastKnownLocation="Documentation.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -3963,13 +3963,13 @@ Label</body>
     <packageHasNamedElement>
       <packageMoniker
         Id="ca2ee2c6-47ef-4107-9922-70067e636121"
-        LastKnownName="Modeller"
+        LastKnownName="ModelEditor"
         LastKnownLocation="Package_1512.uml" />
     </packageHasNamedElement>
     <packageHasNamedElement>
       <packageMoniker
         Id="23e816ca-a77b-4928-8d06-fff138697a42"
-        LastKnownName="Configurator"
+        LastKnownName="ConfigurationEditor"
         LastKnownLocation="Package_1609.uml" />
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -5362,7 +5362,7 @@ Label</body>
     <packageHasNamedElement>
       <packageMoniker
         Id="85c86a5b-97fe-4ebe-b5d0-5ef0922076a7"
-        LastKnownName="UI Builder"
+        LastKnownName="UITemplateEditor"
         LastKnownLocation="Package_2216.uml" />
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -6168,7 +6168,7 @@ Label</body>
     <packageHasNamedElement>
       <useCase
         Id="5ebe50b5-1562-4ad2-b33a-975a0304de1d"
-        name="Manage UI Templates(CREDO)"
+        name="UC03. Manage UI Templates(CREDO)"
         isAbstract="false"
         isLeaf="false">
         <subjects>
@@ -6182,7 +6182,7 @@ Label</body>
     <packageHasNamedElement>
       <useCase
         Id="6bfa5121-dd04-41b7-b0c4-28b1035f3f41"
-        name="Create/edit UI Template"
+        name="UC04.Create/edit UI Template"
         isAbstract="false"
         isLeaf="false">
         <generalsInternal>
@@ -6191,7 +6191,7 @@ Label</body>
             isSubstitutable="false">
             <useCaseMoniker
               Id="5ebe50b5-1562-4ad2-b33a-975a0304de1d"
-              LastKnownName="Manage UI Templates(CREDO)"
+              LastKnownName="UC03. Manage UI Templates(CREDO)"
               LastKnownLocation="Documentation.uml" />
           </generalization>
         </generalsInternal>
@@ -6296,7 +6296,7 @@ Label</body>
             isSubstitutable="false">
             <useCaseMoniker
               Id="5ebe50b5-1562-4ad2-b33a-975a0304de1d"
-              LastKnownName="Manage UI Templates(CREDO)"
+              LastKnownName="UC03. Manage UI Templates(CREDO)"
               LastKnownLocation="Documentation.uml" />
           </generalization>
         </generalsInternal>
@@ -6395,7 +6395,7 @@ Label</body>
             isAbstract="false">
             <classMoniker
               Id="6a433e17-2eab-40d9-a334-4c9b9c3fb27c"
-              LastKnownName="Model"
+              LastKnownName="Feature Model"
               LastKnownLocation="Package_1512.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
