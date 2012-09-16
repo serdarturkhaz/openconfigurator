@@ -2,7 +2,7 @@
 // 
 // Distributed under the MIT license
 // ===========================================================
-// Copyright (c) 2012 - Radu Mitache
+// Copyright (c) 2012 - Radu Mitache, Josef A. Habdank
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -570,7 +570,7 @@ namespace BLL.RuleParser
                     public override IEvalResult[] Eval()
                     {
                         //Root selector
-                        if (_syntaxString.Contains("root"))
+                        if (_syntaxString == "root")
                         {
                             BLL.BusinessObjects.Feature root = _configSession.Model.GetRootFeature();
 
@@ -582,9 +582,11 @@ namespace BLL.RuleParser
                         else
                         //ID selector
                         {
-                            //Get the Feature and FeatureSelection
-                            string featureName = _syntaxString.Replace("#", "").Replace("_", " ");
-                            BusinessObjects.Feature feature = _configSession.Model.GetFeatureByName(featureName);
+                            // Get the Feature and FeatureSelection
+                            // remove the hash
+                            string featureIdentifier = _syntaxString.Replace("#", "");
+                            BusinessObjects.Feature feature = _configSession.Model.GetFeatureByIdentifier(featureIdentifier);
+
                             if (feature == null)
                                 throw new ElementNotFoundException();
 
@@ -598,11 +600,11 @@ namespace BLL.RuleParser
                 public class RelativeFeatureSelector : ParserStatement
                 {
                     //Fields
-                    public static string IdentifyRegex = "^children|descendants$", SplitRegex = null; //example : "descendants"
+                    public static string IdentifyRegex = @"^(children|descendants)(\[(selected|deselected|unselected)\])?$", SplitRegex = null; //example : "descendants"
 
                     public override IEvalResult[] Eval(IEvalResult[] parameters)
                     {
-                        //Setup parameters and variables
+                        // Setup parameters and variables
                         List<BLL.BusinessObjects.Feature> featureReferences = new List<BusinessObjects.Feature>();
                         foreach (IEvalResult parameter in parameters)
                         {
@@ -618,7 +620,7 @@ namespace BLL.RuleParser
                         }
                         List<BLL.BusinessObjects.Feature> selectedFeatures = new List<BusinessObjects.Feature>();
 
-                        //Select features
+                        // Select all the features
                         if (_syntaxString.Contains("children"))
                         {
                             //Children selector
@@ -636,20 +638,44 @@ namespace BLL.RuleParser
                             }
                         }
 
+                        // null if takes all the features
+                        BusinessObjects.FeatureSelectionStates? featureSelectionState = null;
 
-                        //Return a list of references pointing the selected features 
+                        // find the feture state and save it to featureSelectionState, featureSelectionState remains null if could not find
+                        foreach (var featureState in Enum.GetValues(typeof(BusinessObjects.FeatureSelectionStates)))
+                        {
+                            // get the state name
+                            string enumSelector = string.Format(@"[{0}]", featureState.ToString().ToLower());
+
+                            if (_syntaxString.Contains(enumSelector))
+                            {
+                                featureSelectionState = (BusinessObjects.FeatureSelectionStates)featureState;
+                                break;
+                            }
+                        }
+
+                        // Return a list of references pointing the selected features 
                         List<IEvalResult> returnRef = new List<IEvalResult>();
                         foreach (BLL.BusinessObjects.Feature childFeature in selectedFeatures)
                         {
-                            //Only childFeatures which are selected in the configuration
+                            // Only childFeatures which are selected in the configuration
                             BLL.BusinessObjects.FeatureSelection featureSelection = _configSession.Configuration.GetFeatureSelectionByFeatureID(childFeature.ID);
-                            if (featureSelection.SelectionState == BusinessObjects.FeatureSelectionStates.Selected)
+
+                            // get all if there was no selector, else get only those which are of the given state
+                            if (featureSelectionState == null || featureSelection.SelectionState == featureSelectionState)
                             {
-                                //
                                 object target = (object)childFeature;
                                 ObjectReference objRef = new ObjectReference(ref target);
                                 returnRef.Add(objRef);
                             }
+
+                            //if (featureSelection.SelectionState == BusinessObjects.FeatureSelectionStates.Selected)
+                            //{
+                            //    //
+                            //    object target = (object)childFeature;
+                            //    ObjectReference objRef = new ObjectReference(ref target);
+                            //    returnRef.Add(objRef);
+                            //}
                         }
 
                         return returnRef.ToArray();
@@ -681,8 +707,9 @@ namespace BLL.RuleParser
                         foreach (BLL.BusinessObjects.Feature featureRef in featureReferences)
                         {
                             //Get the Attribute
-                            string attributeName = _syntaxString.Replace("_", " ");
-                            BusinessObjects.Attribute attribute = _configSession.Model.GetAttributeByName(featureRef, attributeName);
+                            string attributeIdentifier = _syntaxString;
+                            BusinessObjects.Attribute attribute = _configSession.Model.GetAttributeByIdentifier(featureRef, attributeIdentifier);
+
                             if (attribute != null) //if the feature doesn't have the Attribute, it is ignored
                             {
                                 //Get the AttributeValue

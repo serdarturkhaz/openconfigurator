@@ -3,6 +3,7 @@
 // Distributed under the MIT license
 // ===========================================================
 // Copyright (c) 2012 - Radu Mitache
+// Edited by: Josef A. Habdank
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -243,9 +244,19 @@ namespace BLL.BusinessObjects
             BLL.BusinessObjects.Feature feature = Features.FirstOrDefault(x => x.Name == name);
             return feature;
         }
+        public BLL.BusinessObjects.Feature GetFeatureByIdentifier(string identifier)
+        {
+            BLL.BusinessObjects.Feature feature = Features.FirstOrDefault(x => x.Identifier == identifier);
+            return feature;
+        }
         public BLL.BusinessObjects.Attribute GetAttributeByName(BLL.BusinessObjects.Feature feature, string name)
         {
             BLL.BusinessObjects.Attribute attribute = feature.Attributes.FirstOrDefault(x => x.Name == name);
+            return attribute;
+        }
+        public BLL.BusinessObjects.Attribute GetAttributeByIdentifier(BLL.BusinessObjects.Feature feature, string identifier)
+        {
+            BLL.BusinessObjects.Attribute attribute = feature.Attributes.FirstOrDefault(x => x.Identifier == identifier);
             return attribute;
         }
 

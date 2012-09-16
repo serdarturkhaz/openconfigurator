@@ -2,8 +2,7 @@
 // 
 // Distributed under the MIT license
 // ===========================================================
-// Copyright (c) 2012 - Radu Mitache
-// Edited by: Alexander Mantzoukas
+// Copyright (c) 2012 - Radu Mitache, Alexander Mantzoukas, Josef A. Habdank
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
@@ -629,6 +628,9 @@ ClientObjects.Feature = function (businessObject) {
     this.GetField = function (fieldName) {
         return _businessObject[fieldName];
     }
+    this.GetFieldIdentifier = function () {
+        return _businessObject["Identifier"];
+    }
     this.SetField = function (fieldName, value) {
         _businessObject[fieldName] = value;
     }
@@ -669,6 +671,9 @@ ClientObjects.Attribute = function (businessObject) {
     }
     this.GetField = function (fieldName) {
         return _businessObject[fieldName];
+    }
+    this.GetFieldIdentifier = function () {
+        return _businessObject["Identifier"];
     }
     this.SetField = function (fieldName, value) {
         _businessObject[fieldName] = value;
@@ -843,6 +848,9 @@ ClientObjects.CustomRule = function (businessObject) {
     this.GetField = function (fieldName) {
         return _businessObject[fieldName];
     }
+    this.GetFieldIdentifier = function () {
+        return _businessObject["Identifier"];
+    }
     this.SetField = function (fieldName, value) {
         _businessObject[fieldName] = value;
     }
@@ -919,7 +927,45 @@ var DiagramDataModel = function (modelID, modelName) {
                 returnObj = dataObj;
             }
         });
+
         return returnObj;
+    }
+    // accepts attributes, as a set of collections, call function as 
+    // getNewIdentifier("Attributes_", feature.Attributes) or 
+    // getNewIdentifier("Feature_", _clientObjects.features, _clientObjects.customRules)
+    var getNewIdentifier = function (prefix) { 
+        var elementsWithPrefix = [];
+
+        // if collections is a single 
+        for (var i = 1; i < arguments.length; i++) {
+            var collection = arguments[i];
+            // get all matching feature identifiers
+            for (var guidKey in collection) {
+                var clientObject = collection[guidKey];
+
+                // ignore it if it is deleted
+                if (!clientObject.IsDeleted()) {
+                    var identifier = clientObject.GetFieldIdentifier();
+
+                    // if it starts with the prefix then add it to the array
+                    if (identifier.indexOf(prefix) == 0) {
+                        elementsWithPrefix.push(identifier);
+                    }
+                }
+            }
+        }
+
+        var elementCouter = 0;
+        var elementIdentifier;
+        var elementIndex;
+
+        do {
+            elementCouter++;
+            elementIdentifier = prefix + elementCouter;
+            elementIndex = $.inArray(elementIdentifier, elementsWithPrefix);
+        } while (elementIndex != -1);
+
+        return elementIdentifier;
     }
     var registerOperation = function (operation) {
 
@@ -1141,7 +1187,7 @@ var DiagramDataModel = function (modelID, modelName) {
 
     this.AddNewClientObject = function (type, initialBusinessValues, initialClientValues) {
 
-        //Setup inner business object
+        // Setup inner business object
         var newBusinessObject = getDefaultBusinessObject(type);
         if (initialBusinessValues != undefined && initialBusinessValues != null) {
             for (var fieldName in initialBusinessValues) {
@@ -1150,13 +1196,22 @@ var DiagramDataModel = function (modelID, modelName) {
             }
         }
 
-        //Setup client object
+        // Setup client object
         var newClientObject = null;
         switch (type) {
             case "feature":
+                //var featureIdentifier = getNewFeatureOrCustomRuleIdentifier("Feature_");
+                var featureIdentifier = getNewIdentifier("Feature_", _clientObjects.features, _clientObjects.customRules);
+                newBusinessObject.Identifier = featureIdentifier;
+                newBusinessObject.Name = featureIdentifier.replace("_", " ");
+
                 newClientObject = new ClientObjects.Feature(newBusinessObject);
                 break;
             case "attribute":
+                var attributeIdentifier = getNewIdentifier("Attribute_", initialClientValues.Feature.Attributes);
+                newBusinessObject.Identifier = attributeIdentifier;
+                newBusinessObject.Name = attributeIdentifier.replace("_", " ");
+
                 newClientObject = new ClientObjects.Attribute(newBusinessObject);
                 break;
             case "relation":
@@ -1169,6 +1224,11 @@ var DiagramDataModel = function (modelID, modelName) {
                 newClientObject = new ClientObjects.CompositionRule(newBusinessObject);
                 break;
             case "customRule":
+                // var customRuleIdentifier = getNewFeatureOrCustomRuleIdentifier("CustomRule_");
+                var customRuleIdentifier = getNewIdentifier("CustomRule_", _clientObjects.features, _clientObjects.customRules);
+                newBusinessObject.Identifier = customRuleIdentifier;
+                newBusinessObject.Name = customRuleIdentifier.replace("_", " ");
+
                 newClientObject = new ClientObjects.CustomRule(newBusinessObject);
                 break;
         }
@@ -1242,6 +1302,15 @@ var DiagramDataModel = function (modelID, modelName) {
         for (var guidKey in _clientObjects[type + "s"]) {
             var clientObject = _clientObjects[type + "s"][guidKey];
             if (ID == clientObject.GetField("ID")) {
+                return clientObject;
+            }
+        }
+    }
+    this.GetByIdentifier = function (identifier, type) {
+        var clientObjectCollection = _clientObjects[type + "s"];
+        for (var guidKey in clientObjectCollection) {
+            var clientObject = clientObjectCollection[guidKey];
+            if (!clientObject.IsDeleted() && identifier == clientObject.GetField("Identifier")) {
                 return clientObject;
             }
         }
@@ -4310,6 +4379,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             };
             $(_canvasContainer).bind("click", _clickHandler);
         }
+    }
+    var createFeatureName = function () {
+
     }
     var createRelation = function () {
         if (_selectedElements.length == 2) {

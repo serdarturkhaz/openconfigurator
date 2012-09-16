@@ -139,6 +139,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\PresentationLayer.dll" />
+    <Content Include="bin\PresentationLayer.pdb" />
     <Content Include="Content\themes\base\images\Controls\check-deselected-disabled.png" />
     <Content Include="Content\themes\base\images\Controls\check-deselected.png" />
     <Content Include="Content\themes\base\images\Controls\check-selected-disabled.png" />
@@ -165,12 +167,14 @@
     <Content Include="Content\themes\base\images\Icons\NewModel.png" />
     <Content Include="Content\themes\base\images\Icons\save.png" />
     <Content Include="Content\themes\base\images\Icons\success-notification.png" />
+    <Content Include="Content\themes\base\images\Icons\Toolbar\Toggle-Orientation.png" />
+    <Content Include="Content\themes\base\images\Icons\Toolbar\Zoom-In.png" />
+    <Content Include="Content\themes\base\images\Icons\Toolbar\Zoom-Out.png" />
     <Content Include="Content\themes\base\images\Icons\Toolbox\compositionrule.png" />
     <Content Include="Content\themes\base\images\Icons\Toolbox\customrule.png" />
     <Content Include="Content\themes\base\images\Icons\Toolbox\feature.png" />
     <Content Include="Content\themes\base\images\Icons\Toolbox\grouprelation.png" />
     <Content Include="Content\themes\base\images\Icons\Toolbox\relation.png" />
-    <Content Include="Content\themes\base\images\Icons\undo-toolbar.png" />
     <Content Include="Content\themes\base\images\Layout\content-bg.png" />
     <Content Include="Content\themes\base\images\Layout\header-bar.png" />
     <Content Include="Content\themes\base\images\Layout\menu-bar.png" />
@@ -179,6 +183,7 @@
     <Content Include="Content\themes\base\images\Layout\roundedbox-header-left.png" />
     <Content Include="Content\themes\base\images\Layout\roundedbox-header-right.png" />
     <Content Include="Global.asax" />
+    <Content Include="Content\HtmlBrowserTestPage.htm" />
     <Content Include="Scripts\jquery-1.5.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.5.1.js" />
     <Content Include="Scripts\jquery-1.5.1.min.js" />
@@ -196,7 +201,9 @@
     <Content Include="Scripts\Own\raphael-min.js" />
     <Content Include="Scripts\Pages\ConfigurationEditor.js" />
     <Content Include="Scripts\Pages\ModelEditor.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
