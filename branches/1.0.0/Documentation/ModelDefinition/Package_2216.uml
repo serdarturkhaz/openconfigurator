@@ -38,14 +38,20 @@ Unbound</body>
       <annotatedElements>
         <classMoniker
           Id="0cfc1d7a-1e29-4823-ba76-f308f494652f"
-          LastKnownName="Binding mode"
+          LastKnownName="Binding type"
           LastKnownLocation="Package_2216.uml" />
       </annotatedElements>
     </comment>
     <comment
       Id="d306e369-dd2d-480d-ba3f-0135f4da4525">
       <body>Direct (Feature, Attribute, etc)
-Expression</body>
+Expression (selects a range)</body>
+      <annotatedElements>
+        <classMoniker
+          Id="56e841f9-897d-4adc-83b0-a76e2728d049"
+          LastKnownName="Binding mode"
+          LastKnownLocation="Package_2216.uml" />
+      </annotatedElements>
     </comment>
   </ownedCommentsInternal>
   <packagedElements>
@@ -165,7 +171,7 @@ Expression</body>
             isAbstract="false">
             <classMoniker
               Id="0cfc1d7a-1e29-4823-ba76-f308f494652f"
-              LastKnownName="Binding mode"
+              LastKnownName="Binding type"
               LastKnownLocation="Package_2216.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -183,6 +189,43 @@ Expression</body>
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="ecb1ed17-0d10-4013-874a-6e8ec5547ff5"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="a0497bd3-f3b9-4a9f-a966-529e45e095d4"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="56e841f9-897d-4adc-83b0-a76e2728d049"
+              LastKnownName="Binding mode"
+              LastKnownLocation="Package_2216.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="32bf60ef-d774-497b-ab36-7017e22bb329"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8b339c08-93e2-4054-b1c9-0a4c6bfb0c3b"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -236,7 +279,7 @@ Expression</body>
     <packageHasNamedElement>
       <class
         Id="0cfc1d7a-1e29-4823-ba76-f308f494652f"
-        name="Binding mode"
+        name="Binding type"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />
@@ -244,7 +287,7 @@ Expression</body>
     <packageHasNamedElement>
       <class
         Id="56e841f9-897d-4adc-83b0-a76e2728d049"
-        name="Binding mode1"
+        name="Binding mode"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />
