@@ -188,9 +188,6 @@ Custom:
                 <property Id="92ae27da-2dcf-4295-96e5-3d5b96c13292" name="Type" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
                   <elementDefinition Id="c948b66e-a291-49ae-ac62-aa55fd2cd3de" />
                 </property>
-                <property Id="0ab8b9a2-c356-4fd9-9bbd-386a842d1228" name="Priority" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                  <elementDefinition Id="74ccc14d-4b46-44ce-b419-95f6796153bd" />
-                </property>
               </ownedAttributesInternal>
             </class>
           </packageHasNamedElement>
@@ -420,10 +417,15 @@ Custom:
           <packageHasNamedElement>
             <class Id="77428d77-cec4-43d9-9fc9-f1011fa4b6a8" name="Model Event" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="328d88d3-67b1-41c7-9443-4add8a52b9d2" />
+              <ownedAttributesInternal>
+                <property Id="67979dec-b6c6-432c-9798-77c093983d7e" name="TriggerExpression" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="6d7f2d6f-14a9-46d7-b29e-296fd2adeaff" />
+                </property>
+              </ownedAttributesInternal>
             </class>
           </packageHasNamedElement>
           <packageHasNamedElement>
-            <class Id="d0556e9f-0c91-4c78-9f3c-15ab9955541f" name="Custom Rule instance" isAbstract="false" isLeaf="false" isActiveClass="false">
+            <class Id="d0556e9f-0c91-4c78-9f3c-15ab9955541f" name="Execution Entry" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="6c844151-d1bd-4beb-9269-751a44aa01a4" />
               <targetEnds>
                 <association Id="e4b95524-cefa-421c-99f8-c8264186bf68" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
@@ -457,6 +459,16 @@ Custom:
                   <relationshipOwnedElementsInternal>
                     <associationHasOwnedEnds>
                       <memberEnd Id="db1fe359-7e89-4e6f-94e5-815fa739a7fc" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                        <lowerValueInternal>
+                          <literalString Id="c948b932-81a7-44da-a2a0-33c49a61201c" name="Lower" value="*">
+                            <elementDefinition Id="ba40d25b-0e0f-46b0-9443-daa19da7a8f9" />
+                          </literalString>
+                        </lowerValueInternal>
+                        <upperValueInternal>
+                          <literalString Id="14c59fe9-a020-48aa-ad59-dd11183ec254" name="Upper" value="*">
+                            <elementDefinition Id="076d2dbe-ee35-4595-a974-c566b9ca6c64" />
+                          </literalString>
+                        </upperValueInternal>
                         <elementDefinition Id="ac5ca5aa-5183-4e2c-b682-1aac21ce68ba" />
                       </memberEnd>
                     </associationHasOwnedEnds>

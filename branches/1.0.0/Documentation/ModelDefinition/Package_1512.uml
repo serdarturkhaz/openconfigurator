@@ -472,17 +472,6 @@ Custom:
             isDerivedUnion="false"
             aggregation="None"
             isComposite="false" />
-          <property
-            Id="74ccc14d-4b46-44ce-b419-95f6796153bd"
-            name="Priority"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
         </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
@@ -1183,12 +1172,26 @@ Custom:
         name="Model Event"
         isAbstract="false"
         isLeaf="false"
-        isActiveClass="false" />
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="6d7f2d6f-14a9-46d7-b29e-296fd2adeaff"
+            name="TriggerExpression"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
       <class
         Id="6c844151-d1bd-4beb-9269-751a44aa01a4"
-        name="Custom Rule instance"
+        name="Execution Entry"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -1265,7 +1268,20 @@ Custom:
                   isDerivedUnion="false"
                   aggregation="None"
                   isComposite="false"
-                  isNavigableOwned="false" />
+                  isNavigableOwned="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="ba40d25b-0e0f-46b0-9443-daa19da7a8f9"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="076d2dbe-ee35-4595-a974-c566b9ca6c64"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
               </associationHasOwnedEnds>
               <associationHasOwnedEnds>
                 <memberEnd
