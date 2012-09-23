@@ -57,6 +57,7 @@ Consequence</body>
       <body>Global: 
   FeatureSelection  toggled event
   AttributeValue  modified event
+  Initialize configuration event
 
 Custom:
   User defined</body>
@@ -426,44 +427,6 @@ Custom:
                 <memberEnd
                   Id="ce8d09fd-b0d6-4e61-8feb-1624d18baa00"
                   name="Type"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false" />
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-          </association>
-          <association
-            Id="49a30e7d-defd-4ef2-aa5f-dfabc78ccd85"
-            isDerived="false"
-            sourceEndRoleName=""
-            targetEndRoleName=""
-            isLeaf="false"
-            name="Bound to"
-            isAbstract="false">
-            <classMoniker
-              Id="328d88d3-67b1-41c7-9443-4add8a52b9d2"
-              LastKnownName="Model Event"
-              LastKnownLocation="Package_1512.uml" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="f9ab8ce3-e27c-4819-9bc5-8201240c2926"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false"
-                  isNavigableOwned="false" />
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="6922d51f-214d-49af-a16f-f2119adc7dcc"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -1221,6 +1184,117 @@ Custom:
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="6c844151-d1bd-4beb-9269-751a44aa01a4"
+        name="Custom Rule instance"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="61c325bd-d536-4e96-995c-e1046603c2dc"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
+              LastKnownName="Custom Rule"
+              LastKnownLocation="Package_1512.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="46400057-a3d5-4a5f-ab5c-c60199d6280d"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="cc94190d-c169-4804-941c-7208b96bd73c"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="d8f8eeac-b4bc-4974-8913-b4c430f288e1"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6383a069-4fc7-4500-8bb9-a05ab611d6ff"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="e61dd29b-a22d-49dc-8399-fb00a911ecb1"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="328d88d3-67b1-41c7-9443-4add8a52b9d2"
+              LastKnownName="Model Event"
+              LastKnownLocation="Package_1512.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ac5ca5aa-5183-4e2c-b682-1aac21ce68ba"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="97cbca0e-de8b-4e52-9685-38c9e6e7b379"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="43869873-adf6-4fe7-8a47-ef80267e6e4c"
+            name="Sequence"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
     </packageHasNamedElement>
   </packagedElements>
 </package>
