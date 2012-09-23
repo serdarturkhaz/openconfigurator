@@ -3,10 +3,10 @@
   <Version>1</Version>
   <SourceModelProvider>
     <ConnectionBasedModelProvider>
-      <ConnectionString>Data Source=RADU-HP;Initial Catalog=OpenConfiguratorDEV_1.0.0;Integrated Security=True;Password=</ConnectionString>
+      <ConnectionString>Data Source=localhost;Initial Catalog=OpenConfiguratorDEV_1.0.0;Integrated Security=True;Password=</ConnectionString>
       <DatabaseName>OpenConfiguratorDEV_1.0.0</DatabaseName>
       <DspFamilyName>sql</DspFamilyName>
-      <Name>[RADU-HP.OpenConfiguratorDEV_1.0.0]</Name>
+      <Name>[localhost.OpenConfiguratorDEV_1.0.0]</Name>
     </ConnectionBasedModelProvider>
   </SourceModelProvider>
   <TargetModelProvider>
