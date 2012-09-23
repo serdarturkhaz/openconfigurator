@@ -664,13 +664,16 @@ Toggleable</body>
 Dynamic binding
 Unbound</body>
             <annotatedElements>
-              <classMoniker Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" LastKnownName="Binding mode" />
+              <classMoniker Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" LastKnownName="Binding type" />
             </annotatedElements>
           </comment>
           <comment Id="215099b5-7546-4f8f-b39e-e39e47d70e24">
             <elementDefinition Id="d306e369-dd2d-480d-ba3f-0135f4da4525" />
             <body>Direct (Feature, Attribute, etc)
-Expression</body>
+Expression (selects a range)</body>
+            <annotatedElements>
+              <classMoniker Id="8b907e9d-0480-4b1a-ac47-fa1259bb2bd1" LastKnownName="Binding mode" />
+            </annotatedElements>
           </comment>
         </ownedCommentsInternal>
         <elementDefinition Id="85c86a5b-97fe-4ebe-b5d0-5ef0922076a7" />
@@ -724,7 +727,7 @@ Expression</body>
                   <elementDefinition Id="321299ba-0612-4e36-b745-48a0806d832a" />
                 </association>
                 <association Id="8c3aab75-a8bb-4006-9a03-e48952939fdb" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
-                  <classMoniker Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" LastKnownName="Binding mode" />
+                  <classMoniker Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" LastKnownName="Binding type" />
                   <relationshipOwnedElementsInternal>
                     <associationHasOwnedEnds>
                       <memberEnd Id="701e5bd2-691e-42d5-b891-218acffc5f2e" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
@@ -738,6 +741,22 @@ Expression</body>
                     </associationHasOwnedEnds>
                   </relationshipOwnedElementsInternal>
                   <elementDefinition Id="57d2964c-5e8a-472c-b9f2-9b5f1ee29b6b" />
+                </association>
+                <association Id="96cadbd1-9e27-4a86-8ecd-4caf3d1e566d" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+                  <classMoniker Id="8b907e9d-0480-4b1a-ac47-fa1259bb2bd1" LastKnownName="Binding mode" />
+                  <relationshipOwnedElementsInternal>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="df74cc65-a90e-4249-8f7d-2180348335bd" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                        <elementDefinition Id="32bf60ef-d774-497b-ab36-7017e22bb329" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="93780456-3f2b-4aa5-8731-cf62e7c8eb0c" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <elementDefinition Id="8b339c08-93e2-4054-b1c9-0a4c6bfb0c3b" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                  </relationshipOwnedElementsInternal>
+                  <elementDefinition Id="a0497bd3-f3b9-4a9f-a966-529e45e095d4" />
                 </association>
               </targetEnds>
               <ownedAttributesInternal>
@@ -753,12 +772,12 @@ Expression</body>
             </class>
           </packageHasNamedElement>
           <packageHasNamedElement>
-            <class Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" name="Binding mode" isAbstract="false" isLeaf="false" isActiveClass="false">
+            <class Id="f8e86a45-10a5-45c2-8864-b40e4da76f0c" name="Binding type" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="0cfc1d7a-1e29-4823-ba76-f308f494652f" />
             </class>
           </packageHasNamedElement>
           <packageHasNamedElement>
-            <class Id="8b907e9d-0480-4b1a-ac47-fa1259bb2bd1" name="Binding mode1" isAbstract="false" isLeaf="false" isActiveClass="false">
+            <class Id="8b907e9d-0480-4b1a-ac47-fa1259bb2bd1" name="Binding mode" isAbstract="false" isLeaf="false" isActiveClass="false">
               <elementDefinition Id="56e841f9-897d-4adc-83b0-a76e2728d049" />
             </class>
           </packageHasNamedElement>
