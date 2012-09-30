@@ -79,10 +79,10 @@ var UIObjectStyles = {
         general: {
             box: {
                 dimensions: {
-                    width: 90,
+                    width: 120,
                     height: 26,
                     maxWidth: 150,
-                    paddingLeftRight: 10
+                    paddingLeftRight: 3
                 }
             },
             text: {
@@ -2778,6 +2778,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var _clickHandler = null;
     var _hoverElement = null;
 
+    // Text size optimization calculations
+    var _lettersCalculated = 0;
+
     //UIObjects & Defaults/Settings
     var UIFeature = function (clientObjectGUID, name, absoluteX, absoluteY) {
 
@@ -2800,8 +2803,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var _relatedCompositeElements = [];
         var _attributeElements = [];
         var _thisUIFeature = this;
-        var _wLetterWidthNumber = 0;
-        var _lettersCalculatedForTitle = 0;
 
         //Properties
         this.GUID = clientObjectGUID;
@@ -2839,6 +2840,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     toggleElementSelect(_thisUIFeature, e.ctrlKey, true);
                 }
 
+                _outerElement.attr({ cursor: "" });
             });
 
             //Hoverable
@@ -2847,21 +2849,24 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     if (_innerMode == innerState.relationLock ||
                         _innerMode == innerState.groupRelationLock ||
                         _innerMode == innerState.compositionRuleLock) {
+                        _outerElement.attr({ cursor: "crosshair" });
                         _hoverElement = _thisUIFeature;
                     }
 
                     if (_glow == null) {
-                        _innerElements.box.getBBox(); //hack fix for weird RaphaelJS bug
+                        _innerElements.box.getBBox(); // hack fix for weird RaphaelJS bug
                         _glow = _innerElements.box.glow(commonStyles.glow.attr);
                     }
                 }
             }).mouseout(function (e) {
                 if (_innerMode != innerState.dragging) {
-                    if ((_innerMode == innerState.relationLock ||
+                    if (_innerMode == innerState.relationLock ||
                         _innerMode == innerState.groupRelationLock ||
-                        _innerMode == innerState.compositionRuleLock) &&
-                        _hoverElement == _thisUIFeature) {
-                        _hoverElement = null;
+                        _innerMode == innerState.compositionRuleLock) {
+                        if (_hoverElement == _thisUIFeature) {
+                            _outerElement.attr({ cursor: "" });
+                            _hoverElement = null;
+                        }
                     }
 
                     if (_innerMode != innerState.dragging) {
@@ -3020,27 +3025,23 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
             });
         }
-        var calculateVisibleText = function () {
-            var scaledWidth = UIObjectStyles.feature.general.box.dimensions.maxWidth * _scaleModifier;
-            var textBBox = _innerElements.text.getBBox();
-            if (textBBox.width > scaledWidth) {
-                var txt = _name;
-                while (textBBox.width > scaledWidth) {
-                    txt = txt.replace(/\s*[a-z0-9]+(\.\.\.)?\s*$/gi, "...");
-                    _innerElements.text.attr({
-                        text: txt
-                    });
-                    textBBox = _innerElements.text.getBBox();
-                }
-            }
+        var calculateWLetterText = function () {
+            var wLetterText = _canvas.text(0, 0, 'wi').attr(UIObjectStyles.feature.states[_currentState].box.attr);
+            wLetterText.attr({
+                "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
+            });
+            var wWidth = wLetterText.getBBox().width;
+            wLetterText.remove();
+            return wWidth / 1.9;
         }
-        var calculateCharactersForWidth = function () {
+        var getVisibleText = function (text) {
             // Create a 'w' text and get the width if has not been calculated before
-            if (_wLetterWidthNumber == 0) {
-
+            if (_lettersCalculated === 0) {
+                var _wLetterPixelSize = calculateWLetterText();
+                _lettersCalculated = Math.floor((UIObjectStyles.feature.general.box.dimensions.width - 2 * UIObjectStyles.feature.general.box.dimensions.paddingLeftRight) * _scaleModifier / _wLetterPixelSize);
             }
 
-            _lettersCalculatedForTitle = Math.floor((UIObjectStyles.feature.general.box.dimensions.width - UIObjectStyles.feature.general.box.dimensions.paddingLeftRight) / _wLetterWidthNumber);
+            return text.length > _lettersCalculated ? text.substring(0, _lettersCalculated) + "..." : text;
         }
 
         //Public methods
@@ -3048,31 +3049,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Create inner elements            
             _innerElements.box = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight, 0).attr(UIObjectStyles.feature.states[_currentState].box.attr);
-            _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
+            _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, getVisibleText(_name)).attr(UIObjectStyles.feature.states[_currentState].text.attr);
             _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
 
             // Create the attributes and find the maximum width size
-
-            // Fit the textbox
-            var textBBox = _innerElements.text.getBBox();
-            if (textBBox.width > UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier) {
-                calculateVisibleText();
-
-                textBBox = _innerElements.text.getBBox();
-                _absolutePos.x = textBBox.x / _scaleModifier;
-                _originalBoxWidth = textBBox.width / _scaleModifier;
-                _screenPos.x = _absolutePos.x * _scaleModifier;
-                _screenPos.y = _absolutePos.y * _scaleModifier;
-                _boxWidth = _originalBoxWidth * _scaleModifier;
-                _boxHeight = _originalBoxHeight * _scaleModifier;
-
-                _innerElements.box.attr({
-                    x: _screenPos.x,
-                    y: _screenPos.y,
-                    width: _boxWidth,
-                    height: _boxHeight
-                });
-            }
 
             //Create the main outer element
             _outerElement = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight).attr(systemDefaults.common.outerElement.attr);
@@ -3083,38 +3063,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             makeEditable();
         }
         this.RefreshGraphicalRepresentation = function (options) {
-
-            // Text is needed for calculations, so set the font now
-            _innerElements.text.attr({
-                "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
-            });
-
-            // If true the related composite elements should be refreshed after we have changed this representation.
-            var refreshRelatedCompositeElements = false;
-            var isZooming = typeof (options) !== "undefined" && options.isZooming ? true : false;
-
-            // Fit the textbox
-            var textBBox = _innerElements.text.getBBox();
-            if (isZooming || (textBBox.width > UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier)) {
-                // Check for text truncation
-                calculateVisibleText();
-
-                textBBox = _innerElements.text.getBBox();
-                if (!isZooming) // If the UI is zooming then the textbox will have the previous scaled placement (hasn't been positioned yet)
-                    _absolutePos.x = textBBox.x / _scaleModifier;
-                _originalBoxWidth = textBBox.width / _scaleModifier;
-
-                // While zooming there might be the case that the textbox width is smaller than the box's width
-                if (isZooming && (textBBox.width < UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier))
-                    _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width;
-
-                refreshRelatedCompositeElements = true;
-            }
-            else if (_originalBoxWidth != UIObjectStyles.feature.general.box.dimensions.width) {
-                // Has to fix the x using the old width
-                _absolutePos.x += (_originalBoxWidth - UIObjectStyles.feature.general.box.dimensions.width) * _scaleModifier / 2;
-                _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width;
-                refreshRelatedCompositeElements = true;
+            if (options && options.isZooming) {
+                _innerElements.text.attr({ "text": getVisibleText(_name) });
             }
 
             // Rescale variables
@@ -3125,13 +3075,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             // Refresh the canvas
             refresh();
-
-            // Refresh attached objects if needed
-            if (refreshRelatedCompositeElements && settings.diagramContext.dynamicRefresh == true) {
-                for (var j = 0; j < _relatedCompositeElements.length; j++) {
-                    _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
-                }
-            }
         }
         this.ReverseCoordinates = function () {
 
@@ -3153,8 +3096,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             // Set new name of feature
             _name = newName;
 
-            _innerElements.text.attr({ text: newName });
-            calculateVisibleText();
+            _innerElements.text.attr({ text: getVisibleText(newName) });
         }
         this.Delete = function () {
             if (_innerMode != innerState.inlineEdit) {
@@ -4165,7 +4107,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     ///// UIAttribute TEST <<
 
     // Utilities
-    //Reuse getPath method (copied from UIConnection methods)
+    // Cannot reuse getPath/getArcPath method from UIConnection and UIGroupRelation
     var getPathFromFeatureToPoint = function (objA, x, y) {
 
         //Variables
@@ -4368,6 +4310,34 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             }
         };
         return returnObj;
+    }
+    var getArcPath = function (firstConnection, lastConnection) {
+
+        //Get points
+        var rootPoint = firstConnection.getPointAtLength(0);
+        var pointA = firstConnection.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length * _scaleModifier);
+        var pointB = lastConnection.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length * _scaleModifier);
+
+        //Get arc modifiers
+        var currentOrientation = _fixedOrientation;
+        var rx = systemDefaults.orientations[currentOrientation].arcModifiers.rx;
+        var ry = systemDefaults.orientations[currentOrientation].arcModifiers.ry;
+        var arcSweep = null;
+
+        for (var key in systemDefaults.orientations[currentOrientation].arcDirection) {
+            var arcDirection = systemDefaults.orientations[currentOrientation].arcDirection[key];
+            if (arcDirection.check(rootPoint, pointA) == true) {
+                arcSweep = arcDirection.arcSweep;
+                break;
+            }
+        }
+
+        //Create the path
+        var path = ["M", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3),
+                    "L", pointA.x.toFixed(3), pointA.y.toFixed(3), //"L", pointB.x.toFixed(3), pointB.y.toFixed(3), - straight lines
+                    "A", rx, ry, 0, 0, arcSweep, pointB.x.toFixed(3), pointB.y.toFixed(3),
+                    "L", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3)].join(",");
+        return path;
     }
 
     //Properties
@@ -4645,12 +4615,18 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
                     var rct = null;
                     var scaledDimensions = null;
+                    var firstPath = null;
+                    // Draw the connections for the already selected elements
                     for (var i = 1; i < _selectedElements.length; i++) {
                         var _currentPathForFeatures = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _selectedElements[i].InnerElements.box);
 
                         // This can be refactored
                         _wireframeboxes[_wireframeboxes.length] = _canvas.path(_currentPathForFeatures.path);
                         _wireframeboxes[_wireframeboxes.length - 1].attr(style.line.attr);
+
+                        // Mark the first line
+                        if (i === 1)
+                            firstPath = _wireframeboxes[_wireframeboxes.length - 1];
 
                         rct = style.connectors.endConnector;
                         scaledDimensions = $.extend(true, {}, rct.dimensions);
@@ -4665,18 +4641,26 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                         // Until here
                     }
 
+                    // Draw the last connection that follows the mouse
                     var _currentPath = null;
                     var shouldDrawWireframeBehind = true;
                     if (_hoverElement !== null && _selectedElements[0] !== _hoverElement) {
                         _currentPath = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _hoverElement.InnerElements.box);
                         shouldDrawWireframeBehind = false;
                     }
-                    else
+                    else if (_selectedElements.length > 0)
                         _currentPath = getPathFromFeatureToPoint(_selectedElements[0].InnerElements.box, screenPosX, screenPosY);
 
                     _wireframeboxes[_wireframeboxes.length] = _canvas.path(_currentPath.path);
                     _wireframeboxes[_wireframeboxes.length - 1].attr(style.line.attr);
 
+                    if (_wireframeboxes.length > 1) {
+                        // Add the arc
+                        _wireframeboxes[_wireframeboxes.length] = _canvas.path(getArcPath(firstPath, _wireframeboxes[_wireframeboxes.length - 1])).attr(UIObjectStyles.groupRelation.general.rootArc.attr);
+                        _wireframeboxes[_wireframeboxes.length - 1].attr(style.line.attr);
+                    }
+
+                    // Draw the dot
                     rct = style.connectors.endConnector;
                     scaledDimensions = $.extend(true, {}, rct.dimensions);
                     for (var dimensionKey in scaledDimensions) {
@@ -4952,6 +4936,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
     }
     this.ZoomIn = function () {
+        _lettersCalculated = 0;
 
         //Modify scale
         if (_scaleModifier < 2) {
@@ -4964,6 +4949,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         return _scaleModifier;
     }
     this.ZoomOut = function () {
+        _lettersCalculated = 0;
 
         //Modify scale
         if (_scaleModifier >= 0.50) {
