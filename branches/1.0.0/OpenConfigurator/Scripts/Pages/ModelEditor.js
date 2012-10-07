@@ -2875,6 +2875,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var UIFeature = function (clientObjectGUID, name, absoluteX, absoluteY) {
 
         //Fields
+        var _featureObjectModel = _diagramDataModel.GetByGUID(clientObjectGUID);
         var _outerElement = null, _glow = null;
         var _innerElements = {
             box: null,
@@ -2888,8 +2889,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var _screenPos = {
             x: absoluteX * _scaleModifier, y: absoluteY * _scaleModifier
         }
-        var _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width, _originalBoxHeight = UIObjectStyles.feature.general.box.dimensions.height;
-        var _boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier, _boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
+        var _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width, _originalBoxHeight = (_featureObjectModel.Attributes.length + 1) * UIObjectStyles.feature.general.box.dimensions.height;
+        var _boxWidth = _originalBoxWidth * _scaleModifier, _boxHeight = _originalBoxHeight * _scaleModifier;
         var _relatedCompositeElements = [];
         var _attributeElements = [];
         var _thisUIFeature = this;
@@ -2905,9 +2906,24 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         this.GetPos = function () {
             return { x: _absolutePos.x, y: _absolutePos.y };
         }
+        this.GetBox = function () {
+            return { width: _boxWidth, height: _boxHeight };
+        }
+        this.GetScreenPos = function () {
+            return { x: _screenPos.x, y: _screenPos.y };
+        }
         this.InnerElements = _innerElements;
         this.RelatedCompositeElements = _relatedCompositeElements;
         this.AttributeElements = _attributeElements;
+        this.GetVisibleText = function (text) {
+            // Create a 'w' text and get the width if has not been calculated before
+            if (_lettersCalculated === 0) {
+                var _wLetterPixelSize = calculateWLetterText();
+                _lettersCalculated = Math.floor((UIObjectStyles.feature.general.box.dimensions.width - 2 * UIObjectStyles.feature.general.box.dimensions.paddingLeftRight) * _scaleModifier / _wLetterPixelSize);
+            }
+
+            return text.length > _lettersCalculated ? text.substring(0, _lettersCalculated) + "..." : text;
+        }
 
         //Private methods
         var makeSelectable = function () {
@@ -3018,6 +3034,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     for (var j = 0; j < _relatedCompositeElements.length; j++) {
                         _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
                     }
+                    for (var j = 0; j < _attributeElements.length; j++) {
+                        _attributeElements[j].OnFeatureMoved(_thisUIFeature);
+                    }
                 }
             };
             up = function () {
@@ -3036,9 +3055,11 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                         for (var j = 0; j < _relatedCompositeElements.length; j++) {
                             _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
                         }
+                        for (var j = 0; j < _attributeElements.length; j++) {
+                            _attributeElements[j].OnFeatureMoved(_thisUIFeature);
+                        }
                     }
 
-                    // _thisUIFeature.RefreshGraphicalRepresentation();
                     wasMoved = false;
                 }
             };
@@ -3111,7 +3132,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //
             _innerElements.text.attr({
                 x: _boxWidth / 2 + _screenPos.x,
-                y: _boxHeight / 2 + _screenPos.y,
+                y: UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier / 2 + _screenPos.y,
                 "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
             });
         }
@@ -3124,25 +3145,21 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             wLetterText.remove();
             return wWidth / 1.9;
         }
-        var getVisibleText = function (text) {
-            // Create a 'w' text and get the width if has not been calculated before
-            if (_lettersCalculated === 0) {
-                var _wLetterPixelSize = calculateWLetterText();
-                _lettersCalculated = Math.floor((UIObjectStyles.feature.general.box.dimensions.width - 2 * UIObjectStyles.feature.general.box.dimensions.paddingLeftRight) * _scaleModifier / _wLetterPixelSize);
-            }
-
-            return text.length > _lettersCalculated ? text.substring(0, _lettersCalculated) + "..." : text;
-        }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
 
             //Create inner elements            
             _innerElements.box = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight, 0).attr(UIObjectStyles.feature.states[_currentState].box.attr);
-            _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, getVisibleText(_name)).attr(UIObjectStyles.feature.states[_currentState].text.attr);
+            _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier / 2 + _screenPos.y, this.GetVisibleText(_name)).attr(UIObjectStyles.feature.states[_currentState].text.attr);
             _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
 
-            // Create the attributes and find the maximum width size
+            // Create the attributes and place them for rendering
+            for (var i = 0; i < _featureObjectModel.Attributes.length; ++i) {
+                var uia = new UIAttribute(_featureObjectModel.Attributes[i].GetField("Name"), _thisUIFeature, i);
+                uia.CreateGraphicalRepresentation();
+                _attributeElements.push(uia);
+            }
 
             //Create the main outer element
             _outerElement = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight).attr(systemDefaults.common.outerElement.attr);
@@ -3154,7 +3171,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
         this.RefreshGraphicalRepresentation = function (options) {
             if (options && options.isZooming) {
-                _innerElements.text.attr({ "text": getVisibleText(_name) });
+                _innerElements.text.attr({ "text": this.GetVisibleText(_name) });
             }
 
             // Rescale variables
@@ -3162,6 +3179,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _screenPos.y = _absolutePos.y * _scaleModifier;
             _boxWidth = _originalBoxWidth * _scaleModifier;
             _boxHeight = _originalBoxHeight * _scaleModifier;
+
+            for (var i = 0; i < _attributeElements.length; ++i) {
+                _attributeElements[i].RefreshGraphicalRepresentation();
+            }
 
             // Refresh the canvas
             refresh();
@@ -3186,11 +3207,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             // Set new name of feature
             _name = newName;
 
-            _innerElements.text.attr({ text: getVisibleText(newName) });
+            _innerElements.text.attr({ text: this.GetVisibleText(newName) });
         }
         this.Delete = function () {
             if (_innerMode != innerState.inlineEdit) {
-
                 //Remove Raphael objects
                 _outerElement.remove();
                 _innerElements.box.remove();
@@ -3201,6 +3221,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 //Notify related CompositeElements
                 for (var j = _relatedCompositeElements.length - 1; j >= 0; j--) {
                     _relatedCompositeElements[j].OnAdjacentFeatureDeleted(_thisUIFeature);
+                }
+
+                for (var j = 0; j < _attributeElements.length; ++i) {
+                    _attributeElements.Delete();
                 }
             }
         }
@@ -4110,17 +4134,16 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     }
 
     ///// UIAttribute TEST >>
-    var UIAttribute = function (clientObjectGUID, attributeName, parentFeature) {
+    var UIAttribute = function (attributeName, parentFeature, order) {
 
         //Fields
         var _innerElements = {
-            text: null
+            text: null,
+            line: null
         };
         var _thisUIAttribute = this;
-        var _attributeName = attributeName;
 
         //Properties
-        this.GUID = clientObjectGUID;
         this.IsSelected = function () {
             return _currentState == systemDefaults.uiElementStates.selected;
         }
@@ -4128,41 +4151,36 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             return "attribute";
         }
 
-        //Private methods
-        //        function makeSelectable() {
-        //            //
-        //            var handlers = {
-        //                onClick: function (e) {
-        //                    toggleElementSelect(_thisUIRelation, e.shiftKey, true);
-        //                },
-        //                onMouseOver: function (e) {
-        //                    if (_innerMode != innerState.dragging) {
-        //                        _innerElements.connection.ShowGlow();
-        //                    }
-        //                },
-        //                onMouseOut: function (e) {
-        //                    if (_innerMode != innerState.dragging) {
-        //                        _innerElements.connection.HideGlow();
-        //                    }
-        //                }
-        //            }
-        //            _innerElements.connection.MakeSelectable(handlers);
-        //        }
         function refresh() {
+            var parentPos = parentFeature.GetScreenPos();
+            var parentBox = parentFeature.GetBox();
+
+            // Get the parent dimensions plus text and set up the raphael object
+            _innerElements.text.attr({ x: parentPos.x + UIObjectStyles.feature.general.box.dimensions.paddingLeftRight, y: (order + 1.5) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y, text: parentFeature.GetVisibleText(attributeName) });
+            _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
+            var lineY = (order + 1) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y;
+            _innerElements.line.attr({ path: ["M", parentPos.x, lineY, "L", parentPos.x + parentBox.width, lineY] });
         }
         function removeFromFeature(UIFeature) {
-            var index = $(UIFeature.RelatedCompositeElements).index(_thisUIRelation);
+            var index = $(UIFeature.AttributeElements).index(_thisUIAttribute);
             if (index != -1) {
-                UIFeature.RelatedCompositeElements.splice(index, 1);
+                UIFeature.AttributeElements.splice(index, 1);
             }
         }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
+            var parentPos = parentFeature.GetScreenPos();
+            var parentBox = parentFeature.GetBox();
+
+            // Add padding and coloring of the lines
+            // Add the on change of the attributes to map here
 
             // Get the parent dimensions plus text and set up the raphael object
-            _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
-            _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
+            _innerElements.text = _canvas.text(parentPos.x + UIObjectStyles.feature.general.box.dimensions.paddingLeftRight, (order + 1.5) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y, parentFeature.GetVisibleText(attributeName));
+            _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier, 'text-anchor': 'start' });
+            var lineY = (order + 1) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y;
+            _innerElements.line = _canvas.path(["M", parentPos.x, lineY, "L", parentPos.x + parentBox.width, lineY]);
 
             //Add references
             parentFeature.AttributeElements.push(_thisUIAttribute);
@@ -4170,21 +4188,16 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         this.RefreshGraphicalRepresentation = function () {
             refresh();
         }
-        //        this.Update = function (newRelationType, newLowerBound, newUpperBound) {
-        //            _relationType = newRelationType;
-        //            _lowerBound = newLowerBound;
-        //            _upperBound = newUpperBound;
-
-        //            //Update visuals
-        //            _innerElements.connection.Update(_thisUIRelation.GetSubTypeName());
-        //            toggleCardinalityElement(); //cardinalityElement
-        //        }
         this.Delete = function () {
 
-            //Remove cardinality element
+            //Remove elements
             if (_innerElements.text != null) {
                 _innerElements.text.Delete();
                 _innerElements.text = null;
+            }
+            if (_innerElements.line != null) {
+                _innerElements.line.Delete();
+                _innerElements.line = null;
             }
 
             //Remove references
@@ -4193,6 +4206,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //Event handlers
         // this.OnAttributeEdited
+        this.OnFeatureMoved = function (UIFeature) {
+            refresh();
+        }
     }
     ///// UIAttribute TEST <<
 
