@@ -578,6 +578,9 @@ var systemDefaults = {
         required: "\w+",
         numeric: {
             naturalNumbers: "^[0-9]\\d*\\.?[0]*$"
+        },
+        text: {
+            variableName: "^[A-Za-z\_][A-Za-z0-9\_]*$"
         }
     }
 }
@@ -931,13 +934,13 @@ var DiagramDataModel = function (modelID, modelName) {
 
         return returnObj;
     }
-    // accepts attributes, as a set of collections, call function as 
+
+    // creates a new identifier, accepts element collections as additional attributes, call function as 
     // getNewIdentifier("Attributes_", feature.Attributes) or 
     // getNewIdentifier("Feature_", _clientObjects.features, _clientObjects.customRules)
-    var getNewIdentifier = function (prefix) { 
+    var getNewIdentifier = function (prefix) {
         var elementsWithPrefix = [];
 
-        // if collections is a single 
         for (var i = 1; i < arguments.length; i++) {
             var collection = arguments[i];
             // get all matching feature identifiers
@@ -968,9 +971,51 @@ var DiagramDataModel = function (modelID, modelName) {
 
         return elementIdentifier;
     }
-    var registerOperation = function (operation) {
 
-        //
+    // pass a number of element collections to see if the elementName is used, call function as 
+    // getNewIdentifier("Laptop_attribute_1", feature.Attributes) or 
+    // getNewIdentifier("Laptop_feature_1", _clientObjects.features, _clientObjects.customRules)
+    var isIdentifierInUse = function (elementName, ignoredElementGuid) {
+        for (var i = 2; i < arguments.length; i++) {
+            var collection = arguments[i];
+            // get all matching feature identifiers
+            for (var guidKey in collection) {
+                if (guidKey != ignoredElementGuid) {
+                    var clientObject = collection[guidKey];
+
+                    // ignore it if it is deleted
+                    if (!clientObject.IsDeleted()) {
+                        var identifier = clientObject.GetFieldIdentifier();
+
+                        // if the identifier exists
+                        if (identifier == elementName) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    this.IsFeatureIdentifierInUse = function (featureIdentifier, currentFeatureGuid) {
+        return isIdentifierInUse(featureIdentifier, currentFeatureGuid, _clientObjects.features, _clientObjects.customRules);
+    }
+
+    this.IsCustomRuleIdentifierInUse = function (customRuleIdentifier, currentCustomRuleGuid) {
+        return isIdentifierInUse(customRuleIdentifier, currentCustomRuleGuid, _clientObjects.features, _clientObjects.customRules);
+    }
+
+    this.IsAttributeIdentifierInUse = function (attributeIdentifier, parentFeatureGuid) {
+        var feature = this.GetByGUID(parentFeatureGuid);
+        var attributeCollection = feature.Attributes;
+
+        // here instead of the parent feature guid, it should pass the currentAttributeGuid
+        return isIdentifierInUse(attributeIdentifier, parentFeatureGuid, attributeCollection);
+    }
+
+    var registerOperation = function (operation) {
         _operationsQueue.push(operation);
         registerUnsavedData(operation.GUID);
     }
@@ -1576,7 +1621,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
         //Event handlers
         var onChanged = function () {
-
+            // TODO: add the GUID to the VALIDATION TO EACH OF THE COMPONENTS
             //Variables
             var newVal = _control.val();
             var oldVal = _fieldParent[_fieldName];
@@ -1584,17 +1629,21 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Perform validation
             var valid = true;
             if (settingsField.validation != undefined) {
-
-                //Loop through validations
-                for (var i = 0; i < settingsField.validation.length; i++) {
-                    var validationEntry = settingsField.validation[i];
-                    if (typeof (validationEntry) == "function") {
-                        valid = validationEntry(newVal, oldVal, _control); //call custom validation function
-                    } else if (typeof (validationEntry) == "string") {
-                        valid = new RegExp(validationEntry).test(newVal);
+                // this check is to prevent the error when the validation is called, and the field did not actually change
+                // this happens when somebody changes the field to an invalid oue (which causes the field not to be updated)
+                // and then changes back to the original value
+                if (oldVal != newVal) {
+                    //Loop through validations
+                    for (var i = 0; i < settingsField.validation.length; i++) {
+                        var validationEntry = settingsField.validation[i];
+                        if (typeof (validationEntry) == "function") {
+                            valid = validationEntry(newVal, oldVal, _control); //call custom validation function
+                        } else if (typeof (validationEntry) == "string") {
+                            valid = new RegExp(validationEntry).test(newVal);
+                        }
+                        if (valid == false)
+                            break;
                     }
-                    if (valid == false)
-                        break;
                 }
             }
 
@@ -2028,7 +2077,14 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                         identifier: {
                             label: "Identifier",
                             dataName: "Identifier",
-                            controlType: Controls.Textbox
+                            controlType: Controls.Textbox,
+                            validation:
+                                [
+                                    systemDefaults.validationExpressions.text.variableName,
+                                    function (newVal, oldVal, control) {
+                                        return !_diagramDataModel.IsFeatureIdentifierInUse(newVal, _mainGUID);
+                                    }
+                                ]
                         },
                         name: {
                             label: "Name",
@@ -2057,7 +2113,14 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                 identifier: {
                                     label: "Identifier",
                                     dataName: "Identifier",
-                                    controlType: Controls.Textbox
+                                    controlType: Controls.Textbox,
+                                    validation:
+                                    [
+                                        systemDefaults.validationExpressions.text.variableName,
+                                        function (newVal, oldVal, control) {
+                                            return !_diagramDataModel.IsAttributeIdentifierInUse(newVal, _mainGUID);
+                                        }
+                                    ]
                                 },
                                 name: {
                                     label: "Name",
@@ -2343,7 +2406,14 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                         identifier: {
                             label: "Identifier",
                             dataName: "Identifier",
-                            controlType: Controls.Textbox
+                            controlType: Controls.Textbox,
+                            validation:
+                                [
+                                    systemDefaults.validationExpressions.text.variableName,
+                                    function (newVal, oldVal, control) {
+                                        return !_diagramDataModel.IsCustomRuleIdentifierInUse(newVal, _mainGUID);
+                                    }
+                                ]
                         },
                         name: {
                             label: "Name",
