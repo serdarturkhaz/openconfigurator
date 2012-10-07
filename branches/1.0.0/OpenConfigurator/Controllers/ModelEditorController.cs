@@ -29,6 +29,8 @@ using System.Collections;
 
 namespace PresentationLayer.Controllers
 {
+    using BLL.RuleParser;
+
     public class ModelEditorController : Controller
     {
         [Authorize]
@@ -218,6 +220,23 @@ namespace PresentationLayer.Controllers
 
             //
             return result;
+        }
+        [Authorize]
+        public JsonNetResult ValidateCustomRuleSyntax(int modelID, string customRule)
+        {
+            var sp = new StandardParser();
+            var cs = new ConfiguratorSession(null, null, null);
+
+            try
+            {
+                sp.ParseString(ref cs, customRule);
+            }
+            catch
+            {
+                return new JsonNetResult { Data = false };
+            }
+
+            return new JsonNetResult { Data = true };
         }
     }
 }

@@ -625,6 +625,10 @@ html > body .ui-pnotify
     width: 215px;
     height: 100px;
 }
+.Textarea[invalid]
+{
+    border: 1px solid red;
+}
 .Checkbox
 {
     padding-top: 8px;

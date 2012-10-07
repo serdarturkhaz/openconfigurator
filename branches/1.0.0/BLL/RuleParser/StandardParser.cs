@@ -732,7 +732,7 @@ namespace BLL.RuleParser
         }
 
         //Private Methods
-        private ParserStatement ParseString(ref ConfiguratorSession configSession, string str)
+        public ParserStatement ParseString(ref ConfiguratorSession configSession, string str)
         {
             // trim before the identification, allowing spaces in the code
             str = str.Trim();
