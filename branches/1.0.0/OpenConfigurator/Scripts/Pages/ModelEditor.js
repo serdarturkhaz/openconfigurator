@@ -2434,7 +2434,27 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                         description: {
                             label: "Expression",
                             dataName: "Expression",
-                            controlType: Controls.Textarea
+                            controlType: Controls.Textarea,
+                            validation:
+                                [
+                                    function (newVal, oldVal, control) {
+                                        var isValid;
+
+                                        $.ajax({
+                                            url: "/ModelEditor/ValidateCustomRuleSyntax",
+                                            data: JSON.stringify({ modelID: _diagramDataModel.ModelID, customRule: newVal }),
+                                            async: false,
+                                            success: function (dataObj) {
+                                                isValid = dataObj;
+                                            },
+                                            error: function (jqXHR, textStatus, errorThrown) {
+                                                isValid = false;
+                                            }
+                                        });
+
+                                        return isValid;
+                                    }
+                                ]
                         }
                     }
                 }
