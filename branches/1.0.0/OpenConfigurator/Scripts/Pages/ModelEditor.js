@@ -934,7 +934,6 @@ var DiagramDataModel = function (modelID, modelName) {
 
         return returnObj;
     }
-
     // creates a new identifier, accepts element collections as additional attributes, call function as 
     // getNewIdentifier("Attributes_", feature.Attributes) or 
     // getNewIdentifier("Feature_", _clientObjects.features, _clientObjects.customRules)
@@ -971,7 +970,6 @@ var DiagramDataModel = function (modelID, modelName) {
 
         return elementIdentifier;
     }
-
     // pass a number of element collections to see if the elementName is used, call function as 
     // getNewIdentifier("Laptop_attribute_1", feature.Attributes) or 
     // getNewIdentifier("Laptop_feature_1", _clientObjects.features, _clientObjects.customRules)
@@ -998,23 +996,6 @@ var DiagramDataModel = function (modelID, modelName) {
 
         return false;
     }
-
-    this.IsFeatureIdentifierInUse = function (featureIdentifier, currentFeatureGuid) {
-        return isIdentifierInUse(featureIdentifier, currentFeatureGuid, _clientObjects.features, _clientObjects.customRules);
-    }
-
-    this.IsCustomRuleIdentifierInUse = function (customRuleIdentifier, currentCustomRuleGuid) {
-        return isIdentifierInUse(customRuleIdentifier, currentCustomRuleGuid, _clientObjects.features, _clientObjects.customRules);
-    }
-
-    this.IsAttributeIdentifierInUse = function (attributeIdentifier, parentFeatureGuid) {
-        var feature = this.GetByGUID(parentFeatureGuid);
-        var attributeCollection = feature.Attributes;
-
-        // here instead of the parent feature guid, it should pass the currentAttributeGuid
-        return isIdentifierInUse(attributeIdentifier, parentFeatureGuid, attributeCollection);
-    }
-
     var registerOperation = function (operation) {
         _operationsQueue.push(operation);
         registerUnsavedData(operation.GUID);
@@ -1339,6 +1320,20 @@ var DiagramDataModel = function (modelID, modelName) {
 
         //Raise events
         _thisDiagramDataModel.ClientObjectUpdated.RaiseEvent(guid);
+    }
+
+    this.IsFeatureIdentifierInUse = function (featureIdentifier, currentFeatureGuid) {
+        return isIdentifierInUse(featureIdentifier, currentFeatureGuid, _clientObjects.features, _clientObjects.customRules);
+    }
+    this.IsCustomRuleIdentifierInUse = function (customRuleIdentifier, currentCustomRuleGuid) {
+        return isIdentifierInUse(customRuleIdentifier, currentCustomRuleGuid, _clientObjects.features, _clientObjects.customRules);
+    }
+    this.IsAttributeIdentifierInUse = function (attributeIdentifier, parentFeatureGuid) {
+        var feature = this.GetByGUID(parentFeatureGuid);
+        var attributeCollection = feature.Attributes;
+
+        // here instead of the parent feature guid, it should pass the currentAttributeGuid
+        return isIdentifierInUse(attributeIdentifier, parentFeatureGuid, attributeCollection);
     }
 
     this.GetByGUID = function (guid) {

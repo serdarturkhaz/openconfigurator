@@ -156,11 +156,11 @@ namespace BLL.Services
                     ISolverStatement sumEqualsZero = context.MakeEquals(context.MakeAdd(intConversions.ToArray()), context.MakeNumeral(0));
                     ISolverStatement sumValStatement = context.MakeAnd(sumLesserThan, context.MakeOr(sumGreaterThan, sumEqualsZero));
 
-                    //
+                    //Commented out due to a bug - when lowerbound is = 0, the solver does not allow all elements in a groupRelation to be set to 0
                     ISolverStatement orStatement2 = context.MakeOr(featuresCategory, groupRelation.ChildFeatureIDs.Select(k => k.ToString()).ToArray());
                     ISolverStatement equivalence3 = context.MakeEquivalence(featuresCategory, groupRelation.ParentFeatureID.ToString(), orStatement2);
-
                     returnStatement = context.MakeAnd(equivalence3, sumValStatement);
+
                     break;
             }
             return returnStatement;
