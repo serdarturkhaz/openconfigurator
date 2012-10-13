@@ -43,8 +43,7 @@ Cardinal [*...*]</body>
     <comment
       Id="64850c79-4a2a-415c-942e-6f0994572619">
       <body>Computation
-Constraint
-Consequence</body>
+</body>
       <annotatedElements>
         <classMoniker
           Id="ad4c4122-6046-4fe9-b0e8-7e50af4260ed"
@@ -65,6 +64,17 @@ Custom:
         <classMoniker
           Id="328d88d3-67b1-41c7-9443-4add8a52b9d2"
           LastKnownName="Model Event"
+          LastKnownLocation="Package_1512.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="f440f05f-8415-4b1f-ac85-d7c942ac2c72">
+      <body>Static
+Dynamic ?</body>
+      <annotatedElements>
+        <classMoniker
+          Id="78a976ca-3ca4-4e70-a219-17c3354db767"
+          LastKnownName="Constraints"
           LastKnownLocation="Package_1512.uml" />
       </annotatedElements>
     </comment>
@@ -461,17 +471,6 @@ Custom:
             isDerivedUnion="false"
             aggregation="None"
             isComposite="false" />
-          <property
-            Id="c948b66e-a291-49ae-ac62-aa55fd2cd3de"
-            name="Type"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
         </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
@@ -772,13 +771,63 @@ Custom:
                     <literalString
                       Id="00db7343-122c-4c79-b59c-d2f5562c851a"
                       name="Lower"
-                      value="2" />
+                      value="3" />
                   </lowerValueInternal>
                   <upperValueInternal>
                     <literalString
                       Id="4331dead-b19c-4c7e-ac83-2c0095ecabb4"
                       name="Upper"
                       value=".*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="b93ffc3b-dcd0-4bb6-b6b1-587655969b8c"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="78a976ca-3ca4-4e70-a219-17c3354db767"
+              LastKnownName="Constraints"
+              LastKnownLocation="Package_1512.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="a5f5498b-7f23-46e8-9cc2-76ed41572123"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="5dd065e8-f4ee-432f-a743-c50e61dd12e5"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="101cbe66-f550-4237-b93c-6c949429a468"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="6337795d-9ef0-4686-a16a-140772fc6efe"
+                      name="Upper"
+                      value="*" />
                   </upperValueInternal>
                 </memberEnd>
               </associationHasOwnedEnds>
@@ -1301,6 +1350,39 @@ Custom:
           <property
             Id="43869873-adf6-4fe7-8a47-ef80267e6e4c"
             name="Sequence"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="78a976ca-3ca4-4e70-a219-17c3354db767"
+        name="Constraints"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="d13b522a-ec37-4682-b8a8-f334f9b61ccb"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="96980e1e-2acd-47c7-b7e0-291aa6c7e8da"
+            name="Expression"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"

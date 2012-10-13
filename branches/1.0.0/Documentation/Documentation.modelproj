@@ -134,6 +134,9 @@
     <Content Include="ModelDefinition\Package_2300.uml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="UI\UITemplateEditor-Properties.bmml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="UI\UITemplateEditor.bmml">
       <SubType>Content</SubType>
     </Content>
@@ -141,6 +144,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="UI\Models.bmml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="UI\UITemplateEditor_DataBindPopup.bmml">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Use Cases\Documents\UC01 Manage models.doc">
