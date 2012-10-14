@@ -99,6 +99,22 @@ var UIObjectStyles = {
                         opacity: 1
                     }
                 },
+                line: {
+                    attr: {
+                        fill: "#E1E9FF",
+                        stroke: "#CECECE",
+                        "stroke-width": 1,
+                        opacity: 1
+                    }
+                },
+                "secondary-line": {
+                    attr: {
+                        stroke: "#CECECE",
+                        "stroke-width": 1,
+                        "text-anchor": "start",
+                        "stroke-dasharray": ["- "]
+                    }
+                },
                 text: {
                     attr: {
                         cursor: "default"
@@ -1447,6 +1463,10 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
             _diagramContext.SelectionCleared.Add(new EventHandler(_propertiesComponent.OnRelatedViewSelectionCleared));
             _diagramDataModel.ClientObjectUpdated.Add(new EventHandler(_propertiesComponent.OnClientObjectUpdated));
             _diagramDataModel.ClientObjectDeleted.Add(new EventHandler(_propertiesComponent.OnClientObjectDeleted));
+            _propertiesComponent.AttributeHasChanged.Add(new EventHandler(function (featureID, oldAttributeName, newAttributeName) {
+                // Send this to the model explorer
+                _diagramContext.AttributeHasChanged.RaiseEvent([featureID, oldAttributeName, newAttributeName]);
+            }));
 
             // Button change handlers
             _diagramContext.InnerModeChange.Add(new EventHandler(function (mode) {
@@ -1644,6 +1664,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
             //Validation ok
             if (valid == true) {
+                // When the attribute name is updated then change the field on the model editor
+                var clientObject = diagramDataModelInstance.GetByID(_fieldParent.ID, "attribute");
+                if (clientObject && _fieldName === "Name")
+                    _thisPropertiesComponent.AttributeHasChanged.RaiseEvent([clientObject.Feature.GUID, oldVal, newVal]);
 
                 //Set value and call handlers
                 _control.removeAttr("invalid");
@@ -2578,6 +2602,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
     //Events
     this.Focus = new Event();
+    this.AttributeHasChanged = new Event();
 
     //Eventhandlers
     this.OnClientObjectUpdated = function (guid) {
@@ -4127,8 +4152,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _innerElements.text.attr({ text: "[" + _firstNumber + ".." + _secondNumber + "]" });
         }
     }
-
-    ///// UIAttribute TEST >>
     var UIAttribute = function (attributeName, parentFeature, order) {
 
         //Fields
@@ -4137,6 +4160,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             line: null
         };
         var _thisUIAttribute = this;
+        this.AttributeName = attributeName;
 
         //Properties
         this.IsSelected = function () {
@@ -4146,12 +4170,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             return "attribute";
         }
 
-        function refresh() {
+        function refresh(name) {
             var parentPos = parentFeature.GetScreenPos();
             var parentBox = parentFeature.GetBox();
 
-            // Get the parent dimensions plus text and set up the raphael object
-            _innerElements.text.attr({ x: parentPos.x + UIObjectStyles.feature.general.box.dimensions.paddingLeftRight, y: (order + 1.5) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y, text: parentFeature.GetVisibleText(attributeName) });
+            _innerElements.text.attr({ x: parentPos.x + UIObjectStyles.feature.general.box.dimensions.paddingLeftRight,
+                y: (order + 1.5) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y,
+                text: parentFeature.GetVisibleText(name)
+            });
             _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
             var lineY = (order + 1) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y;
             _innerElements.line.attr({ path: ["M", parentPos.x, lineY, "L", parentPos.x + parentBox.width, lineY] });
@@ -4168,20 +4194,24 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             var parentPos = parentFeature.GetScreenPos();
             var parentBox = parentFeature.GetBox();
 
-            // Add padding and coloring of the lines
             // Add the on change of the attributes to map here
 
             // Get the parent dimensions plus text and set up the raphael object
             _innerElements.text = _canvas.text(parentPos.x + UIObjectStyles.feature.general.box.dimensions.paddingLeftRight, (order + 1.5) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y, parentFeature.GetVisibleText(attributeName));
-            _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier, 'text-anchor': 'start' });
+            _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier, "text-anchor": "start" });
             var lineY = (order + 1) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y;
             _innerElements.line = _canvas.path(["M", parentPos.x, lineY, "L", parentPos.x + parentBox.width, lineY]);
+
+            if (!order)
+                _innerElements.line.attr(UIObjectStyles.feature.states.unselected.line.attr);
+            else
+                _innerElements.line.attr(UIObjectStyles.feature.states.unselected["secondary-line"].attr);
 
             //Add references
             parentFeature.AttributeElements.push(_thisUIAttribute);
         }
         this.RefreshGraphicalRepresentation = function () {
-            refresh();
+            refresh(this.AttributeName);
         }
         this.Delete = function () {
 
@@ -4202,10 +4232,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         //Event handlers
         // this.OnAttributeEdited
         this.OnFeatureMoved = function (UIFeature) {
-            refresh();
+            refresh(this.AttributeName);
         }
     }
-    ///// UIAttribute TEST <<
 
     // Utilities
     // Cannot reuse getPath/getArcPath method from UIConnection and UIGroupRelation
@@ -4459,6 +4488,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         //Set internal eventhandlers
         internalUIElementCascadedDelete.Add(new EventHandler(onInternalUIElementCascadeDeleted));
         internalUIFeatureMoved.Add(new EventHandler(onInternalUIFeatureMoved));
+        this.AttributeHasChanged.Add(new EventHandler(onAttributeHasChanged));
     };
 
     //Private methods
@@ -5125,6 +5155,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     //Private events
     var internalUIElementCascadedDelete = new Event();
     var internalUIFeatureMoved = new Event();
+    this.AttributeHasChanged = new Event();
 
     //Eventhandlers
     this.OnClientObjectsLoaded = function () {
@@ -5169,5 +5200,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     }
     var onInternalUIFeatureMoved = function (UIFeature) {
         _diagramDataModel.UpdateClientObjectFields(UIFeature.GUID, ["XPos", "YPos"], [UIFeature.GetPos().x, UIFeature.GetPos().y]);
+    }
+    var onAttributeHasChanged = function (id, oldAttributeName, newAttributeName) {
+        // Change attribute name
+        var UIElement = _UIElements[id];
+        if (UIElement) {
+            for (var i = 0; i < UIElement.AttributeElements.length; ++i) {
+                if (UIElement.AttributeElements[i].AttributeName == oldAttributeName) {
+                    UIElement.AttributeElements[i].AttributeName = newAttributeName;
+                    UIElement.AttributeElements[i].RefreshGraphicalRepresentation();
+                }
+            }
+        }
     }
 }
