@@ -61,6 +61,15 @@ namespace BLL.BusinessObjects
         Deselected = 2,
         Unselected = 3
     }
+    public enum UIControlTypes
+    {
+        Label,
+        Textbox,
+        Checkbox,
+        CheckboxList,
+        Dropdown,
+        RadiobuttonList
+    }
 
     //Model stuff
     public class Model : IBusinessObject
@@ -1201,6 +1210,207 @@ namespace BLL.BusinessObjects
         }
 
         #endregion
+    }
+
+    //UITemplate stuff
+    public class UITemplate : IBusinessObject
+    {
+        //Fields
+        private DAL.DataEntities.UITemplate _innerEntity;
+        private bool _toBeDeleted = false;
+
+        //Constructor
+        public UITemplate()
+        {
+            _innerEntity = new DAL.DataEntities.UITemplate();
+        }
+        internal UITemplate(DAL.DataEntities.UITemplate innerEntity)
+        {
+            this._innerEntity = innerEntity;
+        }
+
+        //Properties
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return _innerEntity.Name;
+            }
+            set
+            {
+                _innerEntity.Name = value;
+            }
+        }
+        [JsonIgnore]
+        public Nullable<System.DateTime> CreatedDate
+        {
+            get
+            {
+                return _innerEntity.CreatedDate;
+            }
+            set
+            {
+                _innerEntity.CreatedDate = value;
+            }
+        }
+        [JsonIgnore]
+        public Nullable<System.DateTime> LastModifiedDate
+        {
+            get
+            {
+                return _innerEntity.LastModifiedDate;
+            }
+            set
+            {
+                _innerEntity.LastModifiedDate = value;
+            }
+        }
+        public string CreatedDateFormatted
+        {
+            get
+            {
+                return CreatedDate.Value.ToShortDateString();
+            }
+        }
+        public string LastModifiedDateFormatted
+        {
+            get
+            {
+                return LastModifiedDate.Value.ToShortDateString();
+            }
+        }
+        public string Content
+        {
+            get
+            {
+                return _innerEntity.Content;
+            }
+            set
+            {
+                _innerEntity.Content = value;
+            }
+        }
+        public string Stylesheet
+        {
+            get
+            {
+                return _innerEntity.Stylesheet;
+            }
+            set
+            {
+                _innerEntity.Stylesheet = value;
+            }
+        }
+
+        //Conversion
+        public static BLL.BusinessObjects.UITemplate FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.UITemplate obj = new BLL.BusinessObjects.UITemplate((DAL.DataEntities.UITemplate)innerEntity);
+            return obj;
+        }
+        //Factory
+        public static BLL.BusinessObjects.UITemplate CreateDefault(int userId)
+        {
+            //Create a new Model and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.UITemplate();
+            BLL.BusinessObjects.UITemplate uitemplate = new UITemplate((DAL.DataEntities.UITemplate)innerEntity);
+
+            //Set default fields
+            uitemplate.CreatedDate = DateTime.Now;
+            uitemplate.LastModifiedDate = DateTime.Now;
+            uitemplate.Name = "Default Template";
+            uitemplate.Content = "";
+            uitemplate.Stylesheet = "";
+
+            //Set inner entity fields
+            ((DAL.DataEntities.UITemplate)uitemplate.InnerEntity).UserID = userId;
+
+            //Return the object instance
+            return uitemplate;
+        }
+
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.UITemplate)value;
+            }
+        }
+        public bool ToBeDeleted
+        {
+            get
+            {
+                return this._toBeDeleted;
+            }
+            set
+            {
+                this._toBeDeleted = value;
+            }
+        }
+
+        #endregion
+
+    }
+    public class UIControlDataHolder
+    {
+        //Fields
+        private string _wrapper;
+        private string _html, _javascript;
+        private string _type;
+
+        //Constructor
+        public UIControlDataHolder(BusinessObjects.UIControlTypes type, string wrapper, string html, string javascript)
+        {
+            this._type = type.ToString();
+            this._wrapper = wrapper;
+            this._html = html;
+            this._javascript = javascript;
+        }
+       
+        //Properties
+        public string ControlType
+        {
+            get { return _type; }
+            set { _type = value; }
+        }
+        public string Wrapper
+        {
+            get { return _wrapper; }
+            set { _wrapper = value; }
+        }
+        public string HTML
+        {
+            get
+            {
+                return _html;
+            }
+        }
+        public string Script
+        {
+            get
+            {
+                return _javascript;
+            }
+        }
     }
 
     //Users

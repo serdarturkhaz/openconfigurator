@@ -4,9 +4,9 @@
   <SourceModelProvider>
     <ConnectionBasedModelProvider>
       <ConnectionString>Data Source=localhost;Initial Catalog=OpenConfiguratorDEV_1.0.0;Integrated Security=True;Password=</ConnectionString>
-      <DatabaseName>OpenConfiguratorDEV_1.0.0</DatabaseName>
+      <DatabaseName>[RADU-HP.OpenConfiguratorDEV_1.0.0]</DatabaseName>
       <DspFamilyName>sql</DspFamilyName>
-      <Name>[localhost.OpenConfiguratorDEV_1.0.0]</Name>
+      <Name>[RADU-HP.OpenConfiguratorDEV_1.0.0]</Name>
     </ConnectionBasedModelProvider>
   </SourceModelProvider>
   <TargetModelProvider>

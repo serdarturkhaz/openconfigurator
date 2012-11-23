@@ -5,57 +5,9 @@
 @section headerscripts{
     <script type="text/javascript">
 
-        //Grid functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        function createRow(headerColumns, tbody, dataObj) {
-            var tr = $("<tr></tr>").attr("objectid", dataObj.ID);
-
-            //Create TD's for each HeaderColumn
-            for (var j = 0; j < headerColumns.length - 1; j++) {
-                var field = $(headerColumns[j]).children("span[columnname]").attr("columnname");
-                var td = $("<td></td>").attr("style", $(headerColumns[j]).attr("style"));                
-                var innerElem = $("<span>" + dataObj[field] + "</span>");
-
-                //Special if first Column
-                if (j == 0) {
-                    $(td).addClass("FirstColumn");
-                    $(td).prepend("<img src='../../Content/themes/base/images/Icons/Model.png' />");
-                    innerElem = $("<a href='/ModelEditor/ModelEditor/" + dataObj.ID + "'>" + dataObj[field] + "</a>");
-                }
-
-                $(td).append(innerElem);
-                $(tr).append(td);
-            }
-
-            //Add Actions TD
-            var actionstd = $("<td class='ActionsTD'></td>");
-            var wrapper = $("<div class='MultiWrapper'></div>").appendTo(actionstd);
-            var deleteButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").append("<span>Delete</span>").appendTo(wrapper);
-            deleteButton.bind("click", function () {
-                deleteModel(dataObj.ID);
-            });
-            var newConfigurationButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/configure.png' />").append("<span>Config</span>").appendTo(wrapper);
-            newConfigurationButton.bind("click", function () {
-                var newConfigID = addNewConfiguration(dataObj.ID);
-                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
-            });
-            
-            actionstd.attr("style", $(headerColumns[headerColumns.length - 1]).attr("style"));
-
-            $(tr).append(actionstd);
-
-            //
-            $(tbody).append(tr);
-            return tr;
-
-        }
-        function deleteRow(objectid, tbody) {
-            $(tbody).children("tr[objectid=" + objectid + "]").children("td").effect("highlight", { color: "red", mode: "hide" }, 1000);
-            $.timer(700, function () {
-                $(tbody).children("tr[objectid=" + objectid + "]").remove();
-            });
-        }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        var entryLinkUrl = "/ModelEditor/ModelEditor/";
+
         function calcWidth() {
             //Set width for ModelsBox
             var containerWidth = $(".OuterContentArea .InnerContentArea").width();
@@ -73,9 +25,10 @@
                     //
                     var modelsTable = $("#ModelsTable");
                     var headerColumns = $(modelsTable).find("th");
+
                     var tbody = $(modelsTable).children("tbody");
 
-                    var tr = createRow(headerColumns, tbody, modelObj);
+                    var tr = createRow(headerColumns, tbody, modelObj, entryLinkUrl);
                     $(tr).children("td").effect("highlight", { color: "yellow" }, 1000);
                 }
             });
@@ -111,7 +64,7 @@
                     alert('error');
                 }
             });
-           
+
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,19 +95,31 @@
                 },
                 success: function (models) {
                     $.timer(300, function () {
+
+                        //Variables
                         var modelsTable = $("#ModelsTable");
                         var headerColumns = $(modelsTable).find("th");
                         var tbody = $(modelsTable).children("tbody");
+                        
 
                         //Create a TR for each row 
-                        for (var i = 0; i < models.length; i++) {
-                            createRow(headerColumns, tbody, models[i]);
-                        }
+                        $.each(models, function (index, value) {
+
+                            //Special inline "configure" button
+                            var newConfigurationButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/configure.png' />").append("<span>Config</span>");
+                            var modelID = models[index].ID;
+                            newConfigurationButton.bind("click", function () {
+                                var newConfigID = addNewConfiguration(modelID);
+                                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
+                            });
+
+                            //
+                            createRow(headerColumns, tbody, models[index], entryLinkUrl, deleteModel, newConfigurationButton);
+                        });
+
 
                         $("#ModelsBox").unblock();
                     });
-                    //
-
                 },
                 error: function (req, status, error) {
                     alert('error');
@@ -165,9 +130,8 @@
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     </script>
 }
-
 @section RootBreadCrumb {
-    Overview
+Overview
 }
 <div id="ModelsActionsBox" class="RoundedBox">
     <div class="BoxHeader">
@@ -203,13 +167,13 @@
                     <th style="width: 60%; padding-left: 15px;">
                         <span columnname="Name">Name</span>
                     </th>
-                    <th style="width: 20%;text-align: center">
+                    <th style="width: 20%; text-align: center">
                         <span columnname="LastModifiedDateFormatted">Modified Date</span>
                     </th>
-                    <th style="width: 20%;text-align: center">
+                    <th style="width: 20%; text-align: center">
                         <span columnname="CreatedDateFormatted">Created Date</span>
                     </th>
-                    <th style="text-align: center;padding-right: 15px;">
+                    <th style="text-align: center; padding-right: 15px;">
                         <span>Actions</span>
                     </th>
                 </tr>

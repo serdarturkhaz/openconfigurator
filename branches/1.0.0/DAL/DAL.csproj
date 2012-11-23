@@ -177,6 +177,9 @@
     <Compile Include="DataEntities\SelectionState.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataEntities\UITemplate.cs">
+      <DependentUpon>DataEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataEntities\User.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
