@@ -149,6 +149,12 @@ namespace DAL.DataEntities
             get { return _selectionStates  ?? (_selectionStates = CreateObjectSet<SelectionState>("SelectionStates")); }
         }
         private ObjectSet<SelectionState> _selectionStates;
+    
+        public ObjectSet<UITemplate> UITemplates
+        {
+            get { return _uITemplates  ?? (_uITemplates = CreateObjectSet<UITemplate>("UITemplates")); }
+        }
+        private ObjectSet<UITemplate> _uITemplates;
 
         #endregion
     }

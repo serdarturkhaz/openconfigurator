@@ -71,6 +71,38 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<Model> _models;
+    
+        public virtual ICollection<UITemplate> UITemplates
+        {
+            get
+            {
+                if (_uITemplates == null)
+                {
+                    var newCollection = new FixupCollection<UITemplate>();
+                    newCollection.CollectionChanged += FixupUITemplates;
+                    _uITemplates = newCollection;
+                }
+                return _uITemplates;
+            }
+            set
+            {
+                if (!ReferenceEquals(_uITemplates, value))
+                {
+                    var previousValue = _uITemplates as FixupCollection<UITemplate>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupUITemplates;
+                    }
+                    _uITemplates = value;
+                    var newValue = value as FixupCollection<UITemplate>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupUITemplates;
+                    }
+                }
+            }
+        }
+        private ICollection<UITemplate> _uITemplates;
 
         #endregion
         #region Association Fixup
@@ -88,6 +120,28 @@ namespace DAL.DataEntities
             if (e.OldItems != null)
             {
                 foreach (Model item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.User, this))
+                    {
+                        item.User = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupUITemplates(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (UITemplate item in e.NewItems)
+                {
+                    item.User = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (UITemplate item in e.OldItems)
                 {
                     if (ReferenceEquals(item.User, this))
                     {

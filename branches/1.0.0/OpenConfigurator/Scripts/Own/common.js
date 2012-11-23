@@ -1,19 +1,4 @@
-﻿//Pines notify defaults
-$.pnotify.defaults.pnotify_mouse_reset = true;
-$.pnotify.defaults.pnotify_width = "220px";
-$.pnotify.defaults.pnotify_animate_speed = 800;
-$.pnotify.defaults.pnotify_hide = true;
-$.pnotify.defaults.pnotify_hide = true;
-$.pnotify.defaults.pnotify_animation = "fade";
-$.pnotify.defaults.pnotify_delay = 2000;
-$.pnotify.defaults.pnotify_closer = true;
-$.pnotify.defaults.pnotify_notice_icon = "pnotifyNoticeIcon";
-$.pnotify.defaults.pnotify_error_icon = "pnotifyErrorIcon";
-$.pnotify.defaults.pnotify_history = false;
-$.pnotify.defaults.pnotify_opacity = 1;
-
-//
-
+﻿//Settings/initializations****************************************************************************************
 
 //Ajax
 $(document).ready(function () {
@@ -27,6 +12,22 @@ $(document).ready(function () {
         }
     });
 });
+
+//Pines notify defaults
+$.pnotify.defaults.pnotify_mouse_reset = true;
+$.pnotify.defaults.pnotify_width = "220px";
+$.pnotify.defaults.pnotify_animate_speed = 800;
+$.pnotify.defaults.pnotify_hide = true;
+$.pnotify.defaults.pnotify_hide = true;
+$.pnotify.defaults.pnotify_animation = "fade";
+$.pnotify.defaults.pnotify_delay = 2000;
+$.pnotify.defaults.pnotify_closer = true;
+$.pnotify.defaults.pnotify_notice_icon = "pnotifyNoticeIcon";
+$.pnotify.defaults.pnotify_error_icon = "pnotifyErrorIcon";
+$.pnotify.defaults.pnotify_history = false;
+$.pnotify.defaults.pnotify_opacity = 1;
+//****************************************************************************************************************
+//Special objects/classes*****************************************************************************************
 
 //Events
 var Event = function () {
@@ -62,7 +63,59 @@ var EventHandler = function (func) {
     }
 }
 
+//Grid methods
+function createRow(headerColumns, tbody, dataObj, firstColumnURL, deleteHandler, additionalButton) {
+    var tr = $("<tr></tr>").attr("objectid", dataObj.ID);
 
+    //Create TD's for each HeaderColumn
+    for (var j = 0; j < headerColumns.length - 1; j++) {
+        var field = $(headerColumns[j]).children("span[columnname]").attr("columnname");
+        var td = $("<td></td>").attr("style", $(headerColumns[j]).attr("style"));
+        var innerElem = $("<span>" + dataObj[field] + "</span>");
+
+        //Special if first Column
+        if (j == 0) {
+            $(td).addClass("FirstColumn");
+            $(td).prepend("<img src='../../Content/themes/base/images/Icons/Model.png' />");
+            innerElem = $("<a href='" + firstColumnURL + "" + dataObj.ID + "'>" + dataObj[field] + "</a>");
+        }
+
+        $(td).append(innerElem);
+        $(tr).append(td);
+    }
+
+    //Add Actions TD
+    var actionstd = $("<td class='ActionsTD'></td>");
+    var wrapper = $("<div ></div>").appendTo(actionstd);
+    var deleteButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/Delete.png' />").append("<span>Delete</span>").appendTo(wrapper);
+    deleteButton.bind("click", function () {
+        deleteHandler(dataObj.ID);
+    });
+    actionstd.attr("style", $(headerColumns[headerColumns.length - 1]).attr("style"));
+
+    //Additional action button
+    if (additionalButton != undefined) {
+        $(additionalButton).appendTo(wrapper);
+        $(wrapper).addClass("MultiWrapper");
+    }
+    else {
+        $(wrapper).addClass("SingleWrapper");
+    }
+    
+
+    //
+    $(tr).append(actionstd);
+    $(tbody).append(tr);
+    return tr;
+
+}
+function deleteRow(objectid, tbody) {
+    $(tbody).children("tr[objectid=" + objectid + "]").children("td").effect("highlight", { color: "red", mode: "hide" }, 1000);
+    $.timer(700, function () {
+        $(tbody).children("tr[objectid=" + objectid + "]").remove();
+    });
+}
+//****************************************************************************************************************
 //Helper methods/small plugins***********************************************************************************
 function getEnumEntryByID(collection, id) {
     for (var key in collection) {
@@ -80,7 +133,6 @@ function paramsToString(collection) {
     }
     return returnString;
 }
-
 var readyToPress = true;
 $.ctrl = function (key, callback, args) {
     $(document).keydown(function (e) {
@@ -106,11 +158,9 @@ Object.size = function (obj) {
     }
     return size;
 };
-
 function isArray(a) {
     return Object.prototype.toString.apply(a) === '[object Array]';
 }
-
 (function ($) {
 
     $.fn.disableSelection = function () {
@@ -127,6 +177,6 @@ function isArray(a) {
         });
     };
 
-})(jQuery); 
-
+})(jQuery);
 //**************************************************************************************************************
+

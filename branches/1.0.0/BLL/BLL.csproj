@@ -123,6 +123,7 @@
     <Compile Include="Services\CompositionRuleService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\AttributeService.cs" />
+    <Compile Include="Services\UITemplateService.cs" />
     <Compile Include="Services\ServiceInterfaces.cs" />
     <Compile Include="Services\SolverService.cs" />
     <Compile Include="Services\FeatureSelectionService.cs" />
@@ -144,7 +145,43 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\Checkbox\Checkbox.htm" />
+    <EmbeddedResource Include="UIControls\Checkbox\Checkbox.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\GenericWrapper.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\Label\Label.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\Label\Label.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\Dropdown\Dropdown.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\Dropdown\Dropdown.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\Textbox\Textbox.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\Textbox\Textbox.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\CheckboxList\CheckboxList.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\CheckboxList\CheckboxList.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\RadiobuttonList\RadiobuttonList.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\RadiobuttonList\RadiobuttonList.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
