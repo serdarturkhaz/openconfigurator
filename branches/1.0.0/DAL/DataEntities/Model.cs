@@ -269,6 +269,38 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<Configuration> _configurations;
+    
+        public virtual ICollection<Constraint> Constraints
+        {
+            get
+            {
+                if (_constraints == null)
+                {
+                    var newCollection = new FixupCollection<Constraint>();
+                    newCollection.CollectionChanged += FixupConstraints;
+                    _constraints = newCollection;
+                }
+                return _constraints;
+            }
+            set
+            {
+                if (!ReferenceEquals(_constraints, value))
+                {
+                    var previousValue = _constraints as FixupCollection<Constraint>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupConstraints;
+                    }
+                    _constraints = value;
+                    var newValue = value as FixupCollection<Constraint>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupConstraints;
+                    }
+                }
+            }
+        }
+        private ICollection<Constraint> _constraints;
 
         #endregion
         #region Association Fixup
@@ -416,6 +448,28 @@ namespace DAL.DataEntities
             if (e.OldItems != null)
             {
                 foreach (Configuration item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Model, this))
+                    {
+                        item.Model = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupConstraints(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Constraint item in e.NewItems)
+                {
+                    item.Model = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Constraint item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Model, this))
                     {

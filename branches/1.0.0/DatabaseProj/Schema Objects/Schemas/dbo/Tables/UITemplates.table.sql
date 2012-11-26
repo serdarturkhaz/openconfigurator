@@ -4,6 +4,7 @@
     [Name]             NCHAR (50)     NULL,
     [Content]          NVARCHAR (MAX) NULL,
     [CreatedDate]      DATETIME       NULL,
-    [LastModifiedDate] DATETIME       NULL
+    [LastModifiedDate] DATETIME       NULL,
+    [Stylesheet]	   NVARCHAR (MAX) NULL
 );
 
