@@ -833,7 +833,7 @@ namespace BLL.RuleParser
         {
             try
             {
-                if (RuleSyntax != "" && RuleSyntax != null)
+                if (!String.IsNullOrEmpty(RuleSyntax))
                 {
                     ParserStatement rootStatement = ParseString(ref configSession, RuleSyntax);
                     rootStatement.Eval();

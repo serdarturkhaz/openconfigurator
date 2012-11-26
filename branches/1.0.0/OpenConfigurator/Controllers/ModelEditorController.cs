@@ -208,6 +208,20 @@ namespace PresentationLayer.Controllers
             return result;
         }
         [Authorize]
+        public JsonNetResult NewDefaultConstraint()
+        {
+            //Default return variable
+            JsonNetResult result = new JsonNetResult() { Data = null };
+
+            //Get a new default CustomRule
+            ConstraintService _customRuleService = new ConstraintService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.Constraint newCustomRule = (BLL.BusinessObjects.Constraint)_customRuleService.CreateDefault();
+            result.Data = newCustomRule;
+
+            //
+            return result;
+        }
+        [Authorize]
         public JsonNetResult GetRelationTypes()
         {
             //Default return variable

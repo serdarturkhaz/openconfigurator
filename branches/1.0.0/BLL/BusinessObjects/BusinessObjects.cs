@@ -1211,6 +1211,139 @@ namespace BLL.BusinessObjects
 
         #endregion
     }
+    public class Constraint : IBusinessObject
+    {
+        //Fields
+        private DAL.DataEntities.Constraint _innerEntity;
+        private bool _toBeDeleted = false;
+
+        //Constructor
+        public Constraint()
+        {
+            _innerEntity = new DAL.DataEntities.Constraint();
+        }
+        internal Constraint(DAL.DataEntities.Constraint innerEntity)
+        {
+            this._innerEntity = innerEntity;
+        }
+
+        //Properties
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
+            }
+        }
+        public int ModelID
+        {
+            get
+            {
+                return _innerEntity.ModelID;
+            }
+            set
+            {
+                _innerEntity.ModelID = value;
+            }
+        }
+
+        public string Identifier
+        {
+            get
+            {
+                return _innerEntity.Identifier;
+            }
+            set
+            {
+                _innerEntity.Identifier = value;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return _innerEntity.Name;
+            }
+            set
+            {
+                _innerEntity.Name = value;
+            }
+        }
+        public string Description
+        {
+            get
+            {
+                return _innerEntity.Description;
+            }
+            set
+            {
+                _innerEntity.Description = value;
+            }
+        }
+        public string Expression
+        {
+            get
+            {
+                return _innerEntity.Expression;
+            }
+            set
+            {
+                _innerEntity.Expression = value;
+            }
+        }
+
+        //Conversion
+        public static BLL.BusinessObjects.Constraint FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.Constraint customRule = new BLL.BusinessObjects.Constraint((DAL.DataEntities.Constraint)innerEntity);
+            return customRule;
+        }
+        //Factory
+        public static BLL.BusinessObjects.Constraint CreateDefault()
+        {
+            //Create a new CustomRule and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Constraint();
+            BLL.BusinessObjects.Constraint customRule = new Constraint((DAL.DataEntities.Constraint)innerEntity);
+
+            //Set default fields
+            customRule.Name = "Default constraint";
+
+            //Return the object instance
+            return customRule;
+        }
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.Constraint)value;
+            }
+        }
+        public bool ToBeDeleted
+        {
+            get
+            {
+                return this._toBeDeleted;
+            }
+            set
+            {
+                this._toBeDeleted = value;
+            }
+        }
+
+        #endregion
+    }
 
     //UITemplate stuff
     public class UITemplate : IBusinessObject

@@ -155,6 +155,12 @@ namespace DAL.DataEntities
             get { return _uITemplates  ?? (_uITemplates = CreateObjectSet<UITemplate>("UITemplates")); }
         }
         private ObjectSet<UITemplate> _uITemplates;
+    
+        public ObjectSet<Constraint> Constraints
+        {
+            get { return _constraints  ?? (_constraints = CreateObjectSet<Constraint>("Constraints")); }
+        }
+        private ObjectSet<Constraint> _constraints;
 
         #endregion
     }

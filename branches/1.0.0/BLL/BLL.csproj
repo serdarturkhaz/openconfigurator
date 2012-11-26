@@ -123,6 +123,7 @@
     <Compile Include="Services\CompositionRuleService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\AttributeService.cs" />
+    <Compile Include="Services\ConstraintService.cs" />
     <Compile Include="Services\UITemplateService.cs" />
     <Compile Include="Services\ServiceInterfaces.cs" />
     <Compile Include="Services\SolverService.cs" />
