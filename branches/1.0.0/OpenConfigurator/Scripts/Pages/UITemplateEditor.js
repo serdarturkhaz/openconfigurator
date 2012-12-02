@@ -56,14 +56,14 @@ var UITemplateDataModel = function (uiTemplateID, uiTemplateName) {
 
         //Get the control tags
         var htmlObj = $("<div></div>").append(_uiTemplate.Content);
-        var standardControlTags = $(htmlObj).find("div.ControlWrapper[controlid^='" + controlDefaults.idPrefix + controlDefaults.idSeparatorSymbol + "']");
+        var standardControlTags = $(htmlObj).find("div.controlwrapper[id^='" + controlDefaults.idPrefix + controlDefaults.idSeparatorSymbol + "']");
 
         //Find the tag with the highest id counter
         var maxIDCounter = 0;
         for (var i = 0; i < standardControlTags.length; i++) {
 
             //
-            var controlID = $(standardControlTags[i]).attr("controlid");
+            var controlID = $(standardControlTags[i]).attr("id");
             var regex = new RegExp(controlDefaults.idPrefix + controlDefaults.idSeparatorSymbol + "[0-9]+$");
             if (regex.test(controlID)) {
                 var idCounter = controlID.split("_")[1];
@@ -159,15 +159,18 @@ var UITemplateDataModel = function (uiTemplateID, uiTemplateName) {
 
     //Eventhandlers
     var onInternalTemplateDataLoaded = function () {
+
+        //Dynamically find id counter of current template
         _uiControlIDCounter = parseInt(getUIControlIDCounter()) + 1;
     }
 }
-var ClientController = function (htmlViewContainer, cssViewContainer, uiTemplateNameTextbox, uiTemplateDataModelInstance) {
+var ClientController = function (htmlViewContainer, cssViewContainer, visualViewContainer, uiTemplateNameTextbox, uiTemplateDataModelInstance) {
 
     //Fields and variables
     var _uiTemplateDataModel = uiTemplateDataModelInstance;
-    var _htmlView, _cssView;
+    var _htmlView, _cssView, _visualView;
     var _uiTemplateNameTextbox = uiTemplateNameTextbox;
+    var _currentControlFocus = null;
     var _thisClientController = this;
 
     //Constructor/Initalizers
@@ -181,15 +184,21 @@ var ClientController = function (htmlViewContainer, cssViewContainer, uiTemplate
             _htmlView.Initialize();
             _cssView = new CSSView(cssViewContainer, uiTemplateDataModelInstance);
             _cssView.Initialize();
+            _visualView = new VisualView(visualViewContainer, uiTemplateDataModelInstance);
+            _visualView.Initialize();
 
             //Setup eventhandlers
             _uiTemplateDataModel.TemplateDataLoaded.Add(new EventHandler(_htmlView.OnTemplateDataLoaded));
             _uiTemplateDataModel.TemplateDataLoaded.Add(new EventHandler(_cssView.OnTemplateDataLoaded));
+            _uiTemplateDataModel.TemplateDataLoaded.Add(new EventHandler(_visualView.OnTemplateDataLoaded));
+            _uiTemplateDataModel.TemplateDataUpdated.Add(new EventHandler(_visualView.OnTemplateDataUpdated));
 
-            //Load the template
-            _uiTemplateDataModel.LoadData(function (template) {
-                $(uiTemplateNameTextbox).val(template.Name);
-                $("#UITemplateCodeBox").unblock();
+            //Load the template, use delay to make sure all views have finished initializing
+            $.timer(300, function () {
+                _uiTemplateDataModel.LoadData(function (template) {
+                    $(uiTemplateNameTextbox).val(template.Name);
+                    $("#UITemplateCodeBox").unblock();
+                });
             });
         });
     }
@@ -219,6 +228,24 @@ var ClientController = function (htmlViewContainer, cssViewContainer, uiTemplate
     this.RefreshCSSEditor = function () { //special fix for problem with CodeMirror and tabs
         _cssView.Refresh();
     }
+    this.RefreshHTMLEditor = function () { //special fix for problem with CodeMirror and tabs
+        _htmlView.Refresh();
+    }
+    this.SetControlFocus = function (tabName) {
+        switch (tabName) {
+            case "CSS":
+                _currentControlFocus = _cssView;
+                break;
+            case "HTML":
+                _currentControlFocus = _htmlView;
+                break;
+            case "Visual":
+                _currentControlFocus = _visualView;
+                break;
+        }
+        _currentControlFocus.Focus();
+
+    }
     this.AddUIControl = function (controltype) {
         _htmlView.InsertUIControl(controltype);
     }
@@ -233,6 +260,7 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
     var _textArea = textArea;
     var _editorInstance = null;
     var _thisHTMLView = this;
+    var _initialDataLoaded = false;
 
     //Private methods
     var createControlHTMLstring = function (controlObj) {
@@ -240,7 +268,7 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
         //Create the outer control and set its attributes
         var outerControl = $(controlObj.Wrapper);
         $(outerControl).attr({
-            controlid: controlObj.ControlID,
+            id: controlObj.ControlID,
             controltype: controlObj.ControlType,
             databinding: "none"
         });
@@ -256,14 +284,15 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
         return { from: _editorInstance.getCursor(true), to: _editorInstance.getCursor(false) };
     }
 
+
     //Constructor/Initalizers
     this.Initialize = function () {
 
         //Create the editor
-        _editorInstance = CodeMirror.fromTextArea($(_textArea)[0], $.extend(systemDefaults.codeEditorDefaults, {
+        _editorInstance = CodeMirror.fromTextArea($(_textArea)[0], $.extend({}, systemDefaults.codeEditorDefaults, {
             mode: "text/html",
             onChange: function (instance, changesObj) { //changesObj - {from, to, text, next}
-                if (instance === _editorInstance) {
+                if (instance === _editorInstance && _initialDataLoaded) {
                     changesObj.newtext = _editorInstance.getValue();
                     internalEditorValueChanged.RaiseEvent(changesObj);
                 }
@@ -319,6 +348,9 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
     this.Refresh = function () {
         setTimeout(_editorInstance.refresh, 0);
     }
+    this.Focus = function () {
+
+    }
 
     //Events
     var internalEditorValueChanged = new Event();
@@ -327,6 +359,7 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
     this.OnTemplateDataLoaded = function () {
         var content = _uiTemplateDataModel.GetTemplateField("Content");
         _editorInstance.setValue(content);
+        _initialDataLoaded = true;
     }
     var onInternalEditorValueChanged = function (changesObj) {
         _uiTemplateDataModel.UpdateTemplateField("Content", changesObj.newtext);
@@ -339,18 +372,23 @@ var CSSView = function (textArea, uiTemplateDataModelInstance) {
     var _textArea = textArea;
     var _editorInstance = null;
     var _thisCSSView = this;
+    var _initialDataLoaded = false;
+
+    //Private methods
+    var foldFunc = CodeMirror.newFoldFunction(CodeMirror.braceRangeFinder);
 
     //Constructor/Initalizers
     this.Initialize = function () {
-        _editorInstance = CodeMirror.fromTextArea($(_textArea)[0], $.extend(systemDefaults.codeEditorDefaults, {
+        _editorInstance = CodeMirror.fromTextArea($(_textArea)[0], $.extend({}, systemDefaults.codeEditorDefaults, {
             mode: "css",
             onChange: function (instance, changesObj) { //changesObj - {from, to, text, next}
-
-                if (instance === _editorInstance) {
+                if (instance === _editorInstance && _initialDataLoaded) {
                     changesObj.newtext = _editorInstance.getValue();
                     internalEditorValueChanged.RaiseEvent(changesObj);
                 }
-            }
+            },
+            onGutterClick: foldFunc
+
         }));
 
         //Set internal eventhandlers
@@ -362,6 +400,9 @@ var CSSView = function (textArea, uiTemplateDataModelInstance) {
         setTimeout(_editorInstance.refresh, 0);
 
     }
+    this.Focus = function () {
+
+    }
 
     //Events
     var internalEditorValueChanged = new Event();
@@ -370,10 +411,81 @@ var CSSView = function (textArea, uiTemplateDataModelInstance) {
     this.OnTemplateDataLoaded = function () {
         var stylesheet = _uiTemplateDataModel.GetTemplateField("Stylesheet");
         _editorInstance.setValue(stylesheet);
+        _initialDataLoaded = true;
     }
     var onInternalEditorValueChanged = function (changesObj) {
         _uiTemplateDataModel.UpdateTemplateField("Stylesheet", changesObj.newtext);
 
     }
+}
+var VisualView = function (containerArea, uiTemplateDataModelInstance) {
 
+    //Fields
+    var _uiTemplateDataModel = uiTemplateDataModelInstance;
+    var _containerArea = containerArea;
+    var _iframeInstance = null, _body = null, _head = null;
+    var _templateDataChanged = false; //variable to keep track when template is updated
+    var _thisVisualView = this;
+
+    //Constructor/Initalizers
+    this.Initialize = function () {
+
+        //Create the iframe
+        _iframeInstance = $("<iframe id='VisualViewIframe' ></iframe>");
+        $(_containerArea).append(_iframeInstance);
+
+        //Special fix for iframe when it first loads
+        setTimeout(function () {
+
+            //Get iframe sections
+            _body = $(_iframeInstance).contents().find("body");
+            _head = $(_iframeInstance).contents().find("head");
+        }, 1);
+
+        //Set internal eventhandlers
+        internalControlFocused.Add(new EventHandler(onInternalControlFocused));
+    }
+
+    //Private methods
+    var reloadData = function () {
+
+        //Update the CSS
+        var templateCSS = _uiTemplateDataModel.GetTemplateField("Stylesheet");
+        var styleElem = $(_head).find("#styleElem");
+        $(styleElem).text(templateCSS);
+
+        //Update the HTML
+        var templateHTML = _uiTemplateDataModel.GetTemplateField("Content");
+        $(_body).html(templateHTML);
+    }
+
+    //Public methods
+    this.Focus = function () {
+        internalControlFocused.RaiseEvent();
+    }
+
+    //Events
+    var internalControlFocused = new Event();
+
+    //Eventhandlers
+    this.OnTemplateDataLoaded = function () {
+
+        //Set the CSS
+        var templateCSS = _uiTemplateDataModel.GetTemplateField("Stylesheet");
+        var style = $("<style id='styleElem' type='text/css'></style>").text(templateCSS);
+        $(_head).append(style);
+
+        //Set the HTML
+        var templateHTML = _uiTemplateDataModel.GetTemplateField("Content");
+        $(_body).html(templateHTML);
+    }
+    this.OnTemplateDataUpdated = function () {
+        _templateDataChanged = true;
+    }
+    var onInternalControlFocused = function () {
+        if (_templateDataChanged) {
+            reloadData();
+            _templateDataChanged = false;
+        }
+    }
 }

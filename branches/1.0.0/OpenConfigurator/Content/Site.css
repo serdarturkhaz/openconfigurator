@@ -351,17 +351,16 @@ div.blockMsg img
 /*Accordion---------------------------------------------------------------------*/
 .Accordion
 {
-    
 }
 
 .Accordion-Item
 {
-    border-bottom: 1px solid #EFEFEF;
+    border-bottom: 1px solid #F2C100;
     padding: 3px 8px 3px 8px;
     cursor: pointer;
     height: 20px;
     min-width: 60px;
-    border-bottom-color: #F5F5F5;
+    border-bottom-color: #FFCF11;
 }
 .Accordion-Item:hover
 {
@@ -395,14 +394,13 @@ div.blockMsg img
 {
     color: #3a4043;
     background: #f7f7f7;
-    
 }
 .ui-accordion .ui-state-active
 {
     color: #3a4043;
     font-weight: bold;
-    border: 1px solid #C0C0C0;
-    background: #f7f7f7;
+    border: 1px solid #C19B00;
+    background: #FFDE5B !important;
 }
 .ui-accordion .ui-accordion-header a
 {
@@ -420,180 +418,295 @@ div.blockMsg img
     overflow: auto;
     display: none;
     zoom: 1;
-    
 }
 .ui-accordion .ui-accordion-content-active
 {
     display: block;
-    background: #FBFBFB;
-    border:solid 1px #C0C0C0;
-    border-top:none;
+    background: #ffe784;
+    border: solid 1px #C19B00;
+    border-top: none;
 }
 /*------------------------------------------------------------------------------*/
 /* CodeMirror editor------------------------------------------------------------*/
-.CodeMirror {
-  line-height: 1em;
-  font-family: monospace;
-
-  /* Necessary so the scrollbar can be absolutely positioned within the wrapper on Lion. */
-  position: relative;
-  /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
-  overflow: hidden;
-  
-  
+.CodeMirror
+{
+    line-height: 1em;
+    font-family: monospace; /* Necessary so the scrollbar can be absolutely positioned within the wrapper on Lion. */
+    position: relative; /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
+    overflow: hidden;
 }
-.CodeMirror-scroll {
-  overflow: auto;
-  height: 300px;
-  /* This is needed to prevent an IE[67] bug where the scrolled content
-     is visible outside of the scrolling box. */
-  position: relative;
-  outline: none;
+.CodeMirror-scroll
+{
+    overflow: auto;
+    height: 300px; /* This is needed to prevent an IE[67] bug where the scrolled content      is visible outside of the scrolling box. */
+    position: relative;
+    outline: none;
 }
 
 /* Vertical scrollbar */
-.CodeMirror-scrollbar {
-  position: absolute;
-  right: 0; top: 0;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  z-index: 5;
+.CodeMirror-scrollbar
+{
+    position: absolute;
+    right: 0;
+    top: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    z-index: 5;
 }
-.CodeMirror-scrollbar-inner {
-  /* This needs to have a nonzero width in order for the scrollbar to appear
-     in Firefox and IE9. */
-  width: 1px;
+.CodeMirror-scrollbar-inner
+{
+    /* This needs to have a nonzero width in order for the scrollbar to appear      in Firefox and IE9. */
+    width: 1px;
 }
-.CodeMirror-scrollbar.cm-sb-overlap {
-  /* Ensure that the scrollbar appears in Lion, and that it overlaps the content
-     rather than sitting to the right of it. */
-  position: absolute;
-  z-index: 1;
-  float: none;
-  right: 0;
-  min-width: 12px;
+.CodeMirror-scrollbar.cm-sb-overlap
+{
+    /* Ensure that the scrollbar appears in Lion, and that it overlaps the content      rather than sitting to the right of it. */
+    position: absolute;
+    z-index: 1;
+    float: none;
+    right: 0;
+    min-width: 12px;
 }
-.CodeMirror-scrollbar.cm-sb-nonoverlap {
-  min-width: 12px;
+.CodeMirror-scrollbar.cm-sb-nonoverlap
+{
+    min-width: 12px;
 }
-.CodeMirror-scrollbar.cm-sb-ie7 {
-  min-width: 18px;
-}
-
-.CodeMirror-gutter {
-  position: absolute; left: 0; top: 0;
-  z-index: 10;
-  background-color: #f7f7f7;
-  border-right: 1px solid #eee;
-  min-width: 2em;
-  height: 100%;
-}
-.CodeMirror-gutter-text {
-  color: #aaa;
-  text-align: right;
-  padding: .4em .2em .4em .4em;
-  white-space: pre !important;
-  cursor: default;
-}
-.CodeMirror-lines {
-  padding: .4em;
-  white-space: pre;
-  cursor: text;
+.CodeMirror-scrollbar.cm-sb-ie7
+{
+    min-width: 18px;
 }
 
-.CodeMirror pre {
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-  border-width: 0; margin: 0; padding: 0; background: transparent;
-  font-family: inherit;
-  font-size: inherit;
-  padding: 0; margin: 0;
-  white-space: pre;
-  word-wrap: normal;
-  line-height: inherit;
-  color: inherit;
-  overflow: visible;
+.CodeMirror-gutter
+{
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    background-color: #f7f7f7;
+    border-right: 1px solid #eee;
+    min-width: 2em;
+    height: 100%;
 }
-.CodeMirror-wrap pre {
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  word-break: normal;
+.CodeMirror-gutter-text
+{
+    color: #aaa;
+    text-align: right;
+    padding: .4em .2em .4em .4em;
+    white-space: pre !important;
+    cursor: default;
 }
-.CodeMirror-wrap .CodeMirror-scroll {
-  overflow-x: hidden;
-}
-.CodeMirror textarea {
-  outline: none !important;
+.CodeMirror-lines
+{
+    padding: .4em;
+    white-space: pre;
+    cursor: text;
 }
 
-.CodeMirror pre.CodeMirror-cursor {
-  z-index: 10;
-  position: absolute;
-  visibility: hidden;
-  border-left: 1px solid black;
-  border-right: none;
-  width: 0;
+.CodeMirror pre
+{
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    border-width: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+    margin: 0;
+    white-space: pre;
+    word-wrap: normal;
+    line-height: inherit;
+    color: inherit;
+    overflow: visible;
 }
-.cm-keymap-fat-cursor pre.CodeMirror-cursor {
-  width: auto;
-  border: 0;
-  background: transparent;
-  background: rgba(0, 200, 0, .4);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#6600c800, endColorstr=#4c00c800);
+.CodeMirror-wrap pre
+{
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    word-break: normal;
+}
+.CodeMirror-wrap .CodeMirror-scroll
+{
+    overflow-x: hidden;
+}
+.CodeMirror textarea
+{
+    outline: none !important;
+}
+
+.CodeMirror pre.CodeMirror-cursor
+{
+    z-index: 10;
+    position: absolute;
+    visibility: hidden;
+    border-left: 1px solid black;
+    border-right: none;
+    width: 0;
+}
+.cm-keymap-fat-cursor pre.CodeMirror-cursor
+{
+    width: auto;
+    border: 0;
+    background: transparent;
+    background: rgba(0, 200, 0, .4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#6600c800, endColorstr=#4c00c800);
 }
 /* Kludge to turn off filter in ie9+, which also accepts rgba */
-.cm-keymap-fat-cursor pre.CodeMirror-cursor:not(#nonsense_id) {
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+.cm-keymap-fat-cursor pre.CodeMirror-cursor:not(#nonsense_id)
+{
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
-.CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite {}
-.CodeMirror-focused pre.CodeMirror-cursor {
-  visibility: visible;
+.CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite
+{
+}
+.CodeMirror-focused pre.CodeMirror-cursor
+{
+    visibility: visible;
 }
 
-div.CodeMirror-selected { background: #d9d9d9; }
-.CodeMirror-focused div.CodeMirror-selected { background: #d7d4f0; }
+div.CodeMirror-selected
+{
+    background: #d9d9d9;
+}
+.CodeMirror-focused div.CodeMirror-selected
+{
+    background: #d7d4f0;
+}
 
-.CodeMirror-searching {
-  background: #ffa;
-  background: rgba(255, 255, 0, .4);
+.CodeMirror-searching
+{
+    background: #ffa;
+    background: rgba(255, 255, 0, .4);
 }
 
 /* Default theme */
-.cm-s-default span.cm-keyword {color: #708;}
-.cm-s-default span.cm-atom {color: #219;}
-.cm-s-default span.cm-number {color: #164;}
-.cm-s-default span.cm-def {color: #00f;}
-.cm-s-default span.cm-variable {color: black;}
-.cm-s-default span.cm-variable-2 {color: #05a;}
-.cm-s-default span.cm-variable-3 {color: #085;}
-.cm-s-default span.cm-property {color: black;}
-.cm-s-default span.cm-operator {color: black;}
-.cm-s-default span.cm-comment {color: #a50;}
-.cm-s-default span.cm-string {color: #a11;}
-.cm-s-default span.cm-string-2 {color: #f50;}
-.cm-s-default span.cm-meta {color: #555;}
-.cm-s-default span.cm-error {color: #f00;}
-.cm-s-default span.cm-qualifier {color: #555;}
-.cm-s-default span.cm-builtin {color: #30a;}
-.cm-s-default span.cm-bracket {color: #997;}
-.cm-s-default span.cm-tag {color: #170;}
-.cm-s-default span.cm-attribute {color: #00c;}
-.cm-s-default span.cm-header {color: blue;}
-.cm-s-default span.cm-quote {color: #090;}
-.cm-s-default span.cm-hr {color: #999;}
-.cm-s-default span.cm-link {color: #00c;}
+.cm-s-default span.cm-keyword
+{
+    color: #708;
+}
+.cm-s-default span.cm-atom
+{
+    color: #219;
+}
+.cm-s-default span.cm-number
+{
+    color: #164;
+}
+.cm-s-default span.cm-def
+{
+    color: #00f;
+}
+.cm-s-default span.cm-variable
+{
+    color: black;
+}
+.cm-s-default span.cm-variable-2
+{
+    color: #05a;
+}
+.cm-s-default span.cm-variable-3
+{
+    color: #085;
+}
+.cm-s-default span.cm-property
+{
+    color: black;
+}
+.cm-s-default span.cm-operator
+{
+    color: black;
+}
+.cm-s-default span.cm-comment
+{
+    color: #a50;
+}
+.cm-s-default span.cm-string
+{
+    color: #a11;
+}
+.cm-s-default span.cm-string-2
+{
+    color: #f50;
+}
+.cm-s-default span.cm-meta
+{
+    color: #555;
+}
+.cm-s-default span.cm-error
+{
+    color: #f00;
+}
+.cm-s-default span.cm-qualifier
+{
+    color: #555;
+}
+.cm-s-default span.cm-builtin
+{
+    color: #30a;
+}
+.cm-s-default span.cm-bracket
+{
+    color: #997;
+}
+.cm-s-default span.cm-tag
+{
+    color: #170;
+}
+.cm-s-default span.cm-attribute
+{
+    color: #00c;
+}
+.cm-s-default span.cm-header
+{
+    color: blue;
+}
+.cm-s-default span.cm-quote
+{
+    color: #090;
+}
+.cm-s-default span.cm-hr
+{
+    color: #999;
+}
+.cm-s-default span.cm-link
+{
+    color: #00c;
+}
 
-span.cm-header, span.cm-strong {font-weight: bold;}
-span.cm-em {font-style: italic;}
-span.cm-emstrong {font-style: italic; font-weight: bold;}
-span.cm-link {text-decoration: underline;}
+span.cm-header, span.cm-strong
+{
+    font-weight: bold;
+}
+span.cm-em
+{
+    font-style: italic;
+}
+span.cm-emstrong
+{
+    font-style: italic;
+    font-weight: bold;
+}
+span.cm-link
+{
+    text-decoration: underline;
+}
 
-span.cm-invalidchar {color: #f00;}
+span.cm-invalidchar
+{
+    color: #f00;
+}
 
-div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}
-div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
+div.CodeMirror span.CodeMirror-matchingbracket
+{
+    color: #0f0;
+}
+div.CodeMirror span.CodeMirror-nonmatchingbracket
+{
+    color: #f22;
+}
 /*------------------------------------------------------------------------------*/
 /*PinesNotify-------------------------------------------------------------------*/
 .ui-pnotify
@@ -1229,25 +1342,20 @@ a:hover
     position: relative;
     margin-top: -41px;
     float: right;
-    
-    margin-right:1px;
+    margin-right: 1px;
     padding-top: 5px;
 }
 .MainViewTabs .ui-tabs-nav li
 {
     position: relative;
     float: left;
-    
     cursor: pointer;
     border: 1px solid #676767;
     height: 24px;
-    
-    
     margin-left: 3px;
     border: 1px solid #676767;
     margin-top: -3px;
     background: #4B5254;
-    
 }
 .MainViewTabs .ui-tabs-nav li a
 {
@@ -1256,15 +1364,14 @@ a:hover
     font-size: 13px;
     font-weight: bold;
     color: white;
-    display:block;
-    height:20px;
-    
+    display: block;
+    height: 20px;
     text-align: right;
-    text-decoration:none;
+    text-decoration: none;
     padding-left: 4px;
-    padding-right:4px;
+    padding-right: 4px;
     padding-top: 4px;
-    padding-bottom:2px;
+    padding-bottom: 2px;
 }
 .MainViewTabs .ui-tabs-nav li a span
 {
@@ -1279,7 +1386,6 @@ a:hover
 }
 .MainViewTabs .ui-tabs-nav li.ui-tabs-selected a, .MainViewTabs .ui-tabs-nav li.ui-tabs-selected:hover a
 {
-    
 }
 .MainViewTabs .ui-tabs-nav li:hover
 {
@@ -1288,7 +1394,6 @@ a:hover
 }
 .MainViewTabs .ui-tabs-nav li:hover a
 {
-    
 }
 .MainViewTabs .ui-tabs-panel
 {
@@ -1433,7 +1538,6 @@ a:hover
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    
     background-color: #F7F7F7;
     padding: 5px 0px 5px 2px;
     height: 100%;
@@ -1449,7 +1553,7 @@ a:hover
 }
 #UITemplateToolBox .BoxContent
 {
-    padding-top:12px;
+    padding-top: 12px;
 }
 #UITemplateCodeBox
 {
@@ -1468,17 +1572,32 @@ a:hover
 
 #UITemplateCodeBox .CodeMirror
 {
-   
-    width:100%;
+    width: 100%;
     border: 1px solid #E6E6E6;
-    
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 #UITemplateCodeBox .CodeMirror-scroll
 {
-     height: 670px;
+    height: 670px;
+}
+
+/*Visual view - iframe*/
+#VisualViewIframe
+{
+    min-height: 668px;
+    border: none;
+    width: 100%;
+    /*border: 1px solid #E6E6E6;*/
+    
+    /*zoom: 0.75;
+    -moz-transform: scale(0.75);
+    -moz-transform-origin: 0 0;
+    -o-transform: scale(0.75);
+    -o-transform-origin: 0 0;
+    -webkit-transform: scale(0.75);
+    -webkit-transform-origin: 0 0;*/
 }
 
 /*Hide divs*/
@@ -1489,20 +1608,17 @@ a:hover
     height: 400px;
     margin-top: -350px;
     background: #e8e8dd url(themes/base/images/layout/content-bg.png) repeat-x left top;
-    
     opacity: 0.9;
     filter: alpha(opacity=90);
-    
-    display:none;
+    display: none;
 }
-#HidePropertiesboxDiv 
+#HidePropertiesboxDiv
 {
     float: left;
     width: 100%;
     height: 100px;
     margin-top: -55px;
     background: #e8e8dd url(themes/base/images/layout/content-bg.png) repeat-x left top;
-    
     opacity: 0.9;
     filter: alpha(opacity=90);
 }

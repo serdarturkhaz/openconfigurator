@@ -6,6 +6,7 @@
     <script type="text/javascript" src="../../Scripts/Pages/UITemplateEditor.js"></script>
     <script type="text/javascript" src="../../Scripts/Own/CodeMirror/utils/formatting.js"></script>
     <script type="text/javascript" src="../../Scripts/Own/CodeMirror/utils/closetag.js"></script>
+    <script type="text/javascript" src="../../Scripts/Own/CodeMirror/utils/foldcode.js"></script>
     <script type="text/javascript" src="../../Scripts/Own/CodeMirror/modes/xml.js"></script>
     <script type="text/javascript" src="../../Scripts/Own/CodeMirror/modes/css.js"></script>
     <script type="text/javascript" src="../../Scripts/Own/CodeMirror/modes/javascript.js"></script>
@@ -71,12 +72,15 @@
                 calcWidth();
             });
             $("#UITemplatesMenuItem").attr("selected", "selected");
-            $("#ToolboxMenu").accordion( {
+            $("#ToolboxMenu").accordion({
                 active: 1
             });
             $("#MainViewTabs").tabs({ select: function (event, ui) {
+
                 var tabname = $(ui.tab).attr("tabname");
                 var titleLabel = $("#UITemplateCodeBox").find(".BoxHeader .HeaderLabel");
+                
+                //
                 switch (tabname) {
                     case "CSS":
                         $("#HideToolboxDiv").css("display", "block");
@@ -86,8 +90,15 @@
                     case "HTML":
                         $("#HideToolboxDiv").css("display", "none");
                         $("#HidePropertiesboxDiv").css("display", "block");
+                        clientController.RefreshHTMLEditor();
+                        break;
+                    case "Visual":
+                        $("#HideToolboxDiv").css("display", "block");
+                        $("#HidePropertiesboxDiv").css("display", "block");
                         break;
                 }
+                clientController.SetControlFocus(tabname);
+
             }
             });
             calcWidth();
@@ -100,7 +111,7 @@
                 uiTemplateDataModel = new UITemplateDataModel(uiTemplateID);
                 uiTemplateDataModel.Initialize();
 
-                clientController = new ClientController($("#HTMLEditorTextarea"), $("#CSSEditorTextarea"), $("#UITemplateNameTextbox"), uiTemplateDataModel);
+                clientController = new ClientController($("#HTMLEditorTextarea"), $("#CSSEditorTextarea"), $("#VisualEditorInnerarea"), $("#UITemplateNameTextbox"), uiTemplateDataModel);
                 clientController.Initialize();
             });
         });
@@ -183,16 +194,55 @@ Edit Template
     <div id="HideToolboxDiv">
     </div>
 </div>
-<div class="RightColumn"> @*Properties*@ <div id="UITemplatePropertiesBox" class="PropertiesBox
-RoundedBox"> <div class="BoxHeader"> <div class="BoxInnerHeader"> <span class="HeaderLabel">Properties
-- <span id="SetTypeLabel"></span></span> </div> </div> <div class="BoxContent">
-<div id="MainContainer"> </div> </div> <div class="BoxFooter"> <div class="BoxInnerFooter">
-</div> </div> </div> <div id="HidePropertiesboxDiv"> </div> </div> <div class="CenterColumn">
-@*UITemplateCodeBox*@ <div id="UITemplateCodeBox" class="RoundedBox"> <div class="BoxHeader">
-<div class="BoxInnerHeader"> <span class="HeaderLabel">Template view</span> </div>
-</div> <div class="BoxContent"> <div id="MainViewTabs" class="MainViewTabs"> <ul>
-<li><a href="#tabs-1" tabname="HTML">HTML</a></li> <li><a href="#tabs-2" tabname="CSS">CSS</a></li>
-</ul> <div id="tabs-1"> <textarea id="HTMLEditorTextarea" style="display:none"></textarea>
-</div> <div id="tabs-2"> <textarea id="CSSEditorTextarea" style="display:none"></textarea>
-</div> </div> </div> <div class="BoxFooter"> <div class="BoxInnerFooter"> </div>
-</div> </div> </div> 
+<div class="RightColumn">
+    @*Properties*@
+    <div id="UITemplatePropertiesBox" class="PropertiesBox RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Properties - <span id="SetTypeLabel"></span></span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div id="MainContainer">
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+    <div id="HidePropertiesboxDiv">
+    </div>
+</div>
+<div class="CenterColumn">
+    @*UITemplateCodeBox*@
+    <div id="UITemplateCodeBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Template view</span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div id="MainViewTabs" class="MainViewTabs">
+                <ul>
+                    <li><a href="#tabs-1" tabname="HTML">HTML</a></li>
+                    <li><a href="#tabs-2" tabname="CSS">CSS</a></li>
+                    <li><a href="#tabs-3" tabname="Visual">Visual</a></li>
+                </ul>
+                <div id="tabs-1">
+                    <textarea id="HTMLEditorTextarea" style="display: none"></textarea>
+                </div>
+                <div id="tabs-2">
+                    <textarea id="CSSEditorTextarea" style="display: none"></textarea>
+                </div>
+                <div id="tabs-3">
+                    <div id="VisualEditorInnerarea"></div>
+                </div>
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+</div>
