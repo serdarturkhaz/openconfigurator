@@ -1932,7 +1932,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         var _listContainer = null, _detailsContainer = null;
 
         //Private methods
-        var addListElement = function (clientObject) {
+        var addListElement = function (clientObject, isInit) {
 
             //Create the ListElement
             var listElement = new ListElement(clientObject, onListElementDeleted, onListElementClicked);
@@ -1941,6 +1941,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Create the HTML
             var listElementControl = listElement.CreateHTML();
             $(listElementControl).appendTo(_listContainer);
+
+            if (!isInit) {
+                _thisPropertiesComponent.AttributeHasChanged.RaiseEvent([_fieldParent.GUID]);
+            }
 
             //
             return listElement;
@@ -2035,7 +2039,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Create list elements
             var clientObjectCollection = _fieldParent[_fieldName];
             for (var i = 0; i < clientObjectCollection.length; i++) {
-                addListElement(clientObjectCollection[i]);
+                addListElement(clientObjectCollection[i], true);
             }
         }
 
@@ -2069,6 +2073,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             fieldParent[_fieldName].splice(index, 1);
             _diagramDataModel.DeleteClientObject(guid);
 
+            _thisPropertiesComponent.AttributeHasChanged.RaiseEvent([fieldParent.GUID]);
         }
         var onListElementClicked = function (index) {
             var newState = toggleSelected(_listElements[index]);
@@ -3178,7 +3183,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             for (var i = 0; i < _featureObjectModel.Attributes.length; ++i) {
                 var uia = new UIAttribute(_featureObjectModel.Attributes[i].GetField("Name"), _thisUIFeature, i);
                 uia.CreateGraphicalRepresentation();
-                _attributeElements.push(uia);
             }
 
             //Create the main outer element
@@ -3194,18 +3198,40 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 _innerElements.text.attr({ "text": this.GetVisibleText(_name) });
             }
 
+            _originalBoxHeight = (_featureObjectModel.Attributes.length + 1) * UIObjectStyles.feature.general.box.dimensions.height;
+
             // Rescale variables
             _screenPos.x = _absolutePos.x * _scaleModifier;
             _screenPos.y = _absolutePos.y * _scaleModifier;
             _boxWidth = _originalBoxWidth * _scaleModifier;
             _boxHeight = _originalBoxHeight * _scaleModifier;
 
-            for (var i = 0; i < _attributeElements.length; ++i) {
-                _attributeElements[i].RefreshGraphicalRepresentation();
+            if (options && options.rerenderAttributes) {
+                // Rerender the attributes
+                while (_attributeElements.length) {
+                    _attributeElements[0].Delete();
+                }
+
+                for (var i = 0; i < _featureObjectModel.Attributes.length; ++i) {
+                    var uia = new UIAttribute(_featureObjectModel.Attributes[i].GetField("Name"), _thisUIFeature, i);
+                    uia.CreateGraphicalRepresentation();
+                }
+            }
+            else {
+                for (var i = 0; i < _attributeElements.length; ++i) {
+                    _attributeElements[i].RefreshGraphicalRepresentation();
+                }
             }
 
             // Refresh the canvas
             refresh();
+
+            // When we add attributes we need 
+            if (options && options.rerenderAttributes) {
+                for (var i = 0; i < _relatedCompositeElements.length; i++) {
+                    _relatedCompositeElements[i].OnAdjacentFeatureMoved(_thisUIFeature);
+                }
+            }
         }
         this.ReverseCoordinates = function () {
 
@@ -4187,14 +4213,13 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             if (index != -1) {
                 UIFeature.AttributeElements.splice(index, 1);
             }
+            else alert("not found");
         }
 
         //Public methods
         this.CreateGraphicalRepresentation = function () {
             var parentPos = parentFeature.GetScreenPos();
             var parentBox = parentFeature.GetBox();
-
-            // Add the on change of the attributes to map here
 
             // Get the parent dimensions plus text and set up the raphael object
             _innerElements.text = _canvas.text(parentPos.x + UIObjectStyles.feature.general.box.dimensions.paddingLeftRight, (order + 1.5) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y, parentFeature.GetVisibleText(attributeName));
@@ -4217,11 +4242,11 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Remove elements
             if (_innerElements.text != null) {
-                _innerElements.text.Delete();
+                _innerElements.text.remove();
                 _innerElements.text = null;
             }
             if (_innerElements.line != null) {
-                _innerElements.line.Delete();
+                _innerElements.line.remove();
                 _innerElements.line = null;
             }
 
@@ -4230,7 +4255,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
 
         //Event handlers
-        // this.OnAttributeEdited
         this.OnFeatureMoved = function (UIFeature) {
             refresh(this.AttributeName);
         }
@@ -5205,11 +5229,16 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         // Change attribute name
         var UIElement = _UIElements[id];
         if (UIElement) {
-            for (var i = 0; i < UIElement.AttributeElements.length; ++i) {
-                if (UIElement.AttributeElements[i].AttributeName == oldAttributeName) {
-                    UIElement.AttributeElements[i].AttributeName = newAttributeName;
-                    UIElement.AttributeElements[i].RefreshGraphicalRepresentation();
+            if (oldAttributeName && newAttributeName) {
+                for (var i = 0; i < UIElement.AttributeElements.length; ++i) {
+                    if (UIElement.AttributeElements[i].AttributeName == oldAttributeName) {
+                        UIElement.AttributeElements[i].AttributeName = newAttributeName;
+                        UIElement.AttributeElements[i].RefreshGraphicalRepresentation();
+                    }
                 }
+            }
+            else {
+                UIElement.RefreshGraphicalRepresentation({ rerenderAttributes: true });
             }
         }
     }
