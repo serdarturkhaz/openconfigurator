@@ -1299,21 +1299,21 @@ namespace BLL.BusinessObjects
         //Conversion
         public static BLL.BusinessObjects.Constraint FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
         {
-            BLL.BusinessObjects.Constraint customRule = new BLL.BusinessObjects.Constraint((DAL.DataEntities.Constraint)innerEntity);
-            return customRule;
+            BLL.BusinessObjects.Constraint constraint = new BLL.BusinessObjects.Constraint((DAL.DataEntities.Constraint)innerEntity);
+            return constraint;
         }
         //Factory
         public static BLL.BusinessObjects.Constraint CreateDefault()
         {
             //Create a new CustomRule and InnerEntity
             DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Constraint();
-            BLL.BusinessObjects.Constraint customRule = new Constraint((DAL.DataEntities.Constraint)innerEntity);
+            BLL.BusinessObjects.Constraint constraint = new Constraint((DAL.DataEntities.Constraint)innerEntity);
 
             //Set default fields
-            customRule.Name = "Default constraint";
+            constraint.Name = "Default constraint";
 
             //Return the object instance
-            return customRule;
+            return constraint;
         }
 
         //Interface members
