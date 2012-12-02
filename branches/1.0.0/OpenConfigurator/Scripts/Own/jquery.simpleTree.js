@@ -37,7 +37,7 @@
     $.fn.simpleTree.defaults = {
         data: null,
         types: null,
-        onNodeClicked: function (node, shift) {
+        onNodeClicked: function (node, ctrl) {
         }
     };
 
@@ -91,11 +91,11 @@
         });
         if (type.selectable) {
             node.bind("click", function (e) {
-                onNodeClicked.call({}, node, e.shiftKey);
+                onNodeClicked.call({}, node, e.ctrlKey);
             });
         }
 
-        //Disable browser shift selection
+        //Disable browser ctrl selection
         $(node).disableSelection();
 
         return row;
@@ -238,7 +238,7 @@
     var setSelected = function (node) {
         var isSelected = $(node).attr("selected");
         if (!isSelected) {
-            $(node).attr("selected", "true");
+            $(node).attr("selected", "selected");
         }
     }
     var setUnselected = function (node) {
@@ -249,7 +249,7 @@
         return isSelected;
     }
     var deselectAll = function (tree) {
-        $(tree).find(".node[selected=true]").removeAttr("selected");
+        $(tree).find(".node[selected=selected]").removeAttr("selected");
     }
 
     var updateNodeName = function (node, newName) {
@@ -336,7 +336,7 @@
     }
     $.fn.getSelectedNodes = function () {
         var tree = $(this);
-        var selectedNodes = $(tree).find(".node[selected=true]");
+        var selectedNodes = $(tree).find(".node[selected=selected]");
         if (selectedNodes.length > 0)
             return selectedNodes;
         else
