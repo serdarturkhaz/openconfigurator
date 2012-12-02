@@ -37,8 +37,8 @@ PRINT N'Creating $(DatabaseName)...'
 GO
 CREATE DATABASE [$(DatabaseName)]
     ON 
-    PRIMARY(NAME = [OpenConfigurator_TEST], FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\OpenConfigurator_TEST.mdf', SIZE = 3072 KB, FILEGROWTH = 1024 KB)
-    LOG ON (NAME = [OpenConfigurator_TEST_log], FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\OpenConfigurator_TEST_log.ldf', SIZE = 1024 KB, MAXSIZE = 2097152 MB, FILEGROWTH = 10 %) COLLATE Danish_Norwegian_CI_AS
+    PRIMARY(NAME = [OpenConfiguratorDEV_1.0.0], FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\OpenConfiguratorDEV_1.0.0.mdf', SIZE = 3072 KB, FILEGROWTH = 1024 KB)
+    LOG ON (NAME = [OpenConfiguratorDEV_1.0.0_log], FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\OpenConfiguratorDEV_1.0.0_log.ldf', SIZE = 1024 KB, MAXSIZE = 2097152 MB, FILEGROWTH = 10 %) COLLATE Danish_Norwegian_CI_AS
 GO
 EXECUTE sp_dbcmptlevel [$(DatabaseName)], 100;
 
@@ -166,38 +166,6 @@ GO
 */
 
 GO
-PRINT N'Creating [opencon_radu1984]...';
-
-
-GO
-CREATE USER [opencon_radu1984] WITHOUT LOGIN;
-
-
-GO
-PRINT N'Creating <unnamed>...';
-
-
-GO
-EXECUTE sp_addrolemember @rolename = N'db_datareader', @membername = N'opencon_radu1984';
-
-
-GO
-PRINT N'Creating <unnamed>...';
-
-
-GO
-EXECUTE sp_addrolemember @rolename = N'db_datawriter', @membername = N'opencon_radu1984';
-
-
-GO
-PRINT N'Creating <unnamed>...';
-
-
-GO
-EXECUTE sp_addrolemember @rolename = N'db_owner', @membername = N'opencon_radu1984';
-
-
-GO
 PRINT N'Creating [dbo].[Attribute_DataTypes]...';
 
 
@@ -267,6 +235,7 @@ CREATE TABLE [dbo].[Attributes] (
     [FeatureID]       INT            NOT NULL,
     [AttributeTypeID] INT            NOT NULL,
     [DataTypeID]      INT            NOT NULL,
+    [Identifier]      NVARCHAR (50)  NULL,
     [Name]            NVARCHAR (50)  NULL,
     [Description]     NVARCHAR (MAX) NULL,
     [ConstantValue]   NVARCHAR (50)  NULL
@@ -409,34 +378,6 @@ ALTER TABLE [dbo].[Configurations]
 
 
 GO
-PRINT N'Creating [dbo].[CustomRule_Types]...';
-
-
-GO
-SET ANSI_NULLS, QUOTED_IDENTIFIER ON;
-
-
-GO
-CREATE TABLE [dbo].[CustomRule_Types] (
-    [ID]   INT           IDENTITY (1, 1) NOT NULL,
-    [Name] NVARCHAR (50) NULL
-);
-
-
-GO
-SET ANSI_NULLS, QUOTED_IDENTIFIER OFF;
-
-
-GO
-PRINT N'Creating PK_Rule_Types...';
-
-
-GO
-ALTER TABLE [dbo].[CustomRule_Types]
-    ADD CONSTRAINT [PK_Rule_Types] PRIMARY KEY CLUSTERED ([ID] ASC) WITH (ALLOW_PAGE_LOCKS = ON, ALLOW_ROW_LOCKS = ON, PAD_INDEX = OFF, IGNORE_DUP_KEY = OFF, STATISTICS_NORECOMPUTE = OFF);
-
-
-GO
 PRINT N'Creating [dbo].[CustomRules]...';
 
 
@@ -448,6 +389,7 @@ GO
 CREATE TABLE [dbo].[CustomRules] (
     [ID]          INT            IDENTITY (1, 1) NOT NULL,
     [ModelID]     INT            NOT NULL,
+    [Identifier]  NVARCHAR (50)  NULL,
     [Name]        NVARCHAR (50)  NULL,
     [Expression]  NVARCHAR (MAX) NULL,
     [Description] NVARCHAR (MAX) NULL
@@ -479,6 +421,7 @@ GO
 CREATE TABLE [dbo].[Features] (
     [ID]          INT            IDENTITY (1, 1) NOT NULL,
     [ModelID]     INT            NOT NULL,
+    [Identifier]  NVARCHAR (50)  NULL,
     [Name]        NVARCHAR (50)  NULL,
     [Description] NVARCHAR (MAX) NULL,
     [IsRoot]      BIT            NULL,
@@ -746,6 +689,39 @@ ALTER TABLE [dbo].[SelectionStates]
 
 
 GO
+PRINT N'Creating [dbo].[UITemplates]...';
+
+
+GO
+SET ANSI_NULLS, QUOTED_IDENTIFIER ON;
+
+
+GO
+CREATE TABLE [dbo].[UITemplates] (
+    [ID]               INT            IDENTITY (1, 1) NOT NULL,
+    [UserID]           INT            NOT NULL,
+    [Name]             NVARCHAR (50)  NULL,
+    [Content]          NVARCHAR (MAX) NULL,
+    [Stylesheet]       NVARCHAR (MAX) NULL,
+    [CreatedDate]      DATETIME       NULL,
+    [LastModifiedDate] DATETIME       NULL
+);
+
+
+GO
+SET ANSI_NULLS, QUOTED_IDENTIFIER OFF;
+
+
+GO
+PRINT N'Creating PK_UITemplates...';
+
+
+GO
+ALTER TABLE [dbo].[UITemplates]
+    ADD CONSTRAINT [PK_UITemplates] PRIMARY KEY CLUSTERED ([ID] ASC) WITH (ALLOW_PAGE_LOCKS = ON, ALLOW_ROW_LOCKS = ON, PAD_INDEX = OFF, IGNORE_DUP_KEY = OFF, STATISTICS_NORECOMPUTE = OFF);
+
+
+GO
 PRINT N'Creating [dbo].[Users]...';
 
 
@@ -951,6 +927,15 @@ PRINT N'Creating FK_Relations_Relation_Types...';
 GO
 ALTER TABLE [dbo].[Relations] WITH NOCHECK
     ADD CONSTRAINT [FK_Relations_Relation_Types] FOREIGN KEY ([RelationTypeID]) REFERENCES [dbo].[Relation_Types] ([ID]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+GO
+PRINT N'Creating FK_UITemplates_Users...';
+
+
+GO
+ALTER TABLE [dbo].[UITemplates] WITH NOCHECK
+    ADD CONSTRAINT [FK_UITemplates_Users] FOREIGN KEY ([UserID]) REFERENCES [dbo].[Users] ([ID]) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 GO
@@ -1546,6 +1531,8 @@ ALTER TABLE [dbo].[Models] WITH CHECK CHECK CONSTRAINT [FK_Models_Users];
 ALTER TABLE [dbo].[Relations] WITH CHECK CHECK CONSTRAINT [FK_Relations_Models];
 
 ALTER TABLE [dbo].[Relations] WITH CHECK CHECK CONSTRAINT [FK_Relations_Relation_Types];
+
+ALTER TABLE [dbo].[UITemplates] WITH CHECK CHECK CONSTRAINT [FK_UITemplates_Users];
 
 
 GO
