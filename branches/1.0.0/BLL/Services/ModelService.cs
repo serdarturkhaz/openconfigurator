@@ -59,6 +59,30 @@ namespace BLL.Services
             }
             return BModels;
         }
+        public List<BLL.BusinessObjects.Model> GetByUserID_Shallow(int userid)
+        {
+            //
+            List<BLL.BusinessObjects.Model> BModels;
+            using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
+            {
+                //Shallow retreival
+                _ModelRepository.GetContext().ContextOptions.LazyLoadingEnabled = false;
+
+
+                //
+                List<DAL.DataEntities.Model> models = _ModelRepository.Find(m => m.UserID == userid).ToList<DAL.DataEntities.Model>();
+
+                //Create Business objects for each DAL object
+                BModels = new List<BusinessObjects.Model>();
+                foreach (DAL.DataEntities.Model model in models)
+                {
+                    BModels.Add((BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.FromDataEntity(model));
+                }
+            }
+            return BModels;
+        }
+
+
         public void UpdateName(int modelID, string newName)
         {
             using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())

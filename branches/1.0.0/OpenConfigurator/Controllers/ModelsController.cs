@@ -41,14 +41,14 @@ namespace PresentationLayer.Controllers
 
             //Retreive Models belonging to the current User
             ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
-            List<BLL.BusinessObjects.Model> models = _modelService.GetByUserID(SessionData.LoggedInUser.ID);
+            List<BLL.BusinessObjects.Model> models = _modelService.GetByUserID_Shallow(SessionData.LoggedInUser.ID);
             result.Data = models;
-
-            
 
             //
             return result;
         }
+
+        
 
         [Authorize]
         public JsonNetResult AddNewModel()
@@ -74,20 +74,6 @@ namespace PresentationLayer.Controllers
             modelService.Delete(ID);
         }
 
-        [Authorize]
-        public JsonNetResult AddNewConfiguration(int modelID)
-        {
-            //Default return variable
-            JsonNetResult result = new JsonNetResult() { Data = null };
-
-            //Add a new Configuration
-            ConfigurationService configurationService = new ConfigurationService(SessionData.LoggedInUser.ID);
-            BLL.BusinessObjects.Configuration newConfiguration = (BLL.BusinessObjects.Configuration)configurationService.CreateDefault(modelID);
-            configurationService.Add(newConfiguration);
-
-            //Return its ID
-            result.Data = newConfiguration.ID;
-            return result;
-        }
+        
     }
 }

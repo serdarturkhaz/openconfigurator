@@ -43,7 +43,7 @@ namespace BLL.Services
             BLL.BusinessObjects.UITemplate defaultObj = (BLL.BusinessObjects.UITemplate)BLL.BusinessObjects.UITemplate.CreateDefault(_LoggedInUserID);
             return defaultObj;
         }
-        public List<BLL.BusinessObjects.UITemplate> GetByUserID(int userid)
+        public List<BLL.BusinessObjects.UITemplate> GetByUserID(int userid, bool excludeContentAndCSS = false)
         {
             //
             List<BLL.BusinessObjects.UITemplate> BUITemplates;
@@ -55,6 +55,12 @@ namespace BLL.Services
                 BUITemplates = new List<BusinessObjects.UITemplate>();
                 foreach (DAL.DataEntities.UITemplate template in templates)
                 {
+                    if (excludeContentAndCSS)
+                    {
+                        template.Content = "";
+                        template.Stylesheet = "";
+                    }
+                    
                     BUITemplates.Add((BLL.BusinessObjects.UITemplate)BLL.BusinessObjects.UITemplate.FromDataEntity(template));
                 }
             }
@@ -113,7 +119,7 @@ namespace BLL.Services
         {
             //Variables
             string resourcePath = "BLL.UIControls." + controltype.ToString() + "." + controltype.ToString();
-            string wrapper ="", script = "", html = "";
+            string wrapper = "", script = "", html = "";
             string wrapperPath = "BLL.UIControls.GenericWrapper.htm";
 
             //Get the html content and script

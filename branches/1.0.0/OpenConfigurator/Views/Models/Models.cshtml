@@ -8,6 +8,26 @@
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var entryLinkUrl = "/ModelEditor/ModelEditor/";
 
+        //Helper functions
+        function createModelRow(table, dataObj, deleteFunc) {
+
+            //Get table inner controls
+            var headerColumns = $(table).find("th");
+            var tbody = $(table).children("tbody");
+
+            //Setup "configure" button
+            var newConfigurationButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/configure.png' />").append("<span>Config</span>");
+            newConfigurationButton.bind("click", function () {
+                $("#CreateConfigurationPopup").data("modelID", dataObj.ID);
+                $("#CreateConfigurationPopup").dialog("open");
+
+                
+            });
+
+            //
+            var tr = createRow(headerColumns, tbody, dataObj, entryLinkUrl, deleteFunc, newConfigurationButton);
+            return tr;
+        }
         function calcWidth() {
             //Set width for ModelsBox
             var containerWidth = $(".OuterContentArea .InnerContentArea").width();
@@ -16,7 +36,10 @@
             var modelsBoxWidth = containerWidth - marginWidth - actionsBoxWidth;
             $('#ModelsBox').css("width", modelsBoxWidth + "px");
         }
+
+        //Data functions
         function addNewModel() {
+
             //Create new Model in DB
             $.ajax({
                 url: "/Models/AddNewModel",
@@ -24,31 +47,15 @@
                 success: function (modelObj) {
                     //
                     var modelsTable = $("#ModelsTable");
-                    var headerColumns = $(modelsTable).find("th");
-
-                    var tbody = $(modelsTable).children("tbody");
-
-                    var tr = createRow(headerColumns, tbody, modelObj, entryLinkUrl);
+                    var tr = createModelRow(modelsTable, modelObj, deleteModel);
                     $(tr).children("td").effect("highlight", { color: "yellow" }, 1000);
                 }
             });
         }
-        function addNewConfiguration(modelID) {
-            //Create new Configuration in DB
-            var id = null;
-            $.ajax({
-                url: "/Models/AddNewConfiguration",
-                data: JSON.stringify({ modelID: modelID }),
-                async: false,
-                success: function (configurationID) {
-                    //Redirect to the new Configuration
-                    id = configurationID;
-                }
-            });
-            return id;
-        }
+        
         function deleteModel(modelID) {
             var tbody = $("#ModelsTable").children("tbody");
+
             //Delete Model from DB
             $.ajax({
                 type: "POST",
@@ -77,6 +84,7 @@
             //---------------------------------------------------------------------------------
 
             //Initialize
+            registerPopup("CreateConfigurationPopup");
             calcWidth();
             $(window).resize(function () {
                 calcWidth();
@@ -85,10 +93,7 @@
 
             //Load Models
             $.ajax({
-                type: "POST",
                 url: "/Models/GetModels",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
                 data: {},
                 beforeSend: function () {
                     $("#ModelsBox").block({ message: "Loading data...", fadeIn: 300 });
@@ -98,23 +103,11 @@
 
                         //Variables
                         var modelsTable = $("#ModelsTable");
-                        var headerColumns = $(modelsTable).find("th");
-                        var tbody = $(modelsTable).children("tbody");
-                        
 
                         //Create a TR for each row 
                         $.each(models, function (index, value) {
-
-                            //Special inline "configure" button
-                            var newConfigurationButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/configure.png' />").append("<span>Config</span>");
-                            var modelID = models[index].ID;
-                            newConfigurationButton.bind("click", function () {
-                                var newConfigID = addNewConfiguration(modelID);
-                                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
-                            });
-
-                            //
-                            createRow(headerColumns, tbody, models[index], entryLinkUrl, deleteModel, newConfigurationButton);
+                            var modelObj = models[index];
+                            createModelRow(modelsTable, modelObj, deleteModel);
                         });
 
 
@@ -125,7 +118,6 @@
                     alert('error');
                 }
             });
-
         });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     </script>

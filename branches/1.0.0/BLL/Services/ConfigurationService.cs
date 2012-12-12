@@ -35,9 +35,9 @@ namespace BLL.Services
         }
 
         //Methods
-        public IBusinessObject CreateDefault(int modelID)
+        public IBusinessObject CreateDefault(int modelID, int uiTemplateID)
         {
-            BLL.BusinessObjects.Configuration defaultConfiguration = (BLL.BusinessObjects.Configuration)BLL.BusinessObjects.Configuration.CreateDefault(modelID);
+            BLL.BusinessObjects.Configuration defaultConfiguration = (BLL.BusinessObjects.Configuration)BLL.BusinessObjects.Configuration.CreateDefault(modelID, uiTemplateID);
             return defaultConfiguration;
         }
 
