@@ -1643,7 +1643,7 @@ namespace BLL.BusinessObjects
         private DAL.DataEntities.Configuration _innerEntity;
         private List<BLL.BusinessObjects.FeatureSelection> _featureSelections = new List<FeatureSelection>();
         private bool _toBeDeleted = false;
-        private string _modelName;
+        private string _modelName, _uiTemplateName;
 
         //Constructor
         public Configuration()
@@ -1697,6 +1697,13 @@ namespace BLL.BusinessObjects
             get
             {
                 return _modelName;
+            }
+        }
+        public string UITemplateName
+        {
+            get
+            {
+                return _uiTemplateName;
             }
         }
         [JsonIgnore]
@@ -1762,8 +1769,6 @@ namespace BLL.BusinessObjects
             BLL.BusinessObjects.AttributeValue attributeValue = featureSelection.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID);
             return attributeValue;
         }
-        
-
 
         //Conversion
         public static BLL.BusinessObjects.Configuration FromDataEntity(DAL.DataEntities.IDataEntity innerEntity)
@@ -1772,11 +1777,12 @@ namespace BLL.BusinessObjects
             
             //Set fields
             configuration._modelName = ((DAL.DataEntities.Configuration)innerEntity).Model.Name;
+            configuration._uiTemplateName = ((DAL.DataEntities.Configuration)innerEntity).UITemplate.Name;
 
             return configuration;
         }
         //Factory
-        public static BLL.BusinessObjects.Configuration CreateDefault(int modelID)
+        public static BLL.BusinessObjects.Configuration CreateDefault(int modelID, int uiTemplateID)
         {
             //Create a new Model and InnerEntity
             DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Configuration();
@@ -1784,6 +1790,7 @@ namespace BLL.BusinessObjects
 
             //Set default fields
             ((DAL.DataEntities.Configuration)configuration.InnerEntity).ModelID = modelID;
+            ((DAL.DataEntities.Configuration)configuration.InnerEntity).UITemplateID = uiTemplateID;
             configuration.CreatedDate = DateTime.Now;
             configuration.LastModifiedDate = DateTime.Now;
             configuration.Name = "Configuration00";

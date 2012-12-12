@@ -59,6 +59,23 @@ namespace DAL.DataEntities
             get;
             set;
         }
+    
+        public virtual int UITemplateID
+        {
+            get { return _uITemplateID; }
+            set
+            {
+                if (_uITemplateID != value)
+                {
+                    if (UITemplate != null && UITemplate.ID != value)
+                    {
+                        UITemplate = null;
+                    }
+                    _uITemplateID = value;
+                }
+            }
+        }
+        private int _uITemplateID;
 
         #endregion
         #region Navigation Properties
@@ -109,6 +126,21 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<FeatureSelection> _featureSelections;
+    
+        public virtual UITemplate UITemplate
+        {
+            get { return _uITemplate; }
+            set
+            {
+                if (!ReferenceEquals(_uITemplate, value))
+                {
+                    var previousValue = _uITemplate;
+                    _uITemplate = value;
+                    FixupUITemplate(previousValue);
+                }
+            }
+        }
+        private UITemplate _uITemplate;
 
         #endregion
         #region Association Fixup
@@ -129,6 +161,26 @@ namespace DAL.DataEntities
                 if (ModelID != Model.ID)
                 {
                     ModelID = Model.ID;
+                }
+            }
+        }
+    
+        private void FixupUITemplate(UITemplate previousValue)
+        {
+            if (previousValue != null && previousValue.Configurations.Contains(this))
+            {
+                previousValue.Configurations.Remove(this);
+            }
+    
+            if (UITemplate != null)
+            {
+                if (!UITemplate.Configurations.Contains(this))
+                {
+                    UITemplate.Configurations.Add(this);
+                }
+                if (UITemplateID != UITemplate.ID)
+                {
+                    UITemplateID = UITemplate.ID;
                 }
             }
         }

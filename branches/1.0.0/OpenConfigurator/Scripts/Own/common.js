@@ -13,6 +13,8 @@ $(document).ready(function () {
     });
 });
 
+
+
 //Pines notify defaults
 $.pnotify.defaults.pnotify_mouse_reset = true;
 $.pnotify.defaults.pnotify_width = "220px";

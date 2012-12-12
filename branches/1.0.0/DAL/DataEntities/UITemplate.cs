@@ -89,6 +89,38 @@ namespace DAL.DataEntities
             }
         }
         private User _user;
+    
+        public virtual ICollection<Configuration> Configurations
+        {
+            get
+            {
+                if (_configurations == null)
+                {
+                    var newCollection = new FixupCollection<Configuration>();
+                    newCollection.CollectionChanged += FixupConfigurations;
+                    _configurations = newCollection;
+                }
+                return _configurations;
+            }
+            set
+            {
+                if (!ReferenceEquals(_configurations, value))
+                {
+                    var previousValue = _configurations as FixupCollection<Configuration>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupConfigurations;
+                    }
+                    _configurations = value;
+                    var newValue = value as FixupCollection<Configuration>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupConfigurations;
+                    }
+                }
+            }
+        }
+        private ICollection<Configuration> _configurations;
 
         #endregion
         #region Association Fixup
@@ -109,6 +141,28 @@ namespace DAL.DataEntities
                 if (UserID != User.ID)
                 {
                     UserID = User.ID;
+                }
+            }
+        }
+    
+        private void FixupConfigurations(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Configuration item in e.NewItems)
+                {
+                    item.UITemplate = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Configuration item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.UITemplate, this))
+                    {
+                        item.UITemplate = null;
+                    }
                 }
             }
         }

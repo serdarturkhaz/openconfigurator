@@ -58,6 +58,10 @@
             <End Role="Models" EntitySet="Models" />
             <End Role="Configurations" EntitySet="Configurations" />
           </AssociationSet>
+          <AssociationSet Name="FK_Configurations_UITemplates" Association="OpenConfigurator_Model.Store.FK_Configurations_UITemplates">
+            <End Role="UITemplates" EntitySet="UITemplates" />
+            <End Role="Configurations" EntitySet="Configurations" />
+          </AssociationSet>
           <AssociationSet Name="FK_Constraints_Models" Association="OpenConfigurator_Model.Store.FK_Constraints_Models">
             <End Role="Models" EntitySet="Models" />
             <End Role="Constraints" EntitySet="Constraints" />
@@ -172,6 +176,7 @@
           </Key>
           <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="ModelID" Type="int" Nullable="false" />
+          <Property Name="UITemplateID" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="LastModifiedDate" Type="datetime" />
@@ -294,11 +299,11 @@
           </Key>
           <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="UserID" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="Stylesheet" Type="nvarchar(max)" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="LastModifiedDate" Type="datetime" />
-          <Property Name="Stylesheet" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -409,6 +414,18 @@
             </Principal>
             <Dependent Role="Configurations">
               <PropertyRef Name="ModelID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Configurations_UITemplates">
+          <End Role="UITemplates" Type="OpenConfigurator_Model.Store.UITemplates" Multiplicity="1" />
+          <End Role="Configurations" Type="OpenConfigurator_Model.Store.Configurations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UITemplates">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Configurations">
+              <PropertyRef Name="UITemplateID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -698,6 +715,10 @@
           <AssociationSet Name="FK_Constraints_Models" Association="OpenConfigurator_Model.FK_Constraints_Models">
             <End Role="Model" EntitySet="Models" />
             <End Role="Constraint" EntitySet="Constraints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Configurations_UITemplates" Association="OpenConfigurator_Model.FK_Configurations_UITemplates">
+            <End Role="UITemplate" EntitySet="UITemplates" />
+            <End Role="Configuration" EntitySet="Configurations" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Attribute_DataType">
@@ -1066,6 +1087,8 @@
           <Property Type="DateTime" Name="LastModifiedDate" />
           <NavigationProperty Name="Model" Relationship="OpenConfigurator_Model.FK_Configurations_Models" FromRole="Configuration" ToRole="Model" />
           <NavigationProperty Name="FeatureSelections" Relationship="OpenConfigurator_Model.FK_FeatureSelections_Configurations" FromRole="Configuration" ToRole="FeatureSelection" />
+          <Property Type="Int32" Name="UITemplateID" Nullable="false" />
+          <NavigationProperty Name="UITemplate" Relationship="OpenConfigurator_Model.FK_Configurations_UITemplates" FromRole="Configuration" ToRole="UITemplate" />
         </EntityType>
         <EntityType Name="FeatureSelection">
           <Key>
@@ -1174,6 +1197,7 @@
           <Property Type="DateTime" Name="LastModifiedDate" />
           <NavigationProperty Name="User" Relationship="OpenConfigurator_Model.FK_UITemplates_Users" FromRole="UITemplate" ToRole="User" />
           <Property Type="String" Name="Stylesheet" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Configurations" Relationship="OpenConfigurator_Model.FK_Configurations_UITemplates" FromRole="UITemplate" ToRole="Configuration" />
         </EntityType>
         <Association Name="FK_UITemplates_Users">
           <End Type="OpenConfigurator_Model.User" Role="User" Multiplicity="1" />
@@ -1208,6 +1232,18 @@
             </Principal>
             <Dependent Role="Constraint">
               <PropertyRef Name="ModelID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Configurations_UITemplates">
+          <End Type="OpenConfigurator_Model.UITemplate" Role="UITemplate" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.Configuration" Role="Configuration" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UITemplate">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Configuration">
+              <PropertyRef Name="UITemplateID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1361,6 +1397,7 @@
           <EntitySetMapping Name="Configurations">
             <EntityTypeMapping TypeName="OpenConfigurator_Model.Configuration">
               <MappingFragment StoreEntitySet="Configurations">
+                <ScalarProperty Name="UITemplateID" ColumnName="UITemplateID" />
                 <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1461,6 +1498,8 @@
         <EntityTypeShape EntityType="OpenConfigurator_Model.Attribute_Type" Width="1.5" PointX="10.625" PointY="5.25" Height="1.5956835937500031" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_Attributes_Attribute_Types" >
           <ConnectorPoint PointX="10.625" PointY="6.0478417968750016" />
+          <ConnectorPoint PointX="10.458333333333334" PointY="6.0478417968750007" />
+          <ConnectorPoint PointX="10.291666666666666" PointY="6.0478417968750016" />
           <ConnectorPoint PointX="9.875" PointY="6.0478417968750016" />
         </AssociationConnector>
         <EntityTypeShape EntityType="OpenConfigurator_Model.Relation_Type" Width="1.5" PointX="3" PointY="10.625" Height="1.9802864583333317" />
@@ -1479,12 +1518,10 @@
         <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features" ManuallyRouted="true" >
           <ConnectorPoint PointX="6.803649718921764" PointY="8.7013964843749978" />
           <ConnectorPoint PointX="6.803649718921764" PointY="8.8840950520833317" />
-          <ConnectorPoint PointX="7.010416666666667" PointY="8.8840950520833317" />
-          <ConnectorPoint PointX="7.177083333333333" PointY="8.8840950520833317" />
           <ConnectorPoint PointX="7.5" PointY="8.8840950520833317" />
           <ConnectorPoint PointX="7.5" PointY="10.34568359375" />
-          <ConnectorPoint PointX="10.166669166666667" PointY="10.34568359375" />
-          <ConnectorPoint PointX="10.333335833333335" PointY="10.34568359375" />
+          <ConnectorPoint PointX="10.166669166666667" PointY="10.345683593749998" />
+          <ConnectorPoint PointX="10.458333333333334" PointY="10.34568359375" />
           <ConnectorPoint PointX="11.875" PointY="10.34568359375" />
           <ConnectorPoint PointX="11.875" PointY="10" />
           <ConnectorPoint PointX="12.416460402527664" PointY="10" />
@@ -1495,9 +1532,11 @@
           <ConnectorPoint PointX="14.25" PointY="2.0910953776041659" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_FeatureGroups_Models" >
-          <ConnectorPoint PointX="4.5" PointY="4.06224609375" />
-          <ConnectorPoint PointX="12.960935" PointY="4.06224609375" />
-          <ConnectorPoint PointX="12.960935" PointY="3.0571907552083317" />
+          <ConnectorPoint PointX="4.5" PointY="3.468369140625" />
+          <ConnectorPoint PointX="7.8854544652770917" PointY="3.3663672326251852" />
+          <ConnectorPoint PointX="8.0520455347229074" PointY="3.3613479340011789" />
+          <ConnectorPoint PointX="12.960935" PointY="3.2134457552083333" />
+          <ConnectorPoint PointX="12.960935" PointY="3.6246241406250017" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_GroupRelations" >
           <ConnectorPoint PointX="13.796875" PointY="3.0571907552083317" />
@@ -1527,14 +1566,16 @@
           <ConnectorPoint PointX="9.75" PointY="12.7112939453125" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Configurations_Models" >
-          <ConnectorPoint PointX="4.5" PointY="5.4621584551282041" />
-          <ConnectorPoint PointX="4.96875" PointY="5.9309084551282041" />
-          <ConnectorPoint PointX="4.96875" PointY="10.682444661458334" />
-          <ConnectorPoint PointX="5.25" PointY="10.682444661458334" />
+          <ConnectorPoint PointX="4.5" PointY="5.5186979166666656" />
+          <ConnectorPoint PointX="4.875" PointY="5.8936979166666656" />
+          <ConnectorPoint PointX="4.875" PointY="10.87474609375" />
+          <ConnectorPoint PointX="5.25" PointY="10.87474609375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_FeatureSelections_Configurations" >
-          <ConnectorPoint PointX="6.75" PointY="11.619944661458334" />
-          <ConnectorPoint PointX="7.5" PointY="11.619944661458334" />
+          <ConnectorPoint PointX="6.75" PointY="11.81224609375" />
+          <ConnectorPoint PointX="7.010416666666667" PointY="11.81224609375" />
+          <ConnectorPoint PointX="7.177083333333333" PointY="11.81224609375" />
+          <ConnectorPoint PointX="7.5" PointY="11.81224609375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_FeatureSelections_SelectionStates" >
           <ConnectorPoint PointX="6.75" PointY="13.49974609375" />
@@ -1542,27 +1583,35 @@
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_AttributeValues_Attributes" >
           <ConnectorPoint PointX="9.875" PointY="7.4297900390625014" />
-          <ConnectorPoint PointX="10.2500025" PointY="7.4297900390625014" />
-          <ConnectorPoint PointX="10.2500025" PointY="11.625" />
+          <ConnectorPoint PointX="10.2500025" PointY="7.5860450390625029" />
+          <ConnectorPoint PointX="10.2500025" PointY="11.781255000000002" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_FeatureSelections_Features" >
-          <ConnectorPoint PointX="6.2630011227687064" PointY="8.5090950520833317" />
-          <ConnectorPoint PointX="6.2630011227687064" PointY="9.25" />
-          <ConnectorPoint PointX="7" PointY="9.25" />
-          <ConnectorPoint PointX="7" PointY="11" />
-          <ConnectorPoint PointX="7.8139633961199362" PointY="11" />
-          <ConnectorPoint PointX="7.8139633961199362" PointY="11.375" />
+          <ConnectorPoint PointX="7.09375" PointY="8.857651484375" />
+          <ConnectorPoint PointX="7.09375" PointY="12.466095377604166" />
+          <ConnectorPoint PointX="7.5" PointY="12.466095377604166" />
         </AssociationConnector>
         <EntityTypeShape EntityType="OpenConfigurator_Model.UITemplate" Width="1.5" PointX="10" PointY="0.5" Height="2.364889322916667" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_UITemplates_Users" >
-          <ConnectorPoint PointX="2.25" PointY="0.59375" />
-          <ConnectorPoint PointX="10" PointY="0.59375" />
+          <ConnectorPoint PointX="2.25" PointY="0.59375000000000011" />
+          <ConnectorPoint PointX="10" PointY="0.59375000000000011" />
         </AssociationConnector>
         <EntityTypeShape EntityType="OpenConfigurator_Model.Constraint" Width="1.75" PointX="7.875" PointY="0.75" Height="2.364889322916667" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_Constraints_Models" >
-          <ConnectorPoint PointX="4.5" PointY="3.5573157083333329" />
-          <ConnectorPoint PointX="7.96875" PointY="3.5573157083333329" />
-          <ConnectorPoint PointX="7.96875" PointY="3.114889322916667" />
+          <ConnectorPoint PointX="4.5" PointY="3.7593489583333328" />
+          <ConnectorPoint PointX="8.7499998663422645" PointY="3.7593489583333328" />
+          <ConnectorPoint PointX="8.7499998663422645" PointY="3.114889322916667" />
+        </AssociationConnector>
+        <AssociationConnector Association="OpenConfigurator_Model.FK_Configurations_UITemplates" >
+          <ConnectorPoint PointX="10.75" PointY="3.2494921875" />
+          <ConnectorPoint PointX="10.75" PointY="5" />
+          <ConnectorPoint PointX="10.375" PointY="5" />
+          <ConnectorPoint PointX="10.375" PointY="10.829091796875" />
+          <ConnectorPoint PointX="10.333335833333335" PointY="10.829091796875" />
+          <ConnectorPoint PointX="10.166669166666667" PointY="10.829091796875" />
+          <ConnectorPoint PointX="7.177083333333333" PointY="10.829091796875" />
+          <ConnectorPoint PointX="7.010416666666667" PointY="10.829091796875" />
+          <ConnectorPoint PointX="6.75" PointY="10.829091796875" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

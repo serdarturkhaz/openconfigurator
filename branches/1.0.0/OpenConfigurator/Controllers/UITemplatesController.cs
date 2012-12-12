@@ -41,7 +41,7 @@ namespace PresentationLayer.Controllers
 
             //Retreive UITemplates belonging to the current User
             UITemplateService _uiTemplatesService = new UITemplateService(SessionData.LoggedInUser.ID);
-            List<BLL.BusinessObjects.UITemplate> uitemplates = _uiTemplatesService.GetByUserID(SessionData.LoggedInUser.ID);
+            List<BLL.BusinessObjects.UITemplate> uitemplates = _uiTemplatesService.GetByUserID(SessionData.LoggedInUser.ID, true);
             result.Data = uitemplates;
 
             //

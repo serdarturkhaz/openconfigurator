@@ -65,6 +65,14 @@
             $("#NewRadiobuttonList").bind("click", function () {
                 clientController.AddUIControl("radiobuttonlist");
             });
+
+            //Key handlers
+            $(document).keydown(function (e) {
+
+                $.ctrl('S', function () { //create Feature
+                    clientController.SaveData();
+                });
+            });
             //---------------------------------------------------------------------------------
 
             //Initialize
@@ -79,7 +87,7 @@
 
                 var tabname = $(ui.tab).attr("tabname");
                 var titleLabel = $("#UITemplateCodeBox").find(".BoxHeader .HeaderLabel");
-                
+
                 //
                 switch (tabname) {
                     case "CSS":
@@ -236,7 +244,8 @@ Edit Template
                     <textarea id="CSSEditorTextarea" style="display: none"></textarea>
                 </div>
                 <div id="tabs-3">
-                    <div id="VisualEditorInnerarea"></div>
+                    <div id="VisualEditorInnerarea">
+                    </div>
                 </div>
             </div>
         </div>

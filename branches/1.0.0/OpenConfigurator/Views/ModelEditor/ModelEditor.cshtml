@@ -44,8 +44,8 @@
                 clientController.SaveData();
             });
             $("#ConfigureButton").bind("click", function () {
-                var newConfigID = addNewConfiguration(modelId);
-                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
+//                var newConfigID = addNewConfiguration(modelId);
+//                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
             });
             $("#ZoomOutButton").bind("click", function () {
                 clientController.ZoomOut();
@@ -92,10 +92,14 @@
                 $.ctrl('U', function () { //create CustomRule
                     clientController.CreateNewCustomRule();
                 });
+                $.ctrl('S', function () { //Save data
+                    clientController.SaveData();
+                });
             });
             //---------------------------------------------------------------------------------
 
             //Initialize 
+            
             calcWidth();
             calcWidth();
             $(window).resize(function () {
@@ -112,7 +116,11 @@
                 diagramDataModel.Initialize();
                 clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"), $("#ModelNameTextbox"), $("#ZoomLevelIndicator"), diagramDataModel);
                 clientController.Initialize();
+
+
             });
+
+
         });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     </script>
@@ -129,10 +137,10 @@ Edit Model
             <img src="../../Content/themes/base/images/Icons/save.png" />
             <span>Save</span>
         </div>
-        <div class="Button-Toolbar" id="ConfigureButton">
+        @*<div class="Button-Toolbar" id="ConfigureButton">
             <img src="../../Content/themes/base/images/Icons/configure-toolbar.png" />
             <span>Configure</span>
-        </div>
+        </div>*@
     </div>
 }
 <div class="LeftColumn">
