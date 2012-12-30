@@ -29,7 +29,7 @@ using System.Collections;
 
 namespace PresentationLayer.Controllers
 {
-    using BLL.RuleParser;
+    using BLL.Parsers;
 
     public class ModelEditorController : Controller
     {

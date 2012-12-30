@@ -22,11 +22,11 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using BLL.Services;
 
-namespace BLL.RuleParser
+namespace BLL.Parsers
 {
     public interface IParser
     {
-        bool ExecuteSyntax(ref ConfiguratorSession configSession, string RuleSyntax);
+        void ExecuteSyntax(ref ConfiguratorSession configSession, string RuleSyntax);
     }
     public abstract class ParserStatement
     {

@@ -145,6 +145,10 @@ var UITemplateDataModel = function (uiTemplateID, uiTemplateName) {
         //Raise events
         _thisUITemplateDataModel.TemplateDataUpdated.RaiseEvent();
     }
+    this.GetUIControlTypeData = function (controltype) {
+        var controlObj = getUIControlTypeData(controltype);
+        return controlObj;
+    }
     this.CreateUIControlInstance = function (controltype) {
         var controlObj = getUIControlTypeData(controltype);
         controlObj.ControlID = generateUIControlID();
@@ -283,7 +287,6 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
     var getSelectedRange = function () {
         return { from: _editorInstance.getCursor(true), to: _editorInstance.getCursor(false) };
     }
-
 
     //Constructor/Initalizers
     this.Initialize = function () {
@@ -470,12 +473,17 @@ var VisualView = function (containerArea, uiTemplateDataModelInstance) {
     //Eventhandlers
     this.OnTemplateDataLoaded = function () {
 
-        //Set the CSS
-        var templateCSS = _uiTemplateDataModel.GetTemplateField("Stylesheet");
-        var style = $("<style id='styleElem' type='text/css'></style>").text(templateCSS);
-        $(_head).append(style);
+        //Load generic CSS for UIControl types
+        var checkboxCSS = _uiTemplateDataModel.GetUIControlTypeData("Checkbox").CSS;
+        var controlStyles = $("<style id='controlStylesElem' type='text/css'></style>").text(checkboxCSS);
+        $(_head).append(controlStyles);
 
-        //Set the HTML
+        //Load the template CSS
+        var templateCSS = _uiTemplateDataModel.GetTemplateField("Stylesheet");
+        var templateStyles = $("<style id='styleElem' type='text/css'></style>").text(templateCSS);
+        $(_head).append(templateStyles);
+
+        //Load the template HTML
         var templateHTML = _uiTemplateDataModel.GetTemplateField("Content");
         $(_body).html(templateHTML);
     }

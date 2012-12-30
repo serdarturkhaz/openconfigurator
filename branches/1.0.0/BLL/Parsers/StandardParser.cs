@@ -22,7 +22,7 @@ using BLL.SolverEngines;
 using System.Reflection;
 using BLL.Services;
 
-namespace BLL.RuleParser
+namespace BLL.Parsers
 {
     public class StandardParser : IParser
     {
@@ -36,12 +36,11 @@ namespace BLL.RuleParser
                 {
                     typeof(Manipulation),
                     typeof(Operations),
-                    typeof(Comparisons), // JAH: add Comparisons, use OutcomeResult ot return the value of the rule
+                    typeof(Comparisons), 
                     typeof(Functions),
                     typeof(Primitives),
                     typeof(Selectors)
                 };
-
             }
 
             //Categories
@@ -530,7 +529,7 @@ namespace BLL.RuleParser
                 public class CompositeSelector : ParserStatement
                 {
                     //Fields
-                    public static string IdentifyRegex = @"^[^\.]+(\.[^\.]{2,}){1,}[^\.]*$", SplitRegex = @"\."; //example : "#FeatureName.>Descendants.AttributeName"
+                    public static string IdentifyRegex = @"^[^\.]+(\.[^\.]{2,}){1,}[^\.]*$", SplitRegex = @"\."; //example : "#FeatureName.>descendants.AttributeName"
 
                     public override IEvalResult[] Eval()
                     {
@@ -563,6 +562,7 @@ namespace BLL.RuleParser
                         return finalEvalResult;
                     }
                 }
+
                 public class AbsoluteFeatureSelector : ParserStatement
                 {
                     //Fields
@@ -732,43 +732,6 @@ namespace BLL.RuleParser
         }
 
         //Private Methods
-        public ParserStatement ParseString(ref ConfiguratorSession configSession, string str)
-        {
-            // trim before the identification, allowing spaces in the code
-            str = str.Trim();
-
-            // Identify the string and creating a corresponding ParserStatement
-            Type StatementType = IdentifyString(str);
-            ParserStatement instance = (ParserStatement)ExecuteStaticMethod(StatementType, "CreateInstance", (object)StatementType, configSession, (object)str);
-
-            string[] subStrings = null;
-
-            // if defined, split using the Split method
-            var splitResult = ExecuteStaticMethod(StatementType, "Split", str);
-            if (splitResult != null)
-                subStrings = (string[])splitResult;
-            else
-            // else use the regex to split
-            {
-                var splitRegex = (string)GetStaticField(StatementType, "SplitRegex");
-
-                if (splitRegex != null)
-                {
-                    // split the regexa nd only take none empty elements
-                    subStrings = Regex.Split(str, splitRegex).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
-                }
-            }
-
-            // if the string was split, then parse inner statements and add them to the parent
-            if (subStrings != null)
-                foreach (string subString in subStrings)
-                {
-                    ParserStatement innerStatement = ParseString(ref configSession, subString);
-                    instance.AddInnerStatement(innerStatement);
-                }
-
-            return instance;
-        }
         private Type IdentifyString(string str)
         {
             //Loop through all Categories in SyntaxSupport - according to their parsing priority
@@ -805,14 +768,6 @@ namespace BLL.RuleParser
         {
             return ExecuteStaticMethod(baseClass, methodName, null);
         }
-
-        /// <summary>
-        /// Excetures a static method. If the static method does not exists, it returns null
-        /// </summary>
-        /// <param name="baseClass"></param>
-        /// <param name="methodName"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
         private static object ExecuteStaticMethod(Type baseClass, string methodName, params object[] parameters)
         {
             MethodInfo method = baseClass.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
@@ -827,9 +782,46 @@ namespace BLL.RuleParser
             return field.GetValue(null);
         }
 
-
         //Public Methods
-        public bool ExecuteSyntax(ref ConfiguratorSession configSession, string RuleSyntax)
+        public ParserStatement ParseString(ref ConfiguratorSession configSession, string str)
+        {
+            // trim before the identification, allowing spaces in the code
+            str = str.Trim();
+
+            // Identify the string and creating a corresponding ParserStatement
+            Type StatementType = IdentifyString(str);
+            ParserStatement instance = (ParserStatement)ExecuteStaticMethod(StatementType, "CreateInstance", (object)StatementType, configSession, (object)str);
+
+            string[] subStrings = null;
+
+            // if defined, split using the Split method
+            var splitResult = ExecuteStaticMethod(StatementType, "Split", str);
+            if (splitResult != null)
+            {
+                subStrings = (string[])splitResult;
+            }
+            else
+            // else use the regex to split
+            {
+                var splitRegex = (string)GetStaticField(StatementType, "SplitRegex");
+                if (splitRegex != null)
+                {
+                    // split the regex and only take none empty elements
+                    subStrings = Regex.Split(str, splitRegex).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+                }
+            }
+
+            // if the string was split, then parse inner statements and add them to the parent
+            if (subStrings != null)
+                foreach (string subString in subStrings)
+                {
+                    ParserStatement innerStatement = ParseString(ref configSession, subString);
+                    instance.AddInnerStatement(innerStatement);
+                }
+
+            return instance;
+        }
+        public void ExecuteSyntax(ref ConfiguratorSession configSession, string RuleSyntax)
         {
             try
             {
@@ -841,16 +833,10 @@ namespace BLL.RuleParser
             }
             catch (ElementNotFoundException ex)
             {
-
             }
             catch (NullReferenceException ex)
             {
-                //throw new SyntaxIncorrectException();
             }
-
-            return true;
         }
     }
-
-
 }

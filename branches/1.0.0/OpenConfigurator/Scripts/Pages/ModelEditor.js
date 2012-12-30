@@ -1521,7 +1521,7 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
                 }
             });
 
-            //Load the model
+            //Load the data
             _diagramDataModel.LoadData(function (model) {
                 $(_modelNameTextbox).val(model.Name);
                 $("#ModelDiagramBox").unblock();
@@ -2716,11 +2716,6 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                 {
                     ID: "featuresNode",
                     Name: "Features",
-                    typeName: "folder"
-                },
-                {
-                    ID: "featureTypesNode",
-                    Name: "Feature Types",
                     typeName: "folder"
                 },
                 {

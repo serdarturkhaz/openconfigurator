@@ -109,7 +109,7 @@ $("#CreateConfigurationPopup").dialog({
 
 
                     //
-                    $(this).dialog("close");
+                    //$(this).dialog("close");
                 }
             }]
 });

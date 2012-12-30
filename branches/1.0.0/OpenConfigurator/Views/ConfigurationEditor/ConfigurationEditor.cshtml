@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "ConfigurationEditor";
+    ViewBag.Title = "Edit Configuration";
     Layout = "~/Views/Master/_LoggedInLayout.cshtml";
 }
 @section headerscripts{
@@ -9,14 +9,6 @@
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var configurationID = '@(ViewBag.ConfigurationId)';
         var configurationDataModel = null, clientController = null;
-
-        function calcWidth() {
-            var containerWidth = $(".OuterContentArea .InnerContentArea").width();
-            var marginWidth = 31;
-            var explorerBoxWidth = $("#ConfigurationExplorerBox").width();
-            var standardViewBoxWidth = containerWidth - marginWidth - explorerBoxWidth;
-            $('#StandardViewBox').css("width", standardViewBoxWidth + "px");
-        }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $(document).ready(function () {
@@ -29,11 +21,6 @@
             //---------------------------------------------------------------------------------
 
             //Initialize
-            calcWidth();
-            $(window).resize(function () {
-                calcWidth();
-                calcWidth();
-            });
             $("#ConfigurationsMenuItem").attr("selected", "selected");
 
             //Load data
@@ -43,7 +30,7 @@
                 configurationDataModel = new ConfigurationDataModel(configurationID);
                 configurationDataModel.Initialize();
 
-                clientController = new ClientController($("#InnerViewArea"), $("#ConfigurationNameTextbox"), configurationDataModel);
+                clientController = new ClientController($("#InnerViewArea"), $("#ConfigurationNameTextbox"), $("#MainHeaderLabel"), configurationDataModel);
                 clientController.Initialize();
             });
         });
@@ -68,32 +55,13 @@
 @section RootBreadCrumb {
 Edit Configuration
 }
-<div class="LeftColumn">
-    @*ConfigurationExplorerBox*@
-    <div id="ConfigurationExplorerBox" class="RoundedBox">
+
+<div class="SingleColumn">
+    @*InteractiveView*@
+    <div id="InteractiveViewBox" class="RoundedBox">
         <div class="BoxHeader">
             <div class="BoxInnerHeader">
-                <span class="HeaderLabel">Configuration Explorer</span>
-            </div>
-        </div>
-        <div class="BoxContent">
-            <div class="TreeArea">
-                <div id="ConfigurationExplorerTree">
-                </div>
-            </div>
-        </div>
-        <div class="BoxFooter">
-            <div class="BoxInnerFooter">
-            </div>
-        </div>
-    </div>
-</div>
-<div class="RightColumn">
-    @*StandardView*@
-    <div id="StandardViewBox" class="RoundedBox">
-        <div class="BoxHeader">
-            <div class="BoxInnerHeader">
-                <span class="HeaderLabel">Configure Model</span>
+                <span id="MainHeaderLabel" class="HeaderLabel"></span>
             </div>
         </div>
         <div class="BoxContent">

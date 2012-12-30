@@ -1348,10 +1348,6 @@ a:hover
     color: #3a4043;
 }
 
-
-
-
-
 .IconButton-Normal
 {
     border: 1px solid transparent;
@@ -1409,7 +1405,6 @@ a:hover
 .NewConfigurationPopup .Dropdown {
   width:250px;
 }
-
 /***********************************************************************************************/
 /*Pages*****************************************************************************************/
 /*Login-------------------------------------------------------------------------*/
@@ -1476,6 +1471,12 @@ a:hover
 .RightColumn
 {
     float: right;
+}
+
+.SingleColumn
+{
+    float: left;
+    width:100%;
 }
 
 /*Properties box*/
@@ -1839,7 +1840,6 @@ a:hover
     min-height: 668px;
     border: none;
     width: 100%;
-    /*border: 1px solid #E6E6E6;*/
     
     /*zoom: 0.75;
     -moz-transform: scale(0.75);
@@ -1874,28 +1874,28 @@ a:hover
 }
 /*------------------------------------------------------------------------------*/
 /*ConfigurationEditor-----------------------------------------------------------*/
-/*ConfigurationExplorer*/
-#ConfigurationExplorerBox
+
+/*InteractiveViewBox*/
+#InteractiveViewBox
 {
     float: left;
-    margin-top: 30px;
-    width: 185px;
+    margin-top: 12px;
+    width: 100%;
 }
-
-/*StandardViewBox*/
-#StandardViewBox
+#InteractiveViewBox #InnerViewArea
 {
-    float: right;
-    margin-top: 30px;
-    width: 80%;
-}
-#StandardViewBox #InnerViewArea
-{
-    height: 670px;
-    overflow: scroll;
+    min-height: 670px;
     padding: 15px;
 }
+#InteractiveViewBox #InnerViewArea #InnerIframe
+{
+    min-height: 670px;
+    border: none;
+    width: 100%; 
+}
 
+
+/*Old standard view*/
 #StandardViewBox .Entry
 {
     float: left;
@@ -1910,7 +1910,6 @@ a:hover
     float: left;
     background: url(themes/base/images/Controls/featureSelectionConnector-standard.png) no-repeat 75px -23px;
 }
-
 #StandardViewBox .Entry[last]
 {
     background: url(themes/base/images/Controls/featureSelectionConnector-last.png) no-repeat 75px 0;
@@ -1919,7 +1918,6 @@ a:hover
 {
     background: none;
 }
-
 #StandardViewBox .Entry[root]
 {
     background: none;

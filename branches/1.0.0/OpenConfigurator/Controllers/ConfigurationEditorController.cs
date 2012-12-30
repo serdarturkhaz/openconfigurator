@@ -23,6 +23,7 @@ using BLL.Services;
 using PresentationLayer.Common;
 using Newtonsoft.Json.Linq;
 using BLL.SolverEngines;
+using BLL.BusinessObjects;
 
 namespace PresentationLayer.Controllers
 {
@@ -32,16 +33,17 @@ namespace PresentationLayer.Controllers
         [Authorize]
         public ActionResult ConfigurationEditor(int configurationID)
         {
-            //Load the ConfigurationID
+            //Store variables
             ViewBag.ConfigurationID = configurationID;
 
             return View();
         }
+
         [Authorize]
         public JsonNetResult LoadData(int configurationID)
         {
             //Data return wrapper
-            object[] innerJObj = new object[2];
+            object[] innerJObj = new object[3];
             JsonNetResult result = new JsonNetResult() { Data = innerJObj };
 
             //Load Configuration
@@ -54,14 +56,19 @@ namespace PresentationLayer.Controllers
             BLL.BusinessObjects.Model model = _modelService.GetByID(configuration.ModelID);
             innerJObj[1] = model;
 
+            //Load UITemplate
+            UITemplateService _uiTemplatesService = new UITemplateService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.UITemplate template = _uiTemplatesService.GetByID(configuration.UITemplateID);
+            innerJObj[2] = template;
+
+
             //Setup the ConfigurationSession
             ConfiguratorSession newSession = new ConfiguratorSession(model, configuration, SolverService.CreateNewContext(model));
             SetupFeatureSelections(ref newSession);
             SessionData.ConfiguratorSessions[configurationID] = newSession;
 
-            
-            
 
+            //
             return result;
         }
         [Authorize]
@@ -103,6 +110,14 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
+
+        [Authorize]
+        public void ClearSessionContext(int configurationID)
+        {
+            SessionData.ConfiguratorSessions.Remove(configurationID);
+        }
+
+        //Solver / interactive configuration methods 
         [Authorize]
         public JsonNetResult ToggleFeature(int configurationID, int FeatureID, int newState)
         {
@@ -117,8 +132,6 @@ namespace PresentationLayer.Controllers
             BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
             bool selectionValid = solverService.UserToggleSelection(ref configSession, FeatureID, selectionState);
 
-            //string testRule = "#HIS.Total_Price=250";
-            //solverService.ExecuteCustomRule(ref configSession, testRule);
 
             //Return
             if (selectionValid)
@@ -133,9 +146,19 @@ namespace PresentationLayer.Controllers
             return result;
         }
         [Authorize]
-        public void ClearSessionContext(int configurationID)
+        public JsonNetResult EvalDatabindExpression(int configurationID, string expression)
         {
-            SessionData.ConfiguratorSessions.Remove(configurationID);
+            //Data return wrapper
+            JsonNetResult result = new JsonNetResult();
+
+            //Get the ConfiguratorSession
+            ConfiguratorSession configSession = SessionData.ConfiguratorSessions[configurationID];
+            SolverService solverService = new SolverService();
+
+            //Get the implicit selections for the other features
+            result.Data = solverService.EvalExpression(ref configSession, expression);
+
+            return result;
         }
 
         //Private methods
@@ -253,5 +276,29 @@ namespace PresentationLayer.Controllers
             return result;
         }
 
+        //Method for retreiving UIControlTypes
+        [Authorize]
+        public JsonNetResult GetUIControlTypeData(string ControlType)
+        {
+            //Data return wrapper
+            JsonNetResult result = new JsonNetResult();
+
+            //Create service
+            UITemplateService _uiTemplateService = new UITemplateService(SessionData.LoggedInUser.ID);
+
+            //Attempt to retreive controltype data
+            try
+            {
+                UIControlTypes controltype = (UIControlTypes)Enum.Parse(typeof(UIControlTypes), ControlType, true);
+                result.Data = _uiTemplateService.GetUIControlData(controltype);
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+            }
+
+            //
+            return result;
+        }
     }
 }

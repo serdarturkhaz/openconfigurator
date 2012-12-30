@@ -13,8 +13,6 @@ $(document).ready(function () {
     });
 });
 
-
-
 //Pines notify defaults
 $.pnotify.defaults.pnotify_mouse_reset = true;
 $.pnotify.defaults.pnotify_width = "220px";
@@ -118,7 +116,7 @@ function deleteRow(objectid, tbody) {
     });
 }
 //****************************************************************************************************************
-//Helper methods/small plugins***********************************************************************************
+//Helper methods/small plugins************************************************************************************
 function getEnumEntryByID(collection, id) {
     for (var key in collection) {
         var enumEntry = collection[key];
@@ -135,6 +133,13 @@ function paramsToString(collection) {
     }
     return returnString;
 }
+
+function sortUnique(array) {
+    return $.grep(array, function (el, index) {
+        return index == $.inArray(el, array);
+    });
+}
+
 var readyToPress = true;
 $.ctrl = function (key, callback, args) {
     $(document).keydown(function (e) {
@@ -180,5 +185,5 @@ function isArray(a) {
     };
 
 })(jQuery);
-//**************************************************************************************************************
+//****************************************************************************************************************
 
