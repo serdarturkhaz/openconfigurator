@@ -1,0 +1,64 @@
+﻿.CheckboxControl
+{
+    width:140px;
+    height:26px;
+    float:left;
+    clear:both;
+}
+.CheckboxControl .CheckElement
+{
+    width: 16px;
+    height: 16px;
+    margin-top: 4px;
+    padding: 0;
+    float: left;
+    
+    background: url(/content/themes/base/images/Controls/check-unselected.png) no-repeat center center;
+}
+.CheckboxControl .NameLabel
+{
+    line-height: 26px;
+    height: 26px;
+    float: left;
+    font-size: 12px;
+    font-family: Arial;
+    letter-spacing: 1.3px;
+    color: gray;
+  	margin-left:5px;
+  	cursor:default;
+}
+
+
+/*
+.CheckboxControl[selectionstate='unselected'] .CheckElement
+{
+    background: url(/content/themes/base/images/Controls/check-unselected.png) no-repeat center center;
+    border:solid 5px gray;
+}
+.CheckboxControl[selectionstate='unselected'][isdisabled] .CheckElement
+{
+    background: url(/content/themes/base/images/Controls/check-unselected-disabled.png) no-repeat center center;
+}
+
+//selected
+.CheckboxControl[selectionstate='selected'] .CheckElement
+{
+    background: url(/content/themes/base/images/Controls/check-selected.png) no-repeat center center;
+    border:solid 5px green;
+}
+.CheckboxControl[selectionstate='selected'][isdisabled] .CheckElement
+{
+    background: url(/content/themes/base/images/Controls/check-selected-disabled.png) no-repeat center center;
+}
+
+//deselected
+.CheckboxControl[selectionstate='deselected'] .CheckElement
+{
+    background: url(/content/themes/base/images/Controls/check-deselected.png) no-repeat center center ;
+    border:solid 5px red;
+}
+.CheckboxControl[selectionstate='deselected'][isdisabled] .CheckElement
+{
+    background: url(/content/themes/base/images/Controls/check-deselected-disabled.png) no-repeat center center;
+}
+*/

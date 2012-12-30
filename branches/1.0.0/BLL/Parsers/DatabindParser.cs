@@ -1,0 +1,371 @@
+﻿// Developed by OpenConfigurator Core Team
+// 
+// Distributed under the MIT license
+// ===========================================================
+// Copyright (c) 2012 - Radu Mitache, Josef A. Habdank
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR 
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+// OTHER DEALINGS IN THE SOFTWARE.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using BLL.SolverEngines;
+using System.Reflection;
+using BLL.Services;
+
+namespace BLL.Parsers
+{
+    public class DatabindParser 
+    {
+        //Syntax support
+        public static class SyntaxSupport
+        {
+            //Methods
+            public static List<Type> GetCategoriesByParsePriority()
+            {
+                return new List<Type>()
+                {
+                    typeof(Selectors)
+                };
+            }
+
+            //Categories
+            public static class Selectors
+            {
+                //Methods
+                public static List<Type> GetStatementTypes()
+                {
+                    return new List<Type>()
+                    {
+                        typeof(CompositeSelector),
+                        typeof(AbsoluteFeatureSelector),
+                        typeof(RelativeFeatureSelector),
+                        typeof(AbsoluteAttributeSelector)
+                    };
+                }
+
+                //StatementTypes
+                public class CompositeSelector : ParserStatement
+                {
+                    //Fields
+                    public static string IdentifyRegex = @"^[^\.]+(\.[^\.]{2,}){1,}[^\.]*$", SplitRegex = @"\."; //example : "#FeatureName.>descendants.AttributeName"
+
+                    public override IEvalResult[] Eval()
+                    {
+                        //Loop through inner statements
+                        List<IEvalResult[]> evalResults = new List<IEvalResult[]>();
+                        IEvalResult[] finalEvalResult = null;
+                        for (int i = 0; i < base.innerStatements.Count; i++)
+                        {
+                            //First inner statement
+                            if (i == 0)
+                            {
+                                //Evaluate
+                                ParserStatement statement = base.innerStatements[i];
+                                IEvalResult[] evalResult = base.innerStatements[i].Eval();
+                                evalResults.Add(evalResult);
+                            }
+                            //Following inner statements
+                            else if (i >= 1)
+                            {
+                                //Evaluate using the previous statement's result as a parameter
+                                ParserStatement statement = base.innerStatements[i];
+                                IEvalResult[] evalResult = base.innerStatements[i].Eval(evalResults[i - 1]);
+                                evalResults.Add(evalResult);
+
+                                //
+                                finalEvalResult = evalResult;
+                            }
+                        }
+
+                        return finalEvalResult;
+                    }
+                }
+                public class AbsoluteFeatureSelector : ParserStatement
+                {
+                    //Fields
+                    public static string IdentifyRegex = "^(#[A-z,0-9]*|root)$", SplitRegex = null; //example : "#FeatureName" or "root"
+                    public override IEvalResult[] Eval()
+                    {
+                        //Root selector
+                        if (_syntaxString == "root")
+                        {
+                            BLL.BusinessObjects.Feature root = _configSession.Model.GetRootFeature();
+
+                            //Return a reference pointing to the Feature
+                            object target = (object)root;
+                            ObjectReference returnRef = new ObjectReference(ref target);
+                            return new IEvalResult[] { returnRef };
+                        }
+                        else
+                        //ID selector
+                        {
+                            // Get the Feature and FeatureSelection
+                            // remove the hash
+                            string featureIdentifier = _syntaxString.Replace("#", "");
+                            BusinessObjects.Feature feature = _configSession.Model.GetFeatureByIdentifier(featureIdentifier);
+
+                            if (feature == null)
+                                throw new ElementNotFoundException();
+
+                            //Return a reference pointing to the Feature
+                            object target = (object)feature;
+                            ObjectReference returnRef = new ObjectReference(ref target);
+                            return new IEvalResult[] { returnRef };
+                        }
+                    }
+                }
+                public class RelativeFeatureSelector : ParserStatement
+                {
+                    //Fields
+                    public static string IdentifyRegex = @"^(children|descendants)(\[(selected|deselected|unselected)\])?$", SplitRegex = null; //example : "descendants"
+
+                    public override IEvalResult[] Eval(IEvalResult[] parameters)
+                    {
+                        // Setup parameters and variables
+                        List<BLL.BusinessObjects.Feature> featureReferences = new List<BusinessObjects.Feature>();
+                        foreach (IEvalResult parameter in parameters)
+                        {
+                            try
+                            {
+                                ObjectReference objRef = (ObjectReference)parameter;
+                                featureReferences.Add((BusinessObjects.Feature)objRef.GetReference());
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new SyntaxIncorrectException();
+                            }
+                        }
+                        List<BLL.BusinessObjects.Feature> selectedFeatures = new List<BusinessObjects.Feature>();
+
+                        // Select all the features
+                        if (_syntaxString.Contains("children"))
+                        {
+                            //Children selector
+                            foreach (BLL.BusinessObjects.Feature featureRef in featureReferences)
+                            {
+                                selectedFeatures.AddRange(_configSession.Model.GetChildFeatures(featureRef));
+                            }
+                        }
+                        else if (_syntaxString.Contains("descendants"))
+                        {
+                            //Descendants selector
+                            foreach (BLL.BusinessObjects.Feature featureRef in featureReferences)
+                            {
+                                selectedFeatures.AddRange(_configSession.Model.GetDescendantFeatures(featureRef));
+                            }
+                        }
+
+                        // null if takes all the features
+                        BusinessObjects.FeatureSelectionStates? featureSelectionState = null;
+
+                        // find the feture state and save it to featureSelectionState, featureSelectionState remains null if could not find
+                        foreach (var featureState in Enum.GetValues(typeof(BusinessObjects.FeatureSelectionStates)))
+                        {
+                            // get the state name
+                            string enumSelector = string.Format(@"[{0}]", featureState.ToString().ToLower());
+
+                            if (_syntaxString.Contains(enumSelector))
+                            {
+                                featureSelectionState = (BusinessObjects.FeatureSelectionStates)featureState;
+                                break;
+                            }
+                        }
+
+                        // Return a list of references pointing the selected features 
+                        List<IEvalResult> returnRef = new List<IEvalResult>();
+                        foreach (BLL.BusinessObjects.Feature childFeature in selectedFeatures)
+                        {
+                            // Only childFeatures which are selected in the configuration
+                            BLL.BusinessObjects.FeatureSelection featureSelection = _configSession.Configuration.GetFeatureSelectionByFeatureID(childFeature.ID);
+
+                            // get all if there was no selector, else get only those which are of the given state
+                            if (featureSelectionState == null || featureSelection.SelectionState == featureSelectionState)
+                            {
+                                object target = (object)childFeature;
+                                ObjectReference objRef = new ObjectReference(ref target);
+                                returnRef.Add(objRef);
+                            }
+
+                            //if (featureSelection.SelectionState == BusinessObjects.FeatureSelectionStates.Selected)
+                            //{
+                            //    //
+                            //    object target = (object)childFeature;
+                            //    ObjectReference objRef = new ObjectReference(ref target);
+                            //    returnRef.Add(objRef);
+                            //}
+                        }
+
+                        return returnRef.ToArray();
+                    }
+                }
+                public class AbsoluteAttributeSelector : ParserStatement
+                {
+                    //Fields
+                    public static string IdentifyRegex = "^[A-z,0-9]+$", SplitRegex = null; //example : "FeatureName"
+                    public override IEvalResult[] Eval(IEvalResult[] parameters)
+                    {
+                        //Get parameters
+                        List<BLL.BusinessObjects.Feature> featureReferences = new List<BusinessObjects.Feature>();
+                        foreach (IEvalResult parameter in parameters)
+                        {
+                            try
+                            {
+                                ObjectReference objRef = (ObjectReference)parameter;
+                                featureReferences.Add((BusinessObjects.Feature)objRef.GetReference());
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new SyntaxIncorrectException();
+                            }
+                        }
+
+                        //Get the Attributes and AttributeValues 
+                        List<BLL.BusinessObjects.AttributeValue> attributeValues = new List<BusinessObjects.AttributeValue>();
+                        foreach (BLL.BusinessObjects.Feature featureRef in featureReferences)
+                        {
+                            //Get the Attribute
+                            string attributeIdentifier = _syntaxString;
+                            BusinessObjects.Attribute attribute = _configSession.Model.GetAttributeByIdentifier(featureRef, attributeIdentifier);
+
+                            if (attribute != null) //if the feature doesn't have the Attribute, it is ignored
+                            {
+                                //Get the AttributeValue
+                                BusinessObjects.AttributeValue attributeValue = _configSession.Configuration.GetAttributeValueByAttributeID(attribute.ID);
+                                attributeValues.Add(attributeValue);
+                            }
+                        }
+                        //Return a list of references pointing to the each of the childFeatures
+                        List<IEvalResult> returnRef = new List<IEvalResult>();
+                        foreach (BLL.BusinessObjects.AttributeValue attrValue in attributeValues)
+                        {
+                            object target = (object)attrValue;
+                            FieldReference objRef = new FieldReference(target, "Value");
+                            returnRef.Add(objRef);
+                        }
+                        return returnRef.ToArray();
+                    }
+                }
+            }
+        }
+
+        //Private Methods
+        private Type IdentifyString(string str)
+        {
+            //Loop through all Categories in SyntaxSupport - according to their parsing priority
+            foreach (Type CategoryType in SyntaxSupport.GetCategoriesByParsePriority())
+            {
+                //Get statement types for the current Category
+                List<Type> statementTypes = (List<Type>)ExecuteStaticMethod(CategoryType, "GetStatementTypes");
+
+                //Loop through all statement types in the Category
+                foreach (Type StatementType in statementTypes)
+                {
+                    // see if it has the Identify method, if it does then use it for identification
+                    var IdentifyResult = ExecuteStaticMethod(StatementType, "Identify", str);
+                    if (IdentifyResult != null)
+                    {
+                        if ((bool)IdentifyResult)
+                            return StatementType;
+                    }
+                    else
+                    {
+                        // use the regex pattern for the identification
+                        string regexExpression = (string)GetStaticField(StatementType, "IdentifyRegex");
+                        if (Regex.IsMatch(str, regexExpression, RegexOptions.None))
+                        {
+                            return StatementType;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+        private static object ExecuteStaticMethod(Type baseClass, string methodName)
+        {
+            return ExecuteStaticMethod(baseClass, methodName, null);
+        }
+        private static object ExecuteStaticMethod(Type baseClass, string methodName, params object[] parameters)
+        {
+            MethodInfo method = baseClass.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+
+            return method != null
+                       ? method.Invoke(null, parameters)
+                       : null;
+        }
+        private static object GetStaticField(Type baseClass, string fieldName)
+        {
+            FieldInfo field = baseClass.GetField(fieldName);
+            return field.GetValue(null);
+        }
+        private ParserStatement ParseString(ref ConfiguratorSession configSession, string str)
+        {
+            // trim before the identification, allowing spaces in the code
+            str = str.Trim();
+
+            // Identify the string and creating a corresponding ParserStatement
+            Type StatementType = IdentifyString(str);
+            ParserStatement instance = (ParserStatement)ExecuteStaticMethod(StatementType, "CreateInstance", (object)StatementType, configSession, (object)str);
+
+            string[] subStrings = null;
+
+            // if defined, split using the Split method
+            var splitResult = ExecuteStaticMethod(StatementType, "Split", str);
+            if (splitResult != null)
+            {
+                subStrings = (string[])splitResult;
+            }
+            else
+            // else use the regex to split
+            {
+                var splitRegex = (string)GetStaticField(StatementType, "SplitRegex");
+                if (splitRegex != null)
+                {
+                    // split the regex and only take none empty elements
+                    subStrings = Regex.Split(str, splitRegex).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+                }
+            }
+
+            // if the string was split, then parse inner statements and add them to the parent
+            if (subStrings != null)
+                foreach (string subString in subStrings)
+                {
+                    ParserStatement innerStatement = ParseString(ref configSession, subString);
+                    instance.AddInnerStatement(innerStatement);
+                }
+
+            return instance;
+        }
+
+        //Public Methods
+        public IEvalResult[] EvalExpression(ref ConfiguratorSession configSession, string DatabindExpression)
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(DatabindExpression))
+                {
+                    ParserStatement rootStatement = ParseString(ref configSession, DatabindExpression);
+                    return rootStatement.Eval();
+                }
+            }
+            catch (ElementNotFoundException ex)
+            {
+            }
+            catch (NullReferenceException ex)
+            {
+            }
+
+            return null;
+        }
+    }
+}

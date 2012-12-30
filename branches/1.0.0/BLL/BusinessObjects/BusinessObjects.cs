@@ -65,6 +65,7 @@ namespace BLL.BusinessObjects
     {
         Label,
         Textbox,
+        Textarea,
         Checkbox,
         CheckboxList,
         Dropdown,
@@ -1507,15 +1508,18 @@ namespace BLL.BusinessObjects
     {
         //Fields
         private string _wrapper;
-        private string _html, _javascript;
+        private string _html, _css, _javascript;
+
+        
         private string _type;
 
         //Constructor
-        public UIControlDataHolder(BusinessObjects.UIControlTypes type, string wrapper, string html, string javascript)
+        public UIControlDataHolder(BusinessObjects.UIControlTypes type, string wrapper, string html, string css, string javascript)
         {
             this._type = type.ToString();
             this._wrapper = wrapper;
             this._html = html;
+            this._css = css;
             this._javascript = javascript;
         }
        
@@ -1536,6 +1540,11 @@ namespace BLL.BusinessObjects
             {
                 return _html;
             }
+        }
+        public string CSS
+        {
+            get { return _css; }
+            set { _css = value; }
         }
         public string Script
         {
@@ -1679,6 +1688,17 @@ namespace BLL.BusinessObjects
             set
             {
                 _innerEntity.ModelID = value;
+            }
+        }
+        public int UITemplateID
+        {
+            get
+            {
+                return _innerEntity.UITemplateID;
+            }
+            set
+            {
+                _innerEntity.UITemplateID = value;
             }
         }
         public string Name

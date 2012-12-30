@@ -21,7 +21,7 @@ using Microsoft.Z3;
 using System.Linq.Expressions;
 using System.IO;
 using BLL.SolverEngines;
-using BLL.RuleParser;
+using BLL.Parsers;
 
 namespace BLL.Services
 {
@@ -29,14 +29,16 @@ namespace BLL.Services
     {
         //Fields
         IParser _ruleParser;
+        DatabindParser _databindParser;
         const string featuresCategory = "Features", attributesCategory = "Attributes", relationsCategory = "Relations",
             groupRelationsCategory = "GroupRelations", compositionRulesCategory = "CompositionRules";
 
         //Constructors
         public SolverService()
         {
-            //Create a new SolverEngine
+            //
             _ruleParser = new StandardParser();
+            _databindParser = new DatabindParser();
         }
 
         //Private methods
@@ -64,9 +66,9 @@ namespace BLL.Services
             context.CreateInitialRestorePoint();
             return context;
         }
-        private bool ExecuteCustomRule(ref ConfiguratorSession configSession, string Expression)
+        private void ExecuteCustomRule(ref ConfiguratorSession configSession, string Expression)
         {
-            return _ruleParser.ExecuteSyntax(ref configSession, Expression);
+            _ruleParser.ExecuteSyntax(ref configSession, Expression);
         }
         private bool GetValidSelections(ref ConfiguratorSession configSession)
         {
@@ -116,7 +118,6 @@ namespace BLL.Services
             return true;
 
         }
-
         private static ISolverStatement TransformToStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
         {
             ISolverStatement returnStatement = null;
@@ -220,6 +221,33 @@ namespace BLL.Services
 
             //
             return decisionIsValid;
+        }
+        public object EvalExpression(ref ConfiguratorSession configSession, string expression)
+        {
+            //
+            List<object> resultSet = new List<object>();
+
+            //Evaluat the expression
+            IEvalResult[] expResult = _databindParser.EvalExpression(ref configSession, expression);
+
+            //Loop through individual results and add them to the resultSet List
+            if (expResult != null)
+            {
+                expResult.ToList().ForEach(returnResult =>
+                {
+                    object obj = returnResult.GetGenericReturnValue();
+                    var resultEntry = new
+                    {
+                        Type = obj.GetType().Name,
+                        Object = obj
+                    };
+
+                    resultSet.Add(resultEntry);
+                });
+            }
+
+            //
+            return resultSet;
         }
     }
     public class ConfiguratorSession

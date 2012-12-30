@@ -61,8 +61,6 @@ namespace PresentationLayer.Common
             }
         }
 
-        
-
     }
 
     public static class HelperMethods
