@@ -188,9 +188,6 @@ namespace PresentationLayer.Controllers
                         newFeatureSelection.AttributeValues.Add(attrValue);
                     }
                 }
-
-                //Toggle the root Feature and get the initial Configuration state of all the other Features
-                GetInitialFeedback(ref configSession);
             }
             //Create new FeatureSelections ONLY for newly created Features
             else if (configSession.Configuration.FeatureSelections.Count < configSession.Model.Features.Count)

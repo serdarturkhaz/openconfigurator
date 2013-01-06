@@ -2,14 +2,26 @@
 {
     float:left;
     clear:both;
+    width:140px;
 }
 
+.DropdownControl option[selected]
+{
+    
+}
+
+.DropdownControl .defaultOption
+{
+}
+.DropdownControl .defaultOption[selected]
+{
+}
+.DropdownControl .defaultOption[disabled]
+{
+}
 
 .DropdownControl option[disabled]
 {
     color: #CCCCCC;
-}
-.DropdownControl .defaultOption
-{
-    
+    background-color: #DDDDDD;
 }

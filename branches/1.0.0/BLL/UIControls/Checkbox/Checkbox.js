@@ -15,42 +15,52 @@
 
     //Fields
     var _wrapperElement = wrapperElement, _innerControl = null;
-    var _tempID = tempID;
-    var _controlID, _dataBindingExpression;
-    var _currentState = selectionStates.unselected, _disabled = false;
-    var _boundFeature;
+    var _tempID = tempID, _dataBindingExpression = "";
+    var _currentSelectionState = selectionStates.unselected, _disabled = false;
+    var _boundClientFeature;
     var _thisCheckboxControl = this;
 
     //Properties
     this.GetTempID = function () {
         return _tempID;
     }
+    this.GetDatabindExpression = function () {
+        return _dataBindingExpression;
+    }
 
     //Private methods
-    var setState = function (state) {
-        _currentState = state;
+    var setSelectionState = function (state) {
+        _currentSelectionState = state;
         refreshGraphicalRepresentation();
     }
     var setDisabled = function (disabledBool) {
 
         //Disable
         if (disabledBool == true) {
+
+            //Remove click event
             $(_innerControl).unbind("click");
+            $(_innerControl).removeAttr("toggleable");
         }
         //Enable
-        else if (disabledBool == false && _disabled == true) {
-            $(_innerControl).bind("click", function () {
-                internalCheckboxClicked.RaiseEvent();
-            });
+        else if (disabledBool == false) {
+
+            //Bind click event, if not already bound
+            if (!$(_innerControl).is("[toggleable]")) {
+                $(_innerControl).attr("toggleable", "toggleable");
+                $(_innerControl).bind("click", function () {
+                    internalCheckboxClicked.RaiseEvent();
+                });
+            }
         }
-        _disabled = disabledBool;
 
         //
+        _disabled = disabledBool;
         refreshGraphicalRepresentation();
     }
     var refreshGraphicalRepresentation = function () {
         var disabledSuffix = (_disabled == true) ? "-disabled" : "";
-        $(_innerControl).find(".CheckElement").css("background", "url('/content/themes/base/images/Controls/check-" + _currentState + disabledSuffix + ".png') no-repeat center center");
+        $(_innerControl).find(".CheckElement").css("background", "url('/content/themes/base/images/Controls/check-" + _currentSelectionState + disabledSuffix + ".png') no-repeat center center");
     }
     var databind = function (dataCollection) {
 
@@ -59,15 +69,15 @@
 
             //Get the feature
             var boundFeatureID = dataCollection[0].Object.ID;
-            _boundFeature = InternalMethods.GetFeature(boundFeatureID);
+            _boundClientFeature = InternalMethods.GetFeature(boundFeatureID);
 
             //Load initial details from the feature selection
-            var initialState = InternalMethods.GetFeatureSelectionState(_boundFeature.FeatureSelection);
-            setState(initialState);
-            setDisabled(_boundFeature.FeatureSelection.GetField("Disabled"));
+            var initialState = InternalMethods.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
+            setSelectionState(initialState);
+            setDisabled(_boundClientFeature.FeatureSelection.GetField("Disabled"));
 
             //Listen to data for changes
-            InternalMethods.RegisterClientObjectListener(boundFeatureID, _thisCheckboxControl);
+            InternalMethods.RegisterClientObjectListener("feature", boundFeatureID, _thisCheckboxControl);
         }
     }
 
@@ -75,37 +85,33 @@
     this.Initialize = function () {
 
         //Get fields
-        _controlID = $(wrapperElement).attr("id");
         _dataBindingExpression = $(wrapperElement).attr("databinding");
         _innerControl = $(wrapperElement).find(".CheckboxControl");
 
-        //Setup html eventhandlers
-        $(_innerControl).bind("click", function () {
-            internalCheckboxClicked.RaiseEvent();
-        });
-
-        //Setup databinding
-        var boundDataCollection = InternalMethods.EvalDatabindExpression(_dataBindingExpression);
-        if (boundDataCollection != null) {
-            databind(boundDataCollection);
-        }
-
         //Setup eventhandlers
         internalCheckboxClicked.Add(new EventHandler(onInternalCheckboxClicked));
+    }
+
+    //Public methods
+    this.Databind = function (clientObjects) {
+        databind(clientObjects);
+    }
+    this.ReloadData = function (modifiedClientObjects) {
+
+        //Update variables
+        _boundClientFeature = modifiedClientObjects[0];
+
+        //Update state
+        var newState = InternalMethods.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
+        setSelectionState(newState);
+        setDisabled(_boundClientFeature.FeatureSelection.GetField("Disabled"));
     }
 
     //Events
     var internalCheckboxClicked = new Event();
 
     //Eventhandlers
-    this.OnBoundClientObjectUpdated = function (featureClientObject) {
-
-        //Update
-        var newState = InternalMethods.GetFeatureSelectionState(featureClientObject.FeatureSelection);
-        setState(newState);
-        setDisabled(featureClientObject.FeatureSelection.GetField("Disabled"));
-    }
     var onInternalCheckboxClicked = function () {
-        InternalMethods.ToggleFeatureSelection(_boundFeature.GetField("ID"));
+        InternalMethods.ToggleFeatureSelectionState(_boundClientFeature.FeatureSelection.GUID);
     }
 }
