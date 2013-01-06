@@ -31,7 +31,6 @@ var controlDefaults = {
 var UITemplateDataModel = function (uiTemplateID, uiTemplateName) {
 
     //Variables
-    var _uiControlIDCounter = 0;
     var _uiTemplateID = uiTemplateID, _uiTemplate = null, _uiTemplateName = uiTemplateName;
     var _thisUITemplateDataModel = this;
 
@@ -51,33 +50,6 @@ var UITemplateDataModel = function (uiTemplateID, uiTemplateName) {
         });
 
         return returnObj;
-    }
-    var getUIControlIDCounter = function () {
-
-        //Get the control tags
-        var htmlObj = $("<div></div>").append(_uiTemplate.Content);
-        var standardControlTags = $(htmlObj).find("div.controlwrapper[id^='" + controlDefaults.idPrefix + controlDefaults.idSeparatorSymbol + "']");
-
-        //Find the tag with the highest id counter
-        var maxIDCounter = 0;
-        for (var i = 0; i < standardControlTags.length; i++) {
-
-            //
-            var controlID = $(standardControlTags[i]).attr("id");
-            var regex = new RegExp(controlDefaults.idPrefix + controlDefaults.idSeparatorSymbol + "[0-9]+$");
-            if (regex.test(controlID)) {
-                var idCounter = controlID.split("_")[1];
-                if (idCounter > maxIDCounter) {
-                    maxIDCounter = idCounter;
-                }
-            }
-        }
-
-        //
-        return maxIDCounter;
-    }
-    var generateUIControlID = function () {
-        return controlDefaults.idPrefix + controlDefaults.idSeparatorSymbol + _uiControlIDCounter++;
     }
 
     //Constructor/Initalizers
@@ -151,7 +123,6 @@ var UITemplateDataModel = function (uiTemplateID, uiTemplateName) {
     }
     this.CreateUIControlInstance = function (controltype) {
         var controlObj = getUIControlTypeData(controltype);
-        controlObj.ControlID = generateUIControlID();
 
         return controlObj;
     }
@@ -163,9 +134,6 @@ var UITemplateDataModel = function (uiTemplateID, uiTemplateName) {
 
     //Eventhandlers
     var onInternalTemplateDataLoaded = function () {
-
-        //Dynamically find id counter of current template
-        _uiControlIDCounter = parseInt(getUIControlIDCounter()) + 1;
     }
 }
 var ClientController = function (htmlViewContainer, cssViewContainer, visualViewContainer, uiTemplateNameTextbox, uiTemplateDataModelInstance) {
@@ -272,7 +240,6 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
         //Create the outer control and set its attributes
         var outerControl = $(controlObj.Wrapper);
         $(outerControl).attr({
-            id: controlObj.ControlID,
             controltype: controlObj.ControlType,
             databinding: "none"
         });

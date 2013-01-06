@@ -306,10 +306,56 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         //Return result
         return expressionResult;
     }
+    var featureSelectionsDifferent = function (firstBusinessObj, secondBusinessObj) {
+
+        //Compare selectedState and disabled
+        var selectionStateEqual = firstBusinessObj.SelectionState == secondBusinessObj.SelectionState;
+        var disabledEqual = firstBusinessObj.Disabled == secondBusinessObj.Disabled;
+
+        //
+        var featureSelectionsDifferent = !selectionStateEqual || !disabledEqual;
+        return featureSelectionsDifferent;
+    }
+    var setSolverFeatureSelectionState = function (featureSelectionGUID, featureID, newSelectionStateID) {
+        $.ajax({
+            url: "/ConfigurationEditor/ToggleFeature",
+            data: JSON.stringify({ configurationID: _configuration.ID, FeatureID: featureID, newState: newSelectionStateID }),
+            async: false,
+            success: function (response) {
+                var featureSelections = response;
+                if (featureSelections != false) {
+
+                    //Update FeatureSelections
+                    for (var guidkey in featureSelections) {
+
+                        //Get the FeatureSelection returned from the server and the existing FeatureSelection
+                        var updatedFeatureSelectionBusinessObj = featureSelections[guidkey]; //Get the updated business object
+
+                        //Get the FeatureSelection which already exists on the client
+                        var existingClientFeatureSelectionGUID = _lookupTables.featureIDsToFeatureSelections[updatedFeatureSelectionBusinessObj.FeatureID];
+                        var existingFeatureSelection = _thisConfigurationDataModel.GetByGUID(existingClientFeatureSelectionGUID);
+
+                        //Update the existing FeatureSelection, if it has changed
+                        if (featureSelectionsDifferent(updatedFeatureSelectionBusinessObj, existingFeatureSelection.GetBusinessObjectCopy())) {
+                            _thisConfigurationDataModel.UpdateClientObject(existingClientFeatureSelectionGUID, updatedFeatureSelectionBusinessObj);
+                        }
+
+                        ////Update AttributeValues
+                        //for (var i = 0; i < updatedFeatureSelectionBusinessObj.AttributeValues.length; i++) {
+                        //    var existingClientAttributeValueGUID = _lookupTables.attributeIDsToAttributeValues[updatedFeatureSelectionBusinessObj.AttributeValues[i].AttributeID];
+                        //    _thisConfigurationDataModel.UpdateClientObjectField(existingClientAttributeValueGUID, "Value", updatedFeatureSelectionBusinessObj.AttributeValues[i].Value);
+                        //}
+                    }
+
+                    //Raise event to notify Update operation has completed
+                    _thisConfigurationDataModel.SolverFeedbackUpdatesComplete.RaiseEvent();
+                }
+            }
+        });
+    }
 
     //Constructor/Initalizers
     this.Initialize = function () {
-        internalFeatureSelectionToggled.Add(new EventHandler(onInternalFeatureSelectionToggled));
     }
     this.GetRootGUID = function () {
         return _rootFeatureGUID;
@@ -447,7 +493,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
 
         //Raise events
         _thisConfigurationDataModel.UITemplateLoaded.RaiseEvent();
-        _thisConfigurationDataModel.ClientObjectsLoaded.RaiseEvent();
 
         //Callback
         onFinished(_configuration);
@@ -563,22 +608,16 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         //Raise events
         _thisConfigurationDataModel.ClientObjectUpdated.RaiseEvent(guid);
     }
-    this.UpdateClientObjectField = function (guid, fieldName, value) {
+    this.SetFeatureSelectionState = function (featureSelectionGuid, newSelectionStateID) {
 
-        //Raise events
-        var clientObject = _clientObjects.all[guid];
-        var type = clientObject.GetType();
-        if (type == "featureSelection" && fieldName == "SelectionState") {
-            //Event when a FeatureSelection was toggled
-            var featureID = _clientObjects.all[guid].GetField("FeatureID");
-            internalFeatureSelectionToggled.RaiseEvent([guid, featureID, value]);
-        }
-        else {
-            //Normal event
-            _clientObjects.all[guid].SetField(fieldName, value);
-            _thisConfigurationDataModel.ClientObjectUpdated.RaiseEvent(guid);
-        }
+        //Get the featureSelection
+        var featureSelection = _thisConfigurationDataModel.GetByGUID(featureSelectionGuid);
+        var featureID = featureSelection.Feature.GetField("ID");
+
+        //Raise the internal event
+        setSolverFeatureSelectionState(featureSelectionGuid, featureID, newSelectionStateID);
     }
+
     this.GetTemplateField = function (fieldName) {
         var fieldValue = _uiTemplate[fieldName]
         return fieldValue;
@@ -612,40 +651,8 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
 
     //Events
     this.UITemplateLoaded = new Event();
-    this.ClientObjectsLoaded = new Event();
     this.ClientObjectUpdated = new Event();
-    var internalFeatureSelectionToggled = new Event();
-
-    //Eventhandlers
-    var onInternalFeatureSelectionToggled = function (featureSelectionGUID, featureID, selectionState) {
-        $.ajax({
-            url: "/ConfigurationEditor/ToggleFeature",
-            data: JSON.stringify({ configurationID: _configuration.ID, FeatureID: featureID, newState: selectionState }),
-            async: false,
-            success: function (response) {
-                var featureSelections = response;
-                if (featureSelections != false) {
-
-                    //Update FeatureSelections
-                    for (var guidkey in featureSelections) {
-                        var updatedFeatureSelectionBusinessObj = featureSelections[guidkey]; //Get the updated business object
-
-                        //Find the corresponding featureSelection ClientObject
-                        var existingClientFeatureSelectionGUID = _lookupTables.featureIDsToFeatureSelections[updatedFeatureSelectionBusinessObj.FeatureID];
-                        _thisConfigurationDataModel.UpdateClientObject(existingClientFeatureSelectionGUID, updatedFeatureSelectionBusinessObj);
-
-                        //Update AttributeValues
-                        for (var i = 0; i < updatedFeatureSelectionBusinessObj.AttributeValues.length; i++) {
-
-                            //Find the corresponding featureSelection ClientObject
-                            var existingClientAttributeValueGUID = _lookupTables.attributeIDsToAttributeValues[updatedFeatureSelectionBusinessObj.AttributeValues[i].AttributeID];
-                            _thisConfigurationDataModel.UpdateClientObjectField(existingClientAttributeValueGUID, "Value", updatedFeatureSelectionBusinessObj.AttributeValues[i].Value);
-                        }
-                    }
-                }
-            }
-        });
-    }
+    this.SolverFeedbackUpdatesComplete = new Event();
 }
 var ClientController = function (interactiveViewContainer, configurationNameTextbox, headerLabel, configurationDataModelInstance) {
 
@@ -681,6 +688,7 @@ var ClientController = function (interactiveViewContainer, configurationNameText
             //Eventhandlers for InteractiveView
             _configurationDataModel.UITemplateLoaded.Add(new EventHandler(_interactiveView.OnUITemplateLoaded));
             _configurationDataModel.ClientObjectUpdated.Add(new EventHandler(_interactiveView.OnClientObjectUpdated));
+            _configurationDataModel.SolverFeedbackUpdatesComplete.Add(new EventHandler(_interactiveView.OnSolverFeedbackUpdatesComplete));
 
             //Load the data - delay to make sure iframe has finished loading
             $.timer(300, function () {
@@ -728,12 +736,19 @@ var InteractiveView = function (container, configurationDataModelInstance) {
     var _container = container;
     var _UIControlInstances = {}; //dictionary to hold all UIControl instances (tempID, UIControl instance)
     var _UIControlTypes = {}; //collection to keep track of all control types
-    var _clientObjectListeners = {}; //collection mapping (ID - feature or attribute, tempID)
+    var _clientObjectListeners = { //collection mapping (ID - feature or attribute, tempID)
+        features: {},
+        attributes: {}
+    };
+    var _modifiedBoundDataControls = {}; //keeps track of controls which have had their data changed - (controlInstance, array of clientObjects)
     var _iframeInstance = null, _body = null, _head = null;
     var _controlTempIDcounter = 0;
     var _thisInteractiveView = this;
 
     //Private methods
+    var evalDatabindExpression = function (expression) {
+        return _configurationDataModel.EvalDatabindExpression(expression);
+    }
     var createControlInstance = function (controlType, wrapperElem, tempID) {
 
         var controlInstance = null;
@@ -766,7 +781,7 @@ var InteractiveView = function (container, configurationDataModelInstance) {
             var controlWrapper = $(value);
             var type = $(controlWrapper).attr("controltype");
 
-            if (type == "Checkbox") { //|| type == "Dropdown") {
+            if (type == "Checkbox" || type == "Dropdown" || type == "RadiobuttonList") {
 
                 //Load controlType code & content 
                 if (_UIControlTypes[type] == undefined) {
@@ -788,6 +803,12 @@ var InteractiveView = function (container, configurationDataModelInstance) {
                 var uicontrolInstance = createControlInstance(type, controlWrapper, newTempID);
                 uicontrolInstance.Initialize();
 
+                //Databind the control
+                var boundDataCollection = evalDatabindExpression(uicontrolInstance.GetDatabindExpression());
+                if (boundDataCollection != null) {
+                    uicontrolInstance.Databind(boundDataCollection);
+                }
+
                 //Register the control instance
                 _UIControlInstances[newTempID] = uicontrolInstance;
             }
@@ -796,7 +817,7 @@ var InteractiveView = function (container, configurationDataModelInstance) {
 
     //Internal methods (used by control instances)
     var InternalMethods = {};
-    InternalMethods.GetFeature= function (featureID) {
+    InternalMethods.GetFeature = function (featureID) {
         var featureClientObject = _configurationDataModel.GetByID(featureID, "feature");
         return featureClientObject;
     }
@@ -810,54 +831,52 @@ var InteractiveView = function (container, configurationDataModelInstance) {
         //
         var selectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
         return selectionState;
-
     }
-    InternalMethods.ToggleFeatureSelection = function (featureID) {
+    InternalMethods.SetFeatureSelectionState = function (featureSelectionGUID, newState) {
 
         //Get the related FeatureSelection
-        var featureClientObject = _configurationDataModel.GetByID(featureID, "feature");
-        var featureSelectionClientObject = featureClientObject.FeatureSelection;
-
-        //Set its SelectionState and ToggledByUser fields
-        //_configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "ToggledByUser", true);
-        var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
-        switch (currentSelectionState) {
-
-            //Unselected -> becomes Selected                                                                                                                                                                                                                                      
-            case systemDefaults.enums.featureSelectionStates.unselected.name:
-                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
-                break;
-
-            //Selected -> becomes Deselected                                                                
-            case systemDefaults.enums.featureSelectionStates.selected.name:
-                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.deselected.id);
-                break;
-
-            //Deselected -> becomes Unselected                                                                 
-            case systemDefaults.enums.featureSelectionStates.deselected.name:
-                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
-                break;
-        }
-    }
-    InternalMethods.SetFeatureSelection = function (featureID, newState) {
-
-        //Get the related FeatureSelection
-        var featureClientObject = _configurationDataModel.GetByID(featureID, "feature");
-        var featureSelectionClientObject = featureClientObject.FeatureSelection;
+        var featureSelectionClientObject = _configurationDataModel.GetByGUID(featureSelectionGUID);
+        var featureClientObject = featureSelectionClientObject.Feature;
 
         //Set the new state
         var newStateID = systemDefaults.enums.featureSelectionStates[newState].id;
-        _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", newStateID);
+        _configurationDataModel.SetFeatureSelectionState(featureSelectionClientObject.GUID, newStateID);
     }
-    InternalMethods.EvalDatabindExpression = function (expression) {
-        return _configurationDataModel.EvalDatabindExpression(expression);
-    }
-    InternalMethods.RegisterClientObjectListener = function (dataObjectID, tempID) {
-        if (_clientObjectListeners[dataObjectID] == undefined)
-            _clientObjectListeners[dataObjectID] = [];
-        _clientObjectListeners[dataObjectID].push(tempID);
-    }
+    InternalMethods.ToggleFeatureSelectionState = function (featureSelectionGUID) {
 
+        //Get the related FeatureSelection
+        var featureSelectionClientObject = _configurationDataModel.GetByGUID(featureSelectionGUID);
+        var featureClientObject = featureSelectionClientObject.Feature;
+
+        //Determine its SelectionState and ToggledByUser fields
+        var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
+        var newSelectionState = null;
+        switch (currentSelectionState) {
+
+            //Unselected -> becomes Selected                                                                                                                                                                                                                                                                                 
+            case systemDefaults.enums.featureSelectionStates.unselected.name:
+                newSelectionState = systemDefaults.enums.featureSelectionStates.selected;
+                break;
+
+            //Selected -> becomes Deselected                                                                                                           
+            case systemDefaults.enums.featureSelectionStates.selected.name:
+                newSelectionState = systemDefaults.enums.featureSelectionStates.deselected;
+                break;
+
+            //Deselected -> becomes Unselected                                                                                                            
+            case systemDefaults.enums.featureSelectionStates.deselected.name:
+                newSelectionState = systemDefaults.enums.featureSelectionStates.unselected;
+                break;
+        }
+
+        //Toggle the new state
+        _configurationDataModel.SetFeatureSelectionState(featureSelectionClientObject.GUID, newSelectionState.id);
+    }
+    InternalMethods.RegisterClientObjectListener = function (clientObjType, dataObjectID, tempID) {
+        if (_clientObjectListeners[clientObjType + "s"][dataObjectID] == undefined)
+            _clientObjectListeners[clientObjType + "s"][dataObjectID] = [];
+        _clientObjectListeners[clientObjType + "s"][dataObjectID].push(tempID);
+    }
 
     //Constructor/Initalizers
     this.Initialize = function () {
@@ -886,12 +905,11 @@ var InteractiveView = function (container, configurationDataModelInstance) {
     }
     this.OnClientObjectUpdated = function (guid) {
 
-
         //Get the clientObject
         var clientObject = _configurationDataModel.GetByGUID(guid);
         var clientObjectType = clientObject.GetType();
 
-        //Get the corresponding "static" clientObject (ex: FeatureSelection -> get Feature ; AttributeValue -> get Attribute) 
+        //Get the corresponding clientObject (feature or attribute) 
         var boundClientObject = null;
         switch (clientObjectType) {
             case "featureSelection":
@@ -903,447 +921,474 @@ var InteractiveView = function (container, configurationDataModelInstance) {
                 break;
         }
 
-        //Notify 
-        var listenerControls = _clientObjectListeners[boundClientObject.GetField("ID")];
-        for (var i = 0; i < listenerControls.length; i++) {
-            listenerControls[i].OnBoundClientObjectUpdated(boundClientObject);
+        //Keep track of data which was modified, for each control since last feedback from solver
+        var boundType = boundClientObject.GetType();
+        var listenerControlInstances = _clientObjectListeners[boundType + "s"][boundClientObject.GetField("ID")];
+        if (listenerControlInstances != undefined) {
+            for (var i = 0; i < listenerControlInstances.length; i++) {
+
+                //Get the control instance
+                var controlInstance = listenerControlInstances[i];
+                var controlID = controlInstance.GetTempID();
+
+                //Get the collection where modified bound clientobjects are kept
+                if (_modifiedBoundDataControls[controlID] == undefined) {
+                    _modifiedBoundDataControls[controlID] = [];
+                }
+
+                //Add the modified clientobject to the collection
+                _modifiedBoundDataControls[controlID].push(boundClientObject);
+            }
         }
+    }
+    this.OnSolverFeedbackUpdatesComplete = function () {
+
+        //Loop through controls which have had their data updated
+        for (var controlID in _modifiedBoundDataControls) {
+            var modifiedBoundData = _modifiedBoundDataControls[controlID];
+
+            //Call their ReloadData method
+            var controlInstance = _UIControlInstances[controlID];
+            controlInstance.ReloadData(modifiedBoundData);
+        }
+
+        _modifiedBoundDataControls = {};
     }
 }
 
-//Functional - but currently not in use
-var StandardView = function (container, configurationDataModelInstance) {
+//Not in use
+/*var StandardView = function (container, configurationDataModelInstance) {
 
-    //Fields
-    var _configurationDataModel = configurationDataModelInstance;
-    var _container = container;
-    var _innerContainer = null;
-    var _UIElements = {}; //dictionary to hold all UIElements (GUID, UIElement)
-    var _thisStandardView = this;
+//Fields
+var _configurationDataModel = configurationDataModelInstance;
+var _container = container;
+var _innerContainer = null;
+var _UIElements = {}; //dictionary to hold all UIElements (GUID, UIElement)
+var _thisStandardView = this;
 
-    //UIObjects & Defaults/Settings
-    var UIFeature = function (clientObjectGUID, isRoot, initialState, name, description, disabled) {
+//UIObjects & Defaults/Settings
+var UIFeature = function (clientObjectGUID, isRoot, initialState, name, description, disabled) {
 
-        //Fields
-        var _outerElement = null;
-        var _innerElements = {
-            entry: null,
-            connector: null,
-            innerFeatureArea: null,
-            headerDiv: null,
-            nameLabel: null,
-            checkbox: null,
-            attributesArea: null,
-            childFeaturesArea: null
-        };
-        var _currentState = initialState;
-        var _disabled = disabled;
-        var _parent = null, _children = [], _UIAttributes = [];
-        var _name = name, _description = description == null ? "" : description, _isRoot = isRoot;
-        var _thisUIConfigurationFeature = this;
+//Fields
+var _outerElement = null;
+var _innerElements = {
+entry: null,
+connector: null,
+innerFeatureArea: null,
+headerDiv: null,
+nameLabel: null,
+checkbox: null,
+attributesArea: null,
+childFeaturesArea: null
+};
+var _currentState = initialState;
+var _disabled = disabled;
+var _parent = null, _children = [], _UIAttributes = [];
+var _name = name, _description = description == null ? "" : description, _isRoot = isRoot;
+var _thisUIConfigurationFeature = this;
 
-        //Properties
-        this.ClientObjectGUID = clientObjectGUID;
-        this.GetTypeName = function () {
-            return "feature";
-        }
-        this.GetChildrenContainer = function () {
-            return _innerElements.childFeaturesArea;
-        }
-        this.GetAttributesContainer = function () {
-            return _innerElements.attributesArea;
-        }
-        this.InnerElements = _innerElements;
+//Properties
+this.ClientObjectGUID = clientObjectGUID;
+this.GetTypeName = function () {
+return "feature";
+}
+this.GetChildrenContainer = function () {
+return _innerElements.childFeaturesArea;
+}
+this.GetAttributesContainer = function () {
+return _innerElements.attributesArea;
+}
+this.InnerElements = _innerElements;
 
-        //Private methods
-        function makeToggleable() {
-            _innerElements.innerFeatureArea.bind("click", function () {
-                toggleFeatureSelection(_thisUIConfigurationFeature);
-            });
-        }
-        function makeUnToggleable() {
-            _innerElements.innerFeatureArea.unbind("click");
-        }
-        function changeState(state) {
-            _currentState = state;
-            _innerElements.entry.attr("featureSelectionState", _currentState);
-        }
-        function setDisabled(disabledBool) {
-            if (disabledBool == true) { //Disable
-                makeUnToggleable();
-                _innerElements.entry.attr("isdisabled", true);
-            } else if (disabledBool == false && _disabled == true) { //Enable
-                makeToggleable();
-                _innerElements.entry.removeAttr("isdisabled");
-            }
-
-            _disabled = disabledBool;
-        }
-        function createAttributeHTML(attribute, attributeValue) {
-
-            //Variables
-            var attributeTypeName = getEnumEntryByID(systemDefaults.enums.attributeTypes, attribute.AttributeType).name;
-            var dataTypeName = getEnumEntryByID(systemDefaults.enums.attributeDataTypes, attribute.AttributeDataType).name;
-            var outerControl = null, innerControl = null;
-
-            //Create HTML
-            outerControl = $("<div class='Attribute'>" + attribute.Name + "</div>");
-            switch (dataTypeName) {
-                case systemDefaults.enums.attributeDataTypes.integer.name:
-                    innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(outerControl);
-                    if (attributeValue != null) {
-                        $(innerControl).val(attributeValue.GetField("Value"));
-                    }
-                    break;
-                case systemDefaults.enums.attributeDataTypes.boolean.name:
-                    innerControl = $("<input type='checkbox' class='InnerCheckbox' />").appendTo(outerControl);
-                    if (attributeValue != null) {
-                        $(innerControl).val(attributeValue.GetField("Value"));
-                    }
-                    break;
-                case systemDefaults.enums.attributeDataTypes.string.name:
-                    innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(outerControl);
-                    if (attributeValue != null) {
-                        $(innerControl).val(attributeValue.GetField("Value"));
-                    }
-                    break;
-            }
-
-            //Make the control editable/disabled
-            switch (attributeTypeName) {
-                case systemDefaults.enums.attributeTypes.constant.name:
-                    innerControl.attr("disabled", true);
-                    break;
-                case systemDefaults.enums.attributeTypes.dynamic.name:
-                    innerControl.attr("disabled", true);
-                    break;
-                case systemDefaults.enums.attributeTypes.userInput.name:
-
-                    break;
-            }
-
-            //Set defaultValue
-            return outerControl;
-        }
-
-        //Public methods
-        this.CreateGraphicalRepresentation = function () {
-
-            //ParentContainer
-            var parentContainer = null;
-            if (isRoot) {
-                parentContainer = _innerContainer;
-            } else {
-                parentContainer = _parent.GetChildrenContainer();
-            }
-
-            //Create the main outer element
-            _innerElements.entry = $("<div class='Entry'></div>").attr("featureSelectionState", _currentState).appendTo(parentContainer);
-            if (isRoot)
-                _innerElements.entry.attr("root", "");
-            _innerElements.connector = $("<div class='Connector'></div>").appendTo(_innerElements.entry);
-            _outerElement = $("<div class='FeatureControl'></div>").appendTo(_innerElements.entry);
-
-            //Create inner elements   
-            _innerElements.innerFeatureArea = $("<div class='InnerFeatureArea' title='" + _description + "' ></div>").appendTo(_outerElement);
-            _innerElements.headerDiv = $("<div class='HeaderDiv'></div>").appendTo(_innerElements.innerFeatureArea);
-            _innerElements.nameLabel = $("<div class='NameLabel'>" + _name + "</div>").appendTo(_innerElements.headerDiv);
-            _innerElements.checkbox = $("<div class='Checkbox' ></div>").appendTo(_innerElements.headerDiv);
-
-            //AttributesArea
-            _innerElements.attributesArea = $("<div style='display:none' class='AttributesArea'></div>").appendTo(_outerElement);
-
-            //ChildFeaturesArea
-            _innerElements.childFeaturesArea = $("<div class='ChildFeaturesArea'></div>").appendTo(_outerElement);
-
-            //Setup 
-            if (_parent != null)
-                _parent.RefreshGraphicalRepresentation();
-            makeToggleable();
-            if (_disabled == true) {
-                setDisabled(true);
-            }
-        }
-        this.RefreshGraphicalRepresentation = function () {
-            _innerElements.childFeaturesArea.children(".Entry").removeAttr("last");
-            _innerElements.childFeaturesArea.children(".Entry:last").attr("last", "last");
-        }
-        this.Update = function (newSelectionState, newDisabledState) {
-            changeState(newSelectionState);
-            setDisabled(newDisabledState);
-        }
-        this.AddChild = function (UIConfigurationElement) {
-            _children.push(UIConfigurationElement);
-            UIConfigurationElement.SetParent(_thisUIConfigurationFeature);
-
-        }
-        this.AddAttribute = function (UIConfigurationElement) {
-            _UIAttributes.push(UIConfigurationElement);
-            UIConfigurationElement.SetParentUIFeature(_thisUIConfigurationFeature);
-            _innerElements.attributesArea.css("display", "block");
-        }
-        this.SetParent = function (parentUIConfigurationElement) {
-            _parent = parentUIConfigurationElement;
-        }
-    }
-    var UIAttribute = function (clientObjectGUID, attributeType, attributeDataType, name, description, value) {
-
-        //Fields
-        var _outerElement = null;
-        var _innerElements = {
-            innerControl: null
-        }
-        var _parentUIFeature = null, _name = name, _description = description == null ? "" : description, _attributeType = attributeType, _attributeDataType = attributeDataType;
-
-        //Properties
-        this.ClientObjectGUID = clientObjectGUID;
-
-        //Public methods
-        this.CreateGraphicalRepresentation = function () {
-
-            //Variables
-            var parentContainer = _parentUIFeature.GetAttributesContainer();
-            var attributeTypeName = getEnumEntryByID(systemDefaults.enums.attributeTypes, attributeType).name;
-            var dataTypeName = getEnumEntryByID(systemDefaults.enums.attributeDataTypes, _attributeDataType).name;
-            var getValue = function (control) {
-                return $(control).val();
-            };
-
-            //Create HTML
-            _outerElement = $("<div class='Attribute' title='" + _description + "'>" + _name + "</div>").appendTo(parentContainer);
-            switch (dataTypeName) {
-                //Integer               
-                case systemDefaults.enums.attributeDataTypes.integer.name:
-                    _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
-                    $(_innerElements.innerControl).val(value);
-                    break;
-                //Boolean               
-                case systemDefaults.enums.attributeDataTypes.boolean.name:
-                    _innerElements.innerControl = $("<input type='checkbox' class='InnerCheckbox' />").appendTo(_outerElement);
-                    if (value == true || value == "True") {
-                        $(_innerElements.innerControl).attr("checked", true);
-                    }
-
-                    //
-                    getValue = function (control) {
-                        return $(control).is(':checked');
-                    }
-                    break;
-                //String               
-                case systemDefaults.enums.attributeDataTypes.string.name:
-                    _innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
-                    $(_innerElements.innerControl).val(value);
-                    break;
-            }
-
-            //Make the control editable/disabled
-            switch (attributeTypeName) {
-                case systemDefaults.enums.attributeTypes.constant.name:
-                    _innerElements.innerControl.attr("disabled", true);
-                    break;
-                case systemDefaults.enums.attributeTypes.dynamic.name:
-                    _innerElements.innerControl.attr("disabled", true);
-                    break;
-                case systemDefaults.enums.attributeTypes.userInput.name:
-                    _innerElements.innerControl.bind("change", function (e) {
-                        var newValue = getValue($(this));
-                        InternalAttributeValueChanged.RaiseEvent([clientObjectGUID, newValue]);
-                    });
-
-                    break;
-            }
-        }
-        this.Update = function (newValue) {
-            _innerElements.innerControl.val(newValue);
-        }
-        this.SetParentUIFeature = function (parentUIConfigurationElement) {
-            _parentUIFeature = parentUIConfigurationElement;
-        }
-    }
-    var UIGroup = function (clientObjectGUID) {
-
-        //Fields
-        var _outerElement = null;
-        var _innerElements = {
-            entry: null,
-            connector: null,
-            childFeaturesArea: null
-        };
-        var _parent = null, _children = [];
-        var _thisUIConfigurationGroup = this;
-
-        //Properties
-        this.ClientObjectGUID = clientObjectGUID;
-        this.GetTypeName = function () {
-            return "group";
-        }
-        this.GetChildrenContainer = function () {
-            return _innerElements.childFeaturesArea;
-        }
-        this.InnerElements = _innerElements;
-
-        //Public methods
-        this.CreateGraphicalRepresentation = function () {
-
-            //ParentContainer
-            var parentContainer = _parent.GetChildrenContainer();
-
-            //Create the main outer element
-            _innerElements.entry = $("<div class='Entry'></div>").appendTo(parentContainer);
-            _innerElements.connector = $("<div class='Connector'></div>").appendTo(_innerElements.entry);
-            _outerElement = $("<div class='GroupControl'></div>").appendTo(_innerElements.entry);
-
-            //Create inner elements   
-            _innerElements.childFeaturesArea = $("<div class='ChildFeaturesArea'></div>").appendTo(_outerElement);
-
-            //Setup 
-            if (_parent != null)
-                _parent.RefreshGraphicalRepresentation();
-        }
-        this.RefreshGraphicalRepresentation = function () {
-
-        }
-        this.AddChild = function (UIConfigurationElement) {
-            _children.push(UIConfigurationElement);
-            UIConfigurationElement.SetParent(_thisUIConfigurationGroup);
-        }
-        this.SetParent = function (parentUIConfigurationElement) {
-            _parent = parentUIConfigurationElement;
-        }
-    }
-
-    //Constructor/Initalizers
-    this.Initialize = function () {
-        _innerContainer = $("<div class='InnerContainer'></div>").prependTo(container);
-
-        //Set internal eventhandlers
-        InternalAttributeValueChanged.Add(new EventHandler(onInternalAttributeValueChanged));
-    };
-
-    //Private methods
-    var toggleFeatureSelection = function (UIFeature) {
-
-        //Get the related FeatureSelection
-        var featureClientObject = _configurationDataModel.GetByGUID(UIFeature.ClientObjectGUID);
-        var featureSelectionClientObject = featureClientObject.FeatureSelection;
-
-        //Set its SelectionState and ToggledByUser fields
-        var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
-        switch (currentSelectionState) {
-
-            //Unselected -> Selected                                                                                                                                                                                                            
-            case systemDefaults.enums.featureSelectionStates.unselected.name:
-                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
-                break;
-
-            //Selected -> Deselected                                       
-            case systemDefaults.enums.featureSelectionStates.selected.name:
-                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.deselected.id);
-                break;
-
-            //Deselected -> Unselected                                        
-            case systemDefaults.enums.featureSelectionStates.deselected.name:
-                _configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
-                break;
-        }
-    }
-
-    //Sync with data model
-    var updateElement = function (guid) {
-
-        //Variables
-        var clientObject = _configurationDataModel.GetByGUID(guid);
-        var type = clientObject.GetType();
-
-        //Perform update according to type
-        switch (type) {
-            case "featureSelection":
-                var featureGUID = clientObject.Feature.GUID;
-                var UIElement = _UIElements[featureGUID];
-                var newSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, clientObject.GetField("SelectionState")).name;
-                var disabledState = clientObject.GetField("Disabled");
-
-                UIElement.Update(newSelectionState, disabledState);
-                break;
-            case "attributeValue":
-                var attributeGUID = clientObject.Attribute.GUID;
-                var UIElement = _UIElements[attributeGUID];
-                var newValue = clientObject.GetField("Value");
-
-                UIElement.Update(newValue);
-                break;
-        }
-    }
-    var createFeature = function (clientObject, parentUIConfigurationElement) {
-
-        //Determine if it is the root
-        var isRoot = (parentUIConfigurationElement == undefined);
-
-        //Get the associated FeatureSelection object
-        var featureSelectionClientObject = _configurationDataModel.GetByGUID(clientObject.FeatureSelection.GUID);
-        var selectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
-        var attributeValues = featureSelectionClientObject.AttributeValues;
-        var attributes = clientObject.Attributes;
-
-        //Create the Feature --------------------------------------------------------------------------
-        var UIfeature = new UIFeature(clientObject.GUID, isRoot, selectionState, clientObject.GetField("Name"), clientObject.GetField("Description"), featureSelectionClientObject.GetField("Disabled"));
-        if (!isRoot) {
-            parentUIConfigurationElement.AddChild(UIfeature); //add to parent if it has one
-        }
-        UIfeature.CreateGraphicalRepresentation();
-        _UIElements[clientObject.GUID] = UIfeature;
-
-        //Create its Attributes
-        for (var i = 0; i < attributes.length; i++) {
-            var attributeType = attributes[i].GetField("AttributeType"), attributeDataType = attributes[i].GetField("AttributeDataType"), name = attributes[i].GetField("Name");
-            var value = attributes[i].AttributeValue.GetField("Value");
-            var description = attributes[i].GetField("Description");
-            var UIattribute = new UIAttribute(attributes[i].GUID, attributeType, attributeDataType, name, description, value);
-            UIfeature.AddAttribute(UIattribute);
-            UIattribute.CreateGraphicalRepresentation();
-
-            _UIElements[attributes[i].GUID] = UIattribute;
-        }
-        //---------------------------------------------------------------------------------------------
-
-        //Create child Features
-        for (var i = 0; i < clientObject.ChildFeatures.length; i++) {
-            createFeature(clientObject.ChildFeatures[i], UIfeature);
-        }
-
-        //Create child Groups
-        for (var i = 0; i < clientObject.ChildGroups.length; i++) {
-            createGroup(clientObject.ChildGroups[i], UIfeature);
-        }
-    }
-    var createGroup = function (clientObject, parentUIConfigurationElement) {
-
-        //Create the UIConfigurationElement 
-        var UIgroup = new UIGroup(clientObject.GUID);
-        parentUIConfigurationElement.AddChild(UIgroup);
-        UIgroup.CreateGraphicalRepresentation();
-        _UIElements[clientObject.GUID] = UIgroup;
-
-        //Create child Features
-        for (var i = 0; i < clientObject.ChildFeatures.length; i++) {
-            createFeature(clientObject.ChildFeatures[i], UIgroup);
-        }
-    }
-
-    //Eventhandlers
-    this.OnClientObjectsLoaded = function () {
-
-        //Create features/featureGroups recursively starting from the root
-        var rootFeatureClientObject = _configurationDataModel.GetByGUID(_configurationDataModel.GetRootGUID());
-        createFeature(rootFeatureClientObject);
-    }
-    this.OnClientObjectUpdated = function (guid) {
-        updateElement(guid);
-    }
-    var onInternalAttributeValueChanged = function (attributeGUID, newValue) {
-        var attributeClientObject = _configurationDataModel.GetByGUID(attributeGUID);
-        _configurationDataModel.UpdateClientObjectField(attributeClientObject.AttributeValue.GUID, "Value", newValue);
-    }
+//Private methods
+function makeToggleable() {
+_innerElements.innerFeatureArea.bind("click", function () {
+toggleFeatureSelection(_thisUIConfigurationFeature);
+});
+}
+function makeUnToggleable() {
+_innerElements.innerFeatureArea.unbind("click");
+}
+function changeState(state) {
+_currentState = state;
+_innerElements.entry.attr("featureSelectionState", _currentState);
+}
+function setDisabled(disabledBool) {
+if (disabledBool == true) { //Disable
+makeUnToggleable();
+_innerElements.entry.attr("isdisabled", true);
+} else if (disabledBool == false && _disabled == true) { //Enable
+makeToggleable();
+_innerElements.entry.removeAttr("isdisabled");
 }
 
+_disabled = disabledBool;
+}
+function createAttributeHTML(attribute, attributeValue) {
 
+//Variables
+var attributeTypeName = getEnumEntryByID(systemDefaults.enums.attributeTypes, attribute.AttributeType).name;
+var dataTypeName = getEnumEntryByID(systemDefaults.enums.attributeDataTypes, attribute.AttributeDataType).name;
+var outerControl = null, innerControl = null;
+
+//Create HTML
+outerControl = $("<div class='Attribute'>" + attribute.Name + "</div>");
+switch (dataTypeName) {
+case systemDefaults.enums.attributeDataTypes.integer.name:
+innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(outerControl);
+if (attributeValue != null) {
+$(innerControl).val(attributeValue.GetField("Value"));
+}
+break;
+case systemDefaults.enums.attributeDataTypes.boolean.name:
+innerControl = $("<input type='checkbox' class='InnerCheckbox' />").appendTo(outerControl);
+if (attributeValue != null) {
+$(innerControl).val(attributeValue.GetField("Value"));
+}
+break;
+case systemDefaults.enums.attributeDataTypes.string.name:
+innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(outerControl);
+if (attributeValue != null) {
+$(innerControl).val(attributeValue.GetField("Value"));
+}
+break;
+}
+
+//Make the control editable/disabled
+switch (attributeTypeName) {
+case systemDefaults.enums.attributeTypes.constant.name:
+innerControl.attr("disabled", true);
+break;
+case systemDefaults.enums.attributeTypes.dynamic.name:
+innerControl.attr("disabled", true);
+break;
+case systemDefaults.enums.attributeTypes.userInput.name:
+
+break;
+}
+
+//Set defaultValue
+return outerControl;
+}
+
+//Public methods
+this.CreateGraphicalRepresentation = function () {
+
+//ParentContainer
+var parentContainer = null;
+if (isRoot) {
+parentContainer = _innerContainer;
+} else {
+parentContainer = _parent.GetChildrenContainer();
+}
+
+//Create the main outer element
+_innerElements.entry = $("<div class='Entry'></div>").attr("featureSelectionState", _currentState).appendTo(parentContainer);
+if (isRoot)
+_innerElements.entry.attr("root", "");
+_innerElements.connector = $("<div class='Connector'></div>").appendTo(_innerElements.entry);
+_outerElement = $("<div class='FeatureControl'></div>").appendTo(_innerElements.entry);
+
+//Create inner elements   
+_innerElements.innerFeatureArea = $("<div class='InnerFeatureArea' title='" + _description + "' ></div>").appendTo(_outerElement);
+_innerElements.headerDiv = $("<div class='HeaderDiv'></div>").appendTo(_innerElements.innerFeatureArea);
+_innerElements.nameLabel = $("<div class='NameLabel'>" + _name + "</div>").appendTo(_innerElements.headerDiv);
+_innerElements.checkbox = $("<div class='Checkbox' ></div>").appendTo(_innerElements.headerDiv);
+
+//AttributesArea
+_innerElements.attributesArea = $("<div style='display:none' class='AttributesArea'></div>").appendTo(_outerElement);
+
+//ChildFeaturesArea
+_innerElements.childFeaturesArea = $("<div class='ChildFeaturesArea'></div>").appendTo(_outerElement);
+
+//Setup 
+if (_parent != null)
+_parent.RefreshGraphicalRepresentation();
+makeToggleable();
+if (_disabled == true) {
+setDisabled(true);
+}
+}
+this.RefreshGraphicalRepresentation = function () {
+_innerElements.childFeaturesArea.children(".Entry").removeAttr("last");
+_innerElements.childFeaturesArea.children(".Entry:last").attr("last", "last");
+}
+this.Update = function (newSelectionState, newDisabledState) {
+changeState(newSelectionState);
+setDisabled(newDisabledState);
+}
+this.AddChild = function (UIConfigurationElement) {
+_children.push(UIConfigurationElement);
+UIConfigurationElement.SetParent(_thisUIConfigurationFeature);
+
+}
+this.AddAttribute = function (UIConfigurationElement) {
+_UIAttributes.push(UIConfigurationElement);
+UIConfigurationElement.SetParentUIFeature(_thisUIConfigurationFeature);
+_innerElements.attributesArea.css("display", "block");
+}
+this.SetParent = function (parentUIConfigurationElement) {
+_parent = parentUIConfigurationElement;
+}
+}
+var UIAttribute = function (clientObjectGUID, attributeType, attributeDataType, name, description, value) {
+
+//Fields
+var _outerElement = null;
+var _innerElements = {
+innerControl: null
+}
+var _parentUIFeature = null, _name = name, _description = description == null ? "" : description, _attributeType = attributeType, _attributeDataType = attributeDataType;
+
+//Properties
+this.ClientObjectGUID = clientObjectGUID;
+
+//Public methods
+this.CreateGraphicalRepresentation = function () {
+
+//Variables
+var parentContainer = _parentUIFeature.GetAttributesContainer();
+var attributeTypeName = getEnumEntryByID(systemDefaults.enums.attributeTypes, attributeType).name;
+var dataTypeName = getEnumEntryByID(systemDefaults.enums.attributeDataTypes, _attributeDataType).name;
+var getValue = function (control) {
+return $(control).val();
+};
+
+//Create HTML
+_outerElement = $("<div class='Attribute' title='" + _description + "'>" + _name + "</div>").appendTo(parentContainer);
+switch (dataTypeName) {
+//Integer                         
+case systemDefaults.enums.attributeDataTypes.integer.name:
+_innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
+$(_innerElements.innerControl).val(value);
+break;
+//Boolean                         
+case systemDefaults.enums.attributeDataTypes.boolean.name:
+_innerElements.innerControl = $("<input type='checkbox' class='InnerCheckbox' />").appendTo(_outerElement);
+if (value == true || value == "True") {
+$(_innerElements.innerControl).attr("checked", true);
+}
+
+//
+getValue = function (control) {
+return $(control).is(':checked');
+}
+break;
+//String                         
+case systemDefaults.enums.attributeDataTypes.string.name:
+_innerElements.innerControl = $("<input type='text' class='Textbox' style='text-align:right' value='0'/>").appendTo(_outerElement);
+$(_innerElements.innerControl).val(value);
+break;
+}
+
+//Make the control editable/disabled
+switch (attributeTypeName) {
+case systemDefaults.enums.attributeTypes.constant.name:
+_innerElements.innerControl.attr("disabled", true);
+break;
+case systemDefaults.enums.attributeTypes.dynamic.name:
+_innerElements.innerControl.attr("disabled", true);
+break;
+case systemDefaults.enums.attributeTypes.userInput.name:
+_innerElements.innerControl.bind("change", function (e) {
+var newValue = getValue($(this));
+InternalAttributeValueChanged.RaiseEvent([clientObjectGUID, newValue]);
+});
+
+break;
+}
+}
+this.Update = function (newValue) {
+_innerElements.innerControl.val(newValue);
+}
+this.SetParentUIFeature = function (parentUIConfigurationElement) {
+_parentUIFeature = parentUIConfigurationElement;
+}
+}
+var UIGroup = function (clientObjectGUID) {
+
+//Fields
+var _outerElement = null;
+var _innerElements = {
+entry: null,
+connector: null,
+childFeaturesArea: null
+};
+var _parent = null, _children = [];
+var _thisUIConfigurationGroup = this;
+
+//Properties
+this.ClientObjectGUID = clientObjectGUID;
+this.GetTypeName = function () {
+return "group";
+}
+this.GetChildrenContainer = function () {
+return _innerElements.childFeaturesArea;
+}
+this.InnerElements = _innerElements;
+
+//Public methods
+this.CreateGraphicalRepresentation = function () {
+
+//ParentContainer
+var parentContainer = _parent.GetChildrenContainer();
+
+//Create the main outer element
+_innerElements.entry = $("<div class='Entry'></div>").appendTo(parentContainer);
+_innerElements.connector = $("<div class='Connector'></div>").appendTo(_innerElements.entry);
+_outerElement = $("<div class='GroupControl'></div>").appendTo(_innerElements.entry);
+
+//Create inner elements   
+_innerElements.childFeaturesArea = $("<div class='ChildFeaturesArea'></div>").appendTo(_outerElement);
+
+//Setup 
+if (_parent != null)
+_parent.RefreshGraphicalRepresentation();
+}
+this.RefreshGraphicalRepresentation = function () {
+
+}
+this.AddChild = function (UIConfigurationElement) {
+_children.push(UIConfigurationElement);
+UIConfigurationElement.SetParent(_thisUIConfigurationGroup);
+}
+this.SetParent = function (parentUIConfigurationElement) {
+_parent = parentUIConfigurationElement;
+}
+}
+
+//Constructor/Initalizers
+this.Initialize = function () {
+_innerContainer = $("<div class='InnerContainer'></div>").prependTo(container);
+
+//Set internal eventhandlers
+InternalAttributeValueChanged.Add(new EventHandler(onInternalAttributeValueChanged));
+};
+
+//Private methods
+var toggleFeatureSelection = function (UIFeature) {
+
+//Get the related FeatureSelection
+var featureClientObject = _configurationDataModel.GetByGUID(UIFeature.ClientObjectGUID);
+var featureSelectionClientObject = featureClientObject.FeatureSelection;
+
+//Set its SelectionState and ToggledByUser fields
+var currentSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
+switch (currentSelectionState) {
+
+//Unselected -> Selected                                                                                                                                                                                                                      
+case systemDefaults.enums.featureSelectionStates.unselected.name:
+_configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.selected.id);
+break;
+
+//Selected -> Deselected                                                 
+case systemDefaults.enums.featureSelectionStates.selected.name:
+_configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.deselected.id);
+break;
+
+//Deselected -> Unselected                                                  
+case systemDefaults.enums.featureSelectionStates.deselected.name:
+_configurationDataModel.UpdateClientObjectField(featureSelectionClientObject.GUID, "SelectionState", systemDefaults.enums.featureSelectionStates.unselected.id);
+break;
+}
+}
+
+//Sync with data model
+var updateElement = function (guid) {
+
+//Variables
+var clientObject = _configurationDataModel.GetByGUID(guid);
+var type = clientObject.GetType();
+
+//Perform update according to type
+switch (type) {
+case "featureSelection":
+var featureGUID = clientObject.Feature.GUID;
+var UIElement = _UIElements[featureGUID];
+var newSelectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, clientObject.GetField("SelectionState")).name;
+var disabledState = clientObject.GetField("Disabled");
+
+UIElement.Update(newSelectionState, disabledState);
+break;
+case "attributeValue":
+var attributeGUID = clientObject.Attribute.GUID;
+var UIElement = _UIElements[attributeGUID];
+var newValue = clientObject.GetField("Value");
+
+UIElement.Update(newValue);
+break;
+}
+}
+var createFeature = function (clientObject, parentUIConfigurationElement) {
+
+//Determine if it is the root
+var isRoot = (parentUIConfigurationElement == undefined);
+
+//Get the associated FeatureSelection object
+var featureSelectionClientObject = _configurationDataModel.GetByGUID(clientObject.FeatureSelection.GUID);
+var selectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
+var attributeValues = featureSelectionClientObject.AttributeValues;
+var attributes = clientObject.Attributes;
+
+//Create the Feature --------------------------------------------------------------------------
+var UIfeature = new UIFeature(clientObject.GUID, isRoot, selectionState, clientObject.GetField("Name"), clientObject.GetField("Description"), featureSelectionClientObject.GetField("Disabled"));
+if (!isRoot) {
+parentUIConfigurationElement.AddChild(UIfeature); //add to parent if it has one
+}
+UIfeature.CreateGraphicalRepresentation();
+_UIElements[clientObject.GUID] = UIfeature;
+
+//Create its Attributes
+for (var i = 0; i < attributes.length; i++) {
+var attributeType = attributes[i].GetField("AttributeType"), attributeDataType = attributes[i].GetField("AttributeDataType"), name = attributes[i].GetField("Name");
+var value = attributes[i].AttributeValue.GetField("Value");
+var description = attributes[i].GetField("Description");
+var UIattribute = new UIAttribute(attributes[i].GUID, attributeType, attributeDataType, name, description, value);
+UIfeature.AddAttribute(UIattribute);
+UIattribute.CreateGraphicalRepresentation();
+
+_UIElements[attributes[i].GUID] = UIattribute;
+}
+//---------------------------------------------------------------------------------------------
+
+//Create child Features
+for (var i = 0; i < clientObject.ChildFeatures.length; i++) {
+createFeature(clientObject.ChildFeatures[i], UIfeature);
+}
+
+//Create child Groups
+for (var i = 0; i < clientObject.ChildGroups.length; i++) {
+createGroup(clientObject.ChildGroups[i], UIfeature);
+}
+}
+var createGroup = function (clientObject, parentUIConfigurationElement) {
+
+//Create the UIConfigurationElement 
+var UIgroup = new UIGroup(clientObject.GUID);
+parentUIConfigurationElement.AddChild(UIgroup);
+UIgroup.CreateGraphicalRepresentation();
+_UIElements[clientObject.GUID] = UIgroup;
+
+//Create child Features
+for (var i = 0; i < clientObject.ChildFeatures.length; i++) {
+createFeature(clientObject.ChildFeatures[i], UIgroup);
+}
+}
+
+//Eventhandlers
+this.OnClientObjectsLoaded = function () {
+
+//Create features/featureGroups recursively starting from the root
+var rootFeatureClientObject = _configurationDataModel.GetByGUID(_configurationDataModel.GetRootGUID());
+createFeature(rootFeatureClientObject);
+}
+this.OnClientObjectUpdated = function (guid) {
+updateElement(guid);
+}
+var onInternalAttributeValueChanged = function (attributeGUID, newValue) {
+var attributeClientObject = _configurationDataModel.GetByGUID(attributeGUID);
+_configurationDataModel.UpdateClientObjectField(attributeClientObject.AttributeValue.GUID, "Value", newValue);
+}
+}
+
+*/

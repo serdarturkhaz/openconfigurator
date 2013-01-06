@@ -2622,8 +2622,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             clear();
         }
     }
-    this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
-        if (newState == systemDefaults.uiElementStates.selected && shift == false) {
+    this.OnRelatedViewElementSelectToggled = function (guid, ctrl, newState) {
+        if (newState == systemDefaults.uiElementStates.selected && ctrl == false) {
             loadData(guid);
         } else {
             clear();
@@ -3129,7 +3129,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 $(textinput).val(_name).select();
 
                 //Default select
-                toggleElementSelect(_thisUIFeature, e.shiftKey, true);
+                toggleElementSelect(_thisUIFeature, e.ctrlKey, true);
             });
         }
         var refresh = function () {
@@ -3300,7 +3300,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //
             var handlers = {
                 onClick: function (e) {
-                    toggleElementSelect(_thisUIRelation, e.shiftKey, true);
+                    toggleElementSelect(_thisUIRelation, e.ctrlKey, true);
                 },
                 onMouseOver: function (e) {
                     if (_innerMode != innerState.dragging) {
@@ -3461,7 +3461,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //
             var handlers = {
                 onClick: function (e) {
-                    toggleElementSelect(_thisUIGroupRelation, e.shiftKey, true);
+                    toggleElementSelect(_thisUIGroupRelation, e.ctrlKey, true);
                 },
                 onMouseOver: function (e) {
                     if (_innerMode != innerState.dragging) {
@@ -3721,7 +3721,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //
             var handlers = {
                 onClick: function (e) {
-                    toggleElementSelect(_thisUICompositionRule, e.shiftKey, true);
+                    toggleElementSelect(_thisUICompositionRule, e.ctrlKey, true);
                 },
                 onMouseOver: function (e) {
                     if (_innerMode != innerState.dragging) {
@@ -4499,7 +4499,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         //Handler for canvas click
         $(_canvasContainer).bind("click", function (e) {
             _thisDiagramContext.Focus.RaiseEvent();
-            if (e.target.nodeName == "svg" && e.shiftKey != true) {
+            if (e.target.nodeName == "svg" && e.ctrlKey != true) {
                 clearSelection(true);
             }
         });

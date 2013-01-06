@@ -1,0 +1,37 @@
+﻿.RadiobuttonListControl
+{
+    float:left;
+    clear:both;
+}
+.RadiobuttonListControl .RadioOption 
+{
+    float:left;
+    clear:both;
+}
+
+.RadiobuttonListControl .RadioOption input
+{
+    width: 16px;
+    height: 16px;
+    margin-top: 4px;
+    padding: 0;
+    float: left;
+    /*background: url(/content/themes/base/images/Controls/radio-unselected.png) no-repeat center center;*/
+}
+.RadiobuttonListControl .RadioOption .NameLabel
+{
+    line-height: 26px;
+    height: 26px;
+    float: left;
+    font-size: 12px;
+    font-family: Arial;
+    letter-spacing: 1.3px;
+    color: gray;
+  	margin-left:5px;
+  	cursor:default;
+}
+
+.RadiobuttonListControl .RadioOption input[disabled]
+{
+    color: #CCCCCC;
+}

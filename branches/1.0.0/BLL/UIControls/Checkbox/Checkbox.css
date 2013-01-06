@@ -28,37 +28,3 @@
   	cursor:default;
 }
 
-
-/*
-.CheckboxControl[selectionstate='unselected'] .CheckElement
-{
-    background: url(/content/themes/base/images/Controls/check-unselected.png) no-repeat center center;
-    border:solid 5px gray;
-}
-.CheckboxControl[selectionstate='unselected'][isdisabled] .CheckElement
-{
-    background: url(/content/themes/base/images/Controls/check-unselected-disabled.png) no-repeat center center;
-}
-
-//selected
-.CheckboxControl[selectionstate='selected'] .CheckElement
-{
-    background: url(/content/themes/base/images/Controls/check-selected.png) no-repeat center center;
-    border:solid 5px green;
-}
-.CheckboxControl[selectionstate='selected'][isdisabled] .CheckElement
-{
-    background: url(/content/themes/base/images/Controls/check-selected-disabled.png) no-repeat center center;
-}
-
-//deselected
-.CheckboxControl[selectionstate='deselected'] .CheckElement
-{
-    background: url(/content/themes/base/images/Controls/check-deselected.png) no-repeat center center ;
-    border:solid 5px red;
-}
-.CheckboxControl[selectionstate='deselected'][isdisabled] .CheckElement
-{
-    background: url(/content/themes/base/images/Controls/check-deselected-disabled.png) no-repeat center center;
-}
-*/
