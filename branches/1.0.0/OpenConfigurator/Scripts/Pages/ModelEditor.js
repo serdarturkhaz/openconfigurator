@@ -617,7 +617,8 @@ var ClientObjects = {
     Relation: null,
     GroupRelation: null,
     CompositionRule: null,
-    CustomRule: null
+    CustomRule: null,
+    Constraint: null
 }
 
 ClientObjects.Feature = function (businessObject) {
@@ -883,6 +884,47 @@ ClientObjects.CustomRule = function (businessObject) {
     this.SyncBusinessObject = function () {
     }
 }
+ClientObjects.Constraint = function (businessObject) {
+
+    //Fields
+    var _guid = null;
+    var _businessObject = businessObject;
+
+    //Properties
+    this.GUID = _guid;
+    this.GetType = function () {
+        return "constraint";
+    }
+
+    //Methods
+    this.GetBusinessObject = function () {
+        return _businessObject;
+    }
+    this.GetBusinessObjectCopy = function () {
+        var copy = jQuery.extend(true, {}, _businessObject);
+        return copy;
+    }
+    this.UpdateBusinessObject = function (modifiedBusinessObject) {
+        _businessObject = modifiedBusinessObject;
+    }
+    this.GetField = function (fieldName) {
+        return _businessObject[fieldName];
+    }
+    this.GetFieldIdentifier = function () {
+        return _businessObject["Identifier"];
+    }
+    this.SetField = function (fieldName, value) {
+        _businessObject[fieldName] = value;
+    }
+    this.SetDeleteFlag = function () {
+        _businessObject["ToBeDeleted"] = true;
+    }
+    this.IsDeleted = function () {
+        return _businessObject["ToBeDeleted"] == true;
+    }
+    this.SyncBusinessObject = function () {
+    }
+}
 //****************************************************************************************************************
 //Operations******************************************************************************************************
 var Operation = function (operationType, guid, clientObjectType, data) {
@@ -918,7 +960,8 @@ var DiagramDataModel = function (modelID, modelName) {
         relations: {},
         groupRelations: {},
         compositionRules: {},
-        customRules: {}
+        customRules: {},
+        constraints: {}
     }
     var _modelID = modelID, _model = null, _modelName = modelName;
     var _operationsQueue = [];
@@ -928,7 +971,8 @@ var DiagramDataModel = function (modelID, modelName) {
         relations: {},
         groupRelations: {},
         compositionRules: {},
-        customRules: {}
+        customRules: {},
+        constraints: {}
     };
     var _thisDiagramDataModel = this;
 
@@ -1137,6 +1181,17 @@ var DiagramDataModel = function (modelID, modelName) {
                     _thisDiagramDataModel.RegisterClientObject(customRuleClientObject);
                 }
 
+                //Load Constraints
+                for (var i = 0; i < _model.Constraints.length; i++) {
+
+                    //Variables
+                    var constraint = _model.Constraints[i];
+
+                    //Create a new ClientDataObject
+                    var constraintClientObject = new ClientObjects.Constraint(constraint);
+                    _thisDiagramDataModel.RegisterClientObject(constraintClientObject);
+                }
+
 
             },
             error: function (req, status, error) {
@@ -1243,7 +1298,6 @@ var DiagramDataModel = function (modelID, modelName) {
         var newClientObject = null;
         switch (type) {
             case "feature":
-                //var featureIdentifier = getNewFeatureOrCustomRuleIdentifier("Feature_");
                 var featureIdentifier = getNewIdentifier("Feature_", _clientObjects.features, _clientObjects.customRules);
                 newBusinessObject.Identifier = featureIdentifier;
                 newBusinessObject.Name = featureIdentifier.replace("_", " ");
@@ -1267,12 +1321,18 @@ var DiagramDataModel = function (modelID, modelName) {
                 newClientObject = new ClientObjects.CompositionRule(newBusinessObject);
                 break;
             case "customRule":
-                // var customRuleIdentifier = getNewFeatureOrCustomRuleIdentifier("CustomRule_");
                 var customRuleIdentifier = getNewIdentifier("CustomRule_", _clientObjects.features, _clientObjects.customRules);
                 newBusinessObject.Identifier = customRuleIdentifier;
                 newBusinessObject.Name = customRuleIdentifier.replace("_", " ");
 
                 newClientObject = new ClientObjects.CustomRule(newBusinessObject);
+                break;
+            case "constraint":
+                var constraintIdentifier = getNewIdentifier("Constraint_", _clientObjects.features, _clientObjects.customRules);
+                newBusinessObject.Identifier = constraintIdentifier;
+                newBusinessObject.Name = constraintIdentifier.replace("_", " ");
+
+                newClientObject = new ClientObjects.Constraint(newBusinessObject);
                 break;
         }
         if (initialClientValues != undefined && initialClientValues != null) {
@@ -1568,6 +1628,12 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
             ModelID: _diagramDataModel.ModelID
         }
         var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("customRule", initialValues);
+    }
+    this.CreateNewConstraint = function () {
+        var initialValues = {
+            ModelID: _diagramDataModel.ModelID
+        }
+        var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("constraint", initialValues);
     }
     this.Delete = function () {
         switch (_currentControlFocus) {
@@ -2483,6 +2549,69 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                     }
                 }
             }
+        },
+        constraint: {
+            areas: {
+                basicArea: {
+                    displayTitle: false,
+                    tableLayout: true,
+                    fields: {
+                        identifier: {
+                            label: "Identifier",
+                            dataName: "Identifier",
+                            controlType: Controls.Textbox,
+                            validation:
+                                [
+                                    systemDefaults.validationExpressions.text.variableName,
+                                    function (newVal, oldVal, control) {
+                                        return !_diagramDataModel.IsCustomRuleIdentifierInUse(newVal, _mainGUID);
+                                    }
+                                ]
+                        },
+                        name: {
+                            label: "Name",
+                            dataName: "Name",
+                            controlType: Controls.Textbox
+                        },
+                        description: {
+                            label: "Description",
+                            dataName: "Description",
+                            controlType: Controls.Textarea
+                        }
+                    }
+                },
+                expressionArea: {
+                    displayTitle: "Expression",
+                    tableLayout: false,
+                    fields: {
+                        description: {
+                            label: "Expression",
+                            dataName: "Expression",
+                            controlType: Controls.Textarea,
+                            validation:
+                                [
+                                    function (newVal, oldVal, control) {
+                                        var isValid;
+
+                                        $.ajax({
+                                            url: "/ModelEditor/ValidateCustomRuleSyntax",
+                                            data: JSON.stringify({ modelID: _diagramDataModel.ModelID, customRule: newVal }),
+                                            async: false,
+                                            success: function (dataObj) {
+                                                isValid = dataObj;
+                                            },
+                                            error: function (jqXHR, textStatus, errorThrown) {
+                                                isValid = false;
+                                            }
+                                        });
+
+                                        return isValid;
+                                    }
+                                ]
+                        }
+                    }
+                }
+            }
         }
     };
 
@@ -2645,7 +2774,8 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
     var _supportedTypes = {
         feature: true,
         compositionRule: true,
-        customRule: true
+        customRule: true,
+        constraint: true
     }
 
     //Private methods
@@ -2727,8 +2857,12 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                     ID: "customRulesNode",
                     Name: "Custom Rules",
                     typeName: "folder"
+                },
+                {
+                    ID: "constraintsNode",
+                    Name: "Constraints",
+                    typeName: "folder"
                 }
-
             ],
             types: {
                 folder: {
@@ -2747,6 +2881,11 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                     selectable: true
                 },
                 customRule: {
+                    idField: "ID",
+                    labelField: "Name",
+                    selectable: true
+                },
+                constraint: {
                     idField: "ID",
                     labelField: "Name",
                     selectable: true

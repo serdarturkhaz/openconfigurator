@@ -54,13 +54,21 @@ namespace BLL.Services
                 context.AddVariable(feature.Name, feature.ID.ToString(), featuresCategory, VariableDataTypes.Boolean);
 
                 //Add variables for its Attributes
-                feature.Attributes.ForEach(attribute => context.AddVariable(attribute.Name, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer));
+                //feature.Attributes.ForEach(attribute => {
+                //    if (attribute.AttributeDataType == BusinessObjects.AttributeDataTypes.Integer)
+                //        context.AddVariable(attribute.Name, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer);
+                //});
+                //feature.Attributes.ForEach(attribute => {
+                //    if (attribute.AttributeDataType == BusinessObjects.AttributeDataTypes.Integer && !String.IsNullOrEmpty(attribute.ConstantValue))
+                //        context.AddFeatureAttributeValueAssumption(feature.ID.ToString(), featuresCategory, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer, int.Parse(attribute.ConstantValue));
+                //});
             }
 
             //Handle Relations, GroupRelations and CompositionRules
             model.Relations.ForEach(rel => context.AddConstraint(relationsCategory, TransformToStatement(context, rel)));
             model.GroupRelations.ForEach(groupRel => context.AddConstraint(groupRelationsCategory, TransformToStatement(context, groupRel)));
             model.CompositionRules.ForEach(compositionRule => context.AddConstraint(compositionRulesCategory, TransformToStatement(context, compositionRule)));
+            model.Constraints.ForEach(constraint => context.AddConstraint(compositionRulesCategory, TransformToStatement(context, constraint)));
 
             //Create an initial restore point
             context.CreateInitialRestorePoint();
@@ -181,6 +189,23 @@ namespace BLL.Services
                     returnStatement = context.MakeExcludes(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
                     break;
             }
+            return returnStatement;
+        }
+        private static ISolverStatement TransformToStatement(ISolverContext context, BLL.BusinessObjects.Constraint constraint)
+        {
+            ISolverStatement returnStatement = null;
+            //switch (compositionRule.CompositionRuleType)
+            //{
+            //    case BusinessObjects.CompositionRuleTypes.Dependency:
+            //        returnStatement = context.MakeImplies(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+            //        break;
+            //    case BusinessObjects.CompositionRuleTypes.MutualDependency:
+            //        returnStatement = context.MakeEquivalence(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+            //        break;
+            //    case BusinessObjects.CompositionRuleTypes.MutualExclusion:
+            //        returnStatement = context.MakeExcludes(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
+            //        break;
+            //}
             return returnStatement;
         }
 

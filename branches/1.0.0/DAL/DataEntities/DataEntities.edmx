@@ -176,7 +176,7 @@
           </Key>
           <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="ModelID" Type="int" Nullable="false" />
-          <Property Name="UITemplateID" Type="int" Nullable="false" />
+          <Property Name="UITemplateID" Type="int" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="LastModifiedDate" Type="datetime" />
@@ -418,7 +418,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Configurations_UITemplates">
-          <End Role="UITemplates" Type="OpenConfigurator_Model.Store.UITemplates" Multiplicity="1" />
+          <End Role="UITemplates" Type="OpenConfigurator_Model.Store.UITemplates" Multiplicity="0..1" />
           <End Role="Configurations" Type="OpenConfigurator_Model.Store.Configurations" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UITemplates">

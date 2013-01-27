@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Z3;
 
 namespace BLL.SolverEngines
 {
@@ -30,7 +31,8 @@ namespace BLL.SolverEngines
         void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
         void RemoveValueAssumption(string varID, string categoryName);
         void AddOrModifyValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
-
+        void AddFeatureAttributeValueAssumption(string featureVariableID, string featureCategoryName, string attributeVariableID, string attributeCategoryName, VariableDataTypes dataType, object value);
+        
         ISolverStatement MakeEquals(ISolverStatement leftStatement, ISolverStatement rightStatement);
         ISolverStatement MakeAdd(ISolverStatement[] innerStatements);
         ISolverStatement MakeAnd(string categoryName, params string[] variableIDs);
@@ -67,6 +69,12 @@ namespace BLL.SolverEngines
     public interface ISolverFunction
     {
 
+    }
+    public interface IZ3Assumption
+    {
+        Term VariableTerm { get; set; }
+        Term ValueTerm { get; set; }
+        Term EqualsTerm { get; set; }
     }
 
     //Enums
