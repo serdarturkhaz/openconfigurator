@@ -82,6 +82,7 @@ namespace BLL.BusinessObjects
         private List<BLL.BusinessObjects.GroupRelation> _groupRelations = new List<GroupRelation>();
         private List<BLL.BusinessObjects.CompositionRule> _compositionRules = new List<CompositionRule>();
         private List<BLL.BusinessObjects.CustomRule> _customRules = new List<CustomRule>();
+        private List<BLL.BusinessObjects.Constraint> _constraints = new List<Constraint>();
         private bool _toBeDeleted = false;
 
         //Constructor
@@ -98,7 +99,8 @@ namespace BLL.BusinessObjects
             _innerEntity.Relations.ToList().ForEach(DALentity => Relations.Add(BLL.BusinessObjects.Relation.FromDataEntity(DALentity)));
             _innerEntity.GroupRelations.ToList().ForEach(DALentity => GroupRelations.Add(BLL.BusinessObjects.GroupRelation.FromDataEntity(DALentity)));
             _innerEntity.CompositionRules.ToList().ForEach(DALentity => CompositionRules.Add(BLL.BusinessObjects.CompositionRule.FromDataEntity(DALentity)));
-            _innerEntity.CustomRules.ToList().ForEach(DALentity => CustomRules.Add(BLL.BusinessObjects.CustomRule.FromDataEntity(DALentity))); 
+            _innerEntity.CustomRules.ToList().ForEach(DALentity => CustomRules.Add(BLL.BusinessObjects.CustomRule.FromDataEntity(DALentity)));
+            _innerEntity.Constraints.ToList().ForEach(DALentity => Constraints.Add(BLL.BusinessObjects.Constraint.FromDataEntity(DALentity))); 
         }
 
         //Properties
@@ -215,6 +217,17 @@ namespace BLL.BusinessObjects
             set
             {
                 _customRules = value;
+            }
+        }
+        public List<BLL.BusinessObjects.Constraint> Constraints
+        {
+            get
+            {
+                return _constraints;
+            }
+            set
+            {
+                _constraints = value;
             }
         }
 

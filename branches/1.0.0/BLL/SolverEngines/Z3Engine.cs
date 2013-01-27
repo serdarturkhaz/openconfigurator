@@ -27,12 +27,14 @@ namespace BLL.SolverEngines
 {
     public class Z3Context : ISolverContext
     {
+        const string assumptionCategory = "assumptionCategory", impliesAssumptionCategory = "impliesAssumptionCategory";
+
         //Fields
         Config _config;
         Context _context;
         Dictionary<string, Dictionary<string, Z3Variable>> _variables = new Dictionary<string, Dictionary<string, Z3Variable>>();
         Dictionary<string, List<Z3Constraint>> _constraints = new Dictionary<string, List<Z3Constraint>>();
-        Dictionary<string, Dictionary<string, Z3ValueAssumption>> _assumptions = new Dictionary<string, Dictionary<string, Z3ValueAssumption>>();
+        Dictionary<string, Dictionary<string, Dictionary<string, Z3ValueAssumption>>> _assumptions = new Dictionary<string, Dictionary<string, Dictionary<string, Z3ValueAssumption>>>();
         Dictionary<string, Z3Function> _functions = new Dictionary<string, Z3Function>();
 
         //Constructor
@@ -64,21 +66,48 @@ namespace BLL.SolverEngines
             CreateInitialRestorePoint();
 
             //Recreate assumptions
-            foreach (string category in _assumptions.Keys)
+            foreach (string mainAssumptionCategory in _assumptions.Keys)
             {
-                List<Z3ValueAssumption> assumptions = _assumptions[category].Values.ToList();
-                for (int i = 0; i < assumptions.Count; i++)
+                foreach (string category in _assumptions[assumptionCategory].Keys)
                 {
-                    Z3ValueAssumption assumption = assumptions[i];
-                    ReassertValueAssumption(ref assumption);
+                    // This needs a little bit of refactoring
+                    if (mainAssumptionCategory == assumptionCategory)
+                    {
+                        if (_assumptions[mainAssumptionCategory].ContainsKey(category))
+                        {
+                            List<Z3ValueAssumption> assumptions = _assumptions[mainAssumptionCategory][category].Values.ToList();
+                            for (int i = 0; i < assumptions.Count; i++)
+                            {
+                                Z3ValueAssumption assumption = assumptions[i];
+                                ReassertValueAssumption(ref assumption);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (_assumptions[mainAssumptionCategory].ContainsKey(category))
+                        {
+                            List<Z3ValueAssumption> assumptions = _assumptions[mainAssumptionCategory][category].Values.ToList();
+                            for (int i = 0; i < assumptions.Count; i++)
+                            {
+                                Z3ImpliesValueAssumption assumption = assumptions[i] as Z3ImpliesValueAssumption;
+                                ReassertImpliesValueAssumption(ref assumption);
+                            }
+                        }
+                    }
                 }
             }
-
         }
         private void ReassertValueAssumption(ref Z3ValueAssumption assumption)
         {
             assumption.EqualsTerm = _context.MkEq(assumption.VariableTerm, assumption.ValueTerm);
             _context.AssertCnstr(assumption.EqualsTerm);
+        }
+        private void ReassertImpliesValueAssumption(ref Z3ImpliesValueAssumption assumption)
+        {
+            assumption.EqualsTerm = _context.MkEq(assumption.VariableTerm, assumption.ValueTerm);
+            assumption.ImplyTerm = _context.MkImplies(assumption.ImplierTerm, assumption.EqualsTerm);
+            _context.AssertCnstr(assumption.ImplyTerm);
         }
         private Term CreateValueTerm(VariableDataTypes dataType, object value)
         {
@@ -128,6 +157,18 @@ namespace BLL.SolverEngines
 
             //
             Z3ValueAssumption assumption = new Z3ValueAssumption(variableTerm, newValue, statement);
+            return assumption;
+        }
+        private Z3ImpliesValueAssumption AssertImpliesValueAssumption(Term implierTerm, Term variableTerm, VariableDataTypes dataType, object value)
+        {
+            //Assertion
+            Term newValue = CreateValueTerm(dataType, value);
+            Term statement = _context.MkEq(variableTerm, newValue);
+            Term imply = _context.MkImplies(implierTerm, statement);
+            _context.AssertCnstr(statement);
+
+            //
+            Z3ImpliesValueAssumption assumption = new Z3ImpliesValueAssumption(implierTerm, imply, variableTerm, newValue, statement);
             return assumption;
         }
 
@@ -243,23 +284,28 @@ namespace BLL.SolverEngines
             Z3ValueAssumption assumption = AssertValueAssumption(variableTerm, dataType, value);
 
             //Keep track of the assumption added
-            if (_assumptions.ContainsKey(categoryName))
+            if (!_assumptions.ContainsKey(assumptionCategory))
             {
-                _assumptions[categoryName].Add(variableID, assumption);
+                _assumptions.Add(assumptionCategory, new Dictionary<string, Dictionary<string, Z3ValueAssumption>>());
+            }
+
+            if (_assumptions[assumptionCategory].ContainsKey(categoryName))
+            {
+                _assumptions[assumptionCategory][categoryName].Add(variableID, assumption);
             }
             else
             {
-                _assumptions[categoryName] = new Dictionary<string, Z3ValueAssumption>();
-                _assumptions[categoryName].Add(variableID, assumption);
+                _assumptions[assumptionCategory][categoryName] = new Dictionary<string, Z3ValueAssumption>();
+                _assumptions[assumptionCategory][categoryName].Add(variableID, assumption);
             }
         }
         public void RemoveValueAssumption(string variableID, string categoryName)
         {
             //Get the assumption and variable
             bool varRemoved = false;
-            if (_assumptions[categoryName] != null && _assumptions[categoryName].ContainsKey(variableID)) //If the category exists AND the assumption exists
+            if (_assumptions[assumptionCategory][categoryName] != null && _assumptions[assumptionCategory][categoryName].ContainsKey(variableID)) //If the category exists AND the assumption exists
             {
-                _assumptions[categoryName].Remove(variableID);
+                _assumptions[assumptionCategory][categoryName].Remove(variableID);
                 varRemoved = true;
             }
 
@@ -277,7 +323,7 @@ namespace BLL.SolverEngines
             Term variableTerm = varWrapper.Term;
 
             //If previous assumption already exists for the variable
-            if (_assumptions.ContainsKey(categoryName) && _assumptions[categoryName].ContainsKey(variableID))
+            if (_assumptions.ContainsKey(assumptionCategory) && _assumptions[assumptionCategory].ContainsKey(categoryName) && _assumptions[assumptionCategory][categoryName].ContainsKey(variableID))
             {
                 //Remove it
                 RemoveValueAssumption(variableID, categoryName);
@@ -285,6 +331,50 @@ namespace BLL.SolverEngines
 
             //Add the new assumption
             AddValueAssumption(variableID, categoryName, dataType, value);
+        }
+        public void AddFeatureAttributeValueAssumption(string featureVariableID, string featureCategoryName, string attributeVariableID, string attributeCategoryName, VariableDataTypes dataType, object value)
+        {
+            //Variables
+            Z3Variable featureVar = _variables[featureCategoryName][featureVariableID];
+            Term featureVariableTerm = featureVar.Term;
+            Z3Variable attributeVar = _variables[attributeCategoryName][attributeVariableID];
+            Term attributeVariableTerm = attributeVar.Term;
+
+            //Check if an assumption already exists for the variable
+            if (_assumptions.ContainsKey(featureCategoryName) && _assumptions[featureCategoryName].ContainsKey(featureVariableID))
+            {
+                throw new Exception("An assumption already exists for the given feature variable!");
+            }
+
+            if (_assumptions.ContainsKey(featureCategoryName) && _assumptions[featureCategoryName].ContainsKey(featureVariableID))
+            {
+                throw new Exception("An assumption already exists for the given attribute variable!");
+            }
+
+            //Check if the dataType is correct
+            if (attributeVar.DataType != dataType)
+            {
+                throw new Exception("Variable is of a different data type than " + dataType.ToString() + "!");
+            }
+
+            //Create the assertion
+            Z3ImpliesValueAssumption assumption = AssertImpliesValueAssumption(featureVariableTerm, attributeVariableTerm, dataType, value);
+
+            //Keep track of the assumption added
+            if (!_assumptions.ContainsKey(impliesAssumptionCategory))
+            {
+                _assumptions.Add(impliesAssumptionCategory, new Dictionary<string, Dictionary<string, Z3ValueAssumption>>());
+            }
+
+            if (_assumptions[impliesAssumptionCategory].ContainsKey(attributeCategoryName))
+            {
+                _assumptions[impliesAssumptionCategory][attributeCategoryName].Add(attributeVariableID, assumption);
+            }
+            else
+            {
+                _assumptions[impliesAssumptionCategory][attributeCategoryName] = new Dictionary<string, Z3ValueAssumption>();
+                _assumptions[impliesAssumptionCategory][attributeCategoryName].Add(attributeVariableID, assumption);
+            }
         }
 
         //Statements
@@ -669,7 +759,7 @@ namespace BLL.SolverEngines
             _statements = statements;
         }
     }
-    public class Z3ValueAssumption
+    public class Z3ValueAssumption : IZ3Assumption
     {
         //Fields
         Term _variableTerm, _valueTerm, _equalsTerm;
@@ -697,6 +787,32 @@ namespace BLL.SolverEngines
             _variableTerm = variableTerm;
             _valueTerm = valueTerm;
             _equalsTerm = equalsTerm;
+        }
+    }
+    public class Z3ImpliesValueAssumption : Z3ValueAssumption
+    {
+        //Fields
+        Term _implierTerm, _implyTerm;
+
+        //Properties
+        public Term ImplierTerm
+        {
+            get { return _implierTerm; }
+            set { _implierTerm = value; }
+        }
+
+        public Term ImplyTerm
+        {
+            get { return _implyTerm; }
+            set { _implyTerm = value; }
+        }
+
+        //Constructor
+        public Z3ImpliesValueAssumption(Term implierTerm, Term implyTerm, Term variableTerm, Term valueTerm, Term equalsTerm)
+            : base(variableTerm, valueTerm, equalsTerm)
+        {
+            _implyTerm = implyTerm;
+            _implierTerm = implierTerm;
         }
     }
 }
