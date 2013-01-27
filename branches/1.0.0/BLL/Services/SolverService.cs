@@ -238,8 +238,8 @@ namespace BLL.Services
                     object obj = returnResult.GetGenericReturnValue();
                     var resultEntry = new
                     {
-                        Type = obj.GetType().Name,
-                        Object = obj
+                        BusinessObject = obj,
+                        Type = obj.GetType().Name
                     };
 
                     resultSet.Add(resultEntry);

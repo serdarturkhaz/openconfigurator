@@ -272,39 +272,40 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         });
         return returnObj;
     }
-    var getUIControlTypeData = function (controltype) {
-        var returnObj;
-        $.ajax({
-            url: "/ConfigurationEditor/GetUIControlTypeData",
-            data: JSON.stringify({ ControlType: controltype }),
-            async: false,
-            success: function (dataObj) {
-                returnObj = dataObj;
-            }
-        });
-
-        return returnObj;
-    }
     var evalDatabindExpression = function (expression) {
 
-        //
-        var expressionResult = {
-            objectID: null,
-            objecttype: ""
-        };
+        //The return result is returned as a collection of the below objects
+        /*var expressionResultObject = {
+        BusinessObject: null,
+        Type: ""
+        };*/
 
-        //
+        //Get the special objects
+        var resultObjectsCollection = null;
         $.ajax({
             url: "/ConfigurationEditor/EvalDatabindExpression",
             data: JSON.stringify({ configurationID: configurationID, expression: expression }),
             async: false,
             success: function (dataObj) {
-                expressionResult = dataObj;
+                resultObjectsCollection = dataObj;
             }
         });
 
+        //Convert the special objects to client objects
+        var clientObjectsCollection = [];
+        for (var i = 0; i < resultObjectsCollection.length; i++) {
+
+            //Get the client object
+            var resultObject = resultObjectsCollection[i];
+            var objectTypeName = resultObject.Type.toLowerCase();
+            var clientObject = _thisConfigurationDataModel.GetByID(resultObject.BusinessObject.ID, objectTypeName);
+
+            //Add to the  collection
+            clientObjectsCollection.push(clientObject);
+        }
+
         //Return result
-        return expressionResult;
+        return clientObjectsCollection;
     }
     var featureSelectionsDifferent = function (firstBusinessObj, secondBusinessObj) {
 
@@ -622,11 +623,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         var fieldValue = _uiTemplate[fieldName]
         return fieldValue;
     }
-    this.GetUIControlTypeData = function (controltype) {
-        var controlTypeObj = getUIControlTypeData(controltype);
-
-        return controlTypeObj;
-    }
     this.EvalDatabindExpression = function (expression) {
         return evalDatabindExpression(expression);
     }
@@ -735,7 +731,7 @@ var InteractiveView = function (container, configurationDataModelInstance) {
     var _configurationDataModel = configurationDataModelInstance;
     var _container = container;
     var _UIControlInstances = {}; //dictionary to hold all UIControl instances (tempID, UIControl instance)
-    var _UIControlTypes = {}; //collection to keep track of all control types
+    var _loadedCSSs = {}; //keeps track of which css has been registered
     var _clientObjectListeners = { //collection mapping (ID - feature or attribute, tempID)
         features: {},
         attributes: {}
@@ -748,13 +744,6 @@ var InteractiveView = function (container, configurationDataModelInstance) {
     //Private methods
     var evalDatabindExpression = function (expression) {
         return _configurationDataModel.EvalDatabindExpression(expression);
-    }
-    var createControlInstance = function (controlType, wrapperElem, tempID) {
-
-        var controlInstance = null;
-        var controlInstance = new _UIControlTypes[controlType + "Control"](wrapperElem, tempID);
-
-        return controlInstance;
     }
     var loadStaticContent = function () {
 
@@ -771,62 +760,49 @@ var InteractiveView = function (container, configurationDataModelInstance) {
         var calculatedHeight = $(_body).contents().height() + 20;
         $(_iframeInstance).height(Math.max(calculatedHeight, 670));
     }
+    var loadControlCSS = function (controltype) {
+
+        //Load the CSS into the iframe
+        if (_loadedCSSs[controltype] == undefined) {
+            var controlCSS = UIControlTypes.API.GetControlCSS(controltype);
+            $("<style type='text/css'></style>").text(controlCSS).appendTo(_head);
+
+            //
+            _loadedCSSs[controltype] = true;
+        }
+    }
     var initControls = function () {
 
-        //Find all control wrappers
-        var controlWrappers = $(_body).find(".controlwrapper");
+        //Find controltags and register control types 
+        var controltags = $(_body).find(".controltag");
+        $(controltags).each(function (index, value) {
+            var controltag = $(value);
+            var controltype = $(controltag).attr("controltype");
 
-        //Register control types and their javascript
-        $(controlWrappers).each(function (index, value) {
-            var controlWrapper = $(value);
-            var type = $(controlWrapper).attr("controltype");
-
-            if (type == "Checkbox" || type == "Dropdown" || type == "RadiobuttonList") {
-
-                //Load controlType code & content 
-                if (_UIControlTypes[type] == undefined) {
-                    _UIControlTypes[type] = type;
-                    var controlTypeData = _configurationDataModel.GetUIControlTypeData(type);
-                    if (controlTypeData != null) {
-
-                        //Register script
-                        eval(controlTypeData.Script);
-
-                        //Register css
-                        var newStyleElem = $("<style type='text/css'></style>").text(controlTypeData.CSS);
-                        $(_head).append(newStyleElem);
-                    }
-                }
+            //
+            if (controltype == "CheckboxList") { // || controltype == "Dropdown" || controltype == "RadiobuttonList") {
 
                 //Create a new UIControl instance
+                loadControlCSS(controltype);
                 var newTempID = _controlTempIDcounter++;
-                var uicontrolInstance = createControlInstance(type, controlWrapper, newTempID);
+                var uicontrolInstance = UIControlTypes.API.CreateInstanceFromControlTag(controltag, newTempID, InternalMethods);
                 uicontrolInstance.Initialize();
 
                 //Databind the control
-                var boundDataCollection = evalDatabindExpression(uicontrolInstance.GetDatabindExpression());
+                var databindExpression = $(controltag).attr("databinding");
+                var boundDataCollection = evalDatabindExpression(databindExpression);
                 if (boundDataCollection != null) {
                     uicontrolInstance.Databind(boundDataCollection);
                 }
 
-                //Register the control instance
+                //Keep track of the control instance
                 _UIControlInstances[newTempID] = uicontrolInstance;
             }
         });
     }
 
-    //Internal methods (used by control instances)
+    //Collection of methods accessible by UIControls
     var InternalMethods = {};
-    InternalMethods.GetFeature = function (featureID) {
-        var featureClientObject = _configurationDataModel.GetByID(featureID, "feature");
-        return featureClientObject;
-    }
-    InternalMethods.GetFeatureSelection = function (featureID) {
-        var featureClientObject = _configurationDataModel.GetByID(featureID, "feature");
-        var featureSelectionClientObject = featureClientObject.FeatureSelection;
-
-        return featureSelectionClientObject;
-    }
     InternalMethods.GetFeatureSelectionState = function (featureSelectionClientObject) {
         //
         var selectionState = getEnumEntryByID(systemDefaults.enums.featureSelectionStates, featureSelectionClientObject.GetField("SelectionState")).name;
@@ -853,17 +829,17 @@ var InteractiveView = function (container, configurationDataModelInstance) {
         var newSelectionState = null;
         switch (currentSelectionState) {
 
-            //Unselected -> becomes Selected                                                                                                                                                                                                                                                                                 
+            //Unselected -> becomes Selected                                                                                                                                                                                                                                                                                                                
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 newSelectionState = systemDefaults.enums.featureSelectionStates.selected;
                 break;
 
-            //Selected -> becomes Deselected                                                                                                           
+            //Selected -> becomes Deselected                                                                                                                                          
             case systemDefaults.enums.featureSelectionStates.selected.name:
                 newSelectionState = systemDefaults.enums.featureSelectionStates.deselected;
                 break;
 
-            //Deselected -> becomes Unselected                                                                                                            
+            //Deselected -> becomes Unselected                                                                                                                                           
             case systemDefaults.enums.featureSelectionStates.deselected.name:
                 newSelectionState = systemDefaults.enums.featureSelectionStates.unselected;
                 break;
@@ -877,6 +853,8 @@ var InteractiveView = function (container, configurationDataModelInstance) {
             _clientObjectListeners[clientObjType + "s"][dataObjectID] = [];
         _clientObjectListeners[clientObjType + "s"][dataObjectID].push(tempID);
     }
+    InternalMethods.CreateControlTagElem = UIControlTypes.API.CreateControlTagElem;
+    InternalMethods.CreateInstanceFromControlTag = UIControlTypes.API.CreateInstanceFromControlTag;
 
     //Constructor/Initalizers
     this.Initialize = function () {

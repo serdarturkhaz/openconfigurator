@@ -113,40 +113,5 @@ namespace BLL.Services
                 _UITemplateRepository.SaveChanges();
             }
         }
-
-        //UIControls
-        public UIControlDataHolder GetUIControlData(BusinessObjects.UIControlTypes controltype)
-        {
-            //Variables
-            string resourcePath = "BLL.UIControls." + controltype.ToString() + "." + controltype.ToString();
-            string wrapper = "", script = "", html = "", css = "";
-            string wrapperPath = "BLL.UIControls.GenericWrapper.htm";
-
-            //Get the html content and script
-            wrapper = GetEmbeddedUIControlResource(wrapperPath);
-            html = GetEmbeddedUIControlResource(resourcePath + ".htm");
-            css = GetEmbeddedUIControlResource(resourcePath + ".css");
-            script = GetEmbeddedUIControlResource(resourcePath + ".js");
-
-            //
-            UIControlDataHolder holder = new UIControlDataHolder(controltype, wrapper, html, css, script);
-            return holder;
-        }
-        private string GetEmbeddedUIControlResource(string path)
-        {
-            //
-            string result = "";
-
-            //
-            Stream st = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
-            if (st != null)
-            {
-                result = new StreamReader(st).ReadToEnd();
-            }
-
-            //
-            return result;
-        }
-
     }
 }

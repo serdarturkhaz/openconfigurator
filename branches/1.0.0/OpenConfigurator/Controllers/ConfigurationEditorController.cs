@@ -42,7 +42,7 @@ namespace PresentationLayer.Controllers
         [Authorize]
         public JsonNetResult LoadData(int configurationID)
         {
-            //Data return wrapper
+            //Data return controlTagElem
             object[] innerJObj = new object[3];
             JsonNetResult result = new JsonNetResult() { Data = innerJObj };
 
@@ -74,7 +74,7 @@ namespace PresentationLayer.Controllers
         [Authorize]
         public JsonNetResult SaveConfiguration(int configurationID, string configurationName, string featureSelectionsString)
         {
-            //Data return wrapper
+            //Data return controlTagElem
             object[] innerJObj = new object[2];
             JsonNetResult result = new JsonNetResult() { Data = innerJObj };
 
@@ -121,7 +121,7 @@ namespace PresentationLayer.Controllers
         [Authorize]
         public JsonNetResult ToggleFeature(int configurationID, int FeatureID, int newState)
         {
-            //Data return wrapper
+            //Data return controlTagElem
             JsonNetResult result = new JsonNetResult();
 
             //Get the ConfiguratorSession
@@ -148,7 +148,7 @@ namespace PresentationLayer.Controllers
         [Authorize]
         public JsonNetResult EvalDatabindExpression(int configurationID, string expression)
         {
-            //Data return wrapper
+            //Data return controlTagElem
             JsonNetResult result = new JsonNetResult();
 
             //Get the ConfiguratorSession
@@ -273,29 +273,5 @@ namespace PresentationLayer.Controllers
             return result;
         }
 
-        //Method for retreiving UIControlTypes
-        [Authorize]
-        public JsonNetResult GetUIControlTypeData(string ControlType)
-        {
-            //Data return wrapper
-            JsonNetResult result = new JsonNetResult();
-
-            //Create service
-            UITemplateService _uiTemplateService = new UITemplateService(SessionData.LoggedInUser.ID);
-
-            //Attempt to retreive controltype data
-            try
-            {
-                UIControlTypes controltype = (UIControlTypes)Enum.Parse(typeof(UIControlTypes), ControlType, true);
-                result.Data = _uiTemplateService.GetUIControlData(controltype);
-            }
-            catch (Exception ex)
-            {
-                result.Data = null;
-            }
-
-            //
-            return result;
-        }
     }
 }

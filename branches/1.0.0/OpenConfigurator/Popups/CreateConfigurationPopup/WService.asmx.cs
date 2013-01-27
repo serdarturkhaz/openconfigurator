@@ -72,7 +72,7 @@ namespace PresentationLayer.Popups.CreateConfigurationPopup
                 Script = sr.ReadToEnd();
             }
 
-            //HTML
+            //InnerHTML
             string HTML = "";
             st = Assembly.GetExecutingAssembly().GetManifestResourceStream(GetType(), "content.htm");
             if (st != null)

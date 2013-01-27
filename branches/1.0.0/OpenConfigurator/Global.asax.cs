@@ -27,22 +27,23 @@ namespace PresentationLayer
             );
 
             
-            //
+            //Map other routes
             routes.MapRoute(
                 "ConfigurationEditor", // Route name
                 "ConfigurationEditor/{action}/{configurationID}", // URL with parameters
                 new { controller = "ConfigurationEditor", action = "ConfigurationEditor", configurationID = "" } // Parameter defaults
             );
             routes.MapRoute(
-                "UITemplateEditor", // Route name
-                "UITemplateEditor/{action}/{uiTemplateID}", // URL with parameters
-                new { controller = "UITemplateEditor", action = "UITemplateEditor", uiTemplateID = "" } // Parameter defaults
+                "UITemplateEditor", 
+                "UITemplateEditor/{action}/{uiTemplateID}", // 
+                new { controller = "UITemplateEditor", action = "UITemplateEditor", uiTemplateID = "" } 
             );
             routes.MapRoute(
-                "ModelEditor", // Route name
-                "ModelEditor/{action}/{modelID}", // URL with parameters
-                new { controller = "ModelEditor", action = "ModelEditor", modelID = "" } // Parameter defaults
+                "ModelEditor", 
+                "ModelEditor/{action}/{modelID}", 
+                new { controller = "ModelEditor", action = "ModelEditor", modelID = "" }
             );
+
         }
 
         protected void Application_Start()

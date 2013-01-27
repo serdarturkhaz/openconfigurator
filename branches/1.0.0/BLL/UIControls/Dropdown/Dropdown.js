@@ -1,4 +1,5 @@
-﻿_UIControlTypes.DropdownControl = function (wrapperElement, tempID) {
+﻿UIControlTypes.Controls.Dropdown.Dependencies = [];
+UIControlTypes.Controls.Dropdown.Class = function (instanceID, internalMethodsCollection) {
 
     //Inner classes
     var DropdownOptionControl = function (containerControl, objectID, objectName, initialSelected, initialDisabled) {
@@ -27,7 +28,7 @@
         }
         var setDisabled = function (disabledBool) {
 
-            if (disabledBool == true) { 
+            if (disabledBool == true) {
                 $(_innerControl).attr("disabled", "disabled");
             } else {
                 $(_innerControl).removeAttr("disabled");
@@ -58,19 +59,19 @@
     }
 
     //Fields
-    var _wrapperElement = wrapperElement, _innerControl = null;
-    var _tempID = tempID, _dataBindingExpression;
+    var _controlTagElem = null, _innerControl = null;
+    var _instanceID = instanceID;
     var _currentSelectionID = null; //ID of currently selected boundFeature
     var _childOptionControls = {}, _defaultOptionControl = null;
     var _boundClientFeatures = {};
     var _thisDropdownControl = this;
 
     //Properties
-    this.GetTempID = function () {
-        return _tempID;
+    this.GetInstanceID = function () {
+        return _instanceID;
     }
-    this.GetDatabindExpression = function () {
-        return _dataBindingExpression;
+    this.SetControlTagElem = function (controlTagElem) {
+        _controlTagElem = controlTagElem;
     }
 
     //Private methods
@@ -85,25 +86,20 @@
         _defaultOptionControl.Initialize();
     }
     var databind = function (dataCollection) {
-
-        //Clear any inner content and setup the default option
-        resetInnerContent();
-
+        
         //Bind to the Features
-        if (dataCollection.length > 1 && dataCollection[0].Type == "Feature") {
-
-            //Loop through bound features
+        if (dataCollection.length > 1 && dataCollection[0].GetType() == "feature") {
             for (var i = 0; i < dataCollection.length; i++) {
 
                 //Get the feature
-                var boundFeatureID = dataCollection[i].Object.ID;
-                var boundClientFeature = InternalMethods.GetFeature(boundFeatureID);
+                var boundClientFeature = dataCollection[i];
+                var boundFeatureID = boundClientFeature.GetField("ID");
                 _boundClientFeatures[boundFeatureID] = boundClientFeature;
 
                 //Get details for html option element
                 var name = boundClientFeature.GetField("Name");
                 var isDisabled = boundClientFeature.FeatureSelection.GetField("Disabled");
-                var isSelected = InternalMethods.GetFeatureSelectionState(boundClientFeature.FeatureSelection) == "selected";
+                var isSelected = internalMethodsCollection.GetFeatureSelectionState(boundClientFeature.FeatureSelection) == "selected";
 
                 //Create html option
                 var newOptionControl = new DropdownOptionControl(_innerControl, boundFeatureID, name, isSelected, isDisabled);
@@ -111,7 +107,7 @@
                 _childOptionControls[boundFeatureID] = newOptionControl;
 
                 //Listen to data for changes
-                InternalMethods.RegisterClientObjectListener("feature", boundFeatureID, _thisDropdownControl);
+                internalMethodsCollection.RegisterClientObjectListener("feature", boundFeatureID, _thisDropdownControl);
             }
         }
     }
@@ -120,8 +116,10 @@
     this.Initialize = function () {
 
         //Get fields
-        _dataBindingExpression = $(wrapperElement).attr("databinding");
-        _innerControl = $(wrapperElement).find(".DropdownControl");
+        _innerControl = $(_controlTagElem).find(".DropdownControl");
+
+        //Clear any inner content and setup the default option
+        resetInnerContent();
 
         //Setup eventhandlers
         $(_innerControl).bind("change", function () {
@@ -151,7 +149,7 @@
             var boundFeatureID = boundFeature.GetField("ID");
 
             //Update the corresponding OptionControl 
-            var selected = InternalMethods.GetFeatureSelectionState(boundFeature.FeatureSelection) == "selected";
+            var selected = internalMethodsCollection.GetFeatureSelectionState(boundFeature.FeatureSelection) == "selected";
             var disabled = boundFeature.FeatureSelection.GetField("Disabled");
             var optionControl = _childOptionControls[boundFeatureID];
             optionControl.Update(selected, disabled);
@@ -167,35 +165,35 @@
         //Set the state for the default OptionControl
         switch (true) {
 
-            //Single feature selected, nothing disabled or only other features disabled  -> enable default                  
+            //Single feature selected, nothing disabled or only other features disabled  -> enable default                   
             case (selectedFeatures.length == 1 && (disabledFeatures.length == 0 || disabledFeatures.length == (totalNrFeatures - 1))):
                 _currentSelectionID = selectedFeatures[0].GetField("ID");
                 _defaultOptionControl.Update(false, false);
                 break;
 
-            //Single feature selected, everything disabled -> disable default                
+            //Single feature selected, everything disabled -> disable default                 
             case (selectedFeatures.length == 1 && disabledFeatures.length == totalNrFeatures):
                 _currentSelectionID = selectedFeatures[0].GetField("ID");
                 _defaultOptionControl.Update(false, true);
                 break;
 
-            //Nothing selected, nothing disabled -> set default to selected & enabled                            
+            //Nothing selected, nothing disabled -> set default to selected & enabled                             
             case (selectedFeatures.length == 0 && (disabledFeatures.length == 0 || disabledFeatures.length < (totalNrFeatures - 1))):
                 _currentSelectionID = "default";
                 _defaultOptionControl.Update(true, false);
                 break;
 
-            //Nothing selected, everything disabled -> set default to selected & disabled                             
+            //Nothing selected, everything disabled -> set default to selected & disabled                              
             case (selectedFeatures.length == 0 && disabledFeatures.length == totalNrFeatures):
                 _currentSelectionID = "default";
                 _defaultOptionControl.Update(true, true);
                 break;
 
-            //More than one feature selected                              
+            //More than one feature selected                               
             case (selectedFeatures.length > 0):
                 throw {
                     name: "Error",
-                    message: "DropDownControl cannot have more than one bound feature selected at the same time."
+                    message: "Dropdown cannot have more than one bound feature selected at the same time."
                 }
                 break;
         }
@@ -218,7 +216,7 @@
             //Set selectionState to unselected for the previously selected feature
             if (oldSelectionID != null) {
                 var oldSelectionFeature = _boundClientFeatures[oldSelectionID];
-                InternalMethods.SetFeatureSelectionState(oldSelectionFeature.FeatureSelection.GUID, "unselected");
+                internalMethodsCollection.SetFeatureSelectionState(oldSelectionFeature.FeatureSelection.GUID, "unselected");
             }
         }
         //If a boundFeature option was selected
@@ -226,7 +224,7 @@
 
             //Set selectionState to selected for the boundFeature
             var currentSelectionFeature = _boundClientFeatures[_currentSelectionID];
-            InternalMethods.SetFeatureSelectionState(currentSelectionFeature.FeatureSelection.GUID, "selected");
+            internalMethodsCollection.SetFeatureSelectionState(currentSelectionFeature.FeatureSelection.GUID, "selected");
         }
 
 

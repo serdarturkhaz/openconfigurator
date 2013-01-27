@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="287d4d52-4c5d-42e0-8efb-b26186dfbe9e" name="UIControlTypes" linkedPackageId="a864a875-9467-45b6-b83a-af81394100f6" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <packagedElements>
+    <logicalClassDesignerModelHasPackages>
+      <package Id="011fc3c6-b3f1-432c-be54-42d27882def3" name="UIControls">
+        <elementDefinition Id="8d1645a5-f9a9-4f88-9111-1ff52c39d598" />
+        <packagedElements>
+          <packageHasNamedElement>
+            <class Id="8aaf9e73-3939-4b60-a9a2-4b8275ea363b" name="DropdownList" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <elementDefinition Id="ebe06b30-831b-4024-839a-398e84cfa7fa" />
+              <generalsInternal>
+                <generalization Id="ca4dd298-499a-40ff-928e-5e07fd1c629e" isSubstitutable="false">
+                  <classMoniker Id="1ca258b1-8f25-4142-81c7-5eb3d4d1bab0" LastKnownName="UIControlType" />
+                  <elementDefinition Id="ad2018ea-13d4-455b-8801-c3d672ffe7d8" />
+                </generalization>
+              </generalsInternal>
+              <targetEnds>
+                <association Id="4cfa18f4-2075-48b2-b0d1-0367bedefbce" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+                  <classMoniker Id="34e0e823-e824-4a22-88bd-e07458b8955f" LastKnownName="DropdownOptionControl" />
+                  <relationshipOwnedElementsInternal>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="cd55cf53-8b90-4980-aec9-bc82a3180e6e" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                        <elementDefinition Id="08c3f1f2-196d-42cd-98e7-961595fbbf6a" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="7497aee6-70fd-4814-b5fd-f668c90993ba" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <lowerValueInternal>
+                          <literalString Id="48433368-1aa0-4979-abd7-e5c0df8543c6" name="Lower" value="*">
+                            <elementDefinition Id="f548b4f2-365e-4410-9ae2-ff4bf7a08609" />
+                          </literalString>
+                        </lowerValueInternal>
+                        <upperValueInternal>
+                          <literalString Id="76198753-a66b-4092-957c-66657c909cf4" name="Upper" value="*">
+                            <elementDefinition Id="71a820f9-f1e2-4aa9-9274-09769a83a874" />
+                          </literalString>
+                        </upperValueInternal>
+                        <elementDefinition Id="7944cecc-314e-4aa7-83f5-73a8a2bfa8c2" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                  </relationshipOwnedElementsInternal>
+                  <elementDefinition Id="fe4f5c32-b0b1-459d-a6ff-e6fe24081f57" />
+                </association>
+              </targetEnds>
+            </class>
+          </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="a75ccb03-4276-4ed6-a809-3f78b6321efa" name="RadiobuttonList" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <elementDefinition Id="834cff20-e233-46aa-ae9d-96831a954169" />
+              <generalsInternal>
+                <generalization Id="c5059762-fa89-49c3-871c-9c1827cfc99f" isSubstitutable="false">
+                  <classMoniker Id="1ca258b1-8f25-4142-81c7-5eb3d4d1bab0" LastKnownName="UIControlType" />
+                  <elementDefinition Id="40373db6-36bf-4df5-91e1-cf15f0af6712" />
+                </generalization>
+              </generalsInternal>
+              <targetEnds>
+                <association Id="77ede6d8-2c44-4076-948c-1dfa9a165ece" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+                  <classMoniker Id="4016f31f-388a-4c8e-92c5-42a7a8944341" LastKnownName="RadioOptionControl" />
+                  <relationshipOwnedElementsInternal>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="ce9232d9-2cb7-4c29-bff4-39cafb56b2d8" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                        <elementDefinition Id="3024d6c4-c1a4-4802-b1cc-8aa713e0dd05" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="f2cab444-9fe5-4ac6-86c8-3c5475156641" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <lowerValueInternal>
+                          <literalString Id="51bdf114-53bc-42b2-8e4c-c43f39de18cf" name="Lower" value="*">
+                            <elementDefinition Id="58efb934-9185-4ef9-a8d2-b314301f02be" />
+                          </literalString>
+                        </lowerValueInternal>
+                        <upperValueInternal>
+                          <literalString Id="05cb845c-0ee4-4ed9-8b1c-abb67e6197b7" name="Upper" value="*">
+                            <elementDefinition Id="5bae8225-751c-4e64-a816-d2ec05e6f2ef" />
+                          </literalString>
+                        </upperValueInternal>
+                        <elementDefinition Id="dc0794b5-f95e-458f-9ef5-afd342128459" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                  </relationshipOwnedElementsInternal>
+                  <elementDefinition Id="349f7591-6cdc-4089-9beb-e1acb94ec143" />
+                </association>
+              </targetEnds>
+            </class>
+          </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="8b401f37-d65e-48fb-82c3-b938efbbf511" name="CheckboxList" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <elementDefinition Id="236f499a-58be-4978-8c74-7dde6030d455" />
+              <generalsInternal>
+                <generalization Id="6d9ed8b5-9f4f-41ea-ad25-472a6fa14a9a" isSubstitutable="false">
+                  <classMoniker Id="1ca258b1-8f25-4142-81c7-5eb3d4d1bab0" LastKnownName="UIControlType" />
+                  <elementDefinition Id="d4ab8586-cb01-4b84-bd39-09fc2318fedf" />
+                </generalization>
+              </generalsInternal>
+              <targetEnds>
+                <association Id="a3f61e62-0324-4a93-888d-fdb31a8261da" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+                  <classMoniker Id="fc198502-b32c-400c-8cd3-58e230e390ad" LastKnownName="Checkbox" />
+                  <relationshipOwnedElementsInternal>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="c33e6413-bdc2-4220-8ef2-b9514662dc11" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                        <elementDefinition Id="103ddd02-7a1f-4416-9e39-ae0330cb7937" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                    <associationHasOwnedEnds>
+                      <memberEnd Id="2a0e3997-4837-41ac-968b-0be577e6e77a" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                        <lowerValueInternal>
+                          <literalString Id="4bd94129-4770-47d2-b6f3-12792153f1ee" name="Lower" value="*">
+                            <elementDefinition Id="c7978a85-f22e-44cc-abc5-9263bc2026fd" />
+                          </literalString>
+                        </lowerValueInternal>
+                        <upperValueInternal>
+                          <literalString Id="e3e6a04d-4cf6-4e04-a547-937e1466c38c" name="Upper" value="*">
+                            <elementDefinition Id="b0355ed5-61ce-4682-945e-d00d8019ffb9" />
+                          </literalString>
+                        </upperValueInternal>
+                        <elementDefinition Id="f96868d1-7316-48ec-9c5e-e8cd9c1fbaf5" />
+                      </memberEnd>
+                    </associationHasOwnedEnds>
+                  </relationshipOwnedElementsInternal>
+                  <elementDefinition Id="bf621708-90b0-4447-b61a-52e7dd792071" />
+                </association>
+              </targetEnds>
+            </class>
+          </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="fc198502-b32c-400c-8cd3-58e230e390ad" name="Checkbox" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <elementDefinition Id="82b9a91e-16f3-4950-99b7-23a24d847d24" />
+              <generalsInternal>
+                <generalization Id="b02d978f-971f-42fa-92c4-3d3aa5e51b27" isSubstitutable="false">
+                  <classMoniker Id="1ca258b1-8f25-4142-81c7-5eb3d4d1bab0" LastKnownName="UIControlType" />
+                  <elementDefinition Id="40ba4954-5816-4c91-804b-f5655c959959" />
+                </generalization>
+              </generalsInternal>
+            </class>
+          </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="4016f31f-388a-4c8e-92c5-42a7a8944341" name="RadioOptionControl" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <elementDefinition Id="84b98c63-1dc0-4772-8f43-2e51ead52d0c" />
+            </class>
+          </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="34e0e823-e824-4a22-88bd-e07458b8955f" name="DropdownOptionControl" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <elementDefinition Id="e43b5f99-2ec9-4efb-b95b-e2f0fcd57048" />
+            </class>
+          </packageHasNamedElement>
+          <packageHasNamedElement>
+            <class Id="1ca258b1-8f25-4142-81c7-5eb3d4d1bab0" name="UIControlType" isAbstract="false" isLeaf="false" isActiveClass="false">
+              <elementDefinition Id="3fc25ec2-6663-4564-808b-b82ebc3214b1" />
+              <suppliersInternal>
+                <dependency Id="7bf4c675-452d-43ca-8a1a-bfa43443c2cb">
+                  <classMoniker Id="a40da790-d0e0-4dc9-b036-ed5efec61507" LastKnownName="InternalMethods" />
+                  <elementDefinition Id="3f623924-6ae6-467f-9514-6c8e444ddaa1" />
+                </dependency>
+              </suppliersInternal>
+              <ownedOperationsInternal>
+                <operation Id="81c03e80-cb36-41cf-8ab1-1674f7f5b146" name="GetTempID" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <elementDefinition Id="a83f078f-d0ec-4b66-ac25-17ede59d125c" />
+                </operation>
+                <operation Id="03bc4952-a055-4d7e-b12c-e1c8c7126928" name="GetDatabindExpression" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <elementDefinition Id="c6cbda2b-8adf-4fd7-a00e-c8a9e8313a60" />
+                </operation>
+                <operation Id="95e6a040-3918-437e-a26d-cd29210faeb9" name="Initialize" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <elementDefinition Id="8d20cae8-4df8-4230-93dd-0ee8944596ae" />
+                </operation>
+                <operation Id="0777376f-1026-4b03-9625-1d94d6d27625" name="Databind" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <elementDefinition Id="599b904e-f68b-496d-b5d8-8d294d2e05a0" />
+                  <ownedParameters>
+                    <operationHasOwnedParameters>
+                      <parameter Id="e609fe7e-0f56-4b58-aea1-b95805ba56d0" name="clientObjects" direction="In" isUnique="false">
+                        <elementDefinition Id="39fa3073-fb4a-4510-bc09-4d68e85e9d11" />
+                      </parameter>
+                    </operationHasOwnedParameters>
+                  </ownedParameters>
+                </operation>
+                <operation Id="5f15a1ab-7c37-4e82-9fc4-564afcb7244e" name="ReloadData" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+                  <elementDefinition Id="801f8122-d875-44e2-b322-e1147f0e0cbf" />
+                  <ownedParameters>
+                    <operationHasOwnedParameters>
+                      <parameter Id="de5d4f34-d3e1-4391-8ac8-b4e41e753f44" name="modifiedClientObjects" direction="In" isUnique="false">
+                        <elementDefinition Id="f2e7ec7c-cea9-415b-b6d2-b1cbd661875e" />
+                      </parameter>
+                    </operationHasOwnedParameters>
+                  </ownedParameters>
+                </operation>
+              </ownedOperationsInternal>
+            </class>
+          </packageHasNamedElement>
+        </packagedElements>
+      </package>
+    </logicalClassDesignerModelHasPackages>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="14d9f86d-82a0-4fdc-b819-dfc7bb8db434" name="InteractiveView" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="c1182566-22be-4c33-91d2-2f12c102cf90" />
+        <suppliersInternal>
+          <dependency Id="9c7a3fc5-6169-4038-abbc-d0a59324a1b1">
+            <classMoniker Id="eda0c7df-d66d-47f1-946a-4c19a46bea2f" LastKnownName="UIControlTypes.API" />
+            <elementDefinition Id="9783d93f-1613-4c21-95c0-a2abe41f54f6" />
+          </dependency>
+        </suppliersInternal>
+        <targetEnds>
+          <association Id="7c0a6ecf-8522-4cbd-9e28-9622006334df" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <classMoniker Id="1ca258b1-8f25-4142-81c7-5eb3d4d1bab0" LastKnownName="UIControlType" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="c3e76c82-fbcb-45e7-a227-a5f21bb35ca4" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="1fa8a3df-1bc4-44ac-8326-9370fbd6a5fc" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="7f6b14b6-1e90-4c94-9660-dec10cb6cd30" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <lowerValueInternal>
+                    <literalString Id="9a294231-4081-4f54-9bf1-12097b98b80d" name="Lower" value="*">
+                      <elementDefinition Id="7a29b1ba-7f17-407d-89b0-492df91b45c3" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="ec1e7c21-492c-47ec-92ea-ebf33e3469be" name="Upper" value="*">
+                      <elementDefinition Id="feebe0ee-b516-4c07-9102-486ef4b4d424" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="6df8a1b1-e4e9-403e-bc44-4cabd8893cc8" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="17abe653-271c-4d2e-8a3a-74d00f0fad28" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="a40da790-d0e0-4dc9-b036-ed5efec61507" name="InternalMethods" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="50d773d1-5c9d-4592-94d0-27dbbe05b068" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="eda0c7df-d66d-47f1-946a-4c19a46bea2f" name="UIControlTypes.API" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="4c0fd9aa-ca2e-435a-86e2-b61cfcc86641" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+  </packagedElements>
+  <package Id="a864a875-9467-45b6-b83a-af81394100f6" name="Documentation">
+    <elementDefinition Id="7fe7c17e-b471-4379-ad6e-de9b6f9a7747" />
+    <profileInstances>
+      <packageHasProfileInstances Id="b11ef1ed-bab7-403b-b2d4-42f1ca599f83">
+        <profileInstance Id="faac6561-0b6a-48d7-9b4a-e1bc75bba12b" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="e462b3ea-2d44-41f3-9cfd-999345cac2cc">
+        <profileInstance Id="1065463c-28e9-44df-9d36-79e6a2c6b7cb" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
+  </package>
+</logicalClassDesignerModel>
