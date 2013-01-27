@@ -1504,21 +1504,17 @@ namespace BLL.BusinessObjects
         #endregion
 
     }
-    public class UIControlDataHolder
+    public class UIControlResourceHolder
     {
         //Fields
-        private string _wrapper;
-        private string _html, _css, _javascript;
-
-        
+        private string _innerHtml, _css, _javascript;
         private string _type;
 
         //Constructor
-        public UIControlDataHolder(BusinessObjects.UIControlTypes type, string wrapper, string html, string css, string javascript)
+        public UIControlResourceHolder(BusinessObjects.UIControlTypes type, string innerHtml, string css, string javascript)
         {
             this._type = type.ToString();
-            this._wrapper = wrapper;
-            this._html = html;
+            this._innerHtml = innerHtml;
             this._css = css;
             this._javascript = javascript;
         }
@@ -1529,16 +1525,11 @@ namespace BLL.BusinessObjects
             get { return _type; }
             set { _type = value; }
         }
-        public string Wrapper
-        {
-            get { return _wrapper; }
-            set { _wrapper = value; }
-        }
-        public string HTML
+        public string InnerHTML
         {
             get
             {
-                return _html;
+                return _innerHtml;
             }
         }
         public string CSS

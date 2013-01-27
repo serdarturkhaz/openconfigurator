@@ -1,4 +1,5 @@
-﻿_UIControlTypes.CheckboxControl = function (wrapperElement, tempID) {
+﻿UIControlTypes.Controls.Checkbox.Dependencies = [];
+UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCollection) {
 
     //Selection states
     var selectionStates = {
@@ -14,18 +15,18 @@
     }
 
     //Fields
-    var _wrapperElement = wrapperElement, _innerControl = null;
-    var _tempID = tempID, _dataBindingExpression = "";
+    var _controlTagElem = null, _innerControl = null;
+    var _instanceID = instanceID;
     var _currentSelectionState = selectionStates.unselected, _disabled = false;
-    var _boundClientFeature;
+    var _boundClientFeature = null;
     var _thisCheckboxControl = this;
 
     //Properties
-    this.GetTempID = function () {
-        return _tempID;
+    this.GetInstanceID = function () {
+        return _instanceID;
     }
-    this.GetDatabindExpression = function () {
-        return _dataBindingExpression;
+    this.SetControlTagElem = function (controlTagElem) {
+        _controlTagElem = controlTagElem;
     }
 
     //Private methods
@@ -49,7 +50,7 @@
             if (!$(_innerControl).is("[toggleable]")) {
                 $(_innerControl).attr("toggleable", "toggleable");
                 $(_innerControl).bind("click", function () {
-                    internalCheckboxClicked.RaiseEvent();
+                    internalCheckboxToggled.RaiseEvent();
                 });
             }
         }
@@ -65,19 +66,19 @@
     var databind = function (dataCollection) {
 
         //Bind to the Feature
-        if (dataCollection.length == 1 && dataCollection[0].Type == "Feature") {
+        if (dataCollection.length == 1 && dataCollection[0].GetType() == "feature") {
 
             //Get the feature
-            var boundFeatureID = dataCollection[0].Object.ID;
-            _boundClientFeature = InternalMethods.GetFeature(boundFeatureID);
+            _boundClientFeature = dataCollection[0];
+            var boundFeatureID = _boundClientFeature.GetField("ID");
 
             //Load initial details from the feature selection
-            var initialState = InternalMethods.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
+            var initialState = internalMethodsCollection.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
             setSelectionState(initialState);
             setDisabled(_boundClientFeature.FeatureSelection.GetField("Disabled"));
 
             //Listen to data for changes
-            InternalMethods.RegisterClientObjectListener("feature", boundFeatureID, _thisCheckboxControl);
+            internalMethodsCollection.RegisterClientObjectListener("feature", boundFeatureID, _thisCheckboxControl);
         }
     }
 
@@ -85,11 +86,10 @@
     this.Initialize = function () {
 
         //Get fields
-        _dataBindingExpression = $(wrapperElement).attr("databinding");
-        _innerControl = $(wrapperElement).find(".CheckboxControl");
+        _innerControl = $(_controlTagElem).find(".CheckboxControl");
 
         //Setup eventhandlers
-        internalCheckboxClicked.Add(new EventHandler(onInternalCheckboxClicked));
+        internalCheckboxToggled.Add(new EventHandler(onInternalCheckboxToggled));
     }
 
     //Public methods
@@ -102,16 +102,16 @@
         _boundClientFeature = modifiedClientObjects[0];
 
         //Update state
-        var newState = InternalMethods.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
+        var newState = internalMethodsCollection.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
         setSelectionState(newState);
         setDisabled(_boundClientFeature.FeatureSelection.GetField("Disabled"));
     }
 
     //Events
-    var internalCheckboxClicked = new Event();
+    var internalCheckboxToggled = new Event();
 
     //Eventhandlers
-    var onInternalCheckboxClicked = function () {
-        InternalMethods.ToggleFeatureSelectionState(_boundClientFeature.FeatureSelection.GUID);
+    var onInternalCheckboxToggled = function () {
+        internalMethodsCollection.ToggleFeatureSelectionState(_boundClientFeature.FeatureSelection.GUID);
     }
 }

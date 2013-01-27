@@ -19,57 +19,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BLL.Services;
+using System.Web.Security;
 using PresentationLayer.Common;
-using Newtonsoft.Json.Linq;
 using BLL.BusinessObjects;
-using System.Globalization;
-using System.Reflection;
-using System.Collections;
+using BLL.Services;
 
 namespace PresentationLayer.Controllers
 {
-    using BLL.Parsers;
-
-    public class UITemplateEditorController : Controller
+    public class CommonController : Controller
     {
-        [Authorize]
-        public ActionResult UITemplateEditor(int uiTemplateID)
-        {
-            //Load the UITemplateID
-            ViewBag.UITemplateID = uiTemplateID;
 
-            return View();
+        public void Logout()
+        {
+            WebSecurity.Logout();
+            FormsAuthentication.RedirectToLoginPage();
         }
+
+        //
         [Authorize]
-        public JsonNetResult LoadData(int uiTemplateID)
+        public JsonNetResult GetControlResources(string ControlType)
         {
             //Data return controlTagElem
             JsonNetResult result = new JsonNetResult();
 
-            //Get the UITemplate
-            UITemplateService _uiTemplatesService = new UITemplateService(SessionData.LoggedInUser.ID);
-            BLL.BusinessObjects.UITemplate template = _uiTemplatesService.GetByID(uiTemplateID);
-            result.Data = template;
+            //Create service
+            UIControlTypes controltype = (UIControlTypes)Enum.Parse(typeof(UIControlTypes), ControlType, true);
+            result.Data = UIControlsService.GetUIControlResources(controltype);
 
+            //
             return result;
         }
         [Authorize]
-        public void SaveUITemplate(int uiTemplateID, string name, string content, string css)
+        public JsonNetResult GetCommonResources()
         {
-            //Create service
-            UITemplateService _uiTemplateService = new UITemplateService(SessionData.LoggedInUser.ID);
+            //Data return controlTagElem
+            JsonNetResult result = new JsonNetResult();
 
-            //Save changes to template
-            UITemplate currentTemplate = _uiTemplateService.GetByID(uiTemplateID);
-            currentTemplate.Name = name;
-            currentTemplate.Content = content;
-            currentTemplate.Stylesheet = css;
+            //Get resources
+            var commonResources = new
+            {
+                GenericControlTag = UIControlsService.GetGenericControlTag(),
+            };
+            result.Data = commonResources;
 
             //
-            _uiTemplateService.Update(currentTemplate);
+            return result;
         }
-
-        
     }
 }

@@ -1,6 +1,6 @@
 ﻿//Settings/initializations****************************************************************************************
 
-//Ajax
+//Ajax settings
 $(document).ready(function () {
     $.ajaxSetup({
         type: "POST",
@@ -117,6 +117,9 @@ function deleteRow(objectid, tbody) {
 }
 //****************************************************************************************************************
 //Helper methods/small plugins************************************************************************************
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 function getEnumEntryByID(collection, id) {
     for (var key in collection) {
         var enumEntry = collection[key];
@@ -133,13 +136,11 @@ function paramsToString(collection) {
     }
     return returnString;
 }
-
 function sortUnique(array) {
     return $.grep(array, function (el, index) {
         return index == $.inArray(el, array);
     });
 }
-
 var readyToPress = true;
 $.ctrl = function (key, callback, args) {
     $(document).keydown(function (e) {

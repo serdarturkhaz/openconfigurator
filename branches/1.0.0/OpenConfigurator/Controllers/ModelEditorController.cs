@@ -44,7 +44,7 @@ namespace PresentationLayer.Controllers
         [Authorize]
         public JsonNetResult LoadData(int modelID)
         {
-            //Data return wrapper
+            //Data return controlTagElem
             JsonNetResult result = new JsonNetResult();
 
             //Model

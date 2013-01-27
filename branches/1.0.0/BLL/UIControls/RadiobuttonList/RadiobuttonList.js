@@ -1,4 +1,5 @@
-﻿_UIControlTypes.RadiobuttonListControl = function (wrapperElement, tempID) {
+﻿UIControlTypes.Controls.RadiobuttonList.Dependencies = [];
+UIControlTypes.Controls.RadiobuttonList.Class = function (instanceID, internalMethodsCollection) {
 
     //Inner classes
     var RadioOptionControl = function (containerControl, objectID, objectName, initialSelected, initialDisabled, groupName) {
@@ -6,7 +7,7 @@
         //Fields
         var _containerControl = containerControl;
         var _objectID = objectID, _objectName = objectName, _groupName = groupName;
-        var _innerControl = null;
+        var _innerControl = null, _input = null;
         var _thisRadioOptionControl = this;
 
         //Properties
@@ -20,11 +21,10 @@
         //Private methods
         var setSelected = function (selectedBool) {
             if (selectedBool == true) {
-                $(_innerControl).find("input").attr("selected", "selected");
+                $(_innerControl).find("input").attr("checked", "checked");
             } else {
-                $(_innerControl).find("input").removeAttr("selected");
+                $(_innerControl).find("input").removeAttr("checked");
             }
-
         }
         var setDisabled = function (disabledBool) {
 
@@ -34,6 +34,8 @@
                 //Remove click event
                 $(_innerControl).unbind("click");
                 $(_innerControl).removeAttr("toggleable");
+
+                //Disable input
                 $(_innerControl).find("input").attr("disabled", "disabled");
             }
             //Enable
@@ -43,9 +45,12 @@
                 if (!$(_innerControl).is("[toggleable]")) {
                     $(_innerControl).attr("toggleable", "toggleable");
                     $(_innerControl).bind("click", function () {
-                        internalOptionClicked.RaiseEvent();
+                        $(_input).click();
                     });
                 }
+
+                //Enable input
+                $(_innerControl).find("input").removeAttr("disabled");
             }
         }
 
@@ -54,7 +59,7 @@
 
             //Create the html option
             _innerControl = $("<div class='RadioOption'></div>");
-            var radioInput = $("<input type='radio' />").attr({
+            _input = $("<input type='radio' />").attr({
                 "name": _groupName,
                 "value": _objectID
             }).appendTo(_innerControl);
@@ -65,8 +70,9 @@
             setDisabled(initialDisabled);
 
             //Setup eventhandlers
-            internalOptionClicked.Add(new EventHandler(onInternalOptionClicked));
-
+            $(_input).bind("click", function (e) {
+                e.stopPropagation();
+            });
 
             //Add to container
             $(_innerControl).appendTo(_containerControl);
@@ -77,30 +83,22 @@
             setSelected(selected);
             setDisabled(disabled);
         }
-
-        //Events
-        var internalOptionClicked = new Event();
-
-        //Event handlers
-        var onInternalOptionClicked = function () {
-            alert("radio option clicked ! ");
-        }
     }
 
     //Fields
-    var _wrapperElement = wrapperElement, _innerControl = null;
-    var _tempID = tempID, _dataBindingExpression;
+    var _controlTagElem = null, _innerControl = null;
+    var _instanceID = instanceID;
     var _currentSelectionID = null; //ID of currently selected boundFeature
     var _boundClientFeatures = {};
     var _childOptionControls = {}, _defaultOptionControl = null;
     var _thisRadiobuttonListControl = this;
 
     //Properties
-    this.GetTempID = function () {
-        return _tempID;
+    this.GetInstanceID = function () {
+        return _instanceID;
     }
-    this.GetDatabindExpression = function () {
-        return _dataBindingExpression;
+    this.SetControlTagElem = function (controlTagElem) {
+        _controlTagElem = controlTagElem;
     }
 
     //Private methods
@@ -111,37 +109,32 @@
         $(_innerControl).html("");
 
         //Add a default option
-        _defaultOptionControl = new RadioOptionControl(_innerControl, "default", "No selection", true, false, "group" + _tempID);
+        _defaultOptionControl = new RadioOptionControl(_innerControl, "default", "No selection", true, false, "group" + _instanceID);
         _defaultOptionControl.Initialize();
     }
     var databind = function (dataCollection) {
 
-        //Clear any inner content and setup the default option
-        resetInnerContent();
-
         //Bind to the Features
-        if (dataCollection.length > 1 && dataCollection[0].Type == "Feature") {
-
-            //Loop through bound features
+        if (dataCollection.length > 1 && dataCollection[0].GetType() == "feature") {
             for (var i = 0; i < dataCollection.length; i++) {
 
                 //Get the feature
-                var boundFeatureID = dataCollection[i].Object.ID;
-                var boundClientFeature = InternalMethods.GetFeature(boundFeatureID);
+                var boundClientFeature = dataCollection[i];
+                var boundFeatureID = boundClientFeature.GetField("ID");
                 _boundClientFeatures[boundFeatureID] = boundClientFeature;
 
                 //Get details for html option element
                 var name = boundClientFeature.GetField("Name");
                 var isDisabled = boundClientFeature.FeatureSelection.GetField("Disabled");
-                var isSelected = InternalMethods.GetFeatureSelectionState(boundClientFeature.FeatureSelection) == "selected";
+                var isSelected = internalMethodsCollection.GetFeatureSelectionState(boundClientFeature.FeatureSelection) == "selected";
 
                 //Create html option
-                var newOptionControl = new RadioOptionControl(_innerControl, boundFeatureID, name, isSelected, isDisabled, "group" + _tempID);
+                var newOptionControl = new RadioOptionControl(_innerControl, boundFeatureID, name, isSelected, isDisabled, "group" + _instanceID);
                 newOptionControl.Initialize();
                 _childOptionControls[boundFeatureID] = newOptionControl;
 
                 //Listen to data for changes
-                InternalMethods.RegisterClientObjectListener("feature", boundFeatureID, _thisRadiobuttonListControl);
+                internalMethodsCollection.RegisterClientObjectListener("feature", boundFeatureID, _thisRadiobuttonListControl);
             }
         }
     }
@@ -150,14 +143,16 @@
     this.Initialize = function () {
 
         //Get fields
-        _dataBindingExpression = $(wrapperElement).attr("databinding");
-        _innerControl = $(wrapperElement).find(".RadiobuttonListControl");
+        _innerControl = $(_controlTagElem).find(".RadiobuttonListControl");
+
+        //Clear any inner content and setup the default option
+        resetInnerContent();
 
         //Setup eventhandlers
-        $(_innerControl).bind("change", function () {
+        $(_innerControl).find("input").live("change", function () {
             internalRadiobuttonListChanged.RaiseEvent();
         });
-        internalRadiobuttonListChanged.Add(new EventHandler(onInternalRadiobuttonListChanged));
+        internalRadiobuttonListChanged.Add(new EventHandler(onInternalRadioOptionChanged));
     }
 
     //Public methods
@@ -166,15 +161,96 @@
     }
     this.ReloadData = function (modifiedClientObjects) {
 
+        //Update the _boundClientFeatures which were modified
+        for (var i = 0; i < modifiedClientObjects.length; i++) {
+            var modifiedClientFeature = modifiedClientObjects[i];
+            _boundClientFeatures[modifiedClientFeature.GetField("ID")] = modifiedClientFeature;
+        }
+
+        //Loop through all the _boundClientFeatures
+        var totalNrFeatures = 0, selectedFeatures = [], disabledFeatures = [];
+        for (var id in _boundClientFeatures) {
+
+            //Get the bound feature
+            var boundFeature = _boundClientFeatures[id];
+            var boundFeatureID = boundFeature.GetField("ID");
+
+            //Update the corresponding OptionControl 
+            var selected = internalMethodsCollection.GetFeatureSelectionState(boundFeature.FeatureSelection) == "selected";
+            var disabled = boundFeature.FeatureSelection.GetField("Disabled");
+            var optionControl = _childOptionControls[boundFeatureID];
+            optionControl.Update(selected, disabled);
+
+            //Keep track of selected features and disabled features
+            totalNrFeatures++;
+            if (selected)
+                selectedFeatures.push(boundFeature);
+            if (disabled)
+                disabledFeatures.push(boundFeature);
+        }
+
+        //Set the state for the default OptionControl
+        switch (true) {
+
+            //Single feature selected, nothing disabled or only other features disabled  -> enable default                   
+            case (selectedFeatures.length == 1 && (disabledFeatures.length == 0 || disabledFeatures.length == (totalNrFeatures - 1))):
+                _currentSelectionID = selectedFeatures[0].GetField("ID");
+                _defaultOptionControl.Update(false, false);
+                break;
+
+            //Single feature selected, everything disabled -> disable default                 
+            case (selectedFeatures.length == 1 && disabledFeatures.length == totalNrFeatures):
+                _currentSelectionID = selectedFeatures[0].GetField("ID");
+                _defaultOptionControl.Update(false, true);
+                break;
+
+            //Nothing selected, nothing disabled -> set default to selected & enabled                             
+            case (selectedFeatures.length == 0 && (disabledFeatures.length == 0 || disabledFeatures.length < (totalNrFeatures - 1))):
+                _currentSelectionID = "default";
+                _defaultOptionControl.Update(true, false);
+                break;
+
+            //Nothing selected, everything disabled -> set default to selected & disabled                              
+            case (selectedFeatures.length == 0 && disabledFeatures.length == totalNrFeatures):
+                _currentSelectionID = "default";
+                _defaultOptionControl.Update(true, true);
+                break;
+
+            //More than one feature selected                               
+            case (selectedFeatures.length > 0):
+                throw {
+                    name: "Error",
+                    message: "RadiobuttonList cannot have more than one bound feature selected at the same time."
+                }
+                break;
+        }
     }
 
     //Events
     var internalRadiobuttonListChanged = new Event();
 
     //Eventhandlers
-    var onInternalRadiobuttonListChanged = function () {
+    var onInternalRadioOptionChanged = function () {
 
+        //Update the _currentSelectionID variable
+        var oldSelectionID = _currentSelectionID;
+        _currentSelectionID = $(_innerControl).find("input:checked").val();
 
+        //If default was selected
+        if (_currentSelectionID == "default") {
 
+            //Set selectionState to unselected for the previously selected feature
+            if (oldSelectionID != null) {
+                var oldSelectionFeature = _boundClientFeatures[oldSelectionID];
+                internalMethodsCollection.SetFeatureSelectionState(oldSelectionFeature.FeatureSelection.GUID, "unselected");
+            }
+        }
+        //If a boundFeature option was selected
+        else if (_currentSelectionID != "default") {
+
+            //Set selectionState to selected for the boundFeature
+            var currentSelectionFeature = _boundClientFeatures[_currentSelectionID];
+            internalMethodsCollection.SetFeatureSelectionState(currentSelectionFeature.FeatureSelection.GUID, "selected");
+        }
     }
 }

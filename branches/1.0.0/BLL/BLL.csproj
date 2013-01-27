@@ -125,6 +125,7 @@
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\AttributeService.cs" />
     <Compile Include="Services\ConstraintService.cs" />
+    <Compile Include="Services\UIControlsService.cs" />
     <Compile Include="Services\UITemplateService.cs" />
     <Compile Include="Services\ServiceInterfaces.cs" />
     <Compile Include="Services\SolverService.cs" />
@@ -152,7 +153,7 @@
     <EmbeddedResource Include="UIControls\Checkbox\Checkbox.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UIControls\GenericWrapper.htm" />
+    <EmbeddedResource Include="UIControls\GenericControlTag.htm" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UIControls\Label\Label.htm" />
@@ -198,6 +199,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UIControls\RadiobuttonList\RadiobuttonList.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UIControls\CheckboxList\CheckboxList.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

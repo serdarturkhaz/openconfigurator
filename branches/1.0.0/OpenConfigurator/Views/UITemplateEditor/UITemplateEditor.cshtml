@@ -3,14 +3,15 @@
     Layout = "~/Views/Master/_LoggedInLayout.cshtml";
 }
 @section headerscripts{
+    <script type="text/javascript" src="../../Scripts/Application/UIControls.js"></script>
     <script type="text/javascript" src="../../Scripts/Pages/UITemplateEditor.js"></script>
-    <script type="text/javascript" src="../../Scripts/Own/CodeMirror/utils/formatting.js"></script>
-    <script type="text/javascript" src="../../Scripts/Own/CodeMirror/utils/closetag.js"></script>
-    <script type="text/javascript" src="../../Scripts/Own/CodeMirror/utils/foldcode.js"></script>
-    <script type="text/javascript" src="../../Scripts/Own/CodeMirror/modes/xml.js"></script>
-    <script type="text/javascript" src="../../Scripts/Own/CodeMirror/modes/css.js"></script>
-    <script type="text/javascript" src="../../Scripts/Own/CodeMirror/modes/javascript.js"></script>
-    <script type="text/javascript" src="../../Scripts/Own/CodeMirror/modes/htmlmixed.js"></script>
+    <script type="text/javascript" src="../../Scripts/CodeMirror/utils/formatting.js"></script>
+    <script type="text/javascript" src="../../Scripts/CodeMirror/utils/closetag.js"></script>
+    <script type="text/javascript" src="../../Scripts/CodeMirror/utils/foldcode.js"></script>
+    <script type="text/javascript" src="../../Scripts/CodeMirror/modes/xml.js"></script>
+    <script type="text/javascript" src="../../Scripts/CodeMirror/modes/css.js"></script>
+    <script type="text/javascript" src="../../Scripts/CodeMirror/modes/javascript.js"></script>
+    <script type="text/javascript" src="../../Scripts/CodeMirror/modes/htmlmixed.js"></script>
     <script type="text/javascript">
 
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,22 +49,22 @@
 
             //Simple UI controls
             $("#NewLabel").bind("click", function () {
-                clientController.AddUIControl("label");
+                clientController.AddUIControl("Label");
             });
             $("#NewTextbox").bind("click", function () {
-                clientController.AddUIControl("textbox");
+                clientController.AddUIControl("Textbox");
             });
             $("#NewCheckbox").bind("click", function () {
-                clientController.AddUIControl("checkbox");
+                clientController.AddUIControl("Checkbox");
             });
             $("#NewDropdown").bind("click", function () {
-                clientController.AddUIControl("dropdown");
+                clientController.AddUIControl("Dropdown");
             });
             $("#NewCheckboxList").bind("click", function () {
-                clientController.AddUIControl("checkboxlist");
+                clientController.AddUIControl("CheckboxList");
             });
             $("#NewRadiobuttonList").bind("click", function () {
-                clientController.AddUIControl("radiobuttonlist");
+                clientController.AddUIControl("RadiobuttonList");
             });
 
             //Key handlers

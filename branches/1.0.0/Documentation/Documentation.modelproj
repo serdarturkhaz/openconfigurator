@@ -45,6 +45,13 @@
       <SubType>Content</SubType>
       <DependentUpon>Architecture\ModelEditorJS.classdiagram</DependentUpon>
     </Content>
+    <Content Include="Architecture\UIControlTypes.classdiagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Architecture\UIControlTypes.classdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Architecture\UIControlTypes.classdiagram</DependentUpon>
+    </Content>
     <Content Include="Database\DBDiagram.classdiagram">
       <SubType>Content</SubType>
     </Content>
@@ -132,6 +139,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="ModelDefinition\Package_2300.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_2310.uml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ModelDefinition\Package_2323.uml">
       <SubType>Content</SubType>
     </Content>
     <Content Include="UI\UITemplateEditor-Properties.bmml">

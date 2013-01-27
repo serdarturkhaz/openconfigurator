@@ -37,21 +37,6 @@ var UITemplateDataModel = function (uiTemplateID, uiTemplateName) {
     //Properties
     this.UITemplateID = _uiTemplateID;
 
-    //Private methods
-    var getUIControlTypeData = function (controltype) {
-        var returnObj;
-        $.ajax({
-            url: "/UITemplateEditor/GetUIControlTypeData",
-            data: JSON.stringify({ ControlType: controltype }),
-            async: false,
-            success: function (dataObj) {
-                returnObj = dataObj;
-            }
-        });
-
-        return returnObj;
-    }
-
     //Constructor/Initalizers
     this.Initialize = function () {
 
@@ -117,15 +102,7 @@ var UITemplateDataModel = function (uiTemplateID, uiTemplateName) {
         //Raise events
         _thisUITemplateDataModel.TemplateDataUpdated.RaiseEvent();
     }
-    this.GetUIControlTypeData = function (controltype) {
-        var controlObj = getUIControlTypeData(controltype);
-        return controlObj;
-    }
-    this.CreateUIControlInstance = function (controltype) {
-        var controlObj = getUIControlTypeData(controltype);
 
-        return controlObj;
-    }
 
     //Events
     this.TemplateDataLoaded = new Event();
@@ -219,7 +196,7 @@ var ClientController = function (htmlViewContainer, cssViewContainer, visualView
 
     }
     this.AddUIControl = function (controltype) {
-        _htmlView.InsertUIControl(controltype);
+        _htmlView.InsertControlTag(controltype);
     }
     this.AddHTMLControl = function (controltype) {
         _htmlView.InsertHTMLControl(controltype);
@@ -235,21 +212,14 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
     var _initialDataLoaded = false;
 
     //Private methods
-    var createControlHTMLstring = function (controlObj) {
+    var createControlHTMLstring = function (controltype) {
 
-        //Create the outer control and set its attributes
-        var outerControl = $(controlObj.Wrapper);
-        $(outerControl).attr({
-            controltype: controlObj.ControlType,
-            databinding: "none"
-        });
-
-        //Create the inner element
-        var innerElem = $(controlObj.HTML);
+        //Get the controltag element
+        var controlElem = UIControlTypes.API.CreateControlTagElem(controltype);
+        var controlTagString = $(controlElem)[0].outerHTML;
 
         //
-        var controlString = $($(outerControl).append(innerElem))[0].outerHTML;
-        return controlString;
+        return controlTagString;
     }
     var getSelectedRange = function () {
         return { from: _editorInstance.getCursor(true), to: _editorInstance.getCursor(false) };
@@ -282,11 +252,10 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
     }
 
     //Public methods
-    this.InsertUIControl = function (controltype) {
+    this.InsertControlTag = function (controltype) {
 
         //Create a default control string
-        var controlObj = _uiTemplateDataModel.CreateUIControlInstance(controltype);
-        var controlString = createControlHTMLstring(controlObj);
+        var controlString = createControlHTMLstring(controltype);
 
         //Insert its html into the editor
         _editorInstance.replaceSelection(controlString);
@@ -308,7 +277,6 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
                 controlString = "<span></span>"
                 break;
         }
-
 
         //Insert its html into the editor
         _editorInstance.replaceSelection(controlString);
@@ -440,10 +408,10 @@ var VisualView = function (containerArea, uiTemplateDataModelInstance) {
     //Eventhandlers
     this.OnTemplateDataLoaded = function () {
 
-        //Load generic CSS for UIControl types
-        var checkboxCSS = _uiTemplateDataModel.GetUIControlTypeData("Checkbox").CSS;
-        var controlStyles = $("<style id='controlStylesElem' type='text/css'></style>").text(checkboxCSS);
-        $(_head).append(controlStyles);
+        //        //Load generic CSS for UIControl types
+        //        var checkboxCSS = UIControlTypes.GetControlResources("Checkbox").CSS;
+        //        var controlStyles = $("<style id='controlStylesElem' type='text/css'></style>").text(checkboxCSS);
+        //        $(_head).append(controlStyles);
 
         //Load the template CSS
         var templateCSS = _uiTemplateDataModel.GetTemplateField("Stylesheet");

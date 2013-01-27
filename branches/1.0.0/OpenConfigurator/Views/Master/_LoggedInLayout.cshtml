@@ -7,7 +7,7 @@
     @RenderSection("headerscripts", false)
 }
 @section SettingsArea{
-    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout", "General")
+    Logged in as @PresentationLayer.Common.SessionData.LoggedInUser.Email | @Html.ActionLink("Logout", "Logout", "Common")
 }
 @section TopMenuBar{
     <div class="TopMenuItem" id="ModelsMenuItem">
