@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "ModelEditor";
+    ViewBag.Title = "Edit Model";
     Layout = "~/Views/Master/_LoggedInLayout.cshtml";
 }
 @section headerscripts{
@@ -44,8 +44,8 @@
                 clientController.SaveData();
             });
             $("#ConfigureButton").bind("click", function () {
-                var newConfigID = addNewConfiguration(modelId);
-                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
+//                var newConfigID = addNewConfiguration(modelId);
+//                window.location.href = "/ConfigurationEditor/ConfigurationEditor/" + newConfigID;
             });
             $("#ZoomOutButton").bind("click", function () {
                 clientController.ZoomOut();
@@ -71,6 +71,9 @@
             $("#NewCustomRuleButton").bind("click", function () {
                 clientController.CreateNewCustomRule();
             });
+            $("#NewConstraintButton").bind("click", function () {
+                clientController.CreateNewConstraint();
+            });
 
             //Key handlers
             $(document).keydown(function (e) {
@@ -92,10 +95,23 @@
                 $.ctrl('U', function () { //create CustomRule
                     clientController.CreateNewCustomRule();
                 });
+                $.ctrl('S', function () { //Save data
+                    clientController.SaveData();
+                });
+
+                //handler for copy paste actions
+                $.ctrl('C', function () { //trigger CopyElement   
+                    clientController.CopyElement();
+                });
+                //handler for copy paste actions
+                $.ctrl('V', function () { //trigger Past action    
+                    clientController.PasteElement();
+                });
             });
             //---------------------------------------------------------------------------------
 
             //Initialize 
+            
             calcWidth();
             calcWidth();
             $(window).resize(function () {
@@ -112,7 +128,11 @@
                 diagramDataModel.Initialize();
                 clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"), $("#ModelNameTextbox"), $("#ZoomLevelIndicator"), diagramDataModel);
                 clientController.Initialize();
+
+
             });
+
+
         });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     </script>
@@ -129,10 +149,10 @@ Edit Model
             <img src="../../Content/themes/base/images/Icons/save.png" />
             <span>Save</span>
         </div>
-        <div class="Button-Toolbar" id="ConfigureButton">
+        @*<div class="Button-Toolbar" id="ConfigureButton">
             <img src="../../Content/themes/base/images/Icons/configure-toolbar.png" />
             <span>Configure</span>
-        </div>
+        </div>*@
     </div>
 }
 <div class="LeftColumn">
@@ -160,6 +180,9 @@ Edit Model
                 <li class="Button-Normal" id="NewCustomRuleButton">
                     <img src="../../Content/themes/base/images/Icons/Toolbox/customrule.png" />
                     <span>C<span class="underline">u</span>stom Rule</span> </li>
+                <li class="Button-Normal" id="NewConstraintButton">
+                    <img src="../../Content/themes/base/images/Icons/Toolbox/customrule.png" />
+                    <span>C<span class="underline">o</span>nstraint</span> </li>
             </ul>
         </div>
         <div class="BoxFooter">
@@ -188,7 +211,7 @@ Edit Model
 </div>
 <div class="RightColumn">
     @*Properties*@
-    <div id="PropertiesBox" class="RoundedBox">
+    <div id="PropertiesBox" class="PropertiesBox RoundedBox">
         <div class="BoxHeader">
             <div class="BoxInnerHeader">
                 <span class="HeaderLabel">Properties - <span id="SetTypeLabel"></span></span>
@@ -212,7 +235,7 @@ Edit Model
                 <span class="HeaderLabel">Model Diagram</span>
                 <div class="ViewToolBar">
                     <div class="ZoomLabel" id="ZoomLevelIndicator">
-                        100%
+                        75%
                     </div>
                     <div class="Button-Toolbar" id="ZoomOutButton">
                         <img src="../../Content/themes/base/images/Icons/Toolbar/zoom-out.png" />
