@@ -1,4 +1,21 @@
-﻿//Settings and defaults
+﻿// Developed by OpenConfigurator Core Team
+// 
+// Distributed under the MIT license
+// ===========================================================
+// Copyright (c) 2012 - Radu Mitache, Alexander Mantzoukas, Josef A. Habdank
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR 
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+// OTHER DEALINGS IN THE SOFTWARE.
+
+//Settings and defaults
 var settings = {
     diagramContext: {
         drawCurves: true, //determines whether curves should be used for drawing relations - options: true / false
@@ -62,8 +79,10 @@ var UIObjectStyles = {
         general: {
             box: {
                 dimensions: {
-                    width: 90,
-                    height: 26
+                    width: 120,
+                    height: 26,
+                    maxWidth: 150,
+                    paddingLeftRight: 3
                 }
             },
             text: {
@@ -78,6 +97,22 @@ var UIObjectStyles = {
                         stroke: "#CECECE",
                         "stroke-width": 1,
                         opacity: 1
+                    }
+                },
+                line: {
+                    attr: {
+                        fill: "#E1E9FF",
+                        stroke: "#CECECE",
+                        "stroke-width": 1,
+                        opacity: 1
+                    }
+                },
+                "secondary-line": {
+                    attr: {
+                        stroke: "#CECECE",
+                        "stroke-width": 1,
+                        "text-anchor": "start",
+                        "stroke-dasharray": ["- "]
                     }
                 },
                 text: {
@@ -413,7 +448,7 @@ var systemDefaults = {
                 label: "OR",
                 id: 1,
                 bounds: {
-                    defaultLowerBound: 0,
+                    defaultLowerBound: 1,
                     defaultUpperBound: function (clientObject) {
                         return clientObject.ChildFeatures.length;
                     }
@@ -559,8 +594,20 @@ var systemDefaults = {
         required: "\w+",
         numeric: {
             naturalNumbers: "^[0-9]\\d*\\.?[0]*$"
+        },
+        text: {
+            variableName: "^[A-Za-z\_][A-Za-z0-9\_]*$"
         }
     }
+}
+var innerState = {
+    ready: 0,
+    dragging: 1,
+    inlineEdit: 2,
+    featureLock: 3,
+    relationLock: 4,
+    groupRelationLock: 5,
+    compositionRuleLock: 6
 }
 
 //ClientObjects***************************************************************************************************
@@ -570,7 +617,8 @@ var ClientObjects = {
     Relation: null,
     GroupRelation: null,
     CompositionRule: null,
-    CustomRule: null
+    CustomRule: null,
+    Constraint: null
 }
 
 ClientObjects.Feature = function (businessObject) {
@@ -600,6 +648,9 @@ ClientObjects.Feature = function (businessObject) {
     }
     this.GetField = function (fieldName) {
         return _businessObject[fieldName];
+    }
+    this.GetFieldIdentifier = function () {
+        return _businessObject["Identifier"];
     }
     this.SetField = function (fieldName, value) {
         _businessObject[fieldName] = value;
@@ -641,6 +692,9 @@ ClientObjects.Attribute = function (businessObject) {
     }
     this.GetField = function (fieldName) {
         return _businessObject[fieldName];
+    }
+    this.GetFieldIdentifier = function () {
+        return _businessObject["Identifier"];
     }
     this.SetField = function (fieldName, value) {
         _businessObject[fieldName] = value;
@@ -815,6 +869,50 @@ ClientObjects.CustomRule = function (businessObject) {
     this.GetField = function (fieldName) {
         return _businessObject[fieldName];
     }
+    this.GetFieldIdentifier = function () {
+        return _businessObject["Identifier"];
+    }
+    this.SetField = function (fieldName, value) {
+        _businessObject[fieldName] = value;
+    }
+    this.SetDeleteFlag = function () {
+        _businessObject["ToBeDeleted"] = true;
+    }
+    this.IsDeleted = function () {
+        return _businessObject["ToBeDeleted"] == true;
+    }
+    this.SyncBusinessObject = function () {
+    }
+}
+ClientObjects.Constraint = function (businessObject) {
+
+    //Fields
+    var _guid = null;
+    var _businessObject = businessObject;
+
+    //Properties
+    this.GUID = _guid;
+    this.GetType = function () {
+        return "constraint";
+    }
+
+    //Methods
+    this.GetBusinessObject = function () {
+        return _businessObject;
+    }
+    this.GetBusinessObjectCopy = function () {
+        var copy = jQuery.extend(true, {}, _businessObject);
+        return copy;
+    }
+    this.UpdateBusinessObject = function (modifiedBusinessObject) {
+        _businessObject = modifiedBusinessObject;
+    }
+    this.GetField = function (fieldName) {
+        return _businessObject[fieldName];
+    }
+    this.GetFieldIdentifier = function () {
+        return _businessObject["Identifier"];
+    }
     this.SetField = function (fieldName, value) {
         _businessObject[fieldName] = value;
     }
@@ -862,7 +960,8 @@ var DiagramDataModel = function (modelID, modelName) {
         relations: {},
         groupRelations: {},
         compositionRules: {},
-        customRules: {}
+        customRules: {},
+        constraints: {}
     }
     var _modelID = modelID, _model = null, _modelName = modelName;
     var _operationsQueue = [];
@@ -872,7 +971,8 @@ var DiagramDataModel = function (modelID, modelName) {
         relations: {},
         groupRelations: {},
         compositionRules: {},
-        customRules: {}
+        customRules: {},
+        constraints: {}
     };
     var _thisDiagramDataModel = this;
 
@@ -891,11 +991,107 @@ var DiagramDataModel = function (modelID, modelName) {
                 returnObj = dataObj;
             }
         });
+
         return returnObj;
     }
-    var registerOperation = function (operation) {
+    // creates a new identifier, accepts element collections as additional attributes, call function as 
+    // getNewIdentifier("Attributes_", feature.Attributes) or 
+    // getNewIdentifier("Feature_", _clientObjects.features, _clientObjects.customRules)
+    var getNewIdentifier = function (prefix) {
+        var elementsWithPrefix = [];
 
-        //
+        for (var i = 1; i < arguments.length; i++) {
+            var collection = arguments[i];
+            // get all matching feature identifiers
+            for (var guidKey in collection) {
+                var clientObject = collection[guidKey];
+
+                // ignore it if it is deleted
+                if (!clientObject.IsDeleted()) {
+                    var identifier = clientObject.GetFieldIdentifier();
+
+                    // if it starts with the prefix then add it to the array
+                    if (identifier.indexOf(prefix) == 0) {
+                        elementsWithPrefix.push(identifier);
+                    }
+                }
+            }
+        }
+
+        var elementCouter = 0;
+        var elementIdentifier;
+        var elementIndex;
+
+        do {
+            elementCouter++;
+            elementIdentifier = prefix + elementCouter;
+            elementIndex = $.inArray(elementIdentifier, elementsWithPrefix);
+        } while (elementIndex != -1);
+
+        return elementIdentifier;
+    }
+    //Used for copy - creates unique name of feature // method adopted from getNewIdentifier - should be better way to do it,
+    //however for now I dont wont to apply new solution
+    var getNewName = function (prefix) {
+        var elementsWithPrefix = [];
+
+        for (var i = 1; i < arguments.length; i++) {
+            var collection = arguments[i];
+            // get all matching feature identifiers
+            for (var guidKey in collection) {
+                var clientObject = collection[guidKey];
+
+                // ignore it if it is deleted
+                if (!clientObject.IsDeleted()) {
+                    var name = clientObject.GetField("Name");
+
+                    // if it starts with the prefix then add it to the array
+                    if (name.indexOf(prefix) == 0) {
+                        elementsWithPrefix.push(name);
+                    }
+                }
+            }
+        }
+
+        var elementCouter = 0;
+        var elementName;
+        var elementIndex;
+
+        do {
+            elementCouter++;
+            elementName = prefix + elementCouter;
+            elementIndex = $.inArray(elementName, elementsWithPrefix);
+        } while (elementIndex != -1);
+
+        return elementName;
+    }
+    // pass a number of element collections to see if the elementName is used, call function as 
+    // getNewIdentifier("Laptop_attribute_1", feature.Attributes) or 
+    // getNewIdentifier("Laptop_feature_1", _clientObjects.features, _clientObjects.customRules)
+    var isIdentifierInUse = function (elementName, ignoredElementGuid) {
+        for (var i = 2; i < arguments.length; i++) {
+            var collection = arguments[i];
+            // get all matching feature identifiers
+            for (var guidKey in collection) {
+                if (guidKey != ignoredElementGuid) {
+                    var clientObject = collection[guidKey];
+
+                    // ignore it if it is deleted
+                    if (!clientObject.IsDeleted()) {
+                        var identifier = clientObject.GetFieldIdentifier();
+
+                        // if the identifier exists
+                        if (identifier == elementName) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+    var registerOperation = function (operation) {
         _operationsQueue.push(operation);
         registerUnsavedData(operation.GUID);
     }
@@ -1020,6 +1216,17 @@ var DiagramDataModel = function (modelID, modelName) {
                     _thisDiagramDataModel.RegisterClientObject(customRuleClientObject);
                 }
 
+                //Load Constraints
+                for (var i = 0; i < _model.Constraints.length; i++) {
+
+                    //Variables
+                    var constraint = _model.Constraints[i];
+
+                    //Create a new ClientDataObject
+                    var constraintClientObject = new ClientObjects.Constraint(constraint);
+                    _thisDiagramDataModel.RegisterClientObject(constraintClientObject);
+                }
+
 
             },
             error: function (req, status, error) {
@@ -1113,7 +1320,7 @@ var DiagramDataModel = function (modelID, modelName) {
 
     this.AddNewClientObject = function (type, initialBusinessValues, initialClientValues) {
 
-        //Setup inner business object
+        // Setup inner business object
         var newBusinessObject = getDefaultBusinessObject(type);
         if (initialBusinessValues != undefined && initialBusinessValues != null) {
             for (var fieldName in initialBusinessValues) {
@@ -1122,13 +1329,21 @@ var DiagramDataModel = function (modelID, modelName) {
             }
         }
 
-        //Setup client object
+        // Setup client object
         var newClientObject = null;
         switch (type) {
             case "feature":
+                var featureIdentifier = getNewIdentifier("Feature_", _clientObjects.features, _clientObjects.customRules);
+                newBusinessObject.Identifier = featureIdentifier;
+                newBusinessObject.Name = featureIdentifier.replace("_", " ");
+
                 newClientObject = new ClientObjects.Feature(newBusinessObject);
                 break;
             case "attribute":
+                var attributeIdentifier = getNewIdentifier("Attribute_", initialClientValues.Feature.Attributes);
+                newBusinessObject.Identifier = attributeIdentifier;
+                newBusinessObject.Name = attributeIdentifier.replace("_", " ");
+
                 newClientObject = new ClientObjects.Attribute(newBusinessObject);
                 break;
             case "relation":
@@ -1141,7 +1356,18 @@ var DiagramDataModel = function (modelID, modelName) {
                 newClientObject = new ClientObjects.CompositionRule(newBusinessObject);
                 break;
             case "customRule":
+                var customRuleIdentifier = getNewIdentifier("CustomRule_", _clientObjects.features, _clientObjects.customRules);
+                newBusinessObject.Identifier = customRuleIdentifier;
+                newBusinessObject.Name = customRuleIdentifier.replace("_", " ");
+
                 newClientObject = new ClientObjects.CustomRule(newBusinessObject);
+                break;
+            case "constraint":
+                var constraintIdentifier = getNewIdentifier("Constraint_", _clientObjects.features, _clientObjects.customRules);
+                newBusinessObject.Identifier = constraintIdentifier;
+                newBusinessObject.Name = constraintIdentifier.replace("_", " ");
+
+                newClientObject = new ClientObjects.Constraint(newBusinessObject);
                 break;
         }
         if (initialClientValues != undefined && initialClientValues != null) {
@@ -1207,6 +1433,32 @@ var DiagramDataModel = function (modelID, modelName) {
         _thisDiagramDataModel.ClientObjectUpdated.RaiseEvent(guid);
     }
 
+    this.IsFeatureIdentifierInUse = function (featureIdentifier, currentFeatureGuid) {
+        return isIdentifierInUse(featureIdentifier, currentFeatureGuid, _clientObjects.features, _clientObjects.customRules);
+    }
+    this.IsCustomRuleIdentifierInUse = function (customRuleIdentifier, currentCustomRuleGuid) {
+        return isIdentifierInUse(customRuleIdentifier, currentCustomRuleGuid, _clientObjects.features, _clientObjects.customRules);
+    }
+    this.IsAttributeIdentifierInUse = function (attributeIdentifier, parentFeatureGuid) {
+        var feature = this.GetByGUID(parentFeatureGuid);
+        var attributeCollection = feature.Attributes;
+
+        // here instead of the parent feature guid, it should pass the currentAttributeGuid
+        return isIdentifierInUse(attributeIdentifier, parentFeatureGuid, attributeCollection);
+    }
+    //Return the next possible indentifier for given attr prefix
+    this.GetNextAttributeIdentifier = function (attributePrefix, parentClientObject) {
+        return getNewIdentifier(attributePrefix, parentClientObject.Attributes)
+    }
+    //Retrun the next possible identifier for given feature prefix
+    this.GetNextFeatureIdentifier = function (featurePrefix) {
+        return getNewIdentifier(featurePrefix, _clientObjects.features)
+    }
+    //Return the next possible name for given feature prefix
+    this.GetNextFeatureName = function (namePerfix) {
+        return getNewName(namePerfix, _clientObjects.features)
+    }
+
     this.GetByGUID = function (guid) {
         return _clientObjects.all[guid];
     }
@@ -1214,6 +1466,15 @@ var DiagramDataModel = function (modelID, modelName) {
         for (var guidKey in _clientObjects[type + "s"]) {
             var clientObject = _clientObjects[type + "s"][guidKey];
             if (ID == clientObject.GetField("ID")) {
+                return clientObject;
+            }
+        }
+    }
+    this.GetByIdentifier = function (identifier, type) {
+        var clientObjectCollection = _clientObjects[type + "s"];
+        for (var guidKey in clientObjectCollection) {
+            var clientObject = clientObjectCollection[guidKey];
+            if (!clientObject.IsDeleted() && identifier == clientObject.GetField("Identifier")) {
                 return clientObject;
             }
         }
@@ -1279,11 +1540,11 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
         $.timer(300, function () {
 
             //Instantiate/Initialize controls
-            _diagramContext = new DiagramContext($("#SVGCanvas")[0], _diagramDataModel);
+            _diagramContext = new DiagramContext(diagramContainer, _diagramDataModel);
             _diagramContext.Initialize();
-            _propertiesComponent = new PropertiesComponent($("#PropertiesBox"), _diagramDataModel);
+            _propertiesComponent = new PropertiesComponent(propertiesContainer, _diagramDataModel);
             _propertiesComponent.Initialize();
-            _modelExplorer = new ModelExplorer($("#ModelExplorerTree"), _diagramDataModel);
+            _modelExplorer = new ModelExplorer(explorerContainer, _diagramDataModel);
             _modelExplorer.Initialize();
 
             //Modelexplorer eventhandlers
@@ -1309,6 +1570,41 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
             _diagramContext.SelectionCleared.Add(new EventHandler(_propertiesComponent.OnRelatedViewSelectionCleared));
             _diagramDataModel.ClientObjectUpdated.Add(new EventHandler(_propertiesComponent.OnClientObjectUpdated));
             _diagramDataModel.ClientObjectDeleted.Add(new EventHandler(_propertiesComponent.OnClientObjectDeleted));
+            _propertiesComponent.AttributeHasChanged.Add(new EventHandler(function (featureID, oldAttributeName, newAttributeName) {
+                // Send this to the model explorer
+                _diagramContext.AttributeHasChanged.RaiseEvent([featureID, oldAttributeName, newAttributeName]);
+            }));
+
+            // Button change handlers
+            _diagramContext.InnerModeChange.Add(new EventHandler(function (mode) {
+                // Reset states
+                $("#NewRelationButton").removeClass('Button-Normal-Focus');
+                $("#NewGroupRelationButton").removeClass('Button-Normal-Focus');
+                $("#NewCompositionRuleButton").removeClass('Button-Normal-Focus');
+                $("#SVGCanvas").css("cursor", "auto");
+                switch (mode) {
+                    case innerState.featureLock:
+                        $("#SVGCanvas").css("cursor", "crosshair");
+                        break;
+                    case innerState.relationLock:
+                        $("#SVGCanvas").css("cursor", "crosshair");
+                        $("#NewRelationButton").addClass('Button-Normal-Focus');
+                        break;
+                    case innerState.groupRelationLock:
+                        $("#SVGCanvas").css("cursor", "crosshair");
+                        $("#NewGroupRelationButton").addClass('Button-Normal-Focus');
+                        break;
+                    case innerState.compositionRuleLock:
+                        $("#SVGCanvas").css("cursor", "crosshair");
+                        $("#NewCompositionRuleButton").addClass('Button-Normal-Focus');
+                        break;
+                }
+            }));
+
+            // Key handlers
+            $("body").bind("keyup", function (e) {
+                _diagramContext.OnKeyUp(e);
+            });
 
             //Focus handlers
             _diagramContext.Focus.Add(new EventHandler(function () {
@@ -1332,7 +1628,7 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
                 }
             });
 
-            //Load the model
+            //Load the data
             _diagramDataModel.LoadData(function (model) {
                 $(_modelNameTextbox).val(model.Name);
                 $("#ModelDiagramBox").unblock();
@@ -1380,6 +1676,12 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
         }
         var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("customRule", initialValues);
     }
+    this.CreateNewConstraint = function () {
+        var initialValues = {
+            ModelID: _diagramDataModel.ModelID
+        }
+        var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("constraint", initialValues);
+    }
     this.Delete = function () {
         switch (_currentControlFocus) {
             case _diagramContext:
@@ -1400,6 +1702,28 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
     }
     this.ToggleOrientation = function () {
         _diagramContext.ToggleOrientation();
+    }
+    //Copy selected element
+    this.CopyElement = function () {
+        switch (_currentControlFocus) {
+            case _diagramContext:
+
+                _diagramContext.CopySelectedElementToMemory();
+                break;
+            case _modelExplorer:
+                //We might copy elements from Model explore do diagram window
+                //Just another idea
+                //_modelExplorer.
+                break;
+        }
+    }
+    //Paste element from memory
+    this.PasteElement = function () {
+        switch (_currentControlFocus) {
+            case _diagramContext:
+                _diagramContext.PasteSelectedElementFromMemory();
+                break;
+        }
     }
 }
 var PropertiesComponent = function (container, diagramDataModelInstance) {
@@ -1447,7 +1771,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
         //Event handlers
         var onChanged = function () {
-
+            // TODO: add the GUID to the VALIDATION TO EACH OF THE COMPONENTS
             //Variables
             var newVal = _control.val();
             var oldVal = _fieldParent[_fieldName];
@@ -1455,22 +1779,30 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Perform validation
             var valid = true;
             if (settingsField.validation != undefined) {
-
-                //Loop through validations
-                for (var i = 0; i < settingsField.validation.length; i++) {
-                    var validationEntry = settingsField.validation[i];
-                    if (typeof (validationEntry) == "function") {
-                        valid = validationEntry(newVal, oldVal, _control); //call custom validation function
-                    } else if (typeof (validationEntry) == "string") {
-                        valid = new RegExp(validationEntry).test(newVal);
+                // this check is to prevent the error when the validation is called, and the field did not actually change
+                // this happens when somebody changes the field to an invalid oue (which causes the field not to be updated)
+                // and then changes back to the original value
+                if (oldVal != newVal) {
+                    //Loop through validations
+                    for (var i = 0; i < settingsField.validation.length; i++) {
+                        var validationEntry = settingsField.validation[i];
+                        if (typeof (validationEntry) == "function") {
+                            valid = validationEntry(newVal, oldVal, _control); //call custom validation function
+                        } else if (typeof (validationEntry) == "string") {
+                            valid = new RegExp(validationEntry).test(newVal);
+                        }
+                        if (valid == false)
+                            break;
                     }
-                    if (valid == false)
-                        break;
                 }
             }
 
             //Validation ok
             if (valid == true) {
+                // When the attribute name is updated then change the field on the model editor
+                var clientObject = diagramDataModelInstance.GetByID(_fieldParent.ID, "attribute");
+                if (clientObject && _fieldName === "Name")
+                    _thisPropertiesComponent.AttributeHasChanged.RaiseEvent([clientObject.Feature.GUID, oldVal, newVal]);
 
                 //Set value and call handlers
                 _control.removeAttr("invalid");
@@ -1735,7 +2067,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
         var _listContainer = null, _detailsContainer = null;
 
         //Private methods
-        var addListElement = function (clientObject) {
+        var addListElement = function (clientObject, isInit) {
 
             //Create the ListElement
             var listElement = new ListElement(clientObject, onListElementDeleted, onListElementClicked);
@@ -1744,6 +2076,10 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Create the HTML
             var listElementControl = listElement.CreateHTML();
             $(listElementControl).appendTo(_listContainer);
+
+            if (!isInit) {
+                _thisPropertiesComponent.AttributeHasChanged.RaiseEvent([_fieldParent.GUID]);
+            }
 
             //
             return listElement;
@@ -1838,7 +2174,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             //Create list elements
             var clientObjectCollection = _fieldParent[_fieldName];
             for (var i = 0; i < clientObjectCollection.length; i++) {
-                addListElement(clientObjectCollection[i]);
+                addListElement(clientObjectCollection[i], true);
             }
         }
 
@@ -1872,6 +2208,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             fieldParent[_fieldName].splice(index, 1);
             _diagramDataModel.DeleteClientObject(guid);
 
+            _thisPropertiesComponent.AttributeHasChanged.RaiseEvent([fieldParent.GUID]);
         }
         var onListElementClicked = function (index) {
             var newState = toggleSelected(_listElements[index]);
@@ -1889,11 +2226,24 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                     displayTitle: false,
                     tableLayout: true,
                     fields: {
-                        rootFeature: {
-                            label: "Root Feature",
-                            dataName: "IsRoot",
-                            controlType: Controls.Checkbox,
-                            disabled: true
+                        /*rootFeature: {
+                        label: "Root Feature",
+                        dataName: "IsRoot",
+                        controlType: Controls.Checkbox,
+                        disabled: true
+                        },*/
+                        //Commented out, not necessary for now
+                        identifier: {
+                            label: "Identifier",
+                            dataName: "Identifier",
+                            controlType: Controls.Textbox,
+                            validation:
+                                [
+                                    systemDefaults.validationExpressions.text.variableName,
+                                    function (newVal, oldVal, control) {
+                                        return !_diagramDataModel.IsFeatureIdentifierInUse(newVal, _mainGUID);
+                                    }
+                                ]
                         },
                         name: {
                             label: "Name",
@@ -1919,6 +2269,18 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                             parentClientRefField: "Feature",
                             controlType: Controls.CompositeList,
                             subFields: {
+                                identifier: {
+                                    label: "Identifier",
+                                    dataName: "Identifier",
+                                    controlType: Controls.Textbox,
+                                    validation:
+                                    [
+                                        systemDefaults.validationExpressions.text.variableName,
+                                        function (newVal, oldVal, control) {
+                                            return !_diagramDataModel.IsAttributeIdentifierInUse(newVal, _mainGUID);
+                                        }
+                                    ]
+                                },
                                 name: {
                                     label: "Name",
                                     dataName: "Name",
@@ -2153,6 +2515,11 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                                                     return false;
                                                 }
 
+                                                //Upperbound cannot be 0
+                                                if (newVal == 0) {
+                                                    return false;
+                                                }
+
                                                 //
                                                 return isValid;
 
@@ -2195,6 +2562,18 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                     displayTitle: false,
                     tableLayout: true,
                     fields: {
+                        identifier: {
+                            label: "Identifier",
+                            dataName: "Identifier",
+                            controlType: Controls.Textbox,
+                            validation:
+                                [
+                                    systemDefaults.validationExpressions.text.variableName,
+                                    function (newVal, oldVal, control) {
+                                        return !_diagramDataModel.IsCustomRuleIdentifierInUse(newVal, _mainGUID);
+                                    }
+                                ]
+                        },
                         name: {
                             label: "Name",
                             dataName: "Name",
@@ -2214,7 +2593,90 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                         description: {
                             label: "Expression",
                             dataName: "Expression",
+                            controlType: Controls.Textarea,
+                            validation:
+                                [
+                                    function (newVal, oldVal, control) {
+                                        var isValid;
+
+                                        $.ajax({
+                                            url: "/ModelEditor/ValidateCustomRuleSyntax",
+                                            data: JSON.stringify({ modelID: _diagramDataModel.ModelID, customRule: newVal }),
+                                            async: false,
+                                            success: function (dataObj) {
+                                                isValid = dataObj;
+                                            },
+                                            error: function (jqXHR, textStatus, errorThrown) {
+                                                isValid = false;
+                                            }
+                                        });
+
+                                        return isValid;
+                                    }
+                                ]
+                        }
+                    }
+                }
+            }
+        },
+        constraint: {
+            areas: {
+                basicArea: {
+                    displayTitle: false,
+                    tableLayout: true,
+                    fields: {
+                        identifier: {
+                            label: "Identifier",
+                            dataName: "Identifier",
+                            controlType: Controls.Textbox,
+                            validation:
+                                [
+                                    systemDefaults.validationExpressions.text.variableName,
+                                    function (newVal, oldVal, control) {
+                                        return !_diagramDataModel.IsCustomRuleIdentifierInUse(newVal, _mainGUID);
+                                    }
+                                ]
+                        },
+                        name: {
+                            label: "Name",
+                            dataName: "Name",
+                            controlType: Controls.Textbox
+                        },
+                        description: {
+                            label: "Description",
+                            dataName: "Description",
                             controlType: Controls.Textarea
+                        }
+                    }
+                },
+                expressionArea: {
+                    displayTitle: "Expression",
+                    tableLayout: false,
+                    fields: {
+                        description: {
+                            label: "Expression",
+                            dataName: "Expression",
+                            controlType: Controls.Textarea,
+                            validation:
+                                [
+                                    function (newVal, oldVal, control) {
+                                        var isValid;
+
+                                        $.ajax({
+                                            url: "/ModelEditor/ValidateCustomRuleSyntax",
+                                            data: JSON.stringify({ modelID: _diagramDataModel.ModelID, customRule: newVal }),
+                                            async: false,
+                                            success: function (dataObj) {
+                                                isValid = dataObj;
+                                            },
+                                            error: function (jqXHR, textStatus, errorThrown) {
+                                                isValid = false;
+                                            }
+                                        });
+
+                                        return isValid;
+                                    }
+                                ]
                         }
                     }
                 }
@@ -2343,6 +2805,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
 
     //Events
     this.Focus = new Event();
+    this.AttributeHasChanged = new Event();
 
     //Eventhandlers
     this.OnClientObjectUpdated = function (guid) {
@@ -2357,8 +2820,8 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
             clear();
         }
     }
-    this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
-        if (newState == systemDefaults.uiElementStates.selected && shift == false) {
+    this.OnRelatedViewElementSelectToggled = function (guid, ctrl, newState) {
+        if (newState == systemDefaults.uiElementStates.selected && ctrl == false) {
             loadData(guid);
         } else {
             clear();
@@ -2380,7 +2843,8 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
     var _supportedTypes = {
         feature: true,
         compositionRule: true,
-        customRule: true
+        customRule: true,
+        constraint: true
     }
 
     //Private methods
@@ -2398,8 +2862,8 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
             _thisModelExplorer.SelectionCleared.RaiseEvent();
         }
     }
-    var toggleElementSelect = function (node, shift, raiseEvents) {
-        if (shift != true) {
+    var toggleElementSelect = function (node, ctrl, raiseEvents) {
+        if (ctrl != true) {
             clearSelection();
         }
 
@@ -2417,7 +2881,7 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
         //Raise events
         if (raiseEvents == true) {
             var guid = $(node).getNodeDataID();
-            _thisModelExplorer.ElementSelectToggled.RaiseEvent([guid, shift, newState]);
+            _thisModelExplorer.ElementSelectToggled.RaiseEvent([guid, ctrl, newState]);
         }
     }
     var addNewElement = function (guid) {
@@ -2454,11 +2918,6 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                     typeName: "folder"
                 },
                 {
-                    ID: "featureTypesNode",
-                    Name: "Feature Types",
-                    typeName: "folder"
-                },
-                {
                     ID: "compositionRulesNode",
                     Name: "Composition Rules",
                     typeName: "folder"
@@ -2467,8 +2926,12 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                     ID: "customRulesNode",
                     Name: "Custom Rules",
                     typeName: "folder"
+                },
+                {
+                    ID: "constraintsNode",
+                    Name: "Constraints",
+                    typeName: "folder"
                 }
-
             ],
             types: {
                 folder: {
@@ -2490,10 +2953,15 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                     idField: "ID",
                     labelField: "Name",
                     selectable: true
+                },
+                constraint: {
+                    idField: "ID",
+                    labelField: "Name",
+                    selectable: true
                 }
             },
-            onNodeClicked: function (node, shift) {
-                toggleElementSelect(node, shift, true);
+            onNodeClicked: function (node, ctrl) {
+                toggleElementSelect(node, ctrl, true);
             }
         }
         _tree = $(container).simpleTree(options);
@@ -2595,10 +3063,10 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
     this.OnClientObjectDeleted = function (guid) {
         deleteElement(guid);
     }
-    this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
+    this.OnRelatedViewElementSelectToggled = function (guid, ctrl, newState) {
         var node = $(_tree).getNode(guid);
         if (node != null) {
-            toggleElementSelect(node, shift);
+            toggleElementSelect(node, ctrl);
         }
     }
     this.OnRelatedViewSelectionCleared = function () {
@@ -2611,8 +3079,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var _diagramDataModel = diagramDataModelInstance;
     var _canvas = null, _canvasContainer = canvasContainer;
     var _selectedElements = new Array();
-    var _createFeatureMode = false, _inlineEditMode = false, _draggingMode = false;
-    var _scaleModifier = 1.00, _fixedOrientation = "vertical"; //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
+    var _innerMode = innerState.ready;
+    var _scaleModifier = 0.75, _fixedOrientation = "vertical"; //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
     var _UIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
     var _thisDiagramContext = this;
     var _supportedTypes = {
@@ -2622,10 +3090,20 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         compositionRule: true
     }
 
+    //Keeps the generated events references
+    var _wireframeboxes = [];
+    var _mousemoveHandler = null;
+    var _clickHandler = null;
+    var _hoverElement = null;
+
+    // Text size optimization calculations
+    var _lettersCalculated = 0;
+
     //UIObjects & Defaults/Settings
     var UIFeature = function (clientObjectGUID, name, absoluteX, absoluteY) {
 
         //Fields
+        var _featureObjectModel = _diagramDataModel.GetByGUID(clientObjectGUID);
         var _outerElement = null, _glow = null;
         var _innerElements = {
             box: null,
@@ -2639,8 +3117,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         var _screenPos = {
             x: absoluteX * _scaleModifier, y: absoluteY * _scaleModifier
         }
-        var _boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier, _boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
+        var _originalBoxWidth = UIObjectStyles.feature.general.box.dimensions.width, _originalBoxHeight = (_featureObjectModel.Attributes.length + 1) * UIObjectStyles.feature.general.box.dimensions.height;
+        var _boxWidth = _originalBoxWidth * _scaleModifier, _boxHeight = _originalBoxHeight * _scaleModifier;
         var _relatedCompositeElements = [];
+        var _attributeElements = [];
         var _thisUIFeature = this;
 
         //Properties
@@ -2654,31 +3134,80 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         this.GetPos = function () {
             return { x: _absolutePos.x, y: _absolutePos.y };
         }
+        this.GetBox = function () {
+            return { width: _boxWidth, height: _boxHeight };
+        }
+        this.GetScreenPos = function () {
+            return { x: _screenPos.x, y: _screenPos.y };
+        }
         this.InnerElements = _innerElements;
         this.RelatedCompositeElements = _relatedCompositeElements;
+        this.AttributeElements = _attributeElements;
+        this.GetVisibleText = function (text) {
+            // Create a 'w' text and get the width if has not been calculated before
+            if (_lettersCalculated === 0) {
+                var _wLetterPixelSize = calculateWLetterText();
+                _lettersCalculated = Math.floor((UIObjectStyles.feature.general.box.dimensions.width - 2 * UIObjectStyles.feature.general.box.dimensions.paddingLeftRight) * _scaleModifier / _wLetterPixelSize);
+            }
+
+            return text.length > _lettersCalculated ? text.substring(0, _lettersCalculated) + "..." : text;
+        }
 
         //Private methods
         var makeSelectable = function () {
 
             //Selectable
             _outerElement.click(function (e) {
-                toggleElementSelect(_thisUIFeature, e.shiftKey, true);
+                if (_innerMode == innerState.relationLock) {
+                    toggleElementSelect(_thisUIFeature, true, true);
+                    createRelation();
+                }
+                else if (_innerMode == innerState.groupRelationLock && e.ctrlKey) {
+                    toggleElementSelect(_thisUIFeature, true, true);
+                    createGroupRelation(true);
+                }
+                else if (_innerMode == innerState.compositionRuleLock) {
+                    toggleElementSelect(_thisUIFeature, true, true);
+                    createCompositionRule();
+                }
+                else {
+                    toggleElementSelect(_thisUIFeature, e.ctrlKey, true);
+                }
 
+                _outerElement.attr({ cursor: "" });
             });
 
             //Hoverable
             _outerElement.mouseover(function (e) {
-                if (!_draggingMode) {
+                if (_innerMode != innerState.dragging) {
+                    if (_innerMode == innerState.relationLock ||
+                        _innerMode == innerState.groupRelationLock ||
+                        _innerMode == innerState.compositionRuleLock) {
+                        _outerElement.attr({ cursor: "crosshair" });
+                        _hoverElement = _thisUIFeature;
+                    }
+
                     if (_glow == null) {
-                        _innerElements.box.getBBox(); //hack fix for weird RaphaelJS bug
+                        _innerElements.box.getBBox(); // hack fix for weird RaphaelJS bug
                         _glow = _innerElements.box.glow(commonStyles.glow.attr);
                     }
                 }
             }).mouseout(function (e) {
-                if (!_draggingMode) {
-                    if (_glow != null) {
-                        _glow.remove();
-                        _glow = null;
+                if (_innerMode != innerState.dragging) {
+                    if (_innerMode == innerState.relationLock ||
+                        _innerMode == innerState.groupRelationLock ||
+                        _innerMode == innerState.compositionRuleLock) {
+                        if (_hoverElement == _thisUIFeature) {
+                            _outerElement.attr({ cursor: "" });
+                            _hoverElement = null;
+                        }
+                    }
+
+                    if (_innerMode != innerState.dragging) {
+                        if (_glow != null) {
+                            _glow.remove();
+                            _glow = null;
+                        }
                     }
                 }
             });
@@ -2689,6 +3218,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Drag and droppable
             var start = function () {
+                // When in another mode, do not drag and drop
+                if (_innerMode != innerState.ready && _innerMode != innerState.dragging)
+                    return;
 
                 _outerElement.originalx = _outerElement.attr("x");
                 _outerElement.originaly = _outerElement.attr("y");
@@ -2700,9 +3232,13 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 }
             };
             move = function (dx, dy) {
+                // When in create-relation mode, do not drag and drop
+                if (_innerMode != innerState.ready && _innerMode != innerState.dragging)
+                    return;
 
                 //Variables
-                wasMoved = true; _draggingMode = true;
+                wasMoved = true;
+                _innerMode = innerState.dragging;
                 if (_glow != null) {
                     _glow.remove();
                     _glow = null;
@@ -2726,12 +3262,18 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     for (var j = 0; j < _relatedCompositeElements.length; j++) {
                         _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
                     }
+                    for (var j = 0; j < _attributeElements.length; j++) {
+                        _attributeElements[j].OnFeatureMoved(_thisUIFeature);
+                    }
                 }
             };
             up = function () {
+                if (_innerMode != innerState.dragging)
+                    return;
+
                 if (wasMoved == true) {
                     //Variables
-                    _draggingMode = false;
+                    resetInnerMode();
 
                     //Update X and Y variables
                     internalUIFeatureMoved.RaiseEvent(_thisUIFeature);
@@ -2740,6 +3282,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     if (settings.diagramContext.dynamicRefresh == false) {
                         for (var j = 0; j < _relatedCompositeElements.length; j++) {
                             _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
+                        }
+                        for (var j = 0; j < _attributeElements.length; j++) {
+                            _attributeElements[j].OnFeatureMoved(_thisUIFeature);
                         }
                     }
 
@@ -2750,7 +3295,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
         var makeEditable = function () {
             _outerElement.dblclick(function (e) {
-                _inlineEditMode = true;
+                _innerMode = innerState.inlineEdit;
                 var bb1 = this.getBBox();
                 var textinput = $("<input class='Inputbox' type='text' />").prependTo("#SVGCanvasWrapper").css({
                     position: "relative",
@@ -2765,35 +3310,38 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     //
                     var newName = $(this).val();
                     $(this).remove();
-                    _inlineEditMode = false;
+                    resetInnerMode();
 
                     //Update dataModel
                     _diagramDataModel.UpdateClientObjectFields(_thisUIFeature.GUID, ["Name"], [newName]);
+                    _thisUIFeature.RefreshGraphicalRepresentation();
                 }).bind("keypress", function (e) {
                     if (e.which == 13) { //Enter
                         //
                         var newName = $(this).val();
                         $(this).remove();
-                        _inlineEditMode = false;
+                        resetInnerMode();
 
                         //Update dataModel
                         _diagramDataModel.UpdateClientObjectFields(_thisUIFeature.GUID, ["Name"], [newName]);
+                        _thisUIFeature.RefreshGraphicalRepresentation();
                     }
                     else if (e.which == 27) { //Escape
                         $(this).remove();
-                        _inlineEditMode = false;
+                        resetInnerMode();
                     }
                 }).bind("blur", function (e) {
                     $(this).remove();
-                    _inlineEditMode = false;
+                    resetInnerMode();
                 });
                 $(textinput).val(_name).select();
 
                 //Default select
-                toggleElementSelect(_thisUIFeature, e.shiftKey, true);
+                toggleElementSelect(_thisUIFeature, e.ctrlKey, true);
             });
         }
         var refresh = function () {
+
             //
             _innerElements.box.attr({
                 x: _screenPos.x,
@@ -2812,9 +3360,18 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //
             _innerElements.text.attr({
                 x: _boxWidth / 2 + _screenPos.x,
-                y: _boxHeight / 2 + _screenPos.y,
+                y: UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier / 2 + _screenPos.y,
                 "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
             });
+        }
+        var calculateWLetterText = function () {
+            var wLetterText = _canvas.text(0, 0, 'wi').attr(UIObjectStyles.feature.states[_currentState].box.attr);
+            wLetterText.attr({
+                "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
+            });
+            var wWidth = wLetterText.getBBox().width;
+            wLetterText.remove();
+            return wWidth / 1.9;
         }
 
         //Public methods
@@ -2822,8 +3379,14 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
             //Create inner elements            
             _innerElements.box = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight, 0).attr(UIObjectStyles.feature.states[_currentState].box.attr);
-            _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, _boxHeight / 2 + _screenPos.y, _name).attr(UIObjectStyles.feature.states[_currentState].text.attr);
+            _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier / 2 + _screenPos.y, this.GetVisibleText(_name)).attr(UIObjectStyles.feature.states[_currentState].text.attr);
             _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
+
+            // Create the attributes and place them for rendering
+            for (var i = 0; i < _featureObjectModel.Attributes.length; ++i) {
+                var uia = new UIAttribute(_featureObjectModel.Attributes[i].GetField("Name"), _thisUIFeature, i);
+                uia.CreateGraphicalRepresentation();
+            }
 
             //Create the main outer element
             _outerElement = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight).attr(systemDefaults.common.outerElement.attr);
@@ -2833,16 +3396,45 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             makeDraggable();
             makeEditable();
         }
-        this.RefreshGraphicalRepresentation = function () {
+        this.RefreshGraphicalRepresentation = function (options) {
+            if (options && options.isZooming) {
+                _innerElements.text.attr({ "text": this.GetVisibleText(_name) });
+            }
 
-            //
+            _originalBoxHeight = (_featureObjectModel.Attributes.length + 1) * UIObjectStyles.feature.general.box.dimensions.height;
+
+            // Rescale variables
             _screenPos.x = _absolutePos.x * _scaleModifier;
             _screenPos.y = _absolutePos.y * _scaleModifier;
-            _boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier;
-            _boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
+            _boxWidth = _originalBoxWidth * _scaleModifier;
+            _boxHeight = _originalBoxHeight * _scaleModifier;
 
-            //
+            if (options && options.rerenderAttributes) {
+                // Rerender the attributes
+                while (_attributeElements.length) {
+                    _attributeElements[0].Delete();
+                }
+
+                for (var i = 0; i < _featureObjectModel.Attributes.length; ++i) {
+                    var uia = new UIAttribute(_featureObjectModel.Attributes[i].GetField("Name"), _thisUIFeature, i);
+                    uia.CreateGraphicalRepresentation();
+                }
+            }
+            else {
+                for (var i = 0; i < _attributeElements.length; ++i) {
+                    _attributeElements[i].RefreshGraphicalRepresentation();
+                }
+            }
+
+            // Refresh the canvas
             refresh();
+
+            // When we add attributes we need 
+            if (options && options.rerenderAttributes) {
+                for (var i = 0; i < _relatedCompositeElements.length; i++) {
+                    _relatedCompositeElements[i].OnAdjacentFeatureMoved(_thisUIFeature);
+                }
+            }
         }
         this.ReverseCoordinates = function () {
 
@@ -2861,14 +3453,13 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _innerElements.box.attr(UIObjectStyles.feature.states[state].box.attr);
         }
         this.Update = function (newName) {
-
-            //Set text
+            // Set new name of feature
             _name = newName;
-            _innerElements.text.attr({ text: newName });
+
+            _innerElements.text.attr({ text: this.GetVisibleText(newName) });
         }
         this.Delete = function () {
-            if (!_inlineEditMode) {
-
+            if (_innerMode != innerState.inlineEdit) {
                 //Remove Raphael objects
                 _outerElement.remove();
                 _innerElements.box.remove();
@@ -2879,6 +3470,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 //Notify related CompositeElements
                 for (var j = _relatedCompositeElements.length - 1; j >= 0; j--) {
                     _relatedCompositeElements[j].OnAdjacentFeatureDeleted(_thisUIFeature);
+                }
+
+                for (var j = 0; j < _attributeElements.length; ++i) {
+                    _attributeElements.Delete();
                 }
             }
         }
@@ -2900,9 +3495,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         this.IsSelected = function () {
             return _currentState == systemDefaults.uiElementStates.selected;
         }
-        this.GetDataObj = function () {
-            return _dataObj;
-        }
         this.GetType = function () {
             return "relation";
         }
@@ -2916,15 +3508,15 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //
             var handlers = {
                 onClick: function (e) {
-                    toggleElementSelect(_thisUIRelation, e.shiftKey, true);
+                    toggleElementSelect(_thisUIRelation, e.ctrlKey, true);
                 },
                 onMouseOver: function (e) {
-                    if (!_draggingMode) {
+                    if (_innerMode != innerState.dragging) {
                         _innerElements.connection.ShowGlow();
                     }
                 },
                 onMouseOut: function (e) {
-                    if (!_draggingMode) {
+                    if (_innerMode != innerState.dragging) {
                         _innerElements.connection.HideGlow();
                     }
                 }
@@ -3077,17 +3669,17 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //
             var handlers = {
                 onClick: function (e) {
-                    toggleElementSelect(_thisUIGroupRelation, e.shiftKey, true);
+                    toggleElementSelect(_thisUIGroupRelation, e.ctrlKey, true);
                 },
                 onMouseOver: function (e) {
-                    if (!_draggingMode) {
+                    if (_innerMode != innerState.dragging) {
                         for (var i = 0; i < _innerElements.connections.length; i++) {
                             _innerElements.connections[i].ShowGlow();
                         }
                     }
                 },
                 onMouseOut: function (e) {
-                    if (!_draggingMode) {
+                    if (_innerMode != innerState.dragging) {
                         for (var i = 0; i < _innerElements.connections.length; i++) {
                             _innerElements.connections[i].HideGlow();
                         }
@@ -3337,15 +3929,15 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             //
             var handlers = {
                 onClick: function (e) {
-                    toggleElementSelect(_thisUICompositionRule, e.shiftKey, true);
+                    toggleElementSelect(_thisUICompositionRule, e.ctrlKey, true);
                 },
                 onMouseOver: function (e) {
-                    if (!_draggingMode) {
+                    if (_innerMode != innerState.dragging) {
                         _innerElements.connection.ShowGlow();
                     }
                 },
                 onMouseOut: function (e) {
-                    if (!_draggingMode) {
+                    if (_innerMode != innerState.dragging) {
                         _innerElements.connection.HideGlow();
                     }
                 }
@@ -3719,8 +4311,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.dimensionModifier * _scaleModifier, yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.dimensionModifier * _scaleModifier; //position for endConnector
             _innerElements.raphaelElem = eval("_canvas." + raphaelConnectorType.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
             _innerElements.raphaelElem.attr(connectorStyle);
-
-
         }
         this.RefreshGraphicalRepresentation = function () {
             refresh();
@@ -3791,6 +4381,321 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _innerElements.text.attr({ text: "[" + _firstNumber + ".." + _secondNumber + "]" });
         }
     }
+    var UIAttribute = function (attributeName, parentFeature, order) {
+
+        //Fields
+        var _innerElements = {
+            text: null,
+            line: null
+        };
+        var _thisUIAttribute = this;
+        this.AttributeName = attributeName;
+
+        //Properties
+        this.IsSelected = function () {
+            return _currentState == systemDefaults.uiElementStates.selected;
+        }
+        this.GetType = function () {
+            return "attribute";
+        }
+
+        function refresh(name) {
+            var parentPos = parentFeature.GetScreenPos();
+            var parentBox = parentFeature.GetBox();
+
+            _innerElements.text.attr({ x: parentPos.x + UIObjectStyles.feature.general.box.dimensions.paddingLeftRight,
+                y: (order + 1.5) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y,
+                text: parentFeature.GetVisibleText(name)
+            });
+            _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier });
+            var lineY = (order + 1) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y;
+            _innerElements.line.attr({ path: ["M", parentPos.x, lineY, "L", parentPos.x + parentBox.width, lineY] });
+        }
+        function removeFromFeature(UIFeature) {
+            var index = $(UIFeature.AttributeElements).index(_thisUIAttribute);
+            if (index != -1) {
+                UIFeature.AttributeElements.splice(index, 1);
+            }
+            else alert("not found");
+        }
+
+        //Public methods
+        this.CreateGraphicalRepresentation = function () {
+            var parentPos = parentFeature.GetScreenPos();
+            var parentBox = parentFeature.GetBox();
+
+            // Get the parent dimensions plus text and set up the raphael object
+            _innerElements.text = _canvas.text(parentPos.x + UIObjectStyles.feature.general.box.dimensions.paddingLeftRight, (order + 1.5) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y, parentFeature.GetVisibleText(attributeName));
+            _innerElements.text.attr({ "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier, "text-anchor": "start" });
+            var lineY = (order + 1) * UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier + parentPos.y;
+            _innerElements.line = _canvas.path(["M", parentPos.x, lineY, "L", parentPos.x + parentBox.width, lineY]);
+
+            if (!order)
+                _innerElements.line.attr(UIObjectStyles.feature.states.unselected.line.attr);
+            else
+                _innerElements.line.attr(UIObjectStyles.feature.states.unselected["secondary-line"].attr);
+
+            //Add references
+            parentFeature.AttributeElements.push(_thisUIAttribute);
+        }
+        this.RefreshGraphicalRepresentation = function () {
+            refresh(this.AttributeName);
+        }
+        this.Delete = function () {
+
+            //Remove elements
+            if (_innerElements.text != null) {
+                _innerElements.text.remove();
+                _innerElements.text = null;
+            }
+            if (_innerElements.line != null) {
+                _innerElements.line.remove();
+                _innerElements.line = null;
+            }
+
+            //Remove references
+            removeFromFeature(parentFeature);
+        }
+
+        //Event handlers
+        this.OnFeatureMoved = function (UIFeature) {
+            refresh(this.AttributeName);
+        }
+    }
+
+    // Utilities
+    // Cannot reuse getPath/getArcPath method from UIConnection and UIGroupRelation
+    var getPathFromFeatureToPoint = function (objA, x, y) {
+
+        //Variables
+        var bb1 = objA.getBBox();
+        var bb2 = { x: x, y: y, width: 0, height: 0 };
+        var objAcenter = {
+            x: bb1.x + bb1.width / 2,
+            y: bb1.y + bb1.height / 2
+        };
+        var objBcenter = {
+            x: bb2.x + bb2.width / 2,
+            y: bb2.y + bb2.height / 2
+        };
+        var connectionPoints = {
+            firstObject: {
+                top: { x: bb1.x + bb1.width / 2, y: bb1.y - 1 },
+                bottom: { x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1 },
+                left: { x: bb1.x - 1, y: bb1.y + bb1.height / 2 },
+                right: { x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2 }
+            },
+            secondObject: {
+                top: { x: bb2.x + bb2.width / 2, y: bb2.y - 1 },
+                bottom: { x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1 },
+                left: { x: bb2.x - 1, y: bb2.y + bb2.height / 2 },
+                right: { x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2 }
+            }
+        };
+
+        //Determine the orientation
+        var currentOrientation = null;
+        if (_fixedOrientation != false) {
+            currentOrientation = _fixedOrientation; //use default fixed orientation without calculating angle
+        }
+        else {
+            var centerdx = objBcenter.x - objAcenter.x, centerdy = objBcenter.y - objAcenter.y;
+            var angle = Math.atan2(-centerdy, centerdx) * 180 / Math.PI;
+            angle = parseInt(angle.toFixed());
+            if (angle < 0)
+                angle += 360;
+            for (var key in systemDefaults.orientations) {
+                var orientation = systemDefaults.orientations[key];
+                for (var i = 0; i < orientation.angleIntervals.length; i++) {
+                    if (angle >= orientation.angleIntervals[i].min && angle <= orientation.angleIntervals[i].max) {
+                        currentOrientation = orientation.name;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Determine which connection points in the current orientation make the shortest path
+        var distances = [], points = {};
+        for (var i = 0; i < systemDefaults.orientations[currentOrientation].connections.length; i++) {
+            var con = systemDefaults.orientations[currentOrientation].connections[i];
+            var x1 = connectionPoints.firstObject[con[0]].x, y1 = connectionPoints.firstObject[con[0]].y;
+            var x2 = connectionPoints.secondObject[con[1]].x, y2 = connectionPoints.secondObject[con[1]].y;
+
+            var dx = Math.abs(x1 - x2);
+            var dy = Math.abs(y1 - y2);
+            var distance = dx + dy;
+
+            distances[i] = distance;
+            points[distance] = {
+                x1: x1,
+                y1: y1,
+                x2: x2,
+                y2: y2,
+                curveModifier: systemDefaults.orientations[currentOrientation].curveModifiers[i]
+            };
+        }
+        var closestConnection = points[Math.min.apply(Math, distances)];
+
+        //Create path
+        var path = null;
+        if (settings.diagramContext.drawCurves == true) {
+            path = [["M", closestConnection.x1.toFixed(1), closestConnection.y1.toFixed(1)],
+                            ["C",
+                            closestConnection.x1 + closestConnection.curveModifier.x * _scaleModifier,
+                            closestConnection.y1 + closestConnection.curveModifier.y * _scaleModifier,
+                            closestConnection.x2 - closestConnection.curveModifier.x * _scaleModifier,
+                            closestConnection.y2 - closestConnection.curveModifier.y * _scaleModifier,
+                            closestConnection.x2.toFixed(1), closestConnection.y2.toFixed(1)]];
+        } else {
+            path = ["M", closestConnection.x1.toFixed(3), closestConnection.y1.toFixed(3), "L", closestConnection.x2.toFixed(3), closestConnection.y2.toFixed(3)].join(","); //line
+        }
+
+        var returnObj = {
+            path: path,
+            startObj: objA,
+            //endObj: objB,
+            startPoint: {
+                x: closestConnection.x1,
+                y: closestConnection.y1
+            },
+            endPoint: {
+                x: closestConnection.x2,
+                y: closestConnection.y2
+            }
+        };
+        return returnObj;
+    }
+    var getPathBetweenFeatures = function (objA, objB) {
+
+        //Variables
+        var bb1 = objA.getBBox();
+        var bb2 = objB.getBBox();
+        var objAcenter = {
+            x: bb1.x + bb1.width / 2,
+            y: bb1.y + bb1.height / 2
+        };
+        var objBcenter = {
+            x: bb2.x + bb2.width / 2,
+            y: bb2.y + bb2.height / 2
+        };
+        var connectionPoints = {
+            firstObject: {
+                top: { x: bb1.x + bb1.width / 2, y: bb1.y - 1 },
+                bottom: { x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1 },
+                left: { x: bb1.x - 1, y: bb1.y + bb1.height / 2 },
+                right: { x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2 }
+            },
+            secondObject: {
+                top: { x: bb2.x + bb2.width / 2, y: bb2.y - 1 },
+                bottom: { x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1 },
+                left: { x: bb2.x - 1, y: bb2.y + bb2.height / 2 },
+                right: { x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2 }
+            }
+        };
+
+        //Determine the orientation
+        var currentOrientation = null;
+        if (_fixedOrientation != false) {
+            currentOrientation = _fixedOrientation; //use default fixed orientation without calculating angle
+        }
+        else {
+            var centerdx = objBcenter.x - objAcenter.x, centerdy = objBcenter.y - objAcenter.y;
+            var angle = Math.atan2(-centerdy, centerdx) * 180 / Math.PI;
+            angle = parseInt(angle.toFixed());
+            if (angle < 0)
+                angle += 360;
+            for (var key in systemDefaults.orientations) {
+                var orientation = systemDefaults.orientations[key];
+                for (var i = 0; i < orientation.angleIntervals.length; i++) {
+                    if (angle >= orientation.angleIntervals[i].min && angle <= orientation.angleIntervals[i].max) {
+                        currentOrientation = orientation.name;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Determine which connection points in the current orientation make the shortest path
+        var distances = [], points = {};
+        for (var i = 0; i < systemDefaults.orientations[currentOrientation].connections.length; i++) {
+            var con = systemDefaults.orientations[currentOrientation].connections[i];
+            var x1 = connectionPoints.firstObject[con[0]].x, y1 = connectionPoints.firstObject[con[0]].y;
+            var x2 = connectionPoints.secondObject[con[1]].x, y2 = connectionPoints.secondObject[con[1]].y;
+
+            var dx = Math.abs(x1 - x2);
+            var dy = Math.abs(y1 - y2);
+            var distance = dx + dy;
+
+            distances[i] = distance;
+            points[distance] = {
+                x1: x1,
+                y1: y1,
+                x2: x2,
+                y2: y2,
+                curveModifier: systemDefaults.orientations[currentOrientation].curveModifiers[i]
+            };
+        }
+        var closestConnection = points[Math.min.apply(Math, distances)];
+
+        //Create path
+        var path = null;
+        if (settings.diagramContext.drawCurves == true) {
+            path = [["M", closestConnection.x1.toFixed(1), closestConnection.y1.toFixed(1)],
+                ["C",
+                closestConnection.x1 + closestConnection.curveModifier.x * _scaleModifier,
+                closestConnection.y1 + closestConnection.curveModifier.y * _scaleModifier,
+                closestConnection.x2 - closestConnection.curveModifier.x * _scaleModifier,
+                closestConnection.y2 - closestConnection.curveModifier.y * _scaleModifier,
+                closestConnection.x2.toFixed(1), closestConnection.y2.toFixed(1)]];
+        } else {
+            path = ["M", closestConnection.x1.toFixed(3), closestConnection.y1.toFixed(3), "L", closestConnection.x2.toFixed(3), closestConnection.y2.toFixed(3)].join(","); //line
+        }
+
+
+        var returnObj = {
+            path: path,
+            startObj: objA,
+            endObj: objB,
+            startPoint: {
+                x: closestConnection.x1,
+                y: closestConnection.y1
+            },
+            endPoint: {
+                x: closestConnection.x2,
+                y: closestConnection.y2
+            }
+        };
+        return returnObj;
+    }
+    var getArcPath = function (firstConnection, lastConnection) {
+
+        //Get points
+        var rootPoint = firstConnection.getPointAtLength(0);
+        var pointA = firstConnection.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length * _scaleModifier);
+        var pointB = lastConnection.getPointAtLength(UIObjectStyles.groupRelation.general.rootArc.dimensions.length * _scaleModifier);
+
+        //Get arc modifiers
+        var currentOrientation = _fixedOrientation;
+        var rx = systemDefaults.orientations[currentOrientation].arcModifiers.rx;
+        var ry = systemDefaults.orientations[currentOrientation].arcModifiers.ry;
+        var arcSweep = null;
+
+        for (var key in systemDefaults.orientations[currentOrientation].arcDirection) {
+            var arcDirection = systemDefaults.orientations[currentOrientation].arcDirection[key];
+            if (arcDirection.check(rootPoint, pointA) == true) {
+                arcSweep = arcDirection.arcSweep;
+                break;
+            }
+        }
+
+        //Create the path
+        var path = ["M", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3),
+                    "L", pointA.x.toFixed(3), pointA.y.toFixed(3), //"L", pointB.x.toFixed(3), pointB.y.toFixed(3), - straight lines
+                    "A", rx, ry, 0, 0, arcSweep, pointB.x.toFixed(3), pointB.y.toFixed(3),
+                    "L", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3)].join(",");
+        return path;
+    }
 
     //Properties
     this.SelectedElements = _selectedElements;
@@ -3802,7 +4707,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         //Handler for canvas click
         $(_canvasContainer).bind("click", function (e) {
             _thisDiagramContext.Focus.RaiseEvent();
-            if (e.target.nodeName == "svg" && e.shiftKey != true) {
+            if (e.target.nodeName == "svg" && e.ctrlKey != true) {
                 clearSelection(true);
             }
         });
@@ -3810,9 +4715,34 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         //Set internal eventhandlers
         internalUIElementCascadedDelete.Add(new EventHandler(onInternalUIElementCascadeDeleted));
         internalUIFeatureMoved.Add(new EventHandler(onInternalUIFeatureMoved));
+        this.AttributeHasChanged.Add(new EventHandler(onAttributeHasChanged));
     };
 
     //Private methods
+    var resetInnerMode = function () {
+        if (_clickHandler)
+            $(_canvasContainer).unbind("click", _clickHandler);
+        if (_mousemoveHandler)
+            $(_canvasContainer).unbind("mousemove", _mousemoveHandler);
+        removeWireframes();
+
+        _hoverElement = null;
+        _innerMode = innerState.ready;
+        _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
+    }
+    var removeWireframes = function () {
+        for (var i = 0; i < _wireframeboxes.length; ++i) {
+            if (_wireframeboxes[i] != null)
+                _wireframeboxes[i].remove();
+        }
+        _wireframeboxes = [];
+    }
+    var sendWireframesOnBackground = function () {
+        for (var i = 0; i < _wireframeboxes.length; ++i) {
+            if (_wireframeboxes[i] != null)
+                $(_wireframeboxes[i].node).insertBefore($(_wireframeboxes[i].node).parent().children()[4]);
+        }
+    }
     var setElementSelected = function (UIElement) {
         if (UIElement.IsSelected() != true) {
             _selectedElements.push(UIElement);
@@ -3836,8 +4766,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             _thisDiagramContext.SelectionCleared.RaiseEvent();
         }
     }
-    var toggleElementSelect = function (UIElement, shift, raiseEvents) {
-        if (shift != true) {
+    var toggleElementSelect = function (UIElement, ctrl, raiseEvents) {
+        if (ctrl != true) {
             clearSelection();
         }
 
@@ -3852,7 +4782,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         //Raise events
         if (raiseEvents == true) {
-            _thisDiagramContext.ElementSelectToggled.RaiseEvent([UIElement.GUID, shift, newState]);
+            _thisDiagramContext.ElementSelectToggled.RaiseEvent([UIElement.GUID, ctrl, newState]);
         }
     }
     var deleteElement = function (UIElement) {
@@ -3861,42 +4791,36 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         _UIElements[UIElement.GUID] = null;
     }
     var createFeature = function () {
-        if (_createFeatureMode == false) {
-            _createFeatureMode = true;
+        if (_innerMode != innerState.featureLock) {
+            resetInnerMode();
+            _innerMode = innerState.featureLock;
+            _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
 
             //Create wireframe
             var boxWidth = UIObjectStyles.feature.general.box.dimensions.width * _scaleModifier;
             var boxHeight = UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier;
-            $(_canvasContainer).css("cursor", "crosshair");
-            var wireframebox = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states.wireframe.box.attr);
+            _wireframeboxes.push(_canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIObjectStyles.feature.states.wireframe.box.attr));
 
             //Setup mouse move handler
-            var mousemoveHandler = function (e) {
+            _mousemoveHandler = function (e) {
+                if (_innerMode != innerState.featureLock) {
+                    resetInnerMode();
+                    return;
+                }
 
                 //Mouse move
-                var screenPosX = (e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2);
-                var screenPosY = (e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2);
-                if (wireframebox == null) {
-                    wireframebox = _canvas.rect(screenPosX, screenPosY, boxWidth, boxHeight, 0).attr(styles.feature.states.wireframe.box);
-                }
-                else {
-                    wireframebox.attr({ x: screenPosX, y: screenPosY });
-                }
+                var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2);
+                var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2);
+                _wireframeboxes[0].attr({ x: screenPosX, y: screenPosY });
             };
-            $(_canvasContainer).bind("mousemove", mousemoveHandler);
+            $(_canvasContainer).bind("mousemove", _mousemoveHandler);
 
             //Create actual Feature on click
-            var clickHandler = function (e) {
+            _clickHandler = function (e) {
 
                 //Get the position
-                var absolutePosX = (e.pageX - $(document).scrollLeft() - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2) / _scaleModifier;
-                var absolutePosY = (e.pageY - $(document).scrollTop() - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2) / _scaleModifier;
-
-                //Remove wireframe
-                $(_canvasContainer).unbind("click", clickHandler);
-                $(_canvasContainer).unbind("mousemove", mousemoveHandler);
-                $(_canvasContainer).css("cursor", "default");
-                wireframebox.remove();
+                var absolutePosX = (e.pageX - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2) / _scaleModifier;
+                var absolutePosY = (e.pageY - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2) / _scaleModifier;
 
                 //Create a new clientObject in the diagramDataModel
                 var initialValues = {
@@ -3906,15 +4830,70 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 }
                 var clientFeatureObject = _diagramDataModel.AddNewClientObject("feature", initialValues);
 
-                //
-                _createFeatureMode = false;
+                resetInnerMode();
             };
-            $(_canvasContainer).bind("click", clickHandler);
+            $(_canvasContainer).bind("click", _clickHandler);
         }
     }
+    var createFeatureCopy = function (sourceFeature) {
+        if (_innerMode != innerState.featureLock) {
+            resetInnerMode();
+            _innerMode = innerState.featureLock;
+            _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
+
+            var XPosSource = sourceFeature.XPos;
+            var YPosSource = sourceFeature.YPos;
+
+            //Create copy of the feature
+            var initialValues = {
+                ModelID: _diagramDataModel.ModelID,
+                XPos: (XPosSource + 150),
+                YPos: (YPosSource + 50),
+                Description: sourceFeature.Description
+            };
+
+            //Create a new ClientDataObject
+            clientFeatureObject = _diagramDataModel.AddNewClientObject("feature", initialValues);
+
+            //Update the business object
+            var clientBusinessObject = clientFeatureObject.GetBusinessObject();
+            clientBusinessObject.Identifier = _diagramDataModel.GetNextFeatureIdentifier(sourceFeature.Identifier + "_");
+            clientBusinessObject.Name = _diagramDataModel.GetNextFeatureName(sourceFeature.Name + "_");
+            clientBusinessObject.Description = sourceFeature.Description;
+
+            //Load Attributes
+            for (var j = 0; j < sourceFeature.Attributes.length; j++) {
+                var attribute = sourceFeature.Attributes[j];
+                //attributes copied from the source business object
+                var initialValuesAttribute = {
+                    AttributeDataType: attribute.AttributeDataType,
+                    AttributeType: attribute.AttributeType,
+                    ConstantValue: attribute.ConstantValue,
+                    Description: attribute.Description
+                }
+                var initialClientValues = {};
+                initialClientValues["Feature"] = clientFeatureObject;
+                var attributeClientObject = _diagramDataModel.AddNewClientObject("attribute", initialValuesAttribute, initialClientValues);
+                var attributeBusinessObject = attributeClientObject.GetBusinessObject();
+                attributeBusinessObject.Identifier = _diagramDataModel.GetNextAttributeIdentifier(attribute.Identifier + "_", clientFeatureObject.Attributes);
+                attributeBusinessObject.Name = attribute.Name;
+                //Set references
+                clientFeatureObject.Attributes.push(attributeClientObject);
+                attributeClientObject.Feature = clientFeatureObject;
+            }
+            _diagramDataModel.UpdateClientObject(clientFeatureObject.GUID, clientBusinessObject);
+
+            //
+
+            //clientFeatureObject.UpdateBusinessObject(sourceFeature);
+            resetInnerMode();
+        }
+
+        return clientFeatureObject;
+    }
+
     var createRelation = function () {
         if (_selectedElements.length == 2) {
-
             //Create a new clientObject in the diagramDataModel
             var parentFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
             var childFeature = _diagramDataModel.GetByGUID(_selectedElements[1].GUID);
@@ -3926,31 +4905,204 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 ChildFeature: childFeature
             }
             var clientRelationObject = _diagramDataModel.AddNewClientObject("relation", initialValues, initialClientValues);
+            resetInnerMode();
+        }
+        else if (_selectedElements.length < 2) {
+            if (_innerMode != innerState.relationLock) {
+                // Lock the relation element and allow the user to drag and drop selections to relation
+                resetInnerMode();
+                _innerMode = innerState.relationLock;
+                _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
+
+                // Drag and drop for the selected element
+                _mousemoveHandler = function (e) {
+                    if (_selectedElements.length === 0) {
+                        removeWireframes();
+                    }
+                    else if (_selectedElements.length === 1) {
+                        //Mouse move
+                        var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
+                        var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
+                        removeWireframes();
+
+                        var style = (function getStyle() {
+                            var commonStyle = commonStyles.connection.states.unselected;
+                            var generalStyle = UIObjectStyles.relation.general.connection;
+                            var subTypeStyle = UIObjectStyles.relation.subTypes.mandatory.connection;
+                            var currentStyle = $.extend(true, {}, commonStyle, generalStyle, subTypeStyle);
+                            return currentStyle;
+                        })();
+
+                        var _currentPath = null;
+                        var shouldDrawWireframeBehind = true;
+                        if (_hoverElement !== null && _selectedElements[0] !== _hoverElement) {
+                            _currentPath = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _hoverElement.InnerElements.box);
+                            shouldDrawWireframeBehind = false;
+                        }
+                        else
+                            _currentPath = getPathFromFeatureToPoint(_selectedElements[0].InnerElements.box, screenPosX, screenPosY);
+
+                        _wireframeboxes[0] = _canvas.path(_currentPath.path);
+                        _wireframeboxes[0].attr(style.line.attr);
+
+                        var rct = style.connectors.endConnector;
+                        var scaledDimensions = $.extend(true, {}, rct.dimensions);
+                        for (var dimensionKey in scaledDimensions) {
+                            var originalValue = scaledDimensions[dimensionKey];
+                            scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+                        }
+                        var xPos = _currentPath.endPoint.x - rct.dimensionModifier * _scaleModifier, yPos = _currentPath.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
+                        _wireframeboxes[1] = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                        _wireframeboxes[1].attr(rct.attr);
+
+                        if (shouldDrawWireframeBehind)
+                            sendWireframesOnBackground();
+                    }
+                };
+
+                $(_canvasContainer).bind("mousemove", _mousemoveHandler);
+
+                _clickHandler = function (e) {
+                    if (_selectedElements.length === 0) {
+                        resetInnerMode();
+                    }
+                };
+                $(_canvasContainer).bind("click", _clickHandler);
+            }
+        }
+        else {
+            resetInnerMode();
         }
     }
-    var createGroupRelation = function () {
+    var createGroupRelation = function (isSelectMode) {
         if (_selectedElements.length > 2) {
+            if (!isSelectMode) {
+                // Start creating the group relation
+                resetInnerMode();
+                _innerMode = innerState.groupRelationLock;
+                _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
+                // Create a new clientObject in the diagramDataModel
+                var parentFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
+                var childFeatures = [];
+                var childUIFeatures = _selectedElements.slice(1);
+                for (var i = 0; i < childUIFeatures.length; i++) {
+                    childFeatures.push(_diagramDataModel.GetByGUID(childUIFeatures[i].GUID));
+                }
+                var initialValues = {
+                    ModelID: _diagramDataModel.ModelID
+                }
+                var initialClientValues = {
+                    ParentFeature: parentFeature,
+                    ChildFeatures: childFeatures
+                }
+                var clientGroupRelationObject = _diagramDataModel.AddNewClientObject("groupRelation", initialValues, initialClientValues);
+                resetInnerMode();
+            }
+        }
+        else if (_innerMode != innerState.groupRelationLock) {
+            // Preview the group relation
+            resetInnerMode();
+            _innerMode = innerState.groupRelationLock;
+            _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
 
-            //Create a new clientObject in the diagramDataModel
-            var parentFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
-            var childFeatures = [];
-            var childUIFeatures = _selectedElements.slice(1);
-            for (var i = 0; i < childUIFeatures.length; i++) {
-                childFeatures.push(_diagramDataModel.GetByGUID(childUIFeatures[i].GUID));
-            }
-            var initialValues = {
-                ModelID: _diagramDataModel.ModelID
-            }
-            var initialClientValues = {
-                ParentFeature: parentFeature,
-                ChildFeatures: childFeatures
-            }
-            var clientGroupRelationObject = _diagramDataModel.AddNewClientObject("groupRelation", initialValues, initialClientValues);
+            // Drag and drop for the selected element
+            _mousemoveHandler = function (e) {
+                if (_selectedElements.length === 0) {
+                    removeWireframes();
+                }
+                else if (_selectedElements.length >= 0) {
+                    //Mouse move
+                    var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
+                    var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
+
+                    removeWireframes();
+
+                    var style = (function getStyle() {
+                        var commonStyle = commonStyles.connection.states.unselected;
+                        var generalStyle = UIObjectStyles.groupRelation.general.connection;
+                        var subTypeStyle = UIObjectStyles.groupRelation.subTypes.xor.connection;
+                        var currentStyle = $.extend(true, {}, commonStyle, generalStyle, subTypeStyle);
+                        return currentStyle;
+                    })();
+
+                    var rct = null;
+                    var scaledDimensions = null;
+                    var firstPath = null;
+                    // Draw the connections for the already selected elements
+                    for (var i = 1; i < _selectedElements.length; i++) {
+                        var _currentPathForFeatures = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _selectedElements[i].InnerElements.box);
+
+                        // This can be refactored
+                        _wireframeboxes[_wireframeboxes.length] = _canvas.path(_currentPathForFeatures.path);
+                        _wireframeboxes[_wireframeboxes.length - 1].attr(style.line.attr);
+
+                        // Mark the first line
+                        if (i === 1)
+                            firstPath = _wireframeboxes[_wireframeboxes.length - 1];
+
+                        rct = style.connectors.endConnector;
+                        scaledDimensions = $.extend(true, {}, rct.dimensions);
+                        for (var dimensionKey in scaledDimensions) {
+                            var originalValue = scaledDimensions[dimensionKey];
+                            scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+                        }
+                        var xPos = _currentPathForFeatures.endPoint.x - rct.dimensionModifier * _scaleModifier,
+                            yPos = _currentPathForFeatures.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
+                        _wireframeboxes[_wireframeboxes.length] = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                        _wireframeboxes[_wireframeboxes.length - 1].attr(rct.attr);
+                        // Until here
+                    }
+
+                    // Draw the last connection that follows the mouse
+                    var _currentPath = null;
+                    var shouldDrawWireframeBehind = true;
+                    if (_hoverElement !== null && _selectedElements[0] !== _hoverElement) {
+                        _currentPath = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _hoverElement.InnerElements.box);
+                        shouldDrawWireframeBehind = false;
+                    }
+                    else if (_selectedElements.length > 0)
+                        _currentPath = getPathFromFeatureToPoint(_selectedElements[0].InnerElements.box, screenPosX, screenPosY);
+
+                    _wireframeboxes[_wireframeboxes.length] = _canvas.path(_currentPath.path);
+                    _wireframeboxes[_wireframeboxes.length - 1].attr(style.line.attr);
+
+                    if (_wireframeboxes.length > 1) {
+                        // Add the arc
+                        _wireframeboxes[_wireframeboxes.length] = _canvas.path(getArcPath(firstPath, _wireframeboxes[_wireframeboxes.length - 1])).attr(UIObjectStyles.groupRelation.general.rootArc.attr);
+                        _wireframeboxes[_wireframeboxes.length - 1].attr(style.line.attr);
+                    }
+
+                    // Draw the dot
+                    rct = style.connectors.endConnector;
+                    scaledDimensions = $.extend(true, {}, rct.dimensions);
+                    for (var dimensionKey in scaledDimensions) {
+                        var originalValue = scaledDimensions[dimensionKey];
+                        scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+                    }
+                    var xPos = _currentPath.endPoint.x - rct.dimensionModifier * _scaleModifier, yPos = _currentPath.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
+                    _wireframeboxes[_wireframeboxes.length] = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                    _wireframeboxes[_wireframeboxes.length - 1].attr(rct.attr);
+
+                    if (shouldDrawWireframeBehind)
+                        sendWireframesOnBackground();
+                }
+            };
+
+            $(_canvasContainer).bind("mousemove", _mousemoveHandler);
+
+            _clickHandler = function (e) {
+                if (_selectedElements.length === 0) {
+                    resetInnerMode();
+                }
+            };
+            $(_canvasContainer).bind("click", _clickHandler);
         }
     }
     var createCompositionRule = function () {
         if (_selectedElements.length == 2) {
-
+            resetInnerMode();
+            _innerMode = innerState.compositionRuleLock;
+            _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
             //Create a new clientObject in the diagramDataModel
             var firstFeature = _diagramDataModel.GetByGUID(_selectedElements[0].GUID);
             var secondFeature = _diagramDataModel.GetByGUID(_selectedElements[1].GUID);
@@ -3962,6 +5114,74 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 SecondFeature: secondFeature
             }
             var clientRelationObject = _diagramDataModel.AddNewClientObject("compositionRule", initialValues, initialClientValues);
+            resetInnerMode();
+        }
+        else if (_selectedElements.length < 2) {
+            if (_innerMode != innerState.compositionRuleLock) {
+                // Lock the composition element and allow the user to drag and drop selections to relation
+                resetInnerMode();
+                _innerMode = innerState.compositionRuleLock;
+                _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
+
+                // Drag and drop for the selected element
+                _mousemoveHandler = function (e) {
+                    if (_selectedElements.length === 0) {
+                        removeWireframes();
+                    }
+                    else if (_selectedElements.length === 1) {
+                        //Mouse move
+                        var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
+                        var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
+
+                        removeWireframes();
+
+                        var style = (function getStyle() {
+                            var commonStyle = commonStyles.connection.states.unselected;
+                            var generalStyle = UIObjectStyles.compositionRule.general.connection;
+                            var subTypeStyle = UIObjectStyles.compositionRule.subTypes.dependency.connection;
+                            var currentStyle = $.extend(true, {}, commonStyle, generalStyle, subTypeStyle);
+                            return currentStyle;
+                        })();
+
+                        var _currentPath = null;
+                        var shouldDrawWireframeBehind = true;
+                        if (_hoverElement !== null && _selectedElements[0] !== _hoverElement) {
+                            _currentPath = getPathBetweenFeatures(_selectedElements[0].InnerElements.box, _hoverElement.InnerElements.box);
+                            shouldDrawWireframeBehind = false;
+                        }
+                        else
+                            _currentPath = getPathFromFeatureToPoint(_selectedElements[0].InnerElements.box, screenPosX, screenPosY);
+
+                        _wireframeboxes[0] = _canvas.path(_currentPath.path);
+                        _wireframeboxes[0].attr(style.line.attr);
+
+                        var rct = style.connectors.endConnector;
+                        var scaledDimensions = $.extend(true, {}, rct.dimensions);
+                        for (var dimensionKey in scaledDimensions) {
+                            var originalValue = scaledDimensions[dimensionKey];
+                            scaledDimensions[dimensionKey] = originalValue * _scaleModifier;
+                        }
+                        var xPos = _currentPath.endPoint.x - rct.dimensionModifier * _scaleModifier, yPos = _currentPath.endPoint.y - rct.dimensionModifier * _scaleModifier; //position for endConnector
+                        _wireframeboxes[1] = eval("_canvas." + rct.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+                        _wireframeboxes[1].attr(rct.attr);
+
+                        if (shouldDrawWireframeBehind)
+                            sendWireframesOnBackground();
+                    }
+                };
+
+                $(_canvasContainer).bind("mousemove", _mousemoveHandler);
+
+                _clickHandler = function (e) {
+                    if (_selectedElements.length === 0) {
+                        resetInnerMode();
+                    }
+                };
+                $(_canvasContainer).bind("click", _clickHandler);
+            }
+        }
+        else {
+            resetInnerMode();
         }
     }
 
@@ -4079,7 +5299,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
     //Public methods (triggered by ModelController)
     this.DeleteSelectedElements = function () {
-        if (_inlineEditMode != true) {
+        if (_innerMode != innerState.inlineEdit) {
             var elementsToBeDeleted = _selectedElements.slice(0);
             for (var i = 0; i < elementsToBeDeleted.length; i++) {
                 _diagramDataModel.DeleteClientObject(elementsToBeDeleted[i].GUID);
@@ -4102,69 +5322,52 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 break;
         }
     }
+    this.RefreshGraphicalRepresentation = function (options) {
+        //Refresh features
+        for (var guidKey in _diagramDataModel.ClientObjects.features) {
+            var UIFeature = _UIElements[guidKey];
+            if (UIFeature != undefined)
+                UIFeature.RefreshGraphicalRepresentation(options);
+        }
+
+        //Refresh relations, groupRelations and compositionRules
+        for (var guidKey in _diagramDataModel.ClientObjects.relations) {
+            var UIElement = _UIElements[guidKey];
+            if (UIElement != undefined)
+                UIElement.RefreshGraphicalRepresentation(options);
+        }
+        for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
+            var UIElement = _UIElements[guidKey];
+            if (UIElement != undefined)
+                UIElement.RefreshGraphicalRepresentation(options);
+        }
+        for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
+            var UIElement = _UIElements[guidKey];
+            if (UIElement != undefined)
+                UIElement.RefreshGraphicalRepresentation(options);
+        }
+    }
     this.ZoomIn = function () {
+        _lettersCalculated = 0;
 
         //Modify scale
         if (_scaleModifier < 2) {
             _scaleModifier += 0.25;
 
-            //Refresh features
-            for (var guidKey in _diagramDataModel.ClientObjects.features) {
-                var UIFeature = _UIElements[guidKey];
-                if (UIFeature != undefined)
-                    UIFeature.RefreshGraphicalRepresentation();
-            }
-
-            //Refresh relations, groupRelations and compositionRules
-            for (var guidKey in _diagramDataModel.ClientObjects.relations) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
-            for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
-            for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
+            this.RefreshGraphicalRepresentation({ isZooming: true });
         }
 
         //
         return _scaleModifier;
     }
     this.ZoomOut = function () {
+        _lettersCalculated = 0;
 
         //Modify scale
         if (_scaleModifier >= 0.50) {
             _scaleModifier -= 0.25;
 
-            //Refresh features
-            for (var guidKey in _diagramDataModel.ClientObjects.features) {
-                var UIFeature = _UIElements[guidKey];
-                if (UIFeature != undefined)
-                    UIFeature.RefreshGraphicalRepresentation();
-            }
-
-            //Refresh relations, groupRelations and compositionRules
-            for (var guidKey in _diagramDataModel.ClientObjects.relations) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
-            for (var guidKey in _diagramDataModel.ClientObjects.groupRelations) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
-            for (var guidKey in _diagramDataModel.ClientObjects.compositionRules) {
-                var UIElement = _UIElements[guidKey];
-                if (UIElement != undefined)
-                    UIElement.RefreshGraphicalRepresentation();
-            }
+            this.RefreshGraphicalRepresentation({ isZooming: true });
         }
 
         //
@@ -4206,13 +5409,69 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 UIElement.RefreshGraphicalRepresentation();
         }
     }
+    this.ResetInnerState = function () {
+        resetInnerMode();
+    }
+    this.GetInnerState = function () {
+        return _innerMode;
+    }
+    this.OnKeyUp = function (e) {
+        // If ESC has been pressed
+        if (e.which === 27) {
+            _thisDiagramContext.ResetInnerState();
+        }
 
+        // If CTRL has been pressed and group relation lock
+        if (e.which === 17 && _innerMode == innerState.groupRelationLock) {
+            createGroupRelation();
+        }
+    }
+    //Public method for copy to memory
+    this.CopySelectedElementToMemory = function () {
+        var elementsToBeCopied = _selectedElements.slice(0);
+        var guidArray = [];
+        for (var i = 0; i < elementsToBeCopied.length; i++) {
+            //Add element to the memory
+            guidArray.push(elementsToBeCopied[i].GUID);
+        }
+
+        //Save list of elements to copy in memory
+        $('body').data('clipboard_GUID_to_Copy', guidArray);
+
+    }
+    //Public method for past elements from memory
+    this.PasteSelectedElementFromMemory = function () {
+        var guidArray = $('body').data('clipboard_GUID_to_Copy');
+        var counter = 1;
+        if (guidArray.length) {
+            for (var i = 0; i < guidArray.length; i++) {
+                //Retrive each element GUID from memory
+                var elementGUID = guidArray[i];
+
+                var clientObject = _diagramDataModel.GetByGUID(elementGUID);
+                clientObject.GetBusinessObject().Identifier = clientObject.Identifier + '_' + counter;
+                var createdItem = createFeatureCopy(clientObject.GetBusinessObject());
+
+                var UIFeature = _UIElements[createdItem.GUID];
+                if (UIFeature != undefined)
+                    UIFeature.RefreshGraphicalRepresentation();
+
+            }
+            //Clean information in the cache
+            $('body').data('clipboard_GUID_to_Copy', "");
+
+        }
+    }
     //Events
     this.ElementSelectToggled = new Event();
     this.SelectionCleared = new Event();
     this.Focus = new Event();
+    this.InnerModeChange = new Event();
+
+    //Private events
     var internalUIElementCascadedDelete = new Event();
     var internalUIFeatureMoved = new Event();
+    this.AttributeHasChanged = new Event();
 
     //Eventhandlers
     this.OnClientObjectsLoaded = function () {
@@ -4241,10 +5500,10 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
     }
 
-    this.OnRelatedViewElementSelectToggled = function (guid, shift, newState) {
+    this.OnRelatedViewElementSelectToggled = function (guid, ctrl, newState) {
         var UIElement = _UIElements[guid];
         if (UIElement != undefined) {
-            toggleElementSelect(UIElement, shift);
+            toggleElementSelect(UIElement, ctrl);
         } else {
             clearSelection();
         }
@@ -4258,7 +5517,21 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var onInternalUIFeatureMoved = function (UIFeature) {
         _diagramDataModel.UpdateClientObjectFields(UIFeature.GUID, ["XPos", "YPos"], [UIFeature.GetPos().x, UIFeature.GetPos().y]);
     }
+    var onAttributeHasChanged = function (id, oldAttributeName, newAttributeName) {
+        // Change attribute name
+        var UIElement = _UIElements[id];
+        if (UIElement) {
+            if (oldAttributeName && newAttributeName) {
+                for (var i = 0; i < UIElement.AttributeElements.length; ++i) {
+                    if (UIElement.AttributeElements[i].AttributeName == oldAttributeName) {
+                        UIElement.AttributeElements[i].AttributeName = newAttributeName;
+                        UIElement.AttributeElements[i].RefreshGraphicalRepresentation();
+                    }
+                }
+            }
+            else {
+                UIElement.RefreshGraphicalRepresentation({ rerenderAttributes: true });
+            }
+        }
+    }
 }
-
-
-
