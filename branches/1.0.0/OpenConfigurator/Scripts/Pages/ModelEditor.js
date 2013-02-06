@@ -1282,7 +1282,6 @@ var DiagramDataModel = function (modelID, modelName) {
 
         });
     }
-
     this.AddNewClientObject = function (type, initialBusinessValues, initialClientValues) {
 
         // Setup inner business object
@@ -1397,7 +1396,6 @@ var DiagramDataModel = function (modelID, modelName) {
         //Raise events
         _thisDiagramDataModel.ClientObjectUpdated.RaiseEvent(guid);
     }
-
     this.IsFeatureIdentifierInUse = function (featureIdentifier, currentFeatureGuid) {
         return isIdentifierInUse(featureIdentifier, currentFeatureGuid, _clientObjects.features, _clientObjects.customRules);
     }
@@ -1411,7 +1409,6 @@ var DiagramDataModel = function (modelID, modelName) {
         // here instead of the parent feature guid, it should pass the currentAttributeGuid
         return isIdentifierInUse(attributeIdentifier, parentFeatureGuid, attributeCollection);
     }
-
     this.GetByGUID = function (guid) {
         return _clientObjects.all[guid];
     }

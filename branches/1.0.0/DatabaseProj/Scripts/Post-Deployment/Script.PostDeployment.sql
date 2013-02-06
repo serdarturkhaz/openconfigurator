@@ -38,7 +38,7 @@ INSERT [dbo].[GroupRelation_Types] ([ID], [Name], [FixedLowerBound], [FixedUpper
 SET IDENTITY_INSERT [dbo].[GroupRelation_Types] OFF
 /****** Object:  Table [dbo].[Users]    Script Date: 06/21/2012 00:06:39 ******/
 SET IDENTITY_INSERT [dbo].[Users] ON
-INSERT [dbo].[Users] ([ID], [Email], [Password]) VALUES (1, N'admin', N'admin!')
+INSERT [dbo].[Users] ([ID], [Email], [Password]) VALUES (1, N'admin', N'admin')
 SET IDENTITY_INSERT [dbo].[Users] OFF
 /****** Object:  Table [dbo].[SelectionStates]    Script Date: 06/21/2012 00:06:39 ******/
 SET IDENTITY_INSERT [dbo].[SelectionStates] ON
