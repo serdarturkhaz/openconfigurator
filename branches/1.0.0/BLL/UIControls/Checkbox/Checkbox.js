@@ -15,7 +15,7 @@ UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCo
     }
 
     //Fields
-    var _controlTagElem = null, _innerControl = null;
+    var _controlTagElem = null, _innerControl = null, _label = null;
     var _instanceID = instanceID;
     var _currentSelectionState = selectionStates.unselected, _disabled = false;
     var _boundClientFeature = null;
@@ -27,6 +27,9 @@ UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCo
     }
     this.SetControlTagElem = function (controlTagElem) {
         _controlTagElem = controlTagElem;
+    }
+    this.SetLabel = function (str) {
+        $(_label).text(str);
     }
 
     //Private methods
@@ -87,6 +90,7 @@ UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCo
 
         //Get fields
         _innerControl = $(_controlTagElem).find(".CheckboxControl");
+        _label = $(_innerControl).find(".NameLabel");
 
         //Setup eventhandlers
         internalCheckboxToggled.Add(new EventHandler(onInternalCheckboxToggled));

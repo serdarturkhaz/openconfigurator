@@ -34,11 +34,14 @@ UIControlTypes.Controls.CheckboxList.Class = function (instanceID, internalMetho
                 $(newControlTag).appendTo(_innerControl);
 
                 //Create Checkbox control instance for the tag
-                var checkboxInstance = internalMethodsCollection.CreateInstanceFromControlTag(newControlTag, _instanceID + "_" + _innerCheckBoxTempIDCounter++, internalMethodsCollection);
+                var childInstanceID = internalMethodsCollection.CreateNewInstanceID();
+                var checkboxInstance = internalMethodsCollection.CreateInstanceFromControlTag(newControlTag, childInstanceID, internalMethodsCollection);
                 checkboxInstance.Initialize();
 
                 //Databind it
                 checkboxInstance.Databind([dataCollection[i]]);
+                checkboxInstance.SetLabel(dataCollection[i].GetField("Name"));
+                internalMethodsCollection.RegisterControlInstance(checkboxInstance);
             }
         }
     }

@@ -16,8 +16,8 @@
     margin-top: 4px;
     padding: 0;
     float: left;
-    /*background: url(/content/themes/base/images/Controls/radio-unselected.png) no-repeat center center;*/
 }
+
 .RadiobuttonListControl .RadioOption .NameLabel
 {
     line-height: 26px;
@@ -26,10 +26,21 @@
     font-size: 12px;
     font-family: Arial;
     letter-spacing: 1.3px;
-    color: gray;
-  	margin-left:5px;
-  	cursor:default;
+    color: #B2B2B2;
+    margin-left: 5px;
+    cursor: default;
 }
+.RadiobuttonListControl .RadioOption[toggleable] .NameLabel
+{
+    width: 16px;
+    height: 16px;
+    margin-top: 4px;
+    padding: 0;
+    float: left;
+    color: #292929;
+}
+
+
 
 .RadiobuttonListControl .RadioOption input[disabled]
 {

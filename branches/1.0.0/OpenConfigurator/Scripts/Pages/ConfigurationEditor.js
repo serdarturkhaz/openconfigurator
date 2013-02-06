@@ -730,7 +730,7 @@ var InteractiveView = function (container, configurationDataModelInstance) {
     //Fields
     var _configurationDataModel = configurationDataModelInstance;
     var _container = container;
-    var _UIControlInstances = {}; //dictionary to hold all UIControl instances (tempID, UIControl instance)
+    var _UIControlInstances = {}; //dictionary to hold all UIControl instances (instanceID, UIControl instance)
     var _loadedCSSs = {}; //keeps track of which css has been registered
     var _clientObjectListeners = { //collection mapping (ID - feature or attribute, tempID)
         features: {},
@@ -771,6 +771,9 @@ var InteractiveView = function (container, configurationDataModelInstance) {
             _loadedCSSs[controltype] = true;
         }
     }
+    var getNewInstanceID = function () {
+        return _controlTempIDcounter++;
+    }
     var initControls = function () {
 
         //Find controltags and register control types 
@@ -780,12 +783,17 @@ var InteractiveView = function (container, configurationDataModelInstance) {
             var controltype = $(controltag).attr("controltype");
 
             //
-            if (controltype == "CheckboxList") { // || controltype == "Dropdown" || controltype == "RadiobuttonList") {
+            if (controltype == "Checkbox" || controltype == "CheckboxList" || controltype == "Dropdown" || controltype == "RadiobuttonList") {
+
+                //
+                if (controltype == "CheckboxList") {
+                    loadControlCSS("Checkbox");
+                }
 
                 //Create a new UIControl instance
                 loadControlCSS(controltype);
-                var newTempID = _controlTempIDcounter++;
-                var uicontrolInstance = UIControlTypes.API.CreateInstanceFromControlTag(controltag, newTempID, InternalMethods);
+                var newInstanceID = getNewInstanceID();
+                var uicontrolInstance = UIControlTypes.API.CreateInstanceFromControlTag(controltag, newInstanceID, InternalMethods);
                 uicontrolInstance.Initialize();
 
                 //Databind the control
@@ -796,7 +804,7 @@ var InteractiveView = function (container, configurationDataModelInstance) {
                 }
 
                 //Keep track of the control instance
-                _UIControlInstances[newTempID] = uicontrolInstance;
+                _UIControlInstances[newInstanceID] = uicontrolInstance;
             }
         });
     }
@@ -829,17 +837,17 @@ var InteractiveView = function (container, configurationDataModelInstance) {
         var newSelectionState = null;
         switch (currentSelectionState) {
 
-            //Unselected -> becomes Selected                                                                                                                                                                                                                                                                                                                
+            //Unselected -> becomes Selected                                                                                                                                                                                                                                                                                                                        
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 newSelectionState = systemDefaults.enums.featureSelectionStates.selected;
                 break;
 
-            //Selected -> becomes Deselected                                                                                                                                          
+            //Selected -> becomes Deselected                                                                                                                                                  
             case systemDefaults.enums.featureSelectionStates.selected.name:
                 newSelectionState = systemDefaults.enums.featureSelectionStates.deselected;
                 break;
 
-            //Deselected -> becomes Unselected                                                                                                                                           
+            //Deselected -> becomes Unselected                                                                                                                                                   
             case systemDefaults.enums.featureSelectionStates.deselected.name:
                 newSelectionState = systemDefaults.enums.featureSelectionStates.unselected;
                 break;
@@ -847,6 +855,10 @@ var InteractiveView = function (container, configurationDataModelInstance) {
 
         //Toggle the new state
         _configurationDataModel.SetFeatureSelectionState(featureSelectionClientObject.GUID, newSelectionState.id);
+    }
+    InternalMethods.CreateNewInstanceID = getNewInstanceID;
+    InternalMethods.RegisterControlInstance = function (controlInstance) {
+        _UIControlInstances[controlInstance.GetInstanceID()] = controlInstance;
     }
     InternalMethods.RegisterClientObjectListener = function (clientObjType, dataObjectID, tempID) {
         if (_clientObjectListeners[clientObjType + "s"][dataObjectID] == undefined)
@@ -907,7 +919,7 @@ var InteractiveView = function (container, configurationDataModelInstance) {
 
                 //Get the control instance
                 var controlInstance = listenerControlInstances[i];
-                var controlID = controlInstance.GetTempID();
+                var controlID = controlInstance.GetInstanceID();
 
                 //Get the collection where modified bound clientobjects are kept
                 if (_modifiedBoundDataControls[controlID] == undefined) {
@@ -926,6 +938,7 @@ var InteractiveView = function (container, configurationDataModelInstance) {
             var modifiedBoundData = _modifiedBoundDataControls[controlID];
 
             //Call their ReloadData method
+
             var controlInstance = _UIControlInstances[controlID];
             controlInstance.ReloadData(modifiedBoundData);
         }
