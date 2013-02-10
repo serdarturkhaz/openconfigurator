@@ -239,6 +239,34 @@ namespace BLL.SolverEngines
             }
 
         }
+        public void AddAttributeVariable(string featureId, string name, string identifier, string categoryName, VariableDataTypes dataType)
+        {
+            //Create the variable in the Z3 context
+            Sort termType = null;
+            switch (dataType)
+            {
+                case VariableDataTypes.Boolean:
+                    termType = _context.MkBoolSort();
+                    break;
+                case VariableDataTypes.Integer:
+                    termType = _context.MkIntSort();
+                    break;
+            }
+            Term term = _context.MkConst(categoryName + "_" + featureId + "_" + name, termType);
+
+            //Keep track of the variable added
+            Z3Variable z3Var = new Z3Variable(name, identifier, dataType, term);
+            if (_variables.ContainsKey(categoryName))
+            {
+                _variables[categoryName].Add(identifier, z3Var);
+            }
+            else
+            {
+                _variables[categoryName] = new Dictionary<string, Z3Variable>();
+                _variables[categoryName].Add(identifier, z3Var);
+            }
+
+        }
         public void AddConstraint(string categoryName, params ISolverStatement[] statements)
         {
             //Assert the statements into the Z3 context
@@ -269,7 +297,7 @@ namespace BLL.SolverEngines
             Term variableTerm = varWrapper.Term;
 
             //Check if an assumption already exists for the variable
-            if (_assumptions.ContainsKey(categoryName) && _assumptions[categoryName].ContainsKey(variableID))
+            if (_assumptions.ContainsKey(assumptionCategory) && _assumptions[assumptionCategory].ContainsKey(categoryName) && _assumptions[assumptionCategory][categoryName].ContainsKey(variableID))
             {
                 throw new Exception("An assumption already exists for the given variable!");
             }

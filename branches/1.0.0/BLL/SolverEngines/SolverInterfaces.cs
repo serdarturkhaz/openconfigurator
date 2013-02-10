@@ -27,6 +27,7 @@ namespace BLL.SolverEngines
         void CreateInitialRestorePoint();
 
         void AddVariable(string name, string identifier, string categoryName, VariableDataTypes dataType);
+        void AddAttributeVariable(string featureName, string name, string identifier, string categoryName, VariableDataTypes dataType);
         void AddConstraint(string categoryName, params ISolverStatement[] statements);
         void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
         void RemoveValueAssumption(string varID, string categoryName);
