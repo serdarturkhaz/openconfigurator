@@ -3,7 +3,7 @@ var UIControlTypes = {
     Controls: {}
 };
 
-//API-like interface
+//API-like interface  (handles retreival of UIControl resources and creation of instances)
 UIControlTypes.API = {};
 UIControlTypes.CommonResources = {
     Loaded: false
@@ -11,11 +11,11 @@ UIControlTypes.CommonResources = {
 (function () {
 
     //Private methods
-    var initControlAPI = function (controltype) {
+    function initControlResources(controltype) {
         loadCommonResources();
         registerUIControl(controltype);
     }
-    var registerUIControl = function (controltype) {
+    function registerUIControl(controltype) {
 
         //If control hasn't already been registered
         if (UIControlTypes.Controls[controltype] == undefined) {
@@ -39,7 +39,7 @@ UIControlTypes.CommonResources = {
             loadControlScript(controltype);
         }
     }
-    var loadControlScript = function (controltype) {
+    function loadControlScript(controltype) {
 
         //Eval script - if not already done
         if (UIControlTypes.Controls[controltype].Class == undefined) {
@@ -57,7 +57,7 @@ UIControlTypes.CommonResources = {
             }
         }
     }
-    var loadCommonResources = function () {
+    function loadCommonResources() {
 
         //Load 
         if (UIControlTypes.CommonResources.Loaded == false) {
@@ -74,12 +74,32 @@ UIControlTypes.CommonResources = {
             UIControlTypes.CommonResources.Loaded = true;
         }
     }
+    function getRecursiveStyles(controltype, stylesCollection) {
+
+        //Variables
+        var stylesList = stylesCollection!= undefined ? stylesCollection : {};
+
+        //Add the css to the styles collection
+        var css = UIControlTypes.Controls[controltype].Resources.CSS;
+        stylesList[controltype] = css;
+
+        //Recursively load the styles for the dependencies
+        var dependencies = UIControlTypes.Controls[controltype].Dependencies;
+        if (dependencies != undefined && dependencies.length > 0) {
+            for(var i=0;i<dependencies.length;i++) {
+                getRecursiveStyles(dependencies[i], stylesList); 
+            }
+        }
+
+        //
+        return stylesList;
+    }
 
     //Global methods
     UIControlTypes.API.CreateControlTagElem = function (controltype, databindingExp) {
 
-        //Init API for current control
-        initControlAPI(controltype);
+        //Init control resources
+        initControlResources(controltype);
 
         //Setup databinding expression
         if (databindingExp == undefined || databindingExp == null) {
@@ -98,24 +118,37 @@ UIControlTypes.CommonResources = {
         //
         return outerControl;
     }
-    UIControlTypes.API.GetControlCSS = function (controltype) {
+    UIControlTypes.API.RegisterControlCSS = function (controltype, headElem) {
 
-        //Init API for current control
-        initControlAPI(controltype);
+        //Init control resources
+        initControlResources(controltype);
 
-        //Retreive the CSS for the control
-        var css = UIControlTypes.Controls[controltype].Resources.CSS;
-        return css;
+        //Load the CSS for the control (and for its dependencies)
+        var stylesCollection = getRecursiveStyles(controltype);
+
+        //Loop through styles 
+        for(var type in stylesCollection) {
+
+            //If the styleElem for the controltype doesnt exist
+            var styleElem = $(headElem).find("#" + type + "_style");
+            if(styleElem.length == 0) 
+            {
+                //Create it
+                styleElem = $("<style type='text/css'></style>").attr("id", type +"_style").appendTo(headElem);
+            } 
+
+            //Set the content for the styleElem
+            $(styleElem).text(stylesCollection[type]);
+        }
     }
-    UIControlTypes.API.CreateInstanceFromControlTag = function (controlTagElem, instanceID, internalMethodCollection) {
+    UIControlTypes.API.CreateInstanceFromTag = function (controlTagElem) {
 
-        //Init API for current control
+        //Init API for the UIControlType specified in the control tag
         var controltype = $(controlTagElem).attr("controltype");
-        initControlAPI(controltype);
+        initControlResources(controltype);
 
-        //Create a control instance
-        var controlInstance = new UIControlTypes.Controls[controltype].Class(instanceID, internalMethodCollection);
-        controlInstance.SetControlTagElem(controlTagElem);
+        //Create an instance of the specific control type
+        var controlInstance = new UIControlTypes.Controls[controltype].Class(controlTagElem);
 
         //
         return controlInstance;

@@ -199,7 +199,7 @@ var ClientController = function (htmlViewContainer, cssViewContainer, visualView
         _htmlView.InsertControlTag(controltype);
     }
     this.AddHTMLControl = function (controltype) {
-        _htmlView.InsertHTMLControl(controltype);
+        _htmlView.InsertHTMLElem(controltype);
     }
 }
 var HTMLView = function (textArea, uiTemplateDataModelInstance) {
@@ -262,7 +262,7 @@ var HTMLView = function (textArea, uiTemplateDataModelInstance) {
         var range = getSelectedRange();
         _editorInstance.autoFormatRange(range.from, range.to);
     }
-    this.InsertHTMLControl = function (controltype) {
+    this.InsertHTMLElem = function (controltype) {
 
         //Get the html string
         var controlString = "";
@@ -363,6 +363,7 @@ var VisualView = function (containerArea, uiTemplateDataModelInstance) {
     var _containerArea = containerArea;
     var _iframeInstance = null, _body = null, _head = null;
     var _templateDataChanged = false; //variable to keep track when template is updated
+    var _uiControlTypesUsed = {};
     var _thisVisualView = this;
 
     //Constructor/Initalizers
@@ -387,14 +388,23 @@ var VisualView = function (containerArea, uiTemplateDataModelInstance) {
     //Private methods
     var reloadData = function () {
 
-        //Update the CSS
+        //Update the template CSS
         var templateCSS = _uiTemplateDataModel.GetTemplateField("Stylesheet");
-        var styleElem = $(_head).find("#styleElem");
+        var styleElem = $(_head).find("#templateStyleElem");
         $(styleElem).text(templateCSS);
 
         //Update the HTML
         var templateHTML = _uiTemplateDataModel.GetTemplateField("Content");
         $(_body).html(templateHTML);
+
+        //Update the CSS for UIControls
+        $(_body).find("[controltype]").each(function (index) {
+            var type = $(this).attr("controltype");
+            if (_uiControlTypesUsed[type] == undefined) {
+                UIControlTypes.API.RegisterControlCSS(type, _head);
+                _uiControlTypesUsed[type] = true;
+            }
+        });
     }
 
     //Public methods
@@ -408,19 +418,23 @@ var VisualView = function (containerArea, uiTemplateDataModelInstance) {
     //Eventhandlers
     this.OnTemplateDataLoaded = function () {
 
-        //        //Load generic CSS for UIControl types
-        //        var checkboxCSS = UIControlTypes.GetControlResources("Checkbox").CSS;
-        //        var controlStyles = $("<style id='controlStylesElem' type='text/css'></style>").text(checkboxCSS);
-        //        $(_head).append(controlStyles);
-
-        //Load the template CSS
+        //Load the template template CSS
         var templateCSS = _uiTemplateDataModel.GetTemplateField("Stylesheet");
-        var templateStyles = $("<style id='styleElem' type='text/css'></style>").text(templateCSS);
+        var templateStyles = $("<style id='templateStyleElem' type='text/css'></style>").text(templateCSS);
         $(_head).append(templateStyles);
 
         //Load the template HTML
         var templateHTML = _uiTemplateDataModel.GetTemplateField("Content");
         $(_body).html(templateHTML);
+
+        //Load CSS for UIControls
+        $(_body).find("[controltype]").each(function (index) {
+            var type = $(this).attr("controltype");
+            if (_uiControlTypesUsed[type] == undefined) {
+                UIControlTypes.API.RegisterControlCSS(type, _head);
+                _uiControlTypesUsed[type] = true;
+            }
+        });
     }
     this.OnTemplateDataUpdated = function () {
         _templateDataChanged = true;

@@ -91,6 +91,38 @@ Label</body>
       Id="7d75c148-7449-44ce-b900-6ddd7aa0f891">
       <body>Modified in 1.0.0</body>
     </comment>
+    <comment
+      Id="5da85f75-b701-4e35-8332-ea547a813b04">
+      <body>Handle loading of UIControl resources.
+Provide factory methods for creation of ControlTags and ControlInstances
+
+
+</body>
+      <annotatedElements>
+        <classMoniker
+          Id="4c0fd9aa-ca2e-435a-86e2-b61cfcc86641"
+          LastKnownName="UIControlTypes.API"
+          LastKnownLocation="Documentation.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="936c0d9e-5d09-4afe-b60a-701f131c84fd">
+      <body>Responsible for parsing UITemplate and creating/keeping track of UIControl instances
+</body>
+      <annotatedElements>
+        <classMoniker
+          Id="c1182566-22be-4c33-91d2-2f12c102cf90"
+          LastKnownName="InteractiveView"
+          LastKnownLocation="Documentation.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="855a5a98-df5e-437b-8f9b-239236750ad9">
+      <body>ISSUES/REQS:
+1. Load CSS recursively for Controls with Dependencies
+2. UIControls should be able to manipulate other UIControls (create, databind, etc)
+3. </body>
+    </comment>
   </ownedCommentsInternal>
   <profileInstances>
     <packageHasProfileInstances
@@ -6606,6 +6638,13 @@ Label</body>
               LastKnownName="UIControlTypes.API"
               LastKnownLocation="Documentation.uml" />
           </dependency>
+          <dependency
+            Id="8b85f1a9-58e1-422b-a02d-1564976b9d8a">
+            <classMoniker
+              Id="24d8ae06-bb43-4d36-bcab-a9de4cc2d981"
+              LastKnownName="ConfigurationDataModel"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
         </suppliersInternal>
         <targetEnds>
           <association
@@ -6662,12 +6701,12 @@ Label</body>
             Id="17abe653-271c-4d2e-8a3a-74d00f0fad28"
             isDerived="false"
             sourceEndRoleName=""
-            targetEndRoleName=""
+            targetEndRoleName="_UIControlInstances"
             isLeaf="false"
             isAbstract="false">
             <classMoniker
               Id="3fc25ec2-6663-4564-808b-b82ebc3214b1"
-              LastKnownName="UIControlType"
+              LastKnownName="UIControl Instance"
               LastKnownLocation="Package_2310.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -6685,6 +6724,7 @@ Label</body>
               <associationHasOwnedEnds>
                 <memberEnd
                   Id="6df8a1b1-e4e9-403e-bc44-4cabd8893cc8"
+                  name="_UIControlInstances"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -6709,6 +6749,30 @@ Label</body>
             </relationshipOwnedElementsInternal>
           </association>
         </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="c419f0e4-186e-43c5-a3ff-f3e17e40a2b1"
+            name="_UIControlInstances"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="53633970-77de-4ec5-a71b-8881e390604a"
+            name="initControls"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -6731,7 +6795,181 @@ Label</body>
         name="UIControlTypes.API"
         isAbstract="false"
         isLeaf="false"
-        isActiveClass="false" />
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="03704581-8c4a-4904-9e9b-02c108908d73"
+            name="CreateControlTag"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="cbed1d6a-8e84-48ba-82e7-62637792e7f3"
+                  name="controltype"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="d715f54f-4aab-41d5-a4e9-f413c54ab49f"
+            name="RegisterControlCSS"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="eeaabd65-9d52-4bf0-b079-b6e98b7928e1"
+            name="CreateInstanceFromTag"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9285d08d-0be6-48ef-bb14-a4d959e9eb84"
+        name="IConfigurationInstance"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="d9fa990b-5c26-4101-9797-ffd36d74abea"
+            name="ToggleFeatureSelection"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="e8fddf07-17ce-4849-a872-7bad3d07a356"
+            name="UpdateFeatureSelection"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="f5fb6bee-d996-4503-aa4a-f3721406451f"
+            name="GetFeatureSelectionState"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="b4e47830-53a3-4daf-9e72-95428dbcedbc"
+            name="RegisterListener"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="24d8ae06-bb43-4d36-bcab-a9de4cc2d981"
+        name="ConfigurationDataModel"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="214926b0-fd61-4870-aa7a-596d48a86ecc">
+            <interfaceMoniker
+              Id="1479a5c1-af33-4a67-beb4-798637aeadfd"
+              LastKnownName="IConfigurationInstance"
+              LastKnownLocation="Documentation.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="9a019c44-676d-462b-88b5-cf6b841a31ae"
+            name="GetFeatureSelectionState"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="8ec21d39-9a22-4b04-af98-d74680a9fa5c"
+            name="RegisterListener"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="29a5c63a-97e1-4d16-a7f2-ca1c43568b45"
+            name="ToggleFeatureSelection"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="396be919-7f16-47a0-8790-2a61c9a123eb"
+            name="UpdateFeatureSelection"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="1479a5c1-af33-4a67-beb4-798637aeadfd"
+        name="IConfigurationInstance"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedOperations>
+          <operation
+            Id="6fddf370-0737-4cf5-81dd-c4668695bf8e"
+            name="GetFeatureSelectionState"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="f56deb63-56f6-4da9-9289-928e239ca344"
+            name="RegisterListener"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="35f92945-7583-4f5a-bd60-3fec8f4e3075"
+            name="ToggleFeatureSelection"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="724b68b0-b739-4aaa-b47b-6d695b647463"
+            name="UpdateFeatureSelection"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperations>
+      </Interface>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

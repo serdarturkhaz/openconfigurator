@@ -32,11 +32,6 @@
 }
 .RadiobuttonListControl .RadioOption[toggleable] .NameLabel
 {
-    width: 16px;
-    height: 16px;
-    margin-top: 4px;
-    padding: 0;
-    float: left;
     color: #292929;
 }
 

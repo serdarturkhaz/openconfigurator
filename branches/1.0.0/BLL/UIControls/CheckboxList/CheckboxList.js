@@ -1,55 +1,54 @@
 ﻿UIControlTypes.Controls.CheckboxList.Dependencies = ["Checkbox"];
-UIControlTypes.Controls.CheckboxList.Class = function (instanceID, internalMethodsCollection) {
+UIControlTypes.Controls.CheckboxList.Class = function (controlTag) {
 
     //Fields
-    var _controlTagElem = null, _innerControl = null;
-    var _instanceID = instanceID;
+    var _controlTagElem = (controlTag != undefined) ? controlTag : null, _innerControl = null;
+    var _iConfigurationView = null, _instanceID = null, _initialized = false;
     var _boundClientFeatures = {};
-    var _innerCheckBoxTempIDCounter = 0;
     var _thisCheckboxListControl = this;
 
     //Properties
     this.GetInstanceID = function () {
         return _instanceID;
     }
-    this.SetControlTagElem = function (controlTagElem) {
-        _controlTagElem = controlTagElem;
+    this.GetControlTagElem = function () {
+        return _controlTagElem;
     }
 
     //Private methods
-    var resetInnerContent = function () {
+    function resetInnerContent() {
 
         //Clear any existing unbound options
         $(_innerControl).html("");
-
     }
-    var databind = function (dataCollection) {
+    function databind(dataCollection) {
 
         //Bind to the Features
         if (dataCollection.length > 1 && dataCollection[0].GetType() == "feature") {
             for (var i = 0; i < dataCollection.length; i++) {
 
                 //Create control tag with html
-                var newControlTag = internalMethodsCollection.CreateControlTagElem("Checkbox");
+                var newControlTag = UIControlTypes.API.CreateControlTagElem("Checkbox");
                 $(newControlTag).appendTo(_innerControl);
 
                 //Create Checkbox control instance for the tag
-                var childInstanceID = internalMethodsCollection.CreateNewInstanceID();
-                var checkboxInstance = internalMethodsCollection.CreateInstanceFromControlTag(newControlTag, childInstanceID, internalMethodsCollection);
-                checkboxInstance.Initialize();
-
-                //Databind it
-                checkboxInstance.Databind([dataCollection[i]]);
-                checkboxInstance.SetLabel(dataCollection[i].GetField("Name"));
-                internalMethodsCollection.RegisterControlInstance(checkboxInstance);
+                var newControlInstance = UIControlTypes.API.CreateInstanceFromTag(newControlTag);
+                _iConfigurationView.RegisterControl(newControlInstance);
+                _iConfigurationView.DatabindControl(newControlInstance, [dataCollection[i]]);
+                newControlInstance.SetLabel(dataCollection[i].GetField("Name"));
             }
         }
     }
 
     //Constructor/Initalizers
-    this.Initialize = function () {
+    this.Initialize = function (view, instanceID) {
 
-        //Get fields
+        //Set important fields
+        _iConfigurationView = view;
+        _instanceID = instanceID;
+        _initialized = true;
+
+        //Get data from controltag
         _innerControl = $(_controlTagElem).find(".CheckboxListControl");
 
         //Clear any inner content
