@@ -54,11 +54,13 @@ namespace BLL.Services
                 context.AddVariable(feature.Name, feature.ID.ToString(), featuresCategory, VariableDataTypes.Boolean);
 
                 //Add variables for its Attributes
-                //feature.Attributes.ForEach(attribute => {
+                //feature.Attributes.ForEach(attribute =>
+                //{
                 //    if (attribute.AttributeDataType == BusinessObjects.AttributeDataTypes.Integer)
-                //        context.AddVariable(attribute.Name, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer);
+                //        context.AddAttributeVariable(attribute.FeatureID.ToString(), attribute.Name, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer);
                 //});
-                //feature.Attributes.ForEach(attribute => {
+                //feature.Attributes.ForEach(attribute =>
+                //{
                 //    if (attribute.AttributeDataType == BusinessObjects.AttributeDataTypes.Integer && !String.IsNullOrEmpty(attribute.ConstantValue))
                 //        context.AddFeatureAttributeValueAssumption(feature.ID.ToString(), featuresCategory, attribute.ID.ToString(), attributesCategory, VariableDataTypes.Integer, int.Parse(attribute.ConstantValue));
                 //});
@@ -68,7 +70,7 @@ namespace BLL.Services
             model.Relations.ForEach(rel => context.AddConstraint(relationsCategory, TransformToStatement(context, rel)));
             model.GroupRelations.ForEach(groupRel => context.AddConstraint(groupRelationsCategory, TransformToStatement(context, groupRel)));
             model.CompositionRules.ForEach(compositionRule => context.AddConstraint(compositionRulesCategory, TransformToStatement(context, compositionRule)));
-            model.Constraints.ForEach(constraint => context.AddConstraint(compositionRulesCategory, TransformToStatement(context, constraint)));
+            //model.Constraints.ForEach(constraint => context.AddConstraint(compositionRulesCategory, TransformToStatement(context, constraint)));
 
             //Create an initial restore point
             context.CreateInitialRestorePoint();
