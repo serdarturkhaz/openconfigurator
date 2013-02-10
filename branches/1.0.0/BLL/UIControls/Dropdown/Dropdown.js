@@ -1,5 +1,5 @@
 ﻿UIControlTypes.Controls.Dropdown.Dependencies = [];
-UIControlTypes.Controls.Dropdown.Class = function (instanceID, internalMethodsCollection) {
+UIControlTypes.Controls.Dropdown.Class = function (controlTag) {
 
     //Inner classes
     var DropdownOptionControl = function (containerControl, objectID, objectName, initialSelected, initialDisabled) {
@@ -59,8 +59,8 @@ UIControlTypes.Controls.Dropdown.Class = function (instanceID, internalMethodsCo
     }
 
     //Fields
-    var _controlTagElem = null, _innerControl = null;
-    var _instanceID = instanceID;
+    var _controlTagElem = (controlTag != undefined) ? controlTag : null, _innerControl = null;
+    var _iConfigurationView = null, _instanceID = null, _initialized = false;
     var _currentSelectionID = null; //ID of currently selected boundFeature
     var _childOptionControls = {}, _defaultOptionControl = null;
     var _boundClientFeatures = {};
@@ -70,8 +70,8 @@ UIControlTypes.Controls.Dropdown.Class = function (instanceID, internalMethodsCo
     this.GetInstanceID = function () {
         return _instanceID;
     }
-    this.SetControlTagElem = function (controlTagElem) {
-        _controlTagElem = controlTagElem;
+    this.GetControlTagElem = function () {
+        return _controlTagElem;
     }
 
     //Private methods
@@ -99,7 +99,7 @@ UIControlTypes.Controls.Dropdown.Class = function (instanceID, internalMethodsCo
                 //Get details for html option element
                 var name = boundClientFeature.GetField("Name");
                 var isDisabled = boundClientFeature.FeatureSelection.GetField("Disabled");
-                var isSelected = internalMethodsCollection.GetFeatureSelectionState(boundClientFeature.FeatureSelection) == "selected";
+                var isSelected = _iConfigurationView.GetFeatureSelectionState(boundClientFeature.FeatureSelection) == "selected";
 
                 //Create html option
                 var newOptionControl = new DropdownOptionControl(_innerControl, boundFeatureID, name, isSelected, isDisabled);
@@ -107,15 +107,20 @@ UIControlTypes.Controls.Dropdown.Class = function (instanceID, internalMethodsCo
                 _childOptionControls[boundFeatureID] = newOptionControl;
 
                 //Listen to data for changes
-                internalMethodsCollection.RegisterClientObjectListener("feature", boundFeatureID, _thisDropdownControl);
+                _iConfigurationView.RegisterClientObjectListener("feature", boundFeatureID, _thisDropdownControl);
             }
         }
     }
 
     //Constructor/Initalizers
-    this.Initialize = function () {
+    this.Initialize = function (view, instanceID) {
 
-        //Get fields
+        //Set important fields
+        _iConfigurationView = view;
+        _instanceID = instanceID;
+        _initialized = true;
+
+        //Get data from controltag
         _innerControl = $(_controlTagElem).find(".DropdownControl");
 
         //Clear any inner content and setup the default option
@@ -149,7 +154,7 @@ UIControlTypes.Controls.Dropdown.Class = function (instanceID, internalMethodsCo
             var boundFeatureID = boundFeature.GetField("ID");
 
             //Update the corresponding OptionControl 
-            var selected = internalMethodsCollection.GetFeatureSelectionState(boundFeature.FeatureSelection) == "selected";
+            var selected = _iConfigurationView.GetFeatureSelectionState(boundFeature.FeatureSelection) == "selected";
             var disabled = boundFeature.FeatureSelection.GetField("Disabled");
             var optionControl = _childOptionControls[boundFeatureID];
             optionControl.Update(selected, disabled);
@@ -216,7 +221,7 @@ UIControlTypes.Controls.Dropdown.Class = function (instanceID, internalMethodsCo
             //Set selectionState to unselected for the previously selected feature
             if (oldSelectionID != null) {
                 var oldSelectionFeature = _boundClientFeatures[oldSelectionID];
-                internalMethodsCollection.SetFeatureSelectionState(oldSelectionFeature.FeatureSelection.GUID, "unselected");
+                _iConfigurationView.SetFeatureSelectionState(oldSelectionFeature.FeatureSelection.GUID, "unselected");
             }
         }
         //If a boundFeature option was selected
@@ -224,7 +229,7 @@ UIControlTypes.Controls.Dropdown.Class = function (instanceID, internalMethodsCo
 
             //Set selectionState to selected for the boundFeature
             var currentSelectionFeature = _boundClientFeatures[_currentSelectionID];
-            internalMethodsCollection.SetFeatureSelectionState(currentSelectionFeature.FeatureSelection.GUID, "selected");
+            _iConfigurationView.SetFeatureSelectionState(currentSelectionFeature.FeatureSelection.GUID, "selected");
         }
 
 

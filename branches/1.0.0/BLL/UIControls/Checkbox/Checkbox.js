@@ -1,5 +1,5 @@
 ﻿UIControlTypes.Controls.Checkbox.Dependencies = [];
-UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCollection) {
+UIControlTypes.Controls.Checkbox.Class = function (controlTag) {
 
     //Selection states
     var selectionStates = {
@@ -15,29 +15,28 @@ UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCo
     }
 
     //Fields
-    var _controlTagElem = null, _innerControl = null, _label = null;
-    var _instanceID = instanceID;
+    var _controlTagElem = (controlTag != undefined) ? controlTag : null, _innerControl = null, _label = null;
     var _currentSelectionState = selectionStates.unselected, _disabled = false;
-    var _boundClientFeature = null;
+    var _boundClientFeature = null, _iConfigurationView = null, _instanceID = null, _initialized = false; ;
     var _thisCheckboxControl = this;
 
     //Properties
     this.GetInstanceID = function () {
         return _instanceID;
     }
-    this.SetControlTagElem = function (controlTagElem) {
-        _controlTagElem = controlTagElem;
+    this.GetControlTagElem = function () {
+        return _controlTagElem;
     }
-    this.SetLabel = function (str) {
-        $(_label).text(str);
+    this.SetLabel = function (text) {
+        $(_label).text(text);
     }
 
     //Private methods
-    var setSelectionState = function (state) {
+    function setSelectionState(state) {
         _currentSelectionState = state;
         refreshGraphicalRepresentation();
     }
-    var setDisabled = function (disabledBool) {
+    function setDisabled(disabledBool) {
 
         //Disable
         if (disabledBool == true) {
@@ -62,11 +61,11 @@ UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCo
         _disabled = disabledBool;
         refreshGraphicalRepresentation();
     }
-    var refreshGraphicalRepresentation = function () {
+    function refreshGraphicalRepresentation() {
         var disabledSuffix = (_disabled == true) ? "-disabled" : "";
         $(_innerControl).find(".CheckElement").css("background", "url('/content/themes/base/images/Controls/check-" + _currentSelectionState + disabledSuffix + ".png') no-repeat center center");
     }
-    var databind = function (dataCollection) {
+    function databind(dataCollection) {
 
         //Bind to the Feature
         if (dataCollection.length == 1 && dataCollection[0].GetType() == "feature") {
@@ -76,19 +75,24 @@ UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCo
             var boundFeatureID = _boundClientFeature.GetField("ID");
 
             //Load initial details from the feature selection
-            var initialState = internalMethodsCollection.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
+            var initialState = _iConfigurationView.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
             setSelectionState(initialState);
             setDisabled(_boundClientFeature.FeatureSelection.GetField("Disabled"));
 
-            //Listen to data for changes
-            internalMethodsCollection.RegisterClientObjectListener("feature", boundFeatureID, _thisCheckboxControl);
+            //Register a listener
+            _iConfigurationView.RegisterClientObjectListener("feature", boundFeatureID, _thisCheckboxControl);
         }
     }
 
     //Constructor/Initalizers
-    this.Initialize = function () {
+    this.Initialize = function (view, instanceID) {
 
-        //Get fields
+        //Set important fields
+        _iConfigurationView = view;
+        _instanceID = instanceID;
+        _initialized = true;
+
+        //Get data from controltag
         _innerControl = $(_controlTagElem).find(".CheckboxControl");
         _label = $(_innerControl).find(".NameLabel");
 
@@ -106,7 +110,7 @@ UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCo
         _boundClientFeature = modifiedClientObjects[0];
 
         //Update state
-        var newState = internalMethodsCollection.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
+        var newState = _iConfigurationView.GetFeatureSelectionState(_boundClientFeature.FeatureSelection);
         setSelectionState(newState);
         setDisabled(_boundClientFeature.FeatureSelection.GetField("Disabled"));
     }
@@ -116,6 +120,6 @@ UIControlTypes.Controls.Checkbox.Class = function (instanceID, internalMethodsCo
 
     //Eventhandlers
     var onInternalCheckboxToggled = function () {
-        internalMethodsCollection.ToggleFeatureSelectionState(_boundClientFeature.FeatureSelection.GUID);
+        _iConfigurationView.ToggleFeatureSelectionState(_boundClientFeature.FeatureSelection.GUID);
     }
 }

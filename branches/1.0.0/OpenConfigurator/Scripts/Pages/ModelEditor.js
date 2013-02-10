@@ -2840,11 +2840,7 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
         //Create simpleTree
         options = {
             data: [
-                {
-                    ID: "featuresNode",
-                    Name: "Features",
-                    typeName: "folder"
-                },
+
                 {
                     ID: "compositionRulesNode",
                     Name: "Composition Rules",
@@ -2858,6 +2854,11 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                 {
                     ID: "constraintsNode",
                     Name: "Constraints",
+                    typeName: "folder"
+                },
+                {
+                    ID: "featuresNode",
+                    Name: "Features",
                     typeName: "folder"
                 }
             ],

@@ -17,7 +17,7 @@
             isSubstitutable="false">
             <classMoniker
               Id="3fc25ec2-6663-4564-808b-b82ebc3214b1"
-              LastKnownName="UIControlType"
+              LastKnownName="UIControl Instance"
               LastKnownLocation="Package_2310.uml" />
           </generalization>
         </generalsInternal>
@@ -88,7 +88,7 @@
             isSubstitutable="false">
             <classMoniker
               Id="3fc25ec2-6663-4564-808b-b82ebc3214b1"
-              LastKnownName="UIControlType"
+              LastKnownName="UIControl Instance"
               LastKnownLocation="Package_2310.uml" />
           </generalization>
         </generalsInternal>
@@ -159,7 +159,7 @@
             isSubstitutable="false">
             <classMoniker
               Id="3fc25ec2-6663-4564-808b-b82ebc3214b1"
-              LastKnownName="UIControlType"
+              LastKnownName="UIControl Instance"
               LastKnownLocation="Package_2310.uml" />
           </generalization>
         </generalsInternal>
@@ -230,7 +230,7 @@
             isSubstitutable="false">
             <classMoniker
               Id="3fc25ec2-6663-4564-808b-b82ebc3214b1"
-              LastKnownName="UIControlType"
+              LastKnownName="UIControl Instance"
               LastKnownLocation="Package_2310.uml" />
           </generalization>
         </generalsInternal>
@@ -255,7 +255,7 @@
     <packageHasNamedElement>
       <class
         Id="3fc25ec2-6663-4564-808b-b82ebc3214b1"
-        name="UIControlType"
+        name="UIControl Instance"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -272,6 +272,27 @@
             <classMoniker
               Id="50d773d1-5c9d-4592-94d0-27dbbe05b068"
               LastKnownName="InternalMethods"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="690995b1-0537-4927-b901-1281e9b54df7">
+            <classMoniker
+              Id="9285d08d-0be6-48ef-bb14-a4d959e9eb84"
+              LastKnownName="IConfigurationInstance"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="3cf46499-3d7d-4661-b471-af6874e38ec8">
+            <classMoniker
+              Id="4c0fd9aa-ca2e-435a-86e2-b61cfcc86641"
+              LastKnownName="UIControlTypes.API"
+              LastKnownLocation="Documentation.uml" />
+          </dependency>
+          <dependency
+            Id="3422122d-a083-4d16-9a56-a259a07ac5a6">
+            <interfaceMoniker
+              Id="1479a5c1-af33-4a67-beb4-798637aeadfd"
+              LastKnownName="IConfigurationInstance"
               LastKnownLocation="Documentation.uml" />
           </dependency>
         </suppliersInternal>

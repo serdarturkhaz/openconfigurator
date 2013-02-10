@@ -1092,14 +1092,13 @@ html > body .ui-pnotify
 {
     font-family: Arial;
     letter-spacing: 0.3px;
-    font-size: 12px;
+    font-size: 11px;
     color: #2F3335;
 }
 .simpleTree ul.level0 li.row .node .innerNode div.name
 {
     font-family: Arial;
-    letter-spacing: 0.3px;
-    font-size: 10px;
+    font-size: 9px;
     color: #2F3335;
     max-width: 100px;
     overflow: hidden;
@@ -1785,7 +1784,7 @@ a:hover
     float: left;
     margin-top: 30px;
     width: 185px;
-    height: 451px;
+    height: 414px;
     clear: left;
 }
 #ModelExplorerBox .TreeArea
