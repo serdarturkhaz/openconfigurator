@@ -1030,6 +1030,41 @@ var DiagramDataModel = function (modelID, modelName) {
 
         return elementIdentifier;
     }
+    //Used for copy - creates unique name of feature // method adopted from getNewIdentifier - should be better way to do it,
+    //however for now I dont wont to apply new solution
+    var getNewName = function (prefix) {
+        var elementsWithPrefix = [];
+
+        for (var i = 1; i < arguments.length; i++) {
+            var collection = arguments[i];
+            // get all matching feature identifiers
+            for (var guidKey in collection) {
+                var clientObject = collection[guidKey];
+
+                // ignore it if it is deleted
+                if (!clientObject.IsDeleted()) {
+                    var name = clientObject.GetField("Name");
+
+                    // if it starts with the prefix then add it to the array
+                    if (name.indexOf(prefix) == 0) {
+                        elementsWithPrefix.push(name);
+                    }
+                }
+            }
+        }
+
+        var elementCouter = 0;
+        var elementName;
+        var elementIndex;
+
+        do {
+            elementCouter++;
+            elementName = prefix + elementCouter;
+            elementIndex = $.inArray(elementName, elementsWithPrefix);
+        } while (elementIndex != -1);
+
+        return elementName;
+    }
     // pass a number of element collections to see if the elementName is used, call function as 
     // getNewIdentifier("Laptop_attribute_1", feature.Attributes) or 
     // getNewIdentifier("Laptop_feature_1", _clientObjects.features, _clientObjects.customRules)
@@ -1282,6 +1317,7 @@ var DiagramDataModel = function (modelID, modelName) {
 
         });
     }
+
     this.AddNewClientObject = function (type, initialBusinessValues, initialClientValues) {
 
         // Setup inner business object
@@ -1396,6 +1432,7 @@ var DiagramDataModel = function (modelID, modelName) {
         //Raise events
         _thisDiagramDataModel.ClientObjectUpdated.RaiseEvent(guid);
     }
+
     this.IsFeatureIdentifierInUse = function (featureIdentifier, currentFeatureGuid) {
         return isIdentifierInUse(featureIdentifier, currentFeatureGuid, _clientObjects.features, _clientObjects.customRules);
     }
@@ -1409,6 +1446,19 @@ var DiagramDataModel = function (modelID, modelName) {
         // here instead of the parent feature guid, it should pass the currentAttributeGuid
         return isIdentifierInUse(attributeIdentifier, parentFeatureGuid, attributeCollection);
     }
+    //Return the next possible indentifier for given attr prefix
+    this.GetNextAttributeIdentifier = function (attributePrefix, parentClientObject) {
+        return getNewIdentifier(attributePrefix, parentClientObject.Attributes)
+    }
+    //Retrun the next possible identifier for given feature prefix
+    this.GetNextFeatureIdentifier = function (featurePrefix) {
+        return getNewIdentifier(featurePrefix, _clientObjects.features)
+    }
+    //Return the next possible name for given feature prefix
+    this.GetNextFeatureName = function (namePerfix) {
+        return getNewName(namePerfix, _clientObjects.features)
+    }
+
     this.GetByGUID = function (guid) {
         return _clientObjects.all[guid];
     }
@@ -1652,6 +1702,28 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
     }
     this.ToggleOrientation = function () {
         _diagramContext.ToggleOrientation();
+    }
+    //Copy selected element
+    this.CopyElement = function () {
+        switch (_currentControlFocus) {
+            case _diagramContext:
+
+                _diagramContext.CopySelectedElementToMemory();
+                break;
+            case _modelExplorer:
+                //We might copy elements from Model explore do diagram window
+                //Just another idea
+                //_modelExplorer.
+                break;
+        }
+    }
+    //Paste element from memory
+    this.PasteElement = function () {
+        switch (_currentControlFocus) {
+            case _diagramContext:
+                _diagramContext.PasteSelectedElementFromMemory();
+                break;
+        }
     }
 }
 var PropertiesComponent = function (container, diagramDataModelInstance) {
@@ -2840,7 +2912,11 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
         //Create simpleTree
         options = {
             data: [
-
+                {
+                    ID: "featuresNode",
+                    Name: "Features",
+                    typeName: "folder"
+                },
                 {
                     ID: "compositionRulesNode",
                     Name: "Composition Rules",
@@ -2854,11 +2930,6 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                 {
                     ID: "constraintsNode",
                     Name: "Constraints",
-                    typeName: "folder"
-                },
-                {
-                    ID: "featuresNode",
-                    Name: "Features",
                     typeName: "folder"
                 }
             ],
@@ -4764,9 +4835,63 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             $(_canvasContainer).bind("click", _clickHandler);
         }
     }
-    var createFeatureName = function () {
+    var createFeatureCopy = function (sourceFeature) {
+        if (_innerMode != innerState.featureLock) {
+            resetInnerMode();
+            _innerMode = innerState.featureLock;
+            _thisDiagramContext.InnerModeChange.RaiseEvent(_innerMode);
 
+            var XPosSource = sourceFeature.XPos;
+            var YPosSource = sourceFeature.YPos;
+
+            //Create copy of the feature
+            var initialValues = {
+                ModelID: _diagramDataModel.ModelID,
+                XPos: (XPosSource + 150),
+                YPos: (YPosSource + 50),
+                Description: sourceFeature.Description
+            };
+
+            //Create a new ClientDataObject
+            clientFeatureObject = _diagramDataModel.AddNewClientObject("feature", initialValues);
+
+            //Update the business object
+            var clientBusinessObject = clientFeatureObject.GetBusinessObject();
+            clientBusinessObject.Identifier = _diagramDataModel.GetNextFeatureIdentifier(sourceFeature.Identifier + "_");
+            clientBusinessObject.Name = _diagramDataModel.GetNextFeatureName(sourceFeature.Name + "_");
+            clientBusinessObject.Description = sourceFeature.Description;
+
+            //Load Attributes
+            for (var j = 0; j < sourceFeature.Attributes.length; j++) {
+                var attribute = sourceFeature.Attributes[j];
+                //attributes copied from the source business object
+                var initialValuesAttribute = {
+                    AttributeDataType: attribute.AttributeDataType,
+                    AttributeType: attribute.AttributeType,
+                    ConstantValue: attribute.ConstantValue,
+                    Description: attribute.Description
+                }
+                var initialClientValues = {};
+                initialClientValues["Feature"] = clientFeatureObject;
+                var attributeClientObject = _diagramDataModel.AddNewClientObject("attribute", initialValuesAttribute, initialClientValues);
+                var attributeBusinessObject = attributeClientObject.GetBusinessObject();
+                attributeBusinessObject.Identifier = attribute.Identifier;
+                attributeBusinessObject.Name = attribute.Name;
+                //Set references
+                clientFeatureObject.Attributes.push(attributeClientObject);
+                attributeClientObject.Feature = clientFeatureObject;
+            }
+            _diagramDataModel.UpdateClientObject(clientFeatureObject.GUID, clientBusinessObject);
+
+            //
+
+            //clientFeatureObject.UpdateBusinessObject(sourceFeature);
+            resetInnerMode();
+        }
+
+        return clientFeatureObject;
     }
+
     var createRelation = function () {
         if (_selectedElements.length == 2) {
             //Create a new clientObject in the diagramDataModel
@@ -5301,7 +5426,42 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             createGroupRelation();
         }
     }
+    //Public method for copy to memory
+    this.CopySelectedElementToMemory = function () {
+        var elementsToBeCopied = _selectedElements.slice(0);
+        var guidArray = [];
+        for (var i = 0; i < elementsToBeCopied.length; i++) {
+            //Add element to the memory
+            guidArray.push(elementsToBeCopied[i].GUID);
+        }
 
+        //Save list of elements to copy in memory
+        $('body').data('clipboard_GUID_to_Copy', guidArray);
+
+    }
+    //Public method for past elements from memory
+    this.PasteSelectedElementFromMemory = function () {
+        var guidArray = $('body').data('clipboard_GUID_to_Copy');
+        var counter = 1;
+        if (guidArray.length) {
+            for (var i = 0; i < guidArray.length; i++) {
+                //Retrive each element GUID from memory
+                var elementGUID = guidArray[i];
+
+                var clientObject = _diagramDataModel.GetByGUID(elementGUID);
+                clientObject.GetBusinessObject().Identifier = clientObject.Identifier + '_' + counter;
+                var createdItem = createFeatureCopy(clientObject.GetBusinessObject());
+
+                var UIFeature = _UIElements[createdItem.GUID];
+                if (UIFeature != undefined)
+                    UIFeature.RefreshGraphicalRepresentation({ rerenderAttributes: true });
+
+            }
+            //Clean information in the cache
+            $('body').data('clipboard_GUID_to_Copy', "");
+
+        }
+    }
     //Events
     this.ElementSelectToggled = new Event();
     this.SelectionCleared = new Event();

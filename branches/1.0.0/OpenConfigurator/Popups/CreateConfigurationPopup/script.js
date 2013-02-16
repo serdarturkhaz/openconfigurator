@@ -96,7 +96,7 @@ $("#CreateConfigurationPopup").dialog({
             {
                 //OK button
                 text: "Create configuration",
-                class: "OkButton",
+                "class": "OkButton",
                 click: function () {
 
                     //Get the chosen Model and UITemplate ids
