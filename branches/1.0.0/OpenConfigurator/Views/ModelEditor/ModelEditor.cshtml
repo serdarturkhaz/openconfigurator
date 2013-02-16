@@ -98,6 +98,12 @@
                 $.ctrl('S', function () { //Save data
                     clientController.SaveData();
                 });
+                $.ctrl('C', function () { //Copy element 
+                    clientController.CopyElement();
+                });
+                $.ctrl('V', function () { //Paste given element
+                    clientController.PasteElement();
+                });
             });
             //---------------------------------------------------------------------------------
 
