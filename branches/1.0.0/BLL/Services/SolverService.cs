@@ -33,27 +33,21 @@ namespace BLL.Services
         const string featuresCategory = "Features", attributesCategory = "Attributes", relationsCategory = "Relations",
             groupRelationsCategory = "GroupRelations", compositionRulesCategory = "CompositionRules";
 
-        //Constructors
-        public SolverService()
-        {
-            //
-            _ruleParser = new StandardParser();
-            _databindParser = new DatabindParser();
-        }
+
 
         //Private methods
         private static ISolverContext InitializeContextFromModel(BusinessObjects.Model model)
         {
-            //Return val
+            //Create a new SolverContext
             ISolverContext context = new Z3Context();
 
-            //Handle Features and Attributes
+            //Create variables for Features and Attributes
             foreach (BLL.BusinessObjects.Feature feature in model.Features)
             {
-                //Add variable for Feature
+                //Add a variable for the Feature
                 context.AddVariable(feature.Name, feature.ID.ToString(), featuresCategory, VariableDataTypes.Boolean);
 
-                //Add variables for its Attributes
+                ////Add variables for its Attributes
                 //feature.Attributes.ForEach(attribute =>
                 //{
                 //    if (attribute.AttributeDataType == BusinessObjects.AttributeDataTypes.Integer)
@@ -66,67 +60,65 @@ namespace BLL.Services
                 //});
             }
 
-            //Handle Relations, GroupRelations and CompositionRules
+            //Create constraints
             model.Relations.ForEach(rel => context.AddConstraint(relationsCategory, TransformToStatement(context, rel)));
             model.GroupRelations.ForEach(groupRel => context.AddConstraint(groupRelationsCategory, TransformToStatement(context, groupRel)));
             model.CompositionRules.ForEach(compositionRule => context.AddConstraint(compositionRulesCategory, TransformToStatement(context, compositionRule)));
-            //model.Constraints.ForEach(constraint => context.AddConstraint(compositionRulesCategory, TransformToStatement(context, constraint)));
+            model.Constraints.ForEach(constraint => context.AddConstraint(compositionRulesCategory, TransformToStatement(context, constraint)));
 
-            //Create an initial restore point
+            //Create an initial restore point and return the new context
             context.CreateInitialRestorePoint();
             return context;
         }
-        private void ExecuteCustomRule(ref ConfiguratorSession configSession, string Expression)
+        private bool VerifyAssumption(string variableID, string categoryName, VariableDataTypes dataType, object valueToTest)
         {
-            _ruleParser.ExecuteSyntax(ref configSession, Expression);
+            return false;
         }
-        private bool GetValidSelections(ref ConfiguratorSession configSession)
+        private bool ApplyFeedbackAlgorithm(ref ConfiguratorSession configSession)
         {
+            //Variables
+            bool validity = true;
+
             //Loop through all FeatureSelections
             foreach (BLL.BusinessObjects.FeatureSelection featureSelection in configSession.Configuration.FeatureSelections)
             {
-                //Only FeatureSelections which have not been explicitly toggled by the user
+                //Determine the state of each Feature - so as to keep the validity of the configuration 
                 if (featureSelection.ToggledByUser == false)
                 {
-                    bool CanBeTrue = configSession.Context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
-                    bool CanBeFalse = configSession.Context.CheckSolutionExists(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, false);
+                    bool CanBeTrue = configSession.Context.IsValid(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, true);
+                    bool CanBeFalse = configSession.Context.IsValid(featureSelection.FeatureID.ToString(), featuresCategory, VariableDataTypes.Boolean, false);
 
-                    //Cannot be true nor false
+                    //Feature cannot be false nor true - configuration INVALID  
                     if (!CanBeFalse && !CanBeTrue)
                     {
-                        return false;
+                        
+                        validity = false;
                     }
-                    //Cannot be true
+                    //Feature has to be false
                     else if (!CanBeTrue)
                     {
                         featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Deselected;
                         featureSelection.Disabled = true;
                     }
-                    //Cannot be false
+                    //Feature has to be true
                     else if (!CanBeFalse)
                     {
+                        
                         featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Selected;
                         featureSelection.Disabled = true;
                     }
-                    //Can be true or false
+                    //Feature can be anything
                     else if (CanBeFalse && CanBeTrue)
                     {
+                        
                         featureSelection.SelectionState = BusinessObjects.FeatureSelectionStates.Unselected;
                         featureSelection.Disabled = false;
                     }
                 }
             }
 
-            //Loop through CustomRUles
-            foreach (BLL.BusinessObjects.CustomRule customRule in configSession.Model.CustomRules)
-            {
-                ExecuteCustomRule(ref configSession, customRule.Expression);
-            }
-
-
             //
-            return true;
-
+            return validity;
         }
         private static ISolverStatement TransformToStatement(ISolverContext context, BLL.BusinessObjects.Relation relation)
         {
@@ -196,26 +188,22 @@ namespace BLL.Services
         private static ISolverStatement TransformToStatement(ISolverContext context, BLL.BusinessObjects.Constraint constraint)
         {
             ISolverStatement returnStatement = null;
-            //switch (compositionRule.CompositionRuleType)
-            //{
-            //    case BusinessObjects.CompositionRuleTypes.Dependency:
-            //        returnStatement = context.MakeImplies(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-            //        break;
-            //    case BusinessObjects.CompositionRuleTypes.MutualDependency:
-            //        returnStatement = context.MakeEquivalence(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-            //        break;
-            //    case BusinessObjects.CompositionRuleTypes.MutualExclusion:
-            //        returnStatement = context.MakeExcludes(featuresCategory, compositionRule.FirstFeatureID.ToString(), compositionRule.SecondFeatureID.ToString());
-            //        break;
-            //}
+            
             return returnStatement;
+        }
+
+        //Constructors
+        public SolverService()
+        {
+            //
+            _ruleParser = new StandardParser();
+            _databindParser = new DatabindParser();
         }
 
         //Public methods  
         public static ISolverContext CreateNewContext(BusinessObjects.Model model)
         {
             ISolverContext context = InitializeContextFromModel(model);
-
             return context;
         }
         public bool UserToggleSelection(ref ConfiguratorSession configSession, int FeatureID, BLL.BusinessObjects.FeatureSelectionStates newState)
@@ -244,7 +232,7 @@ namespace BLL.Services
             }
 
             //Make changes so that the user cannot break the validity of the model in the next change
-            bool decisionIsValid = GetValidSelections(ref configSession);
+            bool decisionIsValid = ApplyFeedbackAlgorithm(ref configSession);
 
             //
             return decisionIsValid;

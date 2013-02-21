@@ -24,16 +24,20 @@ namespace BLL.SolverEngines
 
     public interface ISolverContext
     {
+        //General context methods
+        bool IsValid(string variableID, string categoryName, VariableDataTypes dataType, object valueToTest);
         void CreateInitialRestorePoint();
 
+        //Methods to manipulate elements inside the context
+        void AddConstraint(string categoryName, params ISolverStatement[] statements);
         void AddVariable(string name, string identifier, string categoryName, VariableDataTypes dataType);
         void AddAttributeVariable(string featureName, string name, string identifier, string categoryName, VariableDataTypes dataType);
-        void AddConstraint(string categoryName, params ISolverStatement[] statements);
         void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
         void RemoveValueAssumption(string varID, string categoryName);
         void AddOrModifyValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
         void AddFeatureAttributeValueAssumption(string featureVariableID, string featureCategoryName, string attributeVariableID, string attributeCategoryName, VariableDataTypes dataType, object value);
         
+        //Methods to create solver statements
         ISolverStatement MakeEquals(ISolverStatement leftStatement, ISolverStatement rightStatement);
         ISolverStatement MakeAdd(ISolverStatement[] innerStatements);
         ISolverStatement MakeAnd(string categoryName, params string[] variableIDs);
@@ -55,9 +59,7 @@ namespace BLL.SolverEngines
 
         ISolverStatement MakeBoolToInt(string variableID, string categoryName);
         ISolverStatement MakeNumeral(int val);
-
-        ISolverSolution GetSolution();
-        bool CheckSolutionExists(string variableID, string categoryName, VariableDataTypes dataType, object valueToTest);
+        
     }
     public interface ISolverSolution
     {
@@ -71,12 +73,7 @@ namespace BLL.SolverEngines
     {
 
     }
-    public interface IZ3Assumption
-    {
-        Term VariableTerm { get; set; }
-        Term ValueTerm { get; set; }
-        Term EqualsTerm { get; set; }
-    }
+    
 
     //Enums
     public enum StatementTypes

@@ -2,7 +2,7 @@
 // 
 // Distributed under the MIT license
 // ===========================================================
-// Copyright (c) 2012 - Radu Mitache
+// Copyright (c) 2012 - Radu Mitache, Alexander Mantzoukas
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
@@ -32,33 +32,37 @@ namespace BLL.SolverEngines
         //Fields
         Config _config;
         Context _context;
+
+        //Variables
+
+        //Constraints
+
+        //Assumptions - simple/implied
+
         Dictionary<string, Dictionary<string, Z3Variable>> _variables = new Dictionary<string, Dictionary<string, Z3Variable>>();
         Dictionary<string, List<Z3Constraint>> _constraints = new Dictionary<string, List<Z3Constraint>>();
         Dictionary<string, Dictionary<string, Dictionary<string, Z3ValueAssumption>>> _assumptions = new Dictionary<string, Dictionary<string, Dictionary<string, Z3ValueAssumption>>>();
         Dictionary<string, Z3Function> _functions = new Dictionary<string, Z3Function>();
 
-        //Constructor
-        public Z3Context()
-        {
-            //Initialize Config and Context
-            _config = new Config();
-            _config.SetParamValue("MODEL", "true"); // corresponds to /m switch 
-            _config.SetParamValue("MACRO_FINDER", "true");
-            _context = new Context(_config);
-
-            //Setup custom conversion method BoolToInt (boolean -> integer)----------------------------------------------------------------
-            FuncDecl boolToInt = _context.MkFuncDecl("BoolToInt", _context.MkBoolSort(), _context.MkIntSort());
-            Term i = _context.MkConst("i", _context.MkBoolSort());
-            Term fDef = _context.MkIte(_context.MkEq(i, _context.MkTrue()), _context.MkIntNumeral(1), _context.MkIntNumeral(0)); // x == true => 1, x == false => 0
-            Term fStatement = _context.MkForall(0, new Term[] { i }, null, _context.MkEq(_context.MkApp(boolToInt, i), fDef));
-            _context.AssertCnstr(fStatement);
-
-            ////
-            _functions.Add("BoolToInt", new Z3Function(boolToInt));
-            //-----------------------------------------------------------------------------------------------------------------------------
-        }
-
         //Private methods
+        private ISolverSolution GetSolution()
+        {
+            //
+            Model model = null;
+            LBool result = _context.CheckAndGetModel(out model);
+
+
+            //Return the Solution
+            if (model != null)
+            {
+                ISolverSolution solution = new Z3Solution(model, _variables);
+                return solution;
+            }
+            else
+            {
+                return null;
+            }
+        }
         private void RecreateContext()
         {
             //Go back to the initial point
@@ -172,26 +176,29 @@ namespace BLL.SolverEngines
             return assumption;
         }
 
-        //Public methods
-        public ISolverSolution GetSolution()
+        //Constructor
+        public Z3Context()
         {
-            //
-            Model model = null;
-            LBool result = _context.CheckAndGetModel(out model);
+            //Initialize Config and Context
+            _config = new Config();
+            _config.SetParamValue("MODEL", "true"); // corresponds to /m switch 
+            _config.SetParamValue("MACRO_FINDER", "true");
+            _context = new Context(_config);
 
+            //Setup custom conversion method BoolToInt (boolean -> integer)----------------------------------------------------------------
+            FuncDecl boolToInt = _context.MkFuncDecl("BoolToInt", _context.MkBoolSort(), _context.MkIntSort());
+            Term i = _context.MkConst("i", _context.MkBoolSort());
+            Term fDef = _context.MkIte(_context.MkEq(i, _context.MkTrue()), _context.MkIntNumeral(1), _context.MkIntNumeral(0)); // x == true => 1, x == false => 0
+            Term fStatement = _context.MkForall(0, new Term[] { i }, null, _context.MkEq(_context.MkApp(boolToInt, i), fDef));
+            _context.AssertCnstr(fStatement);
 
-            //Return the Solution
-            if (model != null)
-            {
-                ISolverSolution solution = new Z3Solution(model, _variables);
-                return solution;
-            }
-            else
-            {
-                return null;
-            }
+            ////
+            _functions.Add("BoolToInt", new Z3Function(boolToInt));
+            //-----------------------------------------------------------------------------------------------------------------------------
         }
-        public bool CheckSolutionExists(string variableID, string categoryName, VariableDataTypes dataType, object valueToTest)
+
+        //Public methods
+        public bool IsValid(string variableID, string categoryName, VariableDataTypes dataType, object valueToTest)
         {
             //Add a new assumption to test for the "valueToTest" value
             bool returnVal = false;
@@ -669,14 +676,6 @@ namespace BLL.SolverEngines
         Dictionary<string, Dictionary<string, Z3Variable>> _variables = new Dictionary<string, Dictionary<string, Z3Variable>>();
         Dictionary<string, Dictionary<string, object>> _variableValues = new Dictionary<string, Dictionary<string, object>>();
 
-
-        //Constructor
-        public Z3Solution(Model model, Dictionary<string, Dictionary<string, Z3Variable>> variables)
-        {
-            _model = model;
-            _variables = variables;
-        }
-
         //Private methods
         private bool? ConvertToBool(Term value)
         {
@@ -692,10 +691,16 @@ namespace BLL.SolverEngines
                 case "false":
                     returnValue = false;
                     break;
-
             }
 
             return returnValue;
+        }
+
+        //Constructor
+        public Z3Solution(Model model, Dictionary<string, Dictionary<string, Z3Variable>> variables)
+        {
+            _model = model;
+            _variables = variables;
         }
 
         //Public methods
@@ -728,24 +733,7 @@ namespace BLL.SolverEngines
             _term = term;
         }
     }
-    public class Z3Function : ISolverFunction
-    {
-        //Fields
-        FuncDecl _function;
-
-        //Properties
-        public FuncDecl Function
-        {
-            get { return _function; }
-            set { _function = value; }
-        }
-
-        //Constructor
-        public Z3Function(FuncDecl function)
-        {
-            _function = function;
-        }
-    }
+    
 
     //Helper classes
     public class Z3Variable
@@ -786,6 +774,31 @@ namespace BLL.SolverEngines
         {
             _statements = statements;
         }
+    }
+    public class Z3Function
+    {
+        //Fields
+        FuncDecl _function;
+
+        //Properties
+        public FuncDecl Function
+        {
+            get { return _function; }
+            set { _function = value; }
+        }
+
+        //Constructor
+        public Z3Function(FuncDecl function)
+        {
+            _function = function;
+        }
+    }
+
+    public interface IZ3Assumption
+    {
+        Term VariableTerm { get; set; }
+        Term ValueTerm { get; set; }
+        Term EqualsTerm { get; set; }
     }
     public class Z3ValueAssumption : IZ3Assumption
     {

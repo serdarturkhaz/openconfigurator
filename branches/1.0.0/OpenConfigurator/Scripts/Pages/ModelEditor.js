@@ -1703,7 +1703,6 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
     this.ToggleOrientation = function () {
         _diagramContext.ToggleOrientation();
     }
-    //Copy selected element
     this.CopyElement = function () {
         switch (_currentControlFocus) {
             case _diagramContext:
@@ -1717,7 +1716,6 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
                 break;
         }
     }
-    //Paste element from memory
     this.PasteElement = function () {
         switch (_currentControlFocus) {
             case _diagramContext:
@@ -3472,8 +3470,9 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                     _relatedCompositeElements[j].OnAdjacentFeatureDeleted(_thisUIFeature);
                 }
 
+                //Delete Attributes
                 for (var j = 0; j < _attributeElements.length; ++i) {
-                    _attributeElements.Delete();
+                    _attributeElements[i].Delete();
                 }
             }
         }
@@ -4463,8 +4462,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         }
     }
 
-    // Utilities
-    // Cannot reuse getPath/getArcPath method from UIConnection and UIGroupRelation
+    //Utilities
     var getPathFromFeatureToPoint = function (objA, x, y) {
 
         //Variables

@@ -30,12 +30,6 @@ INSERT [dbo].[CompositionRule_Types] ([ID], [Name]) VALUES (1, N'Dependency')
 INSERT [dbo].[CompositionRule_Types] ([ID], [Name]) VALUES (2, N'Mutual Dependency')
 INSERT [dbo].[CompositionRule_Types] ([ID], [Name]) VALUES (3, N'Mutual Exclusion')
 SET IDENTITY_INSERT [dbo].[CompositionRule_Types] OFF
-/****** Object:  Table [dbo].[CustomRule_Types]    Script Date: 06/21/2012 00:06:39 ******/
-SET IDENTITY_INSERT [dbo].[CustomRule_Types] ON
-INSERT [dbo].[CustomRule_Types] ([ID], [Name]) VALUES (1, N'Composition Rules')
-INSERT [dbo].[CustomRule_Types] ([ID], [Name]) VALUES (2, N'Consequence Rules')
-INSERT [dbo].[CustomRule_Types] ([ID], [Name]) VALUES (3, N'Global Constraints')
-SET IDENTITY_INSERT [dbo].[CustomRule_Types] OFF
 /****** Object:  Table [dbo].[GroupRelation_Types]    Script Date: 06/21/2012 00:06:39 ******/
 SET IDENTITY_INSERT [dbo].[GroupRelation_Types] ON
 INSERT [dbo].[GroupRelation_Types] ([ID], [Name], [FixedLowerBound], [FixedUpperBound]) VALUES (1, N'OR', 1, NULL)
@@ -44,7 +38,7 @@ INSERT [dbo].[GroupRelation_Types] ([ID], [Name], [FixedLowerBound], [FixedUpper
 SET IDENTITY_INSERT [dbo].[GroupRelation_Types] OFF
 /****** Object:  Table [dbo].[Users]    Script Date: 06/21/2012 00:06:39 ******/
 SET IDENTITY_INSERT [dbo].[Users] ON
-INSERT [dbo].[Users] ([ID], [Email], [Password]) VALUES (1, N'Radu', N'hej123!')
+INSERT [dbo].[Users] ([ID], [Email], [Password]) VALUES (1, N'admin', N'admin')
 SET IDENTITY_INSERT [dbo].[Users] OFF
 /****** Object:  Table [dbo].[SelectionStates]    Script Date: 06/21/2012 00:06:39 ******/
 SET IDENTITY_INSERT [dbo].[SelectionStates] ON
