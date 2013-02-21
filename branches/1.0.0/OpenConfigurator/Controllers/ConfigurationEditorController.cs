@@ -29,6 +29,7 @@ namespace PresentationLayer.Controllers
 {
     public class ConfigurationEditorController : Controller
     {
+        
         //Controller methods
         [Authorize]
         public ActionResult ConfigurationEditor(int configurationID)
@@ -38,7 +39,6 @@ namespace PresentationLayer.Controllers
 
             return View();
         }
-
         [Authorize]
         public JsonNetResult LoadData(int configurationID)
         {
@@ -110,56 +110,12 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
-
         [Authorize]
         public void ClearSessionContext(int configurationID)
         {
             SessionData.ConfiguratorSessions.Remove(configurationID);
         }
 
-        //Solver / interactive configuration methods 
-        [Authorize]
-        public JsonNetResult ToggleFeature(int configurationID, int FeatureID, int newState)
-        {
-            //Data return controlTagElem
-            JsonNetResult result = new JsonNetResult();
-
-            //Get the ConfiguratorSession
-            ConfiguratorSession configSession = SessionData.ConfiguratorSessions[configurationID];
-            SolverService solverService = new SolverService();
-
-            //Get the implicit selections for the other features
-            BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
-            bool selectionValid = solverService.UserToggleSelection(ref configSession, FeatureID, selectionState);
-
-
-            //Return
-            if (selectionValid)
-            {
-                result.Data = configSession.Configuration.FeatureSelections.ToDictionary(g => g.FeatureID, k => k);
-            }
-            else
-            {
-                result.Data = selectionValid;
-            }
-
-            return result;
-        }
-        [Authorize]
-        public JsonNetResult EvalDatabindExpression(int configurationID, string expression)
-        {
-            //Data return controlTagElem
-            JsonNetResult result = new JsonNetResult();
-
-            //Get the ConfiguratorSession
-            ConfiguratorSession configSession = SessionData.ConfiguratorSessions[configurationID];
-            SolverService solverService = new SolverService();
-
-            //Get the implicit selections for the other features
-            result.Data = solverService.EvalExpression(ref configSession, expression);
-
-            return result;
-        }
 
         //Private methods
         private void SetupFeatureSelections(ref ConfiguratorSession configSession)
@@ -218,12 +174,6 @@ namespace PresentationLayer.Controllers
             }
             //---------------------------------------------------------------------------------------------------------------------------------------------------------
         }
-        private void GetInitialFeedback(ref ConfiguratorSession configSession)
-        {
-            //Set the root feature to selected and update the other FeatureSelections
-            SolverService solverService = new SolverService();
-            bool selectionValid = solverService.UserToggleSelection(ref configSession, configSession.Model.Features[0].ID, BLL.BusinessObjects.FeatureSelectionStates.Selected);
-        }
         private string GetDefaultAttrVal(BLL.BusinessObjects.AttributeDataTypes type)
         {
             string returnVal = "";
@@ -241,6 +191,51 @@ namespace PresentationLayer.Controllers
             }
 
             return returnVal;
+        }
+
+
+        //Solver / interactive configuration methods 
+        [Authorize]
+        public JsonNetResult ToggleFeature(int configurationID, int FeatureID, int newState)
+        {
+            //Data return controlTagElem
+            JsonNetResult result = new JsonNetResult();
+
+            //Get the ConfiguratorSession
+            ConfiguratorSession configSession = SessionData.ConfiguratorSessions[configurationID];
+            SolverService solverService = new SolverService();
+
+            //Get the implicit selections for the other features
+            BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
+            bool selectionValid = solverService.UserToggleSelection(ref configSession, FeatureID, selectionState);
+
+
+            //Return
+            if (selectionValid)
+            {
+                result.Data = configSession.Configuration.FeatureSelections.ToDictionary(g => g.FeatureID, k => k);
+            }
+            else
+            {
+                result.Data = selectionValid;
+            }
+
+            return result;
+        }
+        [Authorize]
+        public JsonNetResult EvalDatabindExpression(int configurationID, string expression)
+        {
+            //Data return controlTagElem
+            JsonNetResult result = new JsonNetResult();
+
+            //Get the ConfiguratorSession
+            ConfiguratorSession configSession = SessionData.ConfiguratorSessions[configurationID];
+            SolverService solverService = new SolverService();
+
+            //Get the implicit selections for the other features
+            result.Data = solverService.EvalExpression(ref configSession, expression);
+
+            return result;
         }
 
         //Methods for default Entities
