@@ -43,7 +43,7 @@ namespace BLL.Services
             }
             //
             if (user != null)
-                return (BLL.BusinessObjects.User)BLL.BusinessObjects.User.FromDataEntity(user);
+                return (BLL.BusinessObjects.User)BLL.BusinessObjects.User.CreateInstance(user);
             else
                 return null;
         }

@@ -131,7 +131,7 @@
     <Compile Include="DataEntities\Configuration.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataEntities\Constraint.cs">
+    <Compile Include="DataEntities\CustomFunction.cs">
       <DependentUpon>DataEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="DataEntities\CustomRule.cs">

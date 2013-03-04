@@ -55,7 +55,7 @@ namespace BLL.Services
                 BRelations = new List<BusinessObjects.Relation>();
                 foreach (DAL.DataEntities.Relation relation in relations)
                 {
-                    BRelations.Add((BLL.BusinessObjects.Relation)BLL.BusinessObjects.Relation.FromDataEntity(relation));
+                    BRelations.Add((BLL.BusinessObjects.Relation)BLL.BusinessObjects.Relation.CreateInstance(relation));
                 }
             }
             return BRelations;

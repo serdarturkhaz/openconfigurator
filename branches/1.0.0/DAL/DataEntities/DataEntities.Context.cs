@@ -156,11 +156,11 @@ namespace DAL.DataEntities
         }
         private ObjectSet<UITemplate> _uITemplates;
     
-        public ObjectSet<Constraint> Constraints
+        public ObjectSet<CustomFunction> CustomFunctions
         {
-            get { return _constraints  ?? (_constraints = CreateObjectSet<Constraint>("Constraints")); }
+            get { return _customFunctions  ?? (_customFunctions = CreateObjectSet<CustomFunction>("CustomFunctions")); }
         }
-        private ObjectSet<Constraint> _constraints;
+        private ObjectSet<CustomFunction> _customFunctions;
 
         #endregion
     }

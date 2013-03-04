@@ -57,7 +57,7 @@ namespace BLL.Services
                 foreach (DAL.DataEntities.GroupRelation DALgroupRelation in DALgroupRelations)
                 {
                     //Business object
-                    BLL.BusinessObjects.GroupRelation BLLGroupRelation = (BLL.BusinessObjects.GroupRelation)BLL.BusinessObjects.GroupRelation.FromDataEntity(DALgroupRelation);
+                    BLL.BusinessObjects.GroupRelation BLLGroupRelation = (BLL.BusinessObjects.GroupRelation)BLL.BusinessObjects.GroupRelation.CreateInstance(DALgroupRelation);
                     BLLGroupRelations.Add(BLLGroupRelation);
                 }
             }

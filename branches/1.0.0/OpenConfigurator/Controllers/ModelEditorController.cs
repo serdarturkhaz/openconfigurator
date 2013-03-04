@@ -186,23 +186,23 @@ namespace PresentationLayer.Controllers
             JsonNetResult result = new JsonNetResult() { Data = null };
 
             //Get a new default CustomRule
-            CustomRuleService _customRuleService = new CustomRuleService(SessionData.LoggedInUser.ID);
-            BLL.BusinessObjects.CustomRule newCustomRule = (BLL.BusinessObjects.CustomRule)_customRuleService.CreateDefault();
+            CustomRuleService customRuleService = new CustomRuleService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.CustomRule newCustomRule = (BLL.BusinessObjects.CustomRule)customRuleService.CreateDefault();
             result.Data = newCustomRule;
 
             //
             return result;
         }
         [Authorize]
-        public JsonNetResult NewDefaultConstraint()
+        public JsonNetResult NewDefaultCustomFunction()
         {
             //Default return variable
             JsonNetResult result = new JsonNetResult() { Data = null };
 
             //Get a new default CustomRule
-            ConstraintService _customRuleService = new ConstraintService(SessionData.LoggedInUser.ID);
-            BLL.BusinessObjects.Constraint newCustomRule = (BLL.BusinessObjects.Constraint)_customRuleService.CreateDefault();
-            result.Data = newCustomRule;
+            CustomFunctionService customFunctionService = new CustomFunctionService(SessionData.LoggedInUser.ID);
+            BLL.BusinessObjects.CustomFunction newCustomFunction = (BLL.BusinessObjects.CustomFunction)customFunctionService.CreateDefault();
+            result.Data = newCustomFunction;
 
             //
             return result;
@@ -214,8 +214,8 @@ namespace PresentationLayer.Controllers
             JsonNetResult result = new JsonNetResult() { Data = null };
 
             //Get a dictionary of standard RelationTypes
-            RelationService _relationService = new RelationService(SessionData.LoggedInUser.ID);
-            Dictionary<int, string> relationTypes = _relationService.GetRelationTypes();
+            RelationService relationService = new RelationService(SessionData.LoggedInUser.ID);
+            Dictionary<int, string> relationTypes = relationService.GetRelationTypes();
             result.Data = relationTypes;
 
             //

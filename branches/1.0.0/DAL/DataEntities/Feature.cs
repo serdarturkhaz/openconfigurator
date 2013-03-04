@@ -128,38 +128,6 @@ namespace DAL.DataEntities
         }
         private Model _model;
     
-        public virtual ICollection<GroupRelation_To_Feature> GroupRelations_To_Features
-        {
-            get
-            {
-                if (_groupRelations_To_Features == null)
-                {
-                    var newCollection = new FixupCollection<GroupRelation_To_Feature>();
-                    newCollection.CollectionChanged += FixupGroupRelations_To_Features;
-                    _groupRelations_To_Features = newCollection;
-                }
-                return _groupRelations_To_Features;
-            }
-            set
-            {
-                if (!ReferenceEquals(_groupRelations_To_Features, value))
-                {
-                    var previousValue = _groupRelations_To_Features as FixupCollection<GroupRelation_To_Feature>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupGroupRelations_To_Features;
-                    }
-                    _groupRelations_To_Features = value;
-                    var newValue = value as FixupCollection<GroupRelation_To_Feature>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupGroupRelations_To_Features;
-                    }
-                }
-            }
-        }
-        private ICollection<GroupRelation_To_Feature> _groupRelations_To_Features;
-    
         public virtual ICollection<FeatureSelection> FeatureSelections
         {
             get
@@ -191,6 +159,198 @@ namespace DAL.DataEntities
             }
         }
         private ICollection<FeatureSelection> _featureSelections;
+    
+        public virtual ICollection<Relation> Relations
+        {
+            get
+            {
+                if (_relations == null)
+                {
+                    var newCollection = new FixupCollection<Relation>();
+                    newCollection.CollectionChanged += FixupRelations;
+                    _relations = newCollection;
+                }
+                return _relations;
+            }
+            set
+            {
+                if (!ReferenceEquals(_relations, value))
+                {
+                    var previousValue = _relations as FixupCollection<Relation>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupRelations;
+                    }
+                    _relations = value;
+                    var newValue = value as FixupCollection<Relation>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupRelations;
+                    }
+                }
+            }
+        }
+        private ICollection<Relation> _relations;
+    
+        public virtual ICollection<Relation> Relations1
+        {
+            get
+            {
+                if (_relations1 == null)
+                {
+                    var newCollection = new FixupCollection<Relation>();
+                    newCollection.CollectionChanged += FixupRelations1;
+                    _relations1 = newCollection;
+                }
+                return _relations1;
+            }
+            set
+            {
+                if (!ReferenceEquals(_relations1, value))
+                {
+                    var previousValue = _relations1 as FixupCollection<Relation>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupRelations1;
+                    }
+                    _relations1 = value;
+                    var newValue = value as FixupCollection<Relation>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupRelations1;
+                    }
+                }
+            }
+        }
+        private ICollection<Relation> _relations1;
+    
+        public virtual ICollection<GroupRelation_To_Feature> GroupRelations_To_Features_1
+        {
+            get
+            {
+                if (_groupRelations_To_Features_1 == null)
+                {
+                    var newCollection = new FixupCollection<GroupRelation_To_Feature>();
+                    newCollection.CollectionChanged += FixupGroupRelations_To_Features_1;
+                    _groupRelations_To_Features_1 = newCollection;
+                }
+                return _groupRelations_To_Features_1;
+            }
+            set
+            {
+                if (!ReferenceEquals(_groupRelations_To_Features_1, value))
+                {
+                    var previousValue = _groupRelations_To_Features_1 as FixupCollection<GroupRelation_To_Feature>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupGroupRelations_To_Features_1;
+                    }
+                    _groupRelations_To_Features_1 = value;
+                    var newValue = value as FixupCollection<GroupRelation_To_Feature>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupGroupRelations_To_Features_1;
+                    }
+                }
+            }
+        }
+        private ICollection<GroupRelation_To_Feature> _groupRelations_To_Features_1;
+    
+        public virtual ICollection<GroupRelation_To_Feature> GroupRelations_To_Features1
+        {
+            get
+            {
+                if (_groupRelations_To_Features1 == null)
+                {
+                    var newCollection = new FixupCollection<GroupRelation_To_Feature>();
+                    newCollection.CollectionChanged += FixupGroupRelations_To_Features1;
+                    _groupRelations_To_Features1 = newCollection;
+                }
+                return _groupRelations_To_Features1;
+            }
+            set
+            {
+                if (!ReferenceEquals(_groupRelations_To_Features1, value))
+                {
+                    var previousValue = _groupRelations_To_Features1 as FixupCollection<GroupRelation_To_Feature>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupGroupRelations_To_Features1;
+                    }
+                    _groupRelations_To_Features1 = value;
+                    var newValue = value as FixupCollection<GroupRelation_To_Feature>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupGroupRelations_To_Features1;
+                    }
+                }
+            }
+        }
+        private ICollection<GroupRelation_To_Feature> _groupRelations_To_Features1;
+    
+        public virtual ICollection<CompositionRule> CompositionRules
+        {
+            get
+            {
+                if (_compositionRules == null)
+                {
+                    var newCollection = new FixupCollection<CompositionRule>();
+                    newCollection.CollectionChanged += FixupCompositionRules;
+                    _compositionRules = newCollection;
+                }
+                return _compositionRules;
+            }
+            set
+            {
+                if (!ReferenceEquals(_compositionRules, value))
+                {
+                    var previousValue = _compositionRules as FixupCollection<CompositionRule>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupCompositionRules;
+                    }
+                    _compositionRules = value;
+                    var newValue = value as FixupCollection<CompositionRule>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupCompositionRules;
+                    }
+                }
+            }
+        }
+        private ICollection<CompositionRule> _compositionRules;
+    
+        public virtual ICollection<CompositionRule> CompositionRules1
+        {
+            get
+            {
+                if (_compositionRules1 == null)
+                {
+                    var newCollection = new FixupCollection<CompositionRule>();
+                    newCollection.CollectionChanged += FixupCompositionRules1;
+                    _compositionRules1 = newCollection;
+                }
+                return _compositionRules1;
+            }
+            set
+            {
+                if (!ReferenceEquals(_compositionRules1, value))
+                {
+                    var previousValue = _compositionRules1 as FixupCollection<CompositionRule>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupCompositionRules1;
+                    }
+                    _compositionRules1 = value;
+                    var newValue = value as FixupCollection<CompositionRule>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupCompositionRules1;
+                    }
+                }
+            }
+        }
+        private ICollection<CompositionRule> _compositionRules1;
 
         #endregion
         #region Association Fixup
@@ -237,7 +397,95 @@ namespace DAL.DataEntities
             }
         }
     
-        private void FixupGroupRelations_To_Features(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupFeatureSelections(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (FeatureSelection item in e.NewItems)
+                {
+                    item.Feature = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (FeatureSelection item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Feature, this))
+                    {
+                        item.Feature = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupRelations(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Relation item in e.NewItems)
+                {
+                    item.ChildFeature = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Relation item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.ChildFeature, this))
+                    {
+                        item.ChildFeature = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupRelations1(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Relation item in e.NewItems)
+                {
+                    item.ParentFeature = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (Relation item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.ParentFeature, this))
+                    {
+                        item.ParentFeature = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupGroupRelations_To_Features_1(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (GroupRelation_To_Feature item in e.NewItems)
+                {
+                    item.ChildFeature = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (GroupRelation_To_Feature item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.ChildFeature, this))
+                    {
+                        item.ChildFeature = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupGroupRelations_To_Features1(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
@@ -259,23 +507,45 @@ namespace DAL.DataEntities
             }
         }
     
-        private void FixupFeatureSelections(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupCompositionRules(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (FeatureSelection item in e.NewItems)
+                foreach (CompositionRule item in e.NewItems)
                 {
-                    item.Feature = this;
+                    item.FirstFeature = this;
                 }
             }
     
             if (e.OldItems != null)
             {
-                foreach (FeatureSelection item in e.OldItems)
+                foreach (CompositionRule item in e.OldItems)
                 {
-                    if (ReferenceEquals(item.Feature, this))
+                    if (ReferenceEquals(item.FirstFeature, this))
                     {
-                        item.Feature = null;
+                        item.FirstFeature = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupCompositionRules1(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (CompositionRule item in e.NewItems)
+                {
+                    item.SecondFeature = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (CompositionRule item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.SecondFeature, this))
+                    {
+                        item.SecondFeature = null;
                     }
                 }
             }

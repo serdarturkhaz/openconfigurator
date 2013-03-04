@@ -618,7 +618,7 @@ var ClientObjects = {
     GroupRelation: null,
     CompositionRule: null,
     CustomRule: null,
-    Constraint: null
+    CustomFunction: null
 }
 
 ClientObjects.Feature = function (businessObject) {
@@ -884,7 +884,7 @@ ClientObjects.CustomRule = function (businessObject) {
     this.SyncBusinessObject = function () {
     }
 }
-ClientObjects.Constraint = function (businessObject) {
+ClientObjects.CustomFunction = function (businessObject) {
 
     //Fields
     var _guid = null;
@@ -893,7 +893,7 @@ ClientObjects.Constraint = function (businessObject) {
     //Properties
     this.GUID = _guid;
     this.GetType = function () {
-        return "constraint";
+        return "customFunction";
     }
 
     //Methods
@@ -961,7 +961,7 @@ var DiagramDataModel = function (modelID, modelName) {
         groupRelations: {},
         compositionRules: {},
         customRules: {},
-        constraints: {}
+        customFunctions: {}
     }
     var _modelID = modelID, _model = null, _modelName = modelName;
     var _operationsQueue = [];
@@ -972,7 +972,7 @@ var DiagramDataModel = function (modelID, modelName) {
         groupRelations: {},
         compositionRules: {},
         customRules: {},
-        constraints: {}
+        customFunctions: {}
     };
     var _thisDiagramDataModel = this;
 
@@ -1216,15 +1216,15 @@ var DiagramDataModel = function (modelID, modelName) {
                     _thisDiagramDataModel.RegisterClientObject(customRuleClientObject);
                 }
 
-                //Load Constraints
-                for (var i = 0; i < _model.Constraints.length; i++) {
+                //Load CustomFunctions
+                for (var i = 0; i < _model.CustomFunctions.length; i++) {
 
                     //Variables
-                    var constraint = _model.Constraints[i];
+                    var customFunction = _model.CustomFunctions[i];
 
                     //Create a new ClientDataObject
-                    var constraintClientObject = new ClientObjects.Constraint(constraint);
-                    _thisDiagramDataModel.RegisterClientObject(constraintClientObject);
+                    var customFunctionClientObject = new ClientObjects.CustomFunction(customFunction);
+                    _thisDiagramDataModel.RegisterClientObject(customFunctionClientObject);
                 }
 
 
@@ -1362,12 +1362,12 @@ var DiagramDataModel = function (modelID, modelName) {
 
                 newClientObject = new ClientObjects.CustomRule(newBusinessObject);
                 break;
-            case "constraint":
-                var constraintIdentifier = getNewIdentifier("Constraint_", _clientObjects.features, _clientObjects.customRules);
-                newBusinessObject.Identifier = constraintIdentifier;
-                newBusinessObject.Name = constraintIdentifier.replace("_", " ");
+            case "customFunction":
+                var customFunctionIdentifier = getNewIdentifier("CustomFunction_", _clientObjects.features, _clientObjects.customRules);
+                newBusinessObject.Identifier = customFunctionIdentifier;
+                newBusinessObject.Name = customFunctionIdentifier.replace("_", " ");
 
-                newClientObject = new ClientObjects.Constraint(newBusinessObject);
+                newClientObject = new ClientObjects.CustomFunction(newBusinessObject);
                 break;
         }
         if (initialClientValues != undefined && initialClientValues != null) {
@@ -1676,11 +1676,11 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
         }
         var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("customRule", initialValues);
     }
-    this.CreateNewConstraint = function () {
+    this.CreateNewCustomFunction = function () {
         var initialValues = {
             ModelID: _diagramDataModel.ModelID
         }
-        var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("constraint", initialValues);
+        var clientCustomRuleObject = _diagramDataModel.AddNewClientObject("customFunction", initialValues);
     }
     this.Delete = function () {
         switch (_currentControlFocus) {
@@ -2617,7 +2617,7 @@ var PropertiesComponent = function (container, diagramDataModelInstance) {
                 }
             }
         },
-        constraint: {
+        customFunction: {
             areas: {
                 basicArea: {
                     displayTitle: false,
@@ -2842,7 +2842,7 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
         feature: true,
         compositionRule: true,
         customRule: true,
-        constraint: true
+        customFunction: true
     }
 
     //Private methods
@@ -2926,8 +2926,8 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                     typeName: "folder"
                 },
                 {
-                    ID: "constraintsNode",
-                    Name: "Constraints",
+                    ID: "customFunctionsNode",
+                    Name: "Custom Functions",
                     typeName: "folder"
                 }
             ],
@@ -2952,7 +2952,7 @@ var ModelExplorer = function (container, diagramDataModelInstance) {
                     labelField: "Name",
                     selectable: true
                 },
-                constraint: {
+                customFunction: {
                     idField: "ID",
                     labelField: "Name",
                     selectable: true
@@ -3080,6 +3080,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var _innerMode = innerState.ready;
     var _scaleModifier = 0.75, _fixedOrientation = "vertical"; //determines orientation of diagram - options: horizontal / vertical / false (automatic - needs bug fixing to work properly)
     var _UIElements = {}; //dictionary to hold all UIElements (guid, UIElement)
+    var _lettersCalculated = 0; //text size optimization calculations
     var _thisDiagramContext = this;
     var _supportedTypes = {
         feature: true,
@@ -3093,9 +3094,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
     var _mousemoveHandler = null;
     var _clickHandler = null;
     var _hoverElement = null;
-
-    // Text size optimization calculations
-    var _lettersCalculated = 0;
 
     //UIObjects & Defaults/Settings
     var UIFeature = function (clientObjectGUID, name, absoluteX, absoluteY) {
@@ -3471,8 +3469,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
                 }
 
                 //Delete Attributes
-                for (var j = 0; j < _attributeElements.length; ++i) {
-                    _attributeElements[i].Delete();
+                while (_attributeElements.length > 0) {
+                    _attributeElements[0].Delete();
                 }
             }
         }
@@ -5424,7 +5422,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
             createGroupRelation();
         }
     }
-    //Public method for copy to memory
     this.CopySelectedElementToMemory = function () {
         var elementsToBeCopied = _selectedElements.slice(0);
         var guidArray = [];
@@ -5437,7 +5434,6 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         $('body').data('clipboard_GUID_to_Copy', guidArray);
 
     }
-    //Public method for past elements from memory
     this.PasteSelectedElementFromMemory = function () {
         var guidArray = $('body').data('clipboard_GUID_to_Copy');
         var counter = 1;
@@ -5460,6 +5456,7 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
 
         }
     }
+
     //Events
     this.ElementSelectToggled = new Event();
     this.SelectionCleared = new Event();

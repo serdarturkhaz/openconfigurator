@@ -378,9 +378,6 @@
     <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_UITemplates_Users.fkey.sql">
       <SubType>Code</SubType>
     </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Constraints.table.sql">
-      <SubType>Code</SubType>
-    </Build>
     <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\PK_Constraints.pkey.sql">
       <SubType>Code</SubType>
     </Build>
@@ -389,6 +386,35 @@
     </Build>
     <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_Configurations_UITemplates.fkey.sql">
       <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_Relations_Features_ParentF.fkey.sql">
+      <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_Relations_Features_ChildF.fkey.sql">
+      <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_GroupRelations_To_Features_ParentFeature.fkey.sql">
+      <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_GroupRelations_To_Features_ChildFeature.fkey.sql">
+      <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_CompositionRules_Features_SecondFeature.fkey.sql">
+      <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_CompositionRules_Features_FirstFeature.fkey.sql">
+      <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_Constraints_Models_1.fkey.sql">
+      <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\PK_Constraints_1.pkey.sql">
+      <SubType>Code</SubType>
+    </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\CustomFunctions.table.sql">
+      <SubType>Code</SubType>
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
   </ItemGroup>
   <ItemGroup>
