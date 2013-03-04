@@ -48,7 +48,7 @@ namespace BLL.Services
                 foreach (DAL.DataEntities.Attribute DALAttribute in DALAttributes)
                 {
                     //Create the BLL object
-                    BLL.BusinessObjects.Attribute BLLAttribute = BLL.BusinessObjects.Attribute.FromDataEntity(DALAttribute);
+                    BLL.BusinessObjects.Attribute BLLAttribute = BLL.BusinessObjects.Attribute.CreateInstance(DALAttribute);
                     BLLAttributes.Add(BLLAttribute);
                 }
             }

@@ -270,37 +270,37 @@ namespace DAL.DataEntities
         }
         private ICollection<Configuration> _configurations;
     
-        public virtual ICollection<Constraint> Constraints
+        public virtual ICollection<CustomFunction> CustomFunctions
         {
             get
             {
-                if (_constraints == null)
+                if (_customFunctions == null)
                 {
-                    var newCollection = new FixupCollection<Constraint>();
-                    newCollection.CollectionChanged += FixupConstraints;
-                    _constraints = newCollection;
+                    var newCollection = new FixupCollection<CustomFunction>();
+                    newCollection.CollectionChanged += FixupCustomFunctions;
+                    _customFunctions = newCollection;
                 }
-                return _constraints;
+                return _customFunctions;
             }
             set
             {
-                if (!ReferenceEquals(_constraints, value))
+                if (!ReferenceEquals(_customFunctions, value))
                 {
-                    var previousValue = _constraints as FixupCollection<Constraint>;
+                    var previousValue = _customFunctions as FixupCollection<CustomFunction>;
                     if (previousValue != null)
                     {
-                        previousValue.CollectionChanged -= FixupConstraints;
+                        previousValue.CollectionChanged -= FixupCustomFunctions;
                     }
-                    _constraints = value;
-                    var newValue = value as FixupCollection<Constraint>;
+                    _customFunctions = value;
+                    var newValue = value as FixupCollection<CustomFunction>;
                     if (newValue != null)
                     {
-                        newValue.CollectionChanged += FixupConstraints;
+                        newValue.CollectionChanged += FixupCustomFunctions;
                     }
                 }
             }
         }
-        private ICollection<Constraint> _constraints;
+        private ICollection<CustomFunction> _customFunctions;
 
         #endregion
         #region Association Fixup
@@ -457,11 +457,11 @@ namespace DAL.DataEntities
             }
         }
     
-        private void FixupConstraints(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupCustomFunctions(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (Constraint item in e.NewItems)
+                foreach (CustomFunction item in e.NewItems)
                 {
                     item.Model = this;
                 }
@@ -469,7 +469,7 @@ namespace DAL.DataEntities
     
             if (e.OldItems != null)
             {
-                foreach (Constraint item in e.OldItems)
+                foreach (CustomFunction item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Model, this))
                     {

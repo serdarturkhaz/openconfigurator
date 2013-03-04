@@ -669,7 +669,7 @@ namespace BLL.Parsers
                                 returnRef.Add(objRef);
                             }
 
-                            //if (featureSelection.SelectionState == BusinessObjects.FeatureSelectionStates.Selected)
+                            //if (fSelection.SelectionState == BusinessObjects.FeatureSelectionStates.Selected)
                             //{
                             //    //
                             //    object target = (object)childFeature;

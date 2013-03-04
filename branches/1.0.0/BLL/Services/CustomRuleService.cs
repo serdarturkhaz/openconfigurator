@@ -53,7 +53,7 @@ namespace BLL.Services
                 BCustomRules = new List<BusinessObjects.CustomRule>();
                 foreach (DAL.DataEntities.CustomRule customRule in customRules)
                 {
-                    BCustomRules.Add((BLL.BusinessObjects.CustomRule)BLL.BusinessObjects.CustomRule.FromDataEntity(customRule));
+                    BCustomRules.Add((BLL.BusinessObjects.CustomRule)BLL.BusinessObjects.CustomRule.CreateInstance(customRule));
                 }
             }
             return BCustomRules;

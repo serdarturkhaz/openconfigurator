@@ -53,7 +53,7 @@ namespace BLL.Services
                 BLLCompositionRules = new List<BusinessObjects.CompositionRule>();
                 foreach (DAL.DataEntities.CompositionRule DALCompositionRule in DALCompositionRules)
                 {
-                    BLLCompositionRules.Add((BLL.BusinessObjects.CompositionRule)BLL.BusinessObjects.CompositionRule.FromDataEntity(DALCompositionRule));
+                    BLLCompositionRules.Add((BLL.BusinessObjects.CompositionRule)BLL.BusinessObjects.CompositionRule.CreateInstance(DALCompositionRule));
                 }
             }
             return BLLCompositionRules;

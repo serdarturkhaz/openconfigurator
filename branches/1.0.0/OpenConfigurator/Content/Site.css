@@ -1125,7 +1125,7 @@ html > body .ui-pnotify
 {
     background: url(themes/base/images/controls/simpletree/elementx.png) no-repeat left top;
 }
-.simpleTree li.row .constraint .innerNode div.icon
+.simpleTree li.row .customFunction .innerNode div.icon
 {
     background: url(themes/base/images/controls/simpletree/elementx.png) no-repeat left top;
 }

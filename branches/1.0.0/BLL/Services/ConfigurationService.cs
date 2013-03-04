@@ -48,7 +48,7 @@ namespace BLL.Services
             using (_ConfigurationRepository = new GenericRepository<DAL.DataEntities.Configuration>())
             {
                 List<DAL.DataEntities.Configuration> DALConfigurations = _ConfigurationRepository.Find(m => m.ModelID == modelID).ToList<DAL.DataEntities.Configuration>();
-                DALConfigurations.ForEach(DALentity => BLLConfigurations.Add(BLL.BusinessObjects.Configuration.FromDataEntity(DALentity)));
+                DALConfigurations.ForEach(DALentity => BLLConfigurations.Add(BLL.BusinessObjects.Configuration.CreateInstance(DALentity)));
             }
             return BLLConfigurations;
         }
@@ -59,7 +59,7 @@ namespace BLL.Services
             using (_ConfigurationRepository = new GenericRepository<DAL.DataEntities.Configuration>())
             {
                 List<DAL.DataEntities.Configuration> DALConfigurations = _ConfigurationRepository.Find(m => m.Model.UserID == userID).ToList<DAL.DataEntities.Configuration>();
-                DALConfigurations.ForEach(DALentity => BLLConfigurations.Add(BLL.BusinessObjects.Configuration.FromDataEntity(DALentity)));
+                DALConfigurations.ForEach(DALentity => BLLConfigurations.Add(BLL.BusinessObjects.Configuration.CreateInstance(DALentity)));
             }
             return BLLConfigurations;
         }
@@ -80,7 +80,7 @@ namespace BLL.Services
             using (_ConfigurationRepository = new GenericRepository<DAL.DataEntities.Configuration>())
             {
                 DAL.DataEntities.Configuration DALConfiguration = _ConfigurationRepository.SingleOrDefault(m => m.ID == id);
-                BLLConfiguration = BLL.BusinessObjects.Configuration.FromDataEntity(DALConfiguration);
+                BLLConfiguration = BLL.BusinessObjects.Configuration.CreateInstance(DALConfiguration);
             }
             //
             return BLLConfiguration;

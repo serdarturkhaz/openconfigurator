@@ -55,7 +55,7 @@ namespace BLL.Services
                 foreach (DAL.DataEntities.Feature DALfeature in DALfeatures)
                 {
                     //Create the BLL feature
-                    BLL.BusinessObjects.Feature BLLfeature = BLL.BusinessObjects.Feature.FromDataEntity(DALfeature);
+                    BLL.BusinessObjects.Feature BLLfeature = BLL.BusinessObjects.Feature.CreateInstance(DALfeature);
 
                     BFeatures.Add(BLLfeature);
                 }

@@ -13,7 +13,7 @@
           <EntitySet Name="CompositionRule_Types" EntityType="OpenConfigurator_Model.Store.CompositionRule_Types" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CompositionRules" EntityType="OpenConfigurator_Model.Store.CompositionRules" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Configurations" EntityType="OpenConfigurator_Model.Store.Configurations" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Constraints" EntityType="OpenConfigurator_Model.Store.Constraints" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CustomFunctions" EntityType="OpenConfigurator_Model.Store.CustomFunctions" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CustomRules" EntityType="OpenConfigurator_Model.Store.CustomRules" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Features" EntityType="OpenConfigurator_Model.Store.Features" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="FeatureSelections" EntityType="OpenConfigurator_Model.Store.FeatureSelections" store:Type="Tables" Schema="dbo" />
@@ -50,6 +50,14 @@
             <End Role="CompositionRule_Types" EntitySet="CompositionRule_Types" />
             <End Role="CompositionRules" EntitySet="CompositionRules" />
           </AssociationSet>
+          <AssociationSet Name="FK_CompositionRules_Features_FirstFeature" Association="OpenConfigurator_Model.Store.FK_CompositionRules_Features_FirstFeature">
+            <End Role="Features" EntitySet="Features" />
+            <End Role="CompositionRules" EntitySet="CompositionRules" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CompositionRules_Features_SecondFeature" Association="OpenConfigurator_Model.Store.FK_CompositionRules_Features_SecondFeature">
+            <End Role="Features" EntitySet="Features" />
+            <End Role="CompositionRules" EntitySet="CompositionRules" />
+          </AssociationSet>
           <AssociationSet Name="FK_CompositionRules_Models" Association="OpenConfigurator_Model.Store.FK_CompositionRules_Models">
             <End Role="Models" EntitySet="Models" />
             <End Role="CompositionRules" EntitySet="CompositionRules" />
@@ -64,7 +72,7 @@
           </AssociationSet>
           <AssociationSet Name="FK_Constraints_Models" Association="OpenConfigurator_Model.Store.FK_Constraints_Models">
             <End Role="Models" EntitySet="Models" />
-            <End Role="Constraints" EntitySet="Constraints" />
+            <End Role="CustomFunctions" EntitySet="CustomFunctions" />
           </AssociationSet>
           <AssociationSet Name="FK_FeatureGroups_Models" Association="OpenConfigurator_Model.Store.FK_FeatureGroups_Models">
             <End Role="Models" EntitySet="Models" />
@@ -86,7 +94,7 @@
             <End Role="GroupRelation_Types" EntitySet="GroupRelation_Types" />
             <End Role="GroupRelations" EntitySet="GroupRelations" />
           </AssociationSet>
-          <AssociationSet Name="FK_GroupRelations_To_Features_Features" Association="OpenConfigurator_Model.Store.FK_GroupRelations_To_Features_Features">
+          <AssociationSet Name="FK_GroupRelations_To_Features_ChildFeature" Association="OpenConfigurator_Model.Store.FK_GroupRelations_To_Features_ChildFeature">
             <End Role="Features" EntitySet="Features" />
             <End Role="GroupRelations_To_Features" EntitySet="GroupRelations_To_Features" />
           </AssociationSet>
@@ -94,9 +102,21 @@
             <End Role="GroupRelations" EntitySet="GroupRelations" />
             <End Role="GroupRelations_To_Features" EntitySet="GroupRelations_To_Features" />
           </AssociationSet>
+          <AssociationSet Name="FK_GroupRelations_To_Features_ParentFeature" Association="OpenConfigurator_Model.Store.FK_GroupRelations_To_Features_ParentFeature">
+            <End Role="Features" EntitySet="Features" />
+            <End Role="GroupRelations_To_Features" EntitySet="GroupRelations_To_Features" />
+          </AssociationSet>
           <AssociationSet Name="FK_Models_Users" Association="OpenConfigurator_Model.Store.FK_Models_Users">
             <End Role="Users" EntitySet="Users" />
             <End Role="Models" EntitySet="Models" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Relations_Features_ChildF" Association="OpenConfigurator_Model.Store.FK_Relations_Features_ChildF">
+            <End Role="Features" EntitySet="Features" />
+            <End Role="Relations" EntitySet="Relations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Relations_Features_ParentF" Association="OpenConfigurator_Model.Store.FK_Relations_Features_ParentF">
+            <End Role="Features" EntitySet="Features" />
+            <End Role="Relations" EntitySet="Relations" />
           </AssociationSet>
           <AssociationSet Name="FK_Relations_Models" Association="OpenConfigurator_Model.Store.FK_Relations_Models">
             <End Role="Models" EntitySet="Models" />
@@ -176,12 +196,12 @@
           </Key>
           <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="ModelID" Type="int" Nullable="false" />
-          <Property Name="UITemplateID" Type="int" />
+          <Property Name="UITemplateID" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="LastModifiedDate" Type="datetime" />
         </EntityType>
-        <EntityType Name="Constraints">
+        <EntityType Name="CustomFunctions">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -389,6 +409,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_CompositionRules_Features_FirstFeature">
+          <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+          <End Role="CompositionRules" Type="OpenConfigurator_Model.Store.CompositionRules" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Features">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CompositionRules">
+              <PropertyRef Name="FirstFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CompositionRules_Features_SecondFeature">
+          <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+          <End Role="CompositionRules" Type="OpenConfigurator_Model.Store.CompositionRules" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Features">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CompositionRules">
+              <PropertyRef Name="SecondFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CompositionRules_Models">
           <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -418,7 +462,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Configurations_UITemplates">
-          <End Role="UITemplates" Type="OpenConfigurator_Model.Store.UITemplates" Multiplicity="0..1" />
+          <End Role="UITemplates" Type="OpenConfigurator_Model.Store.UITemplates" Multiplicity="1" />
           <End Role="Configurations" Type="OpenConfigurator_Model.Store.Configurations" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UITemplates">
@@ -433,12 +477,12 @@
           <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Constraints" Type="OpenConfigurator_Model.Store.Constraints" Multiplicity="*" />
+          <End Role="CustomFunctions" Type="OpenConfigurator_Model.Store.CustomFunctions" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Models">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Constraints">
+            <Dependent Role="CustomFunctions">
               <PropertyRef Name="ModelID" />
             </Dependent>
           </ReferentialConstraint>
@@ -509,7 +553,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_GroupRelations_To_Features_Features">
+        <Association Name="FK_GroupRelations_To_Features_ChildFeature">
           <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
           <End Role="GroupRelations_To_Features" Type="OpenConfigurator_Model.Store.GroupRelations_To_Features" Multiplicity="*" />
           <ReferentialConstraint>
@@ -517,7 +561,7 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="GroupRelations_To_Features">
-              <PropertyRef Name="ParentFeatureID" />
+              <PropertyRef Name="ChildFeatureID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -535,6 +579,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_GroupRelations_To_Features_ParentFeature">
+          <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+          <End Role="GroupRelations_To_Features" Type="OpenConfigurator_Model.Store.GroupRelations_To_Features" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Features">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupRelations_To_Features">
+              <PropertyRef Name="ParentFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Models_Users">
           <End Role="Users" Type="OpenConfigurator_Model.Store.Users" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -546,6 +602,30 @@
             </Principal>
             <Dependent Role="Models">
               <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Relations_Features_ChildF">
+          <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+          <End Role="Relations" Type="OpenConfigurator_Model.Store.Relations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Features">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Relations">
+              <PropertyRef Name="ChildFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Relations_Features_ParentF">
+          <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+          <End Role="Relations" Type="OpenConfigurator_Model.Store.Relations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Features">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Relations">
+              <PropertyRef Name="ParentFeatureID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -647,10 +727,6 @@
           <EntitySet Name="GroupRelation_Types" EntityType="OpenConfigurator_Model.GroupRelation_Type" />
           <EntitySet Name="GroupRelations" EntityType="OpenConfigurator_Model.GroupRelation" />
           <EntitySet Name="GroupRelation_To_Feature" EntityType="OpenConfigurator_Model.GroupRelation_To_Feature" />
-          <AssociationSet Name="FK_GroupRelations_To_Features_Features" Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features">
-            <End Role="Feature" EntitySet="Features" />
-            <End Role="GroupRelations_To_Features" EntitySet="GroupRelation_To_Feature" />
-          </AssociationSet>
           <AssociationSet Name="FK_GroupRelations_GroupRelation_Types" Association="OpenConfigurator_Model.FK_GroupRelations_GroupRelation_Types">
             <End Role="GroupRelation_Types" EntitySet="GroupRelation_Types" />
             <End Role="GroupRelation" EntitySet="GroupRelations" />
@@ -711,14 +787,38 @@
             <End Role="User" EntitySet="Users" />
             <End Role="UITemplate" EntitySet="UITemplates" />
           </AssociationSet>
-          <EntitySet Name="Constraints" EntityType="OpenConfigurator_Model.Constraint" />
-          <AssociationSet Name="FK_Constraints_Models" Association="OpenConfigurator_Model.FK_Constraints_Models">
-            <End Role="Model" EntitySet="Models" />
-            <End Role="Constraint" EntitySet="Constraints" />
-          </AssociationSet>
           <AssociationSet Name="FK_Configurations_UITemplates" Association="OpenConfigurator_Model.FK_Configurations_UITemplates">
             <End Role="UITemplate" EntitySet="UITemplates" />
             <End Role="Configuration" EntitySet="Configurations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Relations_Features_ChildF" Association="OpenConfigurator_Model.FK_Relations_Features_ChildF">
+            <End Role="Feature" EntitySet="Features" />
+            <End Role="Relation" EntitySet="Relations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Relations_Features_ParentF" Association="OpenConfigurator_Model.FK_Relations_Features_ParentF">
+            <End Role="Feature" EntitySet="Features" />
+            <End Role="Relation" EntitySet="Relations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupRelations_To_Features_ChildFeature" Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_ChildFeature">
+            <End Role="Feature" EntitySet="Features" />
+            <End Role="GroupRelation_To_Feature" EntitySet="GroupRelation_To_Feature" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupRelations_To_Features_ParentFeature" Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_ParentFeature">
+            <End Role="Feature" EntitySet="Features" />
+            <End Role="GroupRelation_To_Feature" EntitySet="GroupRelation_To_Feature" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CompositionRules_Features_FirstFeature" Association="OpenConfigurator_Model.FK_CompositionRules_Features_FirstFeature">
+            <End Role="Feature" EntitySet="Features" />
+            <End Role="CompositionRule" EntitySet="CompositionRules" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CompositionRules_Features_SecondFeature" Association="OpenConfigurator_Model.FK_CompositionRules_Features_SecondFeature">
+            <End Role="Feature" EntitySet="Features" />
+            <End Role="CompositionRule" EntitySet="CompositionRules" />
+          </AssociationSet>
+          <EntitySet Name="CustomFunctions" EntityType="OpenConfigurator_Model.CustomFunction" />
+          <AssociationSet Name="FK_Constraints_Models" Association="OpenConfigurator_Model.FK_Constraints_Models">
+            <End Role="Model" EntitySet="Models" />
+            <End Role="CustomFunction" EntitySet="CustomFunctions" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Attribute_DataType">
@@ -757,11 +857,16 @@
           <NavigationProperty Name="Attributes" Relationship="OpenConfigurator_Model.FK_Attributes_Features" FromRole="Features" ToRole="Attributes" />
           <NavigationProperty Name="Model" Relationship="OpenConfigurator_Model.FK_Features_Models" FromRole="Features" ToRole="Models" />
           <Property Type="Boolean" Name="IsRoot" />
-          <NavigationProperty Name="GroupRelations_To_Features" Relationship="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features" FromRole="Feature" ToRole="GroupRelations_To_Features" />
           <Property Type="Double" Name="XPos" />
           <Property Type="Double" Name="YPos" />
           <NavigationProperty Name="FeatureSelections" Relationship="OpenConfigurator_Model.FK_FeatureSelections_Features" FromRole="Feature" ToRole="FeatureSelection" />
           <Property Type="String" Name="Identifier" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Relations" Relationship="OpenConfigurator_Model.FK_Relations_Features_ChildF" FromRole="Feature" ToRole="Relation" />
+          <NavigationProperty Name="Relations1" Relationship="OpenConfigurator_Model.FK_Relations_Features_ParentF" FromRole="Feature" ToRole="Relation" />
+          <NavigationProperty Name="GroupRelations_To_Features_1" Relationship="OpenConfigurator_Model.FK_GroupRelations_To_Features_ChildFeature" FromRole="Feature" ToRole="GroupRelation_To_Feature" />
+          <NavigationProperty Name="GroupRelations_To_Features1" Relationship="OpenConfigurator_Model.FK_GroupRelations_To_Features_ParentFeature" FromRole="Feature" ToRole="GroupRelation_To_Feature" />
+          <NavigationProperty Name="CompositionRules" Relationship="OpenConfigurator_Model.FK_CompositionRules_Features_FirstFeature" FromRole="Feature" ToRole="CompositionRule" />
+          <NavigationProperty Name="CompositionRules1" Relationship="OpenConfigurator_Model.FK_CompositionRules_Features_SecondFeature" FromRole="Feature" ToRole="CompositionRule" />
         </EntityType>
         <EntityType Name="Model">
           <Key>
@@ -779,7 +884,7 @@
           <NavigationProperty Name="CompositionRules" Relationship="OpenConfigurator_Model.FK_CompositionRules_Models" FromRole="Model" ToRole="CompositionRule" />
           <NavigationProperty Name="CustomRules" Relationship="OpenConfigurator_Model.FK_Rules_Models1" FromRole="Model" ToRole="CustomRule" />
           <NavigationProperty Name="Configurations" Relationship="OpenConfigurator_Model.FK_Configurations_Models" FromRole="Model" ToRole="Configuration" />
-          <NavigationProperty Name="Constraints" Relationship="OpenConfigurator_Model.FK_Constraints_Models" FromRole="Model" ToRole="Constraint" />
+          <NavigationProperty Name="CustomFunctions" Relationship="OpenConfigurator_Model.FK_Constraints_Models" FromRole="Model" ToRole="CustomFunction" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -888,6 +993,8 @@
           <NavigationProperty Name="Model" Relationship="OpenConfigurator_Model.FK_Relations_Models" FromRole="Relation" ToRole="Model" />
           <Property Type="Int32" Name="LowerBound" />
           <Property Type="Int32" Name="UpperBound" />
+          <NavigationProperty Name="ChildFeature" Relationship="OpenConfigurator_Model.FK_Relations_Features_ChildF" FromRole="Relation" ToRole="Feature" />
+          <NavigationProperty Name="ParentFeature" Relationship="OpenConfigurator_Model.FK_Relations_Features_ParentF" FromRole="Relation" ToRole="Feature" />
         </EntityType>
         <Association Name="FK_Relations_Relation_Types">
           <End Type="OpenConfigurator_Model.Relation_Type" Role="Relation_Types" Multiplicity="1" />
@@ -944,21 +1051,10 @@
           <Property Type="Int32" Name="GroupRelationID" Nullable="false" />
           <Property Type="Int32" Name="ParentFeatureID" Nullable="false" />
           <Property Type="Int32" Name="ChildFeatureID" Nullable="false" />
-          <NavigationProperty Name="ParentFeature" Relationship="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features" FromRole="GroupRelations_To_Features" ToRole="Feature" />
           <NavigationProperty Name="GroupRelation" Relationship="OpenConfigurator_Model.FK_GroupRelations_To_Features_GroupRelations" FromRole="GroupRelations_To_Features" ToRole="GroupRelation" />
+          <NavigationProperty Name="ChildFeature" Relationship="OpenConfigurator_Model.FK_GroupRelations_To_Features_ChildFeature" FromRole="GroupRelation_To_Feature" ToRole="Feature" />
+          <NavigationProperty Name="ParentFeature" Relationship="OpenConfigurator_Model.FK_GroupRelations_To_Features_ParentFeature" FromRole="GroupRelation_To_Feature" ToRole="Feature" />
         </EntityType>
-        <Association Name="FK_GroupRelations_To_Features_Features">
-          <End Type="OpenConfigurator_Model.Feature" Role="Feature" Multiplicity="1" />
-          <End Type="OpenConfigurator_Model.GroupRelation_To_Feature" Role="GroupRelations_To_Features" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Feature">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="GroupRelations_To_Features">
-              <PropertyRef Name="ParentFeatureID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_GroupRelations_GroupRelation_Types">
           <End Type="OpenConfigurator_Model.GroupRelation_Type" Role="GroupRelation_Types" Multiplicity="1" />
           <End Type="OpenConfigurator_Model.GroupRelation" Role="GroupRelation" Multiplicity="*" />
@@ -1016,6 +1112,8 @@
           <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="CompositionRule_Types" Relationship="OpenConfigurator_Model.FK_CompositionRules_CompositionRule_Types" FromRole="CompositionRule" ToRole="CompositionRule_Types" />
           <NavigationProperty Name="Model" Relationship="OpenConfigurator_Model.FK_CompositionRules_Models" FromRole="CompositionRule" ToRole="Model" />
+          <NavigationProperty Name="FirstFeature" Relationship="OpenConfigurator_Model.FK_CompositionRules_Features_FirstFeature" FromRole="CompositionRule" ToRole="Feature" />
+          <NavigationProperty Name="SecondFeature" Relationship="OpenConfigurator_Model.FK_CompositionRules_Features_SecondFeature" FromRole="CompositionRule" ToRole="Feature" />
         </EntityType>
         <Association Name="FK_CompositionRules_CompositionRule_Types">
           <End Type="OpenConfigurator_Model.CompositionRule_Type" Role="CompositionRule_Types" Multiplicity="1" />
@@ -1211,30 +1309,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Constraint">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="Int32" Name="ModelID" Nullable="false" />
-          <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Model" Relationship="OpenConfigurator_Model.FK_Constraints_Models" FromRole="Constraint" ToRole="Model" />
-          <Property Type="String" Name="Identifier" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="Expression" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <Association Name="FK_Constraints_Models">
-          <End Type="OpenConfigurator_Model.Model" Role="Model" Multiplicity="1" />
-          <End Type="OpenConfigurator_Model.Constraint" Role="Constraint" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Model">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Constraint">
-              <PropertyRef Name="ModelID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Configurations_UITemplates">
           <End Type="OpenConfigurator_Model.UITemplate" Role="UITemplate" Multiplicity="1" />
           <End Type="OpenConfigurator_Model.Configuration" Role="Configuration" Multiplicity="*" />
@@ -1244,6 +1318,102 @@
             </Principal>
             <Dependent Role="Configuration">
               <PropertyRef Name="UITemplateID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Relations_Features_ChildF">
+          <End Type="OpenConfigurator_Model.Feature" Role="Feature" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.Relation" Role="Relation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Feature">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Relation">
+              <PropertyRef Name="ChildFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Relations_Features_ParentF">
+          <End Type="OpenConfigurator_Model.Feature" Role="Feature" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.Relation" Role="Relation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Feature">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Relation">
+              <PropertyRef Name="ParentFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupRelations_To_Features_ChildFeature">
+          <End Type="OpenConfigurator_Model.Feature" Role="Feature" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.GroupRelation_To_Feature" Role="GroupRelation_To_Feature" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Feature">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupRelation_To_Feature">
+              <PropertyRef Name="ChildFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupRelations_To_Features_ParentFeature">
+          <End Type="OpenConfigurator_Model.Feature" Role="Feature" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.GroupRelation_To_Feature" Role="GroupRelation_To_Feature" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Feature">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GroupRelation_To_Feature">
+              <PropertyRef Name="ParentFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CompositionRules_Features_FirstFeature">
+          <End Type="OpenConfigurator_Model.Feature" Role="Feature" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.CompositionRule" Role="CompositionRule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Feature">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CompositionRule">
+              <PropertyRef Name="FirstFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CompositionRules_Features_SecondFeature">
+          <End Type="OpenConfigurator_Model.Feature" Role="Feature" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.CompositionRule" Role="CompositionRule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Feature">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CompositionRule">
+              <PropertyRef Name="SecondFeatureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CustomFunction">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int32" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ModelID" Nullable="false" />
+          <Property Type="String" Name="Identifier" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Name" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Expression" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Model" Relationship="OpenConfigurator_Model.FK_Constraints_Models" FromRole="CustomFunction" ToRole="Model" />
+        </EntityType>
+        <Association Name="FK_Constraints_Models">
+          <End Type="OpenConfigurator_Model.Model" Role="Model" Multiplicity="1" />
+          <End Type="OpenConfigurator_Model.CustomFunction" Role="CustomFunction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Model">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CustomFunction">
+              <PropertyRef Name="ModelID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1439,14 +1609,14 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Constraints">
-            <EntityTypeMapping TypeName="OpenConfigurator_Model.Constraint">
-              <MappingFragment StoreEntitySet="Constraints">
-                <ScalarProperty Name="ModelID" ColumnName="ModelID" />
-                <ScalarProperty Name="Expression" ColumnName="Expression" />
-                <ScalarProperty Name="Identifier" ColumnName="Identifier" />
+          <EntitySetMapping Name="CustomFunctions">
+            <EntityTypeMapping TypeName="OpenConfigurator_Model.CustomFunction">
+              <MappingFragment StoreEntitySet="CustomFunctions">
                 <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Expression" ColumnName="Expression" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Identifier" ColumnName="Identifier" />
+                <ScalarProperty Name="ModelID" ColumnName="ModelID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1473,9 +1643,9 @@
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
       <Diagram Name="DataEntities" ZoomLevel="80">
-        <EntityTypeShape EntityType="OpenConfigurator_Model.Attribute_DataType" Width="1.875" PointX="7.875" PointY="8.625" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.Attribute_DataType" Width="1.875" PointX="7.875" PointY="8.625" Height="0.4" IsExpanded="false" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.Attribute" Width="1.75" PointX="8.125" PointY="4.625" Height="3.3263964843749996" IsExpanded="true" />
-        <EntityTypeShape EntityType="OpenConfigurator_Model.Feature" Width="2.125" PointX="5.25" PointY="5.375" Height="3.3263964843749978" IsExpanded="true" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.Feature" Width="2.125" PointX="5.5" PointY="5" Height="3.7109993489583335" IsExpanded="true" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.Model" Width="1.5" PointX="3" PointY="2" Height="2.3648893229166665" IsExpanded="true" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.User" Width="1.5" PointX="0.75" PointY="0.5" Height="1.787985026041667" IsExpanded="true" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_Attributes_Attribute_DataTypes" ManuallyRouted="false">
@@ -1483,13 +1653,14 @@
           <ConnectorPoint PointX="8.9375" PointY="7.951396484375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Attributes_Features" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.375" PointY="6.6631982421875" />
-          <ConnectorPoint PointX="8.125" PointY="6.6631982421875" />
+          <ConnectorPoint PointX="7.625" PointY="6.4756982421875" />
+          <ConnectorPoint PointX="8.125" PointY="6.4756982421875" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Features_Models" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="4.642438180469731" />
-          <ConnectorPoint PointX="7.34375" PointY="4.642438180469731" />
-          <ConnectorPoint PointX="7.34375" PointY="5.375" />
+          <ConnectorPoint PointX="4.5" PointY="5.2593489583333328" />
+          <ConnectorPoint PointX="5.072916666666667" PointY="5.2593489583333319" />
+          <ConnectorPoint PointX="5.239583333333333" PointY="5.2593489583333328" />
+          <ConnectorPoint PointX="5.5" PointY="5.2593489583333328" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Models_Users" ManuallyRouted="false">
           <ConnectorPoint PointX="2.25" PointY="2.2401432291666667" />
@@ -1498,8 +1669,6 @@
         <EntityTypeShape EntityType="OpenConfigurator_Model.Attribute_Type" Width="1.5" PointX="10.625" PointY="5.25" Height="1.5956835937500031" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_Attributes_Attribute_Types" >
           <ConnectorPoint PointX="10.625" PointY="6.0478417968750016" />
-          <ConnectorPoint PointX="10.458333333333334" PointY="6.0478417968750007" />
-          <ConnectorPoint PointX="10.291666666666666" PointY="6.0478417968750016" />
           <ConnectorPoint PointX="9.875" PointY="6.0478417968750016" />
         </AssociationConnector>
         <EntityTypeShape EntityType="OpenConfigurator_Model.Relation_Type" Width="1.5" PointX="3" PointY="10.625" Height="1.9802864583333317" />
@@ -1515,103 +1684,153 @@
         <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelation_Type" Width="1.875" PointX="14.625" PointY="1.125" Height="1.9802864583333353" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelation" Width="2.375" PointX="11.875" PointY="0.5" Height="2.5571907552083317" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.GroupRelation_To_Feature" Width="2.25" PointX="12.125" PointY="10.25" Height="2.172587890624996" />
-        <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_Features" ManuallyRouted="true" >
-          <ConnectorPoint PointX="6.803649718921764" PointY="8.7013964843749978" />
-          <ConnectorPoint PointX="6.803649718921764" PointY="8.8840950520833317" />
-          <ConnectorPoint PointX="7.5" PointY="8.8840950520833317" />
-          <ConnectorPoint PointX="7.5" PointY="10.34568359375" />
-          <ConnectorPoint PointX="10.166669166666667" PointY="10.345683593749998" />
-          <ConnectorPoint PointX="10.458333333333334" PointY="10.34568359375" />
-          <ConnectorPoint PointX="11.875" PointY="10.34568359375" />
-          <ConnectorPoint PointX="11.875" PointY="10" />
-          <ConnectorPoint PointX="12.416460402527664" PointY="10" />
-          <ConnectorPoint PointX="12.416460402527664" PointY="10.25" />
-        </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_GroupRelation_Types" >
           <ConnectorPoint PointX="14.625" PointY="2.0910953776041659" />
           <ConnectorPoint PointX="14.25" PointY="2.0910953776041659" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_FeatureGroups_Models" >
-          <ConnectorPoint PointX="4.5" PointY="3.468369140625" />
-          <ConnectorPoint PointX="7.8854544652770917" PointY="3.3663672326251852" />
-          <ConnectorPoint PointX="8.0520455347229074" PointY="3.3613479340011789" />
-          <ConnectorPoint PointX="12.960935" PointY="3.2134457552083333" />
-          <ConnectorPoint PointX="12.960935" PointY="3.6246241406250017" />
+          <ConnectorPoint PointX="4.5" PointY="3.93724609375" />
+          <ConnectorPoint PointX="9.9479166666666661" PointY="3.9372460937499993" />
+          <ConnectorPoint PointX="10.114583333333334" PointY="3.93724609375" />
+          <ConnectorPoint PointX="12.93625939118609" PointY="3.93724609375" />
+          <ConnectorPoint PointX="12.93625939118609" PointY="3.0571907552083317" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_GroupRelations" >
-          <ConnectorPoint PointX="13.796875" PointY="3.0571907552083317" />
-          <ConnectorPoint PointX="13.796875" PointY="10.25" />
+          <ConnectorPoint PointX="13.635740625" PointY="3.0571907552083317" />
+          <ConnectorPoint PointX="13.635740625" PointY="10.25" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="OpenConfigurator_Model.CompositionRule_Type" Width="2" PointX="0.5" PointY="7.5" Height="1.5956835937500031" />
-        <EntityTypeShape EntityType="OpenConfigurator_Model.CompositionRule" Width="1.75" PointX="0.5" PointY="3.25" Height="2.7494921874999987" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.CompositionRule_Type" Width="2" PointX="0.5" PointY="8.875" Height="1.5956835937500031" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.CompositionRule" Width="1.75" PointX="0.75" PointY="5.5" Height="2.7494921874999987" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_CompositionRules_CompositionRule_Types" >
-          <ConnectorPoint PointX="1.375" PointY="7.5" />
-          <ConnectorPoint PointX="1.375" PointY="5.9994921874999987" />
+          <ConnectorPoint PointX="1.625" PointY="8.875" />
+          <ConnectorPoint PointX="1.625" PointY="8.6340950520833317" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_CompositionRules_Models" >
-          <ConnectorPoint PointX="3" PointY="4.3843489583333328" />
-          <ConnectorPoint PointX="2.25" PointY="4.3843489583333328" />
+          <ConnectorPoint PointX="3" PointY="3.7593489583333328" />
+          <ConnectorPoint PointX="1.625" PointY="3.7593489583333328" />
+          <ConnectorPoint PointX="1.625" PointY="5.5" />
         </AssociationConnector>
         <EntityTypeShape EntityType="OpenConfigurator_Model.CustomRule" Width="2" PointX="5.5" PointY="0.75" Height="2.364889322916667" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_Rules_Models1" >
           <ConnectorPoint PointX="4.5" PointY="2.5574446614583337" />
           <ConnectorPoint PointX="5.5" PointY="2.5574446614583337" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="OpenConfigurator_Model.AttributeValue" Width="1.5" PointX="9.75" PointY="11.625" Height="1.9802864583333388" />
-        <EntityTypeShape EntityType="OpenConfigurator_Model.Configuration" Width="1.5" PointX="5.25" PointY="9.5" Height="2.3648893229166674" />
-        <EntityTypeShape EntityType="OpenConfigurator_Model.FeatureSelection" Width="1.5" PointX="7.5" PointY="11.375" Height="2.5571907552083388" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.AttributeValue" Width="1.5" PointX="10.125" PointY="11.625" Height="2.1725878906249996" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.Configuration" Width="1.5" PointX="4.875" PointY="9.5" Height="2.7494921874999996" />
+        <EntityTypeShape EntityType="OpenConfigurator_Model.FeatureSelection" Width="1.5" PointX="8.125" PointY="11.375" Height="2.9417936197916656" />
         <EntityTypeShape EntityType="OpenConfigurator_Model.SelectionState" Width="1.5" PointX="5.25" PointY="12.875" Height="1.5956835937500031" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_AttributeValues_FeatureSelections" >
-          <ConnectorPoint PointX="9" PointY="12.7112939453125" />
-          <ConnectorPoint PointX="9.75" PointY="12.7112939453125" />
+          <ConnectorPoint PointX="9.625" PointY="12.7112939453125" />
+          <ConnectorPoint PointX="10.125" PointY="12.7112939453125" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Configurations_Models" >
-          <ConnectorPoint PointX="4.5" PointY="5.5186979166666656" />
-          <ConnectorPoint PointX="4.875" PointY="5.8936979166666656" />
-          <ConnectorPoint PointX="4.875" PointY="10.87474609375" />
-          <ConnectorPoint PointX="5.25" PointY="10.87474609375" />
+          <ConnectorPoint PointX="4.5" PointY="4.4686255468750007" />
+          <ConnectorPoint PointX="5.15625" PointY="4.4686255468750007" />
+          <ConnectorPoint PointX="5.15625" PointY="9.5" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_FeatureSelections_Configurations" >
-          <ConnectorPoint PointX="6.75" PointY="11.81224609375" />
-          <ConnectorPoint PointX="7.010416666666667" PointY="11.81224609375" />
-          <ConnectorPoint PointX="7.177083333333333" PointY="11.81224609375" />
-          <ConnectorPoint PointX="7.5" PointY="11.81224609375" />
+          <ConnectorPoint PointX="6.375" PointY="11.81224609375" />
+          <ConnectorPoint PointX="7.135416666666667" PointY="11.81224609375" />
+          <ConnectorPoint PointX="7.302083333333333" PointY="11.81224609375" />
+          <ConnectorPoint PointX="8.125" PointY="11.81224609375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_FeatureSelections_SelectionStates" >
-          <ConnectorPoint PointX="6.75" PointY="13.49974609375" />
-          <ConnectorPoint PointX="7.5" PointY="13.49974609375" />
+          <ConnectorPoint PointX="6.75" PointY="13.595896809895834" />
+          <ConnectorPoint PointX="8.125" PointY="13.595896809895834" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_AttributeValues_Attributes" >
           <ConnectorPoint PointX="9.875" PointY="7.4297900390625014" />
-          <ConnectorPoint PointX="10.2500025" PointY="7.5860450390625029" />
-          <ConnectorPoint PointX="10.2500025" PointY="11.781255000000002" />
+          <ConnectorPoint PointX="9.9479166666666661" PointY="7.4297900390625005" />
+          <ConnectorPoint PointX="10.114583333333334" PointY="7.4297900390625014" />
+          <ConnectorPoint PointX="10.34375" PointY="7.4297900390625014" />
+          <ConnectorPoint PointX="10.34375" PointY="11.625" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_FeatureSelections_Features" >
-          <ConnectorPoint PointX="7.09375" PointY="8.857651484375" />
-          <ConnectorPoint PointX="7.09375" PointY="12.466095377604166" />
-          <ConnectorPoint PointX="7.5" PointY="12.466095377604166" />
+          <ConnectorPoint PointX="7.21875" PointY="9.2879036458333335" />
+          <ConnectorPoint PointX="7.21875" PointY="12.56224609375" />
+          <ConnectorPoint PointX="8.125" PointY="12.56224609375" />
         </AssociationConnector>
         <EntityTypeShape EntityType="OpenConfigurator_Model.UITemplate" Width="1.5" PointX="10" PointY="0.5" Height="2.364889322916667" />
         <AssociationConnector Association="OpenConfigurator_Model.FK_UITemplates_Users" >
-          <ConnectorPoint PointX="2.25" PointY="0.59375000000000011" />
-          <ConnectorPoint PointX="10" PointY="0.59375000000000011" />
-        </AssociationConnector>
-        <EntityTypeShape EntityType="OpenConfigurator_Model.Constraint" Width="1.75" PointX="7.875" PointY="0.75" Height="2.364889322916667" />
-        <AssociationConnector Association="OpenConfigurator_Model.FK_Constraints_Models" >
-          <ConnectorPoint PointX="4.5" PointY="3.7593489583333328" />
-          <ConnectorPoint PointX="8.7499998663422645" PointY="3.7593489583333328" />
-          <ConnectorPoint PointX="8.7499998663422645" PointY="3.114889322916667" />
+          <ConnectorPoint PointX="2.25" PointY="0.59375" />
+          <ConnectorPoint PointX="10" PointY="0.59375" />
         </AssociationConnector>
         <AssociationConnector Association="OpenConfigurator_Model.FK_Configurations_UITemplates" >
-          <ConnectorPoint PointX="10.75" PointY="3.2494921875" />
-          <ConnectorPoint PointX="10.75" PointY="5" />
-          <ConnectorPoint PointX="10.375" PointY="5" />
-          <ConnectorPoint PointX="10.375" PointY="10.829091796875" />
-          <ConnectorPoint PointX="10.333335833333335" PointY="10.829091796875" />
-          <ConnectorPoint PointX="10.166669166666667" PointY="10.829091796875" />
-          <ConnectorPoint PointX="7.177083333333333" PointY="10.829091796875" />
-          <ConnectorPoint PointX="7.010416666666667" PointY="10.829091796875" />
-          <ConnectorPoint PointX="6.75" PointY="10.829091796875" />
+          <ConnectorPoint PointX="10.03125" PointY="3.2494921875" />
+          <ConnectorPoint PointX="10.03125" PointY="10.40625" />
+          <ConnectorPoint PointX="7.302083333333333" PointY="10.40625" />
+          <ConnectorPoint PointX="7.135416666666667" PointY="10.40625" />
+          <ConnectorPoint PointX="6.375" PointY="10.40625" />
+        </AssociationConnector>
+        <AssociationConnector Association="OpenConfigurator_Model.FK_Relations_Features_ChildF" >
+          <ConnectorPoint PointX="5.5" PointY="8.5087522105375921" />
+          <ConnectorPoint PointX="5.239583333333333" PointY="8.5087522105375921" />
+          <ConnectorPoint PointX="5.072916666666667" PointY="8.5087522105375921" />
+          <ConnectorPoint PointX="4.833333333333333" PointY="8.5087522105375921" />
+          <ConnectorPoint PointX="4.666666666666667" PointY="8.5087522105375921" />
+          <ConnectorPoint PointX="4.5" PointY="8.5087522105375921" />
+        </AssociationConnector>
+        <AssociationConnector Association="OpenConfigurator_Model.FK_Relations_Features_ParentF" >
+          <ConnectorPoint PointX="5.5" PointY="7.6293761052687961" />
+          <ConnectorPoint PointX="5.239583333333333" PointY="7.6293761052687952" />
+          <ConnectorPoint PointX="5.072916666666667" PointY="7.6293761052687961" />
+          <ConnectorPoint PointX="4.833333333333333" PointY="7.6293761052687952" />
+          <ConnectorPoint PointX="4.666666666666667" PointY="7.6293761052687961" />
+          <ConnectorPoint PointX="4.5" PointY="7.6293761052687961" />
+        </AssociationConnector>
+        <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_ChildFeature" >
+          <ConnectorPoint PointX="7.625" PointY="8.2220117553710939" />
+          <ConnectorPoint PointX="8.8541666666666661" PointY="8.2220117553710939" />
+          <ConnectorPoint PointX="9.0208333333333339" PointY="8.2220117553710939" />
+          <ConnectorPoint PointX="9.9479166666666661" PointY="8.2220117553710939" />
+          <ConnectorPoint PointX="10.114583333333334" PointY="8.2220117553710939" />
+          <ConnectorPoint PointX="10.260416666666666" PointY="8.2220117553710939" />
+          <ConnectorPoint PointX="10.427083333333334" PointY="8.2220117553710939" />
+          <ConnectorPoint PointX="13.120047564744358" PointY="8.2220117553710939" />
+          <ConnectorPoint PointX="13.120047564744358" PointY="10.25" />
+        </AssociationConnector>
+        <AssociationConnector Association="OpenConfigurator_Model.FK_GroupRelations_To_Features_ParentFeature" >
+          <ConnectorPoint PointX="7.625" PointY="8.4235083776855468" />
+          <ConnectorPoint PointX="8.8541666666666661" PointY="8.4235083776855468" />
+          <ConnectorPoint PointX="9.0208333333333339" PointY="8.4235083776855468" />
+          <ConnectorPoint PointX="9.9479166666666661" PointY="8.4235083776855468" />
+          <ConnectorPoint PointX="10.114583333333334" PointY="8.4235083776855468" />
+          <ConnectorPoint PointX="10.260416666666666" PointY="8.4235083776855468" />
+          <ConnectorPoint PointX="10.427083333333334" PointY="8.4235083776855468" />
+          <ConnectorPoint PointX="12.62252128237218" PointY="8.4235083776855468" />
+          <ConnectorPoint PointX="12.62252128237218" PointY="10.25" />
+        </AssociationConnector>
+        <AssociationConnector Association="OpenConfigurator_Model.FK_CompositionRules_Features_FirstFeature" >
+          <ConnectorPoint PointX="5.5" PointY="5.9560490494791605" />
+          <ConnectorPoint PointX="5.239583333333333" PointY="5.95604904947916" />
+          <ConnectorPoint PointX="5.072916666666667" PointY="5.9560490494791605" />
+          <ConnectorPoint PointX="4.2395853333333333" PointY="5.95604904947916" />
+          <ConnectorPoint PointX="4.0729186666666672" PointY="5.9560490494791605" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="5.95604904947916" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="5.9560490494791605" />
+          <ConnectorPoint PointX="2.5" PointY="5.9560490494791605" />
+        </AssociationConnector>
+        <AssociationConnector Association="OpenConfigurator_Model.FK_CompositionRules_Features_SecondFeature" >
+          <ConnectorPoint PointX="5.5" PointY="6.4745930989583336" />
+          <ConnectorPoint PointX="5.239583333333333" PointY="6.4745930989583327" />
+          <ConnectorPoint PointX="5.072916666666667" PointY="6.4745930989583336" />
+          <ConnectorPoint PointX="4.2395853333333333" PointY="6.4745930989583327" />
+          <ConnectorPoint PointX="4.0729186666666672" PointY="6.4745930989583336" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="6.4745930989583327" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="6.4745930989583336" />
+          <ConnectorPoint PointX="2.5" PointY="6.4745930989583336" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="OpenConfigurator_Model.CustomFunction" Width="1.5" PointX="5.25" PointY="15.625" Height="2.3648893229166674" />
+        <AssociationConnector Association="OpenConfigurator_Model.FK_Constraints_Models" >
+          <ConnectorPoint PointX="4.156252" PointY="5.5186979166666656" />
+          <ConnectorPoint PointX="4.156252" PointY="6.625" />
+          <ConnectorPoint PointX="4.75" PointY="6.625" />
+          <ConnectorPoint PointX="4.75" PointY="9.25" />
+          <ConnectorPoint PointX="4.625" PointY="9.25" />
+          <ConnectorPoint PointX="4.625" PointY="10.375" />
+          <ConnectorPoint PointX="4.75" PointY="10.375" />
+          <ConnectorPoint PointX="4.75" PointY="16.807444661458334" />
+          <ConnectorPoint PointX="5.25" PointY="16.807444661458334" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

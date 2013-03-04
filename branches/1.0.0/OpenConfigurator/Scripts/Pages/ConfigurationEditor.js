@@ -307,20 +307,20 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         //Return result
         return clientObjectsCollection;
     }
-    function featureSelectionsDifferent(firstBusinessObj, secondBusinessObj) {
+    function fSelectionsEqual(firstBusinessObj, secondBusinessObj) {
 
         //Compare selectedState and disabled
         var selectionStateEqual = firstBusinessObj.SelectionState == secondBusinessObj.SelectionState;
         var disabledEqual = firstBusinessObj.Disabled == secondBusinessObj.Disabled;
 
         //
-        var featureSelectionsDifferent = !selectionStateEqual || !disabledEqual;
-        return featureSelectionsDifferent;
+        var equal = selectionStateEqual && disabledEqual;
+        return equal;
     }
-    function setSolverFeatureSelectionState(featureSelectionGUID, featureID, newSelectionStateID) {
+    function toggleSolverFSelection(featureSelectionGUID, featureID, newSelectionStateID) {
         $.ajax({
             url: "/ConfigurationEditor/ToggleFeature",
-            data: JSON.stringify({ configurationID: _configuration.ID, FeatureID: featureID, newState: newSelectionStateID }),
+            data: JSON.stringify({ configurationID: _configuration.ID, featureID: featureID, newStateID: newSelectionStateID }),
             async: false,
             success: function (response) {
                 var featureSelections = response;
@@ -330,15 +330,16 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
                     for (var guidkey in featureSelections) {
 
                         //Get the FeatureSelection returned from the server and the existing FeatureSelection
-                        var updatedFeatureSelectionBusinessObj = featureSelections[guidkey]; //Get the updated business object
+                        var updatedFSelBusinessObj = featureSelections[guidkey]; //Get the updated business object
 
                         //Get the FeatureSelection which already exists on the client
-                        var existingClientFeatureSelectionGUID = _lookupTables.featureIDsToFeatureSelections[updatedFeatureSelectionBusinessObj.FeatureID];
-                        var existingFeatureSelection = _thisConfigurationDataModel.GetByGUID(existingClientFeatureSelectionGUID);
+                        var existingClientFSelectionGUID = _lookupTables.featureIDsToFeatureSelections[updatedFSelBusinessObj.FeatureID];
+                        var existingFSelection = _thisConfigurationDataModel.GetByGUID(existingClientFSelectionGUID);
 
                         //Update the existing FeatureSelection, if it has changed
-                        if (featureSelectionsDifferent(updatedFeatureSelectionBusinessObj, existingFeatureSelection.GetBusinessObjectCopy())) {
-                            _thisConfigurationDataModel.UpdateClientObject(existingClientFeatureSelectionGUID, updatedFeatureSelectionBusinessObj);
+                        var fSelectionsDif = !fSelectionsEqual(updatedFSelBusinessObj, existingFSelection.GetBusinessObjectCopy());
+                        if (fSelectionsDif) {
+                            _thisConfigurationDataModel.UpdateClientObject(existingClientFSelectionGUID, updatedFSelBusinessObj);
                         }
 
                         ////Update AttributeValues
@@ -371,9 +372,9 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             data: JSON.stringify({ configurationID: _configurationID }),
             async: false,
             success: function (response) {
-                _configuration = response[0];
-                _model = response[1];
-                _uiTemplate = response[2];
+                _configuration = response.ConfigurationObj;
+                _model = response.ModelObj;
+                _uiTemplate = response.TemplateObj;
 
                 //Register Configuration elements
                 for (var i = 0; i < _configuration.FeatureSelections.length; i++) {
@@ -557,7 +558,6 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
             }
         });
     }
-
     this.CreateDefaultClientObject = function (type, initialFieldValues) {
 
         //Variables
@@ -615,10 +615,9 @@ var ConfigurationDataModel = function (configurationID, configurationName) {
         var featureSelection = _thisConfigurationDataModel.GetByGUID(featureSelectionGuid);
         var featureID = featureSelection.Feature.GetField("ID");
 
-        //Raise the internal event
-        setSolverFeatureSelectionState(featureSelectionGuid, featureID, newSelectionStateID);
+        //Modify it using the server-side Solver
+        toggleSolverFSelection(featureSelectionGuid, featureID, newSelectionStateID);
     }
-
     this.GetTemplateField = function (fieldName) {
         var fieldValue = _uiTemplate[fieldName]
         return fieldValue;
@@ -749,7 +748,7 @@ var InteractiveView = function (container, configurationDataModelInstance) {
         return selectionState;
     }
     ViewInterface.SetFeatureSelectionState = function (featureSelectionGUID, newState) {
-
+        
         //Get the related FeatureSelection
         var featureSelectionClientObject = _configurationDataModel.GetByGUID(featureSelectionGUID);
         var featureClientObject = featureSelectionClientObject.Feature;
@@ -759,7 +758,7 @@ var InteractiveView = function (container, configurationDataModelInstance) {
         _configurationDataModel.SetFeatureSelectionState(featureSelectionClientObject.GUID, newStateID);
     }
     ViewInterface.ToggleFeatureSelectionState = function (featureSelectionGUID) {
-
+        
         //Get the related FeatureSelection
         var featureSelectionClientObject = _configurationDataModel.GetByGUID(featureSelectionGUID);
         var featureClientObject = featureSelectionClientObject.Feature;
@@ -769,17 +768,17 @@ var InteractiveView = function (container, configurationDataModelInstance) {
         var newSelectionState = null;
         switch (currentSelectionState) {
 
-            //Unselected -> becomes Selected                                                                                                                                                                                                                                                                                                                                           
+            //Unselected -> becomes Selected                                                                                                                                                                                                                                                                                                                                              
             case systemDefaults.enums.featureSelectionStates.unselected.name:
                 newSelectionState = systemDefaults.enums.featureSelectionStates.selected;
                 break;
 
-            //Selected -> becomes Deselected                                                                                                                                                                     
+            //Selected -> becomes Deselected                                                                                                                                                                        
             case systemDefaults.enums.featureSelectionStates.selected.name:
                 newSelectionState = systemDefaults.enums.featureSelectionStates.deselected;
                 break;
 
-            //Deselected -> becomes Unselected                                                                                                                                                                      
+            //Deselected -> becomes Unselected                                                                                                                                                                         
             case systemDefaults.enums.featureSelectionStates.deselected.name:
                 newSelectionState = systemDefaults.enums.featureSelectionStates.unselected;
                 break;

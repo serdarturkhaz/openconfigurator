@@ -61,7 +61,7 @@ namespace BLL.Services
                         template.Stylesheet = "";
                     }
                     
-                    BUITemplates.Add((BLL.BusinessObjects.UITemplate)BLL.BusinessObjects.UITemplate.FromDataEntity(template));
+                    BUITemplates.Add((BLL.BusinessObjects.UITemplate)BLL.BusinessObjects.UITemplate.CreateInstance(template));
                 }
             }
             return BUITemplates;

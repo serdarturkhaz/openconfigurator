@@ -29,46 +29,45 @@ namespace PresentationLayer.Controllers
 {
     public class ConfigurationEditorController : Controller
     {
-        
         //Controller methods
         [Authorize]
         public ActionResult ConfigurationEditor(int configurationID)
         {
             //Store variables
             ViewBag.ConfigurationID = configurationID;
-
             return View();
         }
         [Authorize]
         public JsonNetResult LoadData(int configurationID)
         {
-            //Data return controlTagElem
-            object[] innerJObj = new object[3];
-            JsonNetResult result = new JsonNetResult() { Data = innerJObj };
+            //Data return wrapper
+            JsonNetResult result = new JsonNetResult() { };
 
             //Load Configuration
             ConfigurationService _configurationService = new ConfigurationService(SessionData.LoggedInUser.ID);
             BLL.BusinessObjects.Configuration configuration = _configurationService.GetByID(configurationID);
-            innerJObj[0] = configuration;
 
             //Load Model
             ModelService _modelService = new ModelService(SessionData.LoggedInUser.ID);
             BLL.BusinessObjects.Model model = _modelService.GetByID(configuration.ModelID);
-            innerJObj[1] = model;
 
             //Load UITemplate
             UITemplateService _uiTemplatesService = new UITemplateService(SessionData.LoggedInUser.ID);
             BLL.BusinessObjects.UITemplate template = _uiTemplatesService.GetByID(configuration.UITemplateID);
-            innerJObj[2] = template;
 
-
-            //Setup the ConfigurationSession
+            //Initialize the ConfiguratorSession
             ConfiguratorSession newSession = new ConfiguratorSession(model, configuration, SolverService.CreateNewContext(model));
             SetupFeatureSelections(ref newSession);
             SessionData.ConfiguratorSessions[configurationID] = newSession;
 
-
-            //
+            //Return the data
+            var innerObj = new
+            {
+                ConfigurationObj = configuration,
+                ModelObj = model,
+                TemplateObj = template
+            };
+            result.Data = innerObj;
             return result;
         }
         [Authorize]
@@ -115,7 +114,6 @@ namespace PresentationLayer.Controllers
         {
             SessionData.ConfiguratorSessions.Remove(configurationID);
         }
-
 
         //Private methods
         private void SetupFeatureSelections(ref ConfiguratorSession configSession)
@@ -193,33 +191,21 @@ namespace PresentationLayer.Controllers
             return returnVal;
         }
 
-
-        //Solver / interactive configuration methods 
+        //Solver/interactive configuration methods 
         [Authorize]
-        public JsonNetResult ToggleFeature(int configurationID, int FeatureID, int newState)
+        public JsonNetResult ToggleFeature(int configurationID, int featureID, int newStateID)
         {
-            //Data return controlTagElem
+            //Variables
             JsonNetResult result = new JsonNetResult();
-
-            //Get the ConfiguratorSession
             ConfiguratorSession configSession = SessionData.ConfiguratorSessions[configurationID];
             SolverService solverService = new SolverService();
 
-            //Get the implicit selections for the other features
-            BLL.BusinessObjects.FeatureSelectionStates selectionState = (BLL.BusinessObjects.FeatureSelectionStates)newState;
-            bool selectionValid = solverService.UserToggleSelection(ref configSession, FeatureID, selectionState);
-
+            //Modify the feature state the feature and get the resulting feedback
+            BLL.BusinessObjects.FeatureSelectionStates newSelectionState = (BLL.BusinessObjects.FeatureSelectionStates)newStateID;
+            solverService.UserToggleFeature(ref configSession, featureID, newSelectionState);
 
             //Return
-            if (selectionValid)
-            {
-                result.Data = configSession.Configuration.FeatureSelections.ToDictionary(g => g.FeatureID, k => k);
-            }
-            else
-            {
-                result.Data = selectionValid;
-            }
-
+            result.Data = configSession.Configuration.FeatureSelections.ToDictionary(g => g.FeatureID, k => k);
             return result;
         }
         [Authorize]
@@ -238,7 +224,7 @@ namespace PresentationLayer.Controllers
             return result;
         }
 
-        //Methods for default Entities
+        //Methods for default entities
         [Authorize]
         public JsonNetResult NewDefaultFeatureSelection()
         {
@@ -267,6 +253,5 @@ namespace PresentationLayer.Controllers
             //
             return result;
         }
-
     }
 }

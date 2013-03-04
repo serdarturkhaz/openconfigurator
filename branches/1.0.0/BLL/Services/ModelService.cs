@@ -41,7 +41,6 @@ namespace BLL.Services
             BLL.BusinessObjects.Model defaultModel = (BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.CreateDefault(_LoggedInUserID);
             return defaultModel;
         }
-
         public List<BLL.BusinessObjects.Model> GetByUserID(int userid)
         {
             //
@@ -54,7 +53,7 @@ namespace BLL.Services
                 BModels = new List<BusinessObjects.Model>();
                 foreach (DAL.DataEntities.Model model in models)
                 {
-                    BModels.Add((BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.FromDataEntity(model));
+                    BModels.Add((BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.CreateInstance(model));
                 }
             }
             return BModels;
@@ -76,13 +75,11 @@ namespace BLL.Services
                 BModels = new List<BusinessObjects.Model>();
                 foreach (DAL.DataEntities.Model model in models)
                 {
-                    BModels.Add((BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.FromDataEntity(model));
+                    BModels.Add((BLL.BusinessObjects.Model)BLL.BusinessObjects.Model.CreateInstance(model));
                 }
             }
             return BModels;
         }
-
-
         public void UpdateName(int modelID, string newName)
         {
             using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
@@ -101,7 +98,7 @@ namespace BLL.Services
             using (_ModelRepository = new GenericRepository<DAL.DataEntities.Model>())
             {
                 DAL.DataEntities.Model DALmodel = _ModelRepository.SingleOrDefault(m => m.ID == id);
-                BLLmodel = BLL.BusinessObjects.Model.FromDataEntity(DALmodel);
+                BLLmodel = BLL.BusinessObjects.Model.CreateInstance(DALmodel);
             }
             //
             return BLLmodel;

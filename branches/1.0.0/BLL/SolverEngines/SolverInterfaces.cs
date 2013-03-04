@@ -29,13 +29,12 @@ namespace BLL.SolverEngines
         void CreateInitialRestorePoint();
 
         //Methods to manipulate elements inside the context
-        void AddConstraint(string categoryName, params ISolverStatement[] statements);
-        void AddVariable(string name, string identifier, string categoryName, VariableDataTypes dataType);
-        void AddAttributeVariable(string featureName, string name, string identifier, string categoryName, VariableDataTypes dataType);
+        void AddCustomFunction(string identifier, params ISolverStatement[] statements);
+        void AddVariable(string identifier, VariableDataTypes dataType);
         void AddValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
         void RemoveValueAssumption(string varID, string categoryName);
         void AddOrModifyValueAssumption(string variableID, string categoryName, VariableDataTypes dataType, object value);
-        void AddFeatureAttributeValueAssumption(string featureVariableID, string featureCategoryName, string attributeVariableID, string attributeCategoryName, VariableDataTypes dataType, object value);
+        void AddImpliedValueAssumption(string featureVariableID, string featureCategoryName, string attributeVariableID, string attributeCategoryName, VariableDataTypes dataType, object value);
         
         //Methods to create solver statements
         ISolverStatement MakeEquals(ISolverStatement leftStatement, ISolverStatement rightStatement);
@@ -61,20 +60,11 @@ namespace BLL.SolverEngines
         ISolverStatement MakeNumeral(int val);
         
     }
-    public interface ISolverSolution
-    {
-        object GetVariableValue(string variableID, string categoryName);
-    }
     public interface ISolverStatement
     {
 
     }
-    public interface ISolverFunction
-    {
-
-    }
-    
-
+  
     //Enums
     public enum StatementTypes
     {
@@ -94,6 +84,4 @@ namespace BLL.SolverEngines
         Integer,
         Boolean
     }
-
-
 }

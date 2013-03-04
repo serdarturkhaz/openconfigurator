@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BLL.SolverEngines;
 
 namespace BLL.BusinessObjects
 {
@@ -27,17 +28,23 @@ namespace BLL.BusinessObjects
             get;
             set;
         }
-
         bool ToBeDeleted
         {
             get;
             set;
         }
-
         int ID
         {
             get;
             set;
+        }
+    }
+
+    public interface ISolverMappable
+    {
+        string SlvMapIdentifier
+        {
+            get;
         }
     }
 }

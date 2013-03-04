@@ -61,27 +61,23 @@ namespace DAL.DataEntities
     
         public virtual int ChildFeatureID
         {
-            get;
-            set;
-        }
-
-        #endregion
-        #region Navigation Properties
-    
-        public virtual Feature ParentFeature
-        {
-            get { return _parentFeature; }
+            get { return _childFeatureID; }
             set
             {
-                if (!ReferenceEquals(_parentFeature, value))
+                if (_childFeatureID != value)
                 {
-                    var previousValue = _parentFeature;
-                    _parentFeature = value;
-                    FixupParentFeature(previousValue);
+                    if (ChildFeature != null && ChildFeature.ID != value)
+                    {
+                        ChildFeature = null;
+                    }
+                    _childFeatureID = value;
                 }
             }
         }
-        private Feature _parentFeature;
+        private int _childFeatureID;
+
+        #endregion
+        #region Navigation Properties
     
         public virtual GroupRelation GroupRelation
         {
@@ -97,29 +93,39 @@ namespace DAL.DataEntities
             }
         }
         private GroupRelation _groupRelation;
-
-        #endregion
-        #region Association Fixup
     
-        private void FixupParentFeature(Feature previousValue)
+        public virtual Feature ChildFeature
         {
-            if (previousValue != null && previousValue.GroupRelations_To_Features.Contains(this))
+            get { return _childFeature; }
+            set
             {
-                previousValue.GroupRelations_To_Features.Remove(this);
-            }
-    
-            if (ParentFeature != null)
-            {
-                if (!ParentFeature.GroupRelations_To_Features.Contains(this))
+                if (!ReferenceEquals(_childFeature, value))
                 {
-                    ParentFeature.GroupRelations_To_Features.Add(this);
-                }
-                if (ParentFeatureID != ParentFeature.ID)
-                {
-                    ParentFeatureID = ParentFeature.ID;
+                    var previousValue = _childFeature;
+                    _childFeature = value;
+                    FixupChildFeature(previousValue);
                 }
             }
         }
+        private Feature _childFeature;
+    
+        public virtual Feature ParentFeature
+        {
+            get { return _parentFeature; }
+            set
+            {
+                if (!ReferenceEquals(_parentFeature, value))
+                {
+                    var previousValue = _parentFeature;
+                    _parentFeature = value;
+                    FixupParentFeature(previousValue);
+                }
+            }
+        }
+        private Feature _parentFeature;
+
+        #endregion
+        #region Association Fixup
     
         private void FixupGroupRelation(GroupRelation previousValue)
         {
@@ -137,6 +143,46 @@ namespace DAL.DataEntities
                 if (GroupRelationID != GroupRelation.ID)
                 {
                     GroupRelationID = GroupRelation.ID;
+                }
+            }
+        }
+    
+        private void FixupChildFeature(Feature previousValue)
+        {
+            if (previousValue != null && previousValue.GroupRelations_To_Features_1.Contains(this))
+            {
+                previousValue.GroupRelations_To_Features_1.Remove(this);
+            }
+    
+            if (ChildFeature != null)
+            {
+                if (!ChildFeature.GroupRelations_To_Features_1.Contains(this))
+                {
+                    ChildFeature.GroupRelations_To_Features_1.Add(this);
+                }
+                if (ChildFeatureID != ChildFeature.ID)
+                {
+                    ChildFeatureID = ChildFeature.ID;
+                }
+            }
+        }
+    
+        private void FixupParentFeature(Feature previousValue)
+        {
+            if (previousValue != null && previousValue.GroupRelations_To_Features1.Contains(this))
+            {
+                previousValue.GroupRelations_To_Features1.Remove(this);
+            }
+    
+            if (ParentFeature != null)
+            {
+                if (!ParentFeature.GroupRelations_To_Features1.Contains(this))
+                {
+                    ParentFeature.GroupRelations_To_Features1.Add(this);
+                }
+                if (ParentFeatureID != ParentFeature.ID)
+                {
+                    ParentFeatureID = ParentFeature.ID;
                 }
             }
         }
