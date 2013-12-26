@@ -1,8 +1,0 @@
-C:\Users\Radu\Documents\Visual Studio 2010\Projects\OpenConfigurator\branches\1.0.0\DatabaseProj\sql\debug\OpenConfigurator_TEST_Script.PreDeployment.sql
-C:\Users\Radu\Documents\Visual Studio 2010\Projects\OpenConfigurator\branches\1.0.0\DatabaseProj\sql\debug\OpenConfigurator_TEST_Script.PostDeployment.sql
-C:\Users\Radu\Documents\Visual Studio 2010\Projects\OpenConfigurator\branches\1.0.0\DatabaseProj\sql\debug\OpenConfigurator_TEST_Database.sqlsettings
-C:\Users\Radu\Documents\Visual Studio 2010\Projects\OpenConfigurator\branches\1.0.0\DatabaseProj\sql\debug\OpenConfigurator_TEST_Database.sqldeployment
-C:\Users\Radu\Documents\Visual Studio 2010\Projects\OpenConfigurator\branches\1.0.0\DatabaseProj\sql\debug\OpenConfigurator_TEST_Database.sqlcmdvars
-C:\Users\Radu\Documents\Visual Studio 2010\Projects\OpenConfigurator\branches\1.0.0\DatabaseProj\sql\debug\DatabaseProj.deploymanifest
-C:\Users\Radu\Documents\Visual Studio 2010\Projects\OpenConfigurator\branches\1.0.0\DatabaseProj\sql\debug\DatabaseProj.dbschema
-C:\Users\Radu\Documents\Visual Studio 2010\Projects\OpenConfigurator\branches\1.0.0\DatabaseProj\obj\MCD\Debug\DatabaseProj.dbschema
