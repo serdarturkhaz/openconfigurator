@@ -1,0 +1,30 @@
+﻿.CheckboxControl
+{
+    width:140px;
+    height:26px;
+    float:left;
+    clear:both;
+}
+.CheckboxControl .CheckElement
+{
+    width: 16px;
+    height: 16px;
+    margin-top: 4px;
+    padding: 0;
+    float: left;
+    
+    background: url(/content/themes/base/images/Controls/check-unselected.png) no-repeat center center;
+}
+.CheckboxControl .NameLabel
+{
+    line-height: 26px;
+    height: 26px;
+    float: left;
+    font-size: 12px;
+    font-family: Arial;
+    letter-spacing: 1.3px;
+    color: #292929;
+  	margin-left:5px;
+  	cursor:default;
+}
+

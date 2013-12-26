@@ -1,0 +1,181 @@
+﻿@{
+    ViewBag.Title = "Models";
+    Layout = "~/Views/Master/_LoggedInLayout.cshtml";
+}
+@section headerscripts{
+    <script type="text/javascript">
+
+        //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        var entryLinkUrl = "/ModelEditor/ModelEditor/";
+
+        //Helper functions
+        function createModelRow(table, dataObj, deleteFunc) {
+
+            //Get table inner controls
+            var headerColumns = $(table).find("th");
+            var tbody = $(table).children("tbody");
+
+            //Setup "configure" button
+            var newConfigurationButton = $("<div class='IconButton-Normal'></div>").append("<img src='../../Content/themes/base/images/Icons/configure.png' />").append("<span>Config</span>");
+            newConfigurationButton.bind("click", function () {
+                $("#CreateConfigurationPopup").data("modelID", dataObj.ID);
+                $("#CreateConfigurationPopup").dialog("open");
+
+                
+            });
+
+            //
+            var tr = createRow(headerColumns, tbody, dataObj, entryLinkUrl, deleteFunc, newConfigurationButton);
+            return tr;
+        }
+        function calcWidth() {
+            //Set width for ModelsBox
+            var containerWidth = $(".OuterContentArea .InnerContentArea").width();
+            var marginWidth = 30;
+            var actionsBoxWidth = $("#ModelsActionsBox").width();
+            var modelsBoxWidth = containerWidth - marginWidth - actionsBoxWidth;
+            $('#ModelsBox').css("width", modelsBoxWidth + "px");
+        }
+
+        //Data functions
+        function addNewModel() {
+
+            //Create new Model in DB
+            $.ajax({
+                url: "/Models/AddNewModel",
+                data: {},
+                success: function (modelObj) {
+                    //
+                    var modelsTable = $("#ModelsTable");
+                    var tr = createModelRow(modelsTable, modelObj, deleteModel);
+                    $(tr).children("td").effect("highlight", { color: "yellow" }, 1000);
+                }
+            });
+        }
+        
+        function deleteModel(modelID) {
+            var tbody = $("#ModelsTable").children("tbody");
+
+            //Delete Model from DB
+            $.ajax({
+                type: "POST",
+                url: "/Models/DeleteModel",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({ ID: modelID }),
+                success: function (reponse) {
+                    //
+                    deleteRow(modelID, tbody);
+                },
+                error: function (req, status, error) {
+                    alert('error');
+                }
+            });
+
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        $(document).ready(function () {
+
+            //Event handlers-------------------------------------------------------------------
+            $("#NewModelButton").bind("click", function () {
+                addNewModel();
+            });
+            //---------------------------------------------------------------------------------
+
+            //Initialize
+            registerPopup("CreateConfigurationPopup");
+            calcWidth();
+            $(window).resize(function () {
+                calcWidth();
+            });
+            $("#ModelsMenuItem").attr("selected", "selected");
+
+            //Load Models
+            $.ajax({
+                url: "/Models/GetModels",
+                data: {},
+                beforeSend: function () {
+                    $("#ModelsBox").block({ message: "Loading data...", fadeIn: 300 });
+                },
+                success: function (models) {
+                    $.timer(300, function () {
+
+                        //Variables
+                        var modelsTable = $("#ModelsTable");
+
+                        //Create a TR for each row 
+                        $.each(models, function (index, value) {
+                            var modelObj = models[index];
+                            createModelRow(modelsTable, modelObj, deleteModel);
+                        });
+
+
+                        $("#ModelsBox").unblock();
+                    });
+                },
+                error: function (req, status, error) {
+                    alert('error');
+                }
+            });
+        });
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    </script>
+}
+@section RootBreadCrumb {
+Overview
+}
+<div id="ModelsActionsBox" class="RoundedBox">
+    <div class="BoxHeader">
+        <div class="BoxInnerHeader">
+            <span class="HeaderLabel">Actions</span>
+        </div>
+    </div>
+    <div class="BoxContent">
+        <ul class="ActionList">
+            <li class="Button-Normal" id="NewModelButton">
+                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                <span>New Model</span> </li>
+            <li class="Button-Normal" disabled="disabled">
+                <img src="../../Content/themes/base/images/Icons/NewModel.png" />
+                <span>Import Model</span> </li>
+        </ul>
+    </div>
+    <div class="BoxFooter">
+        <div class="BoxInnerFooter">
+        </div>
+    </div>
+</div>
+<div id="ModelsBox" class="RoundedBox">
+    <div class="BoxHeader">
+        <div class="BoxInnerHeader">
+            <span class="HeaderLabel">Models</span>
+        </div>
+    </div>
+    <div class="BoxContent">
+        <table cellpadding="0" cellspacing="0" id="ModelsTable" class="grid">
+            <thead>
+                <tr>
+                    <th style="width: 40%; padding-left: 15px;">
+                        <span columnname="Name">Name</span>
+                    </th>
+                    <th style="width: 30%; text-align: center">
+                        <span columnname="LastModifiedDateFormatted">Modified Date</span>
+                    </th>
+                    <th style="width: 30%; text-align: center">
+                        <span columnname="CreatedDateFormatted">Created Date</span>
+                    </th>
+                    <th style="text-align: center; padding-right: 15px;">
+                        <span>Actions</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div class="BoxFooter">
+        <div class="BoxInnerFooter">
+        </div>
+    </div>
+</div>

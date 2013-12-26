@@ -1,0 +1,681 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="OpenConfigurator_Model.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+  <EntityContainer Name="OpenConfigurator_ModelStoreContainer">
+    <EntitySet Name="Attribute_DataTypes" EntityType="OpenConfigurator_Model.Store.Attribute_DataTypes" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Attribute_Types" EntityType="OpenConfigurator_Model.Store.Attribute_Types" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Attributes" EntityType="OpenConfigurator_Model.Store.Attributes" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="AttributeValues" EntityType="OpenConfigurator_Model.Store.AttributeValues" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CompositionRule_Types" EntityType="OpenConfigurator_Model.Store.CompositionRule_Types" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CompositionRules" EntityType="OpenConfigurator_Model.Store.CompositionRules" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Configurations" EntityType="OpenConfigurator_Model.Store.Configurations" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CustomFunctions" EntityType="OpenConfigurator_Model.Store.CustomFunctions" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CustomRules" EntityType="OpenConfigurator_Model.Store.CustomRules" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Features" EntityType="OpenConfigurator_Model.Store.Features" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="FeatureSelections" EntityType="OpenConfigurator_Model.Store.FeatureSelections" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="GroupRelation_Types" EntityType="OpenConfigurator_Model.Store.GroupRelation_Types" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="GroupRelations" EntityType="OpenConfigurator_Model.Store.GroupRelations" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="GroupRelations_To_Features" EntityType="OpenConfigurator_Model.Store.GroupRelations_To_Features" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Models" EntityType="OpenConfigurator_Model.Store.Models" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Relation_Types" EntityType="OpenConfigurator_Model.Store.Relation_Types" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Relations" EntityType="OpenConfigurator_Model.Store.Relations" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="SelectionStates" EntityType="OpenConfigurator_Model.Store.SelectionStates" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="UITemplates" EntityType="OpenConfigurator_Model.Store.UITemplates" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Users" EntityType="OpenConfigurator_Model.Store.Users" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="FK_Attributes_Attribute_DataTypes" Association="OpenConfigurator_Model.Store.FK_Attributes_Attribute_DataTypes">
+      <End Role="Attribute_DataTypes" EntitySet="Attribute_DataTypes" />
+      <End Role="Attributes" EntitySet="Attributes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Attributes_Attribute_Types" Association="OpenConfigurator_Model.Store.FK_Attributes_Attribute_Types">
+      <End Role="Attribute_Types" EntitySet="Attribute_Types" />
+      <End Role="Attributes" EntitySet="Attributes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Attributes_Features" Association="OpenConfigurator_Model.Store.FK_Attributes_Features">
+      <End Role="Features" EntitySet="Features" />
+      <End Role="Attributes" EntitySet="Attributes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AttributeValues_Attributes" Association="OpenConfigurator_Model.Store.FK_AttributeValues_Attributes">
+      <End Role="Attributes" EntitySet="Attributes" />
+      <End Role="AttributeValues" EntitySet="AttributeValues" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AttributeValues_FeatureSelections" Association="OpenConfigurator_Model.Store.FK_AttributeValues_FeatureSelections">
+      <End Role="FeatureSelections" EntitySet="FeatureSelections" />
+      <End Role="AttributeValues" EntitySet="AttributeValues" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CompositionRules_CompositionRule_Types" Association="OpenConfigurator_Model.Store.FK_CompositionRules_CompositionRule_Types">
+      <End Role="CompositionRule_Types" EntitySet="CompositionRule_Types" />
+      <End Role="CompositionRules" EntitySet="CompositionRules" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CompositionRules_Features_FirstFeature" Association="OpenConfigurator_Model.Store.FK_CompositionRules_Features_FirstFeature">
+      <End Role="Features" EntitySet="Features" />
+      <End Role="CompositionRules" EntitySet="CompositionRules" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CompositionRules_Features_SecondFeature" Association="OpenConfigurator_Model.Store.FK_CompositionRules_Features_SecondFeature">
+      <End Role="Features" EntitySet="Features" />
+      <End Role="CompositionRules" EntitySet="CompositionRules" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CompositionRules_Models" Association="OpenConfigurator_Model.Store.FK_CompositionRules_Models">
+      <End Role="Models" EntitySet="Models" />
+      <End Role="CompositionRules" EntitySet="CompositionRules" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Configurations_Models" Association="OpenConfigurator_Model.Store.FK_Configurations_Models">
+      <End Role="Models" EntitySet="Models" />
+      <End Role="Configurations" EntitySet="Configurations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Configurations_UITemplates" Association="OpenConfigurator_Model.Store.FK_Configurations_UITemplates">
+      <End Role="UITemplates" EntitySet="UITemplates" />
+      <End Role="Configurations" EntitySet="Configurations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomFunctions_Models" Association="OpenConfigurator_Model.Store.FK_CustomFunctions_Models">
+      <End Role="Models" EntitySet="Models" />
+      <End Role="CustomFunctions" EntitySet="CustomFunctions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FeatureGroups_Models" Association="OpenConfigurator_Model.Store.FK_FeatureGroups_Models">
+      <End Role="Models" EntitySet="Models" />
+      <End Role="GroupRelations" EntitySet="GroupRelations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Features_Models" Association="OpenConfigurator_Model.Store.FK_Features_Models">
+      <End Role="Models" EntitySet="Models" />
+      <End Role="Features" EntitySet="Features" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FeatureSelections_Configurations" Association="OpenConfigurator_Model.Store.FK_FeatureSelections_Configurations">
+      <End Role="Configurations" EntitySet="Configurations" />
+      <End Role="FeatureSelections" EntitySet="FeatureSelections" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FeatureSelections_SelectionStates" Association="OpenConfigurator_Model.Store.FK_FeatureSelections_SelectionStates">
+      <End Role="SelectionStates" EntitySet="SelectionStates" />
+      <End Role="FeatureSelections" EntitySet="FeatureSelections" />
+    </AssociationSet>
+    <AssociationSet Name="FK_GroupRelations_GroupRelation_Types" Association="OpenConfigurator_Model.Store.FK_GroupRelations_GroupRelation_Types">
+      <End Role="GroupRelation_Types" EntitySet="GroupRelation_Types" />
+      <End Role="GroupRelations" EntitySet="GroupRelations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_GroupRelations_To_Features_ChildFeature" Association="OpenConfigurator_Model.Store.FK_GroupRelations_To_Features_ChildFeature">
+      <End Role="Features" EntitySet="Features" />
+      <End Role="GroupRelations_To_Features" EntitySet="GroupRelations_To_Features" />
+    </AssociationSet>
+    <AssociationSet Name="FK_GroupRelations_To_Features_GroupRelations" Association="OpenConfigurator_Model.Store.FK_GroupRelations_To_Features_GroupRelations">
+      <End Role="GroupRelations" EntitySet="GroupRelations" />
+      <End Role="GroupRelations_To_Features" EntitySet="GroupRelations_To_Features" />
+    </AssociationSet>
+    <AssociationSet Name="FK_GroupRelations_To_Features_ParentFeature" Association="OpenConfigurator_Model.Store.FK_GroupRelations_To_Features_ParentFeature">
+      <End Role="Features" EntitySet="Features" />
+      <End Role="GroupRelations_To_Features" EntitySet="GroupRelations_To_Features" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Models_Users" Association="OpenConfigurator_Model.Store.FK_Models_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Models" EntitySet="Models" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Relations_Features_ChildF" Association="OpenConfigurator_Model.Store.FK_Relations_Features_ChildF">
+      <End Role="Features" EntitySet="Features" />
+      <End Role="Relations" EntitySet="Relations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Relations_Features_ParentF" Association="OpenConfigurator_Model.Store.FK_Relations_Features_ParentF">
+      <End Role="Features" EntitySet="Features" />
+      <End Role="Relations" EntitySet="Relations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Relations_Models" Association="OpenConfigurator_Model.Store.FK_Relations_Models">
+      <End Role="Models" EntitySet="Models" />
+      <End Role="Relations" EntitySet="Relations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Relations_Relation_Types" Association="OpenConfigurator_Model.Store.FK_Relations_Relation_Types">
+      <End Role="Relation_Types" EntitySet="Relation_Types" />
+      <End Role="Relations" EntitySet="Relations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Rules_Models" Association="OpenConfigurator_Model.Store.FK_Rules_Models">
+      <End Role="Models" EntitySet="Models" />
+      <End Role="CustomRules" EntitySet="CustomRules" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UITemplates_Users" Association="OpenConfigurator_Model.Store.FK_UITemplates_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="UITemplates" EntitySet="UITemplates" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Attribute_DataTypes">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Attribute_Types">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Attributes">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="FeatureID" Type="int" Nullable="false" />
+    <Property Name="AttributeTypeID" Type="int" Nullable="false" />
+    <Property Name="DataTypeID" Type="int" Nullable="false" />
+    <Property Name="Identifier" Type="nvarchar" MaxLength="50" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="Description" Type="nvarchar(max)" />
+    <Property Name="ConstantValue" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="AttributeValues">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="FeatureSelectionID" Type="int" Nullable="false" />
+    <Property Name="AttributeID" Type="int" Nullable="false" />
+    <Property Name="Value" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="CompositionRule_Types">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="CompositionRules">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ModelID" Type="int" Nullable="false" />
+    <Property Name="CompositionRuleTypeID" Type="int" Nullable="false" />
+    <Property Name="FirstFeatureID" Type="int" Nullable="false" />
+    <Property Name="SecondFeatureID" Type="int" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="Description" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="Configurations">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ModelID" Type="int" Nullable="false" />
+    <Property Name="UITemplateID" Type="int" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="CustomFunctions">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ModelID" Type="int" Nullable="false" />
+    <Property Name="Identifier" Type="nvarchar" MaxLength="50" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="Expression" Type="nvarchar(max)" />
+    <Property Name="Description" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="CustomRules">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ModelID" Type="int" Nullable="false" />
+    <Property Name="Identifier" Type="nvarchar" MaxLength="50" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="Expression" Type="nvarchar(max)" />
+    <Property Name="Description" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="Features">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ModelID" Type="int" Nullable="false" />
+    <Property Name="Identifier" Type="nvarchar" MaxLength="50" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="Description" Type="nvarchar(max)" />
+    <Property Name="IsRoot" Type="bit" />
+    <Property Name="XPos" Type="float" />
+    <Property Name="YPos" Type="float" />
+  </EntityType>
+  <EntityType Name="FeatureSelections">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ConfigurationID" Type="int" Nullable="false" />
+    <Property Name="FeatureID" Type="int" Nullable="false" />
+    <Property Name="SelectionStateID" Type="int" Nullable="false" />
+    <Property Name="Disabled" Type="bit" />
+    <Property Name="ToggledByUser" Type="bit" />
+  </EntityType>
+  <EntityType Name="GroupRelation_Types">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="FixedLowerBound" Type="int" />
+    <Property Name="FixedUpperBound" Type="int" />
+  </EntityType>
+  <EntityType Name="GroupRelations">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ModelID" Type="int" Nullable="false" />
+    <Property Name="GroupRelationTypeID" Type="int" Nullable="false" />
+    <Property Name="LowerBound" Type="int" />
+    <Property Name="UpperBound" Type="int" />
+  </EntityType>
+  <EntityType Name="GroupRelations_To_Features">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="GroupRelationID" Type="int" Nullable="false" />
+    <Property Name="ParentFeatureID" Type="int" Nullable="false" />
+    <Property Name="ChildFeatureID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Models">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Relation_Types">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="FixedLowerBound" Type="int" />
+    <Property Name="FixedUpperBound" Type="int" />
+  </EntityType>
+  <EntityType Name="Relations">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="ModelID" Type="int" Nullable="false" />
+    <Property Name="RelationTypeID" Type="int" Nullable="false" />
+    <Property Name="ParentFeatureID" Type="int" Nullable="false" />
+    <Property Name="ChildFeatureID" Type="int" Nullable="false" />
+    <Property Name="LowerBound" Type="int" />
+    <Property Name="UpperBound" Type="int" />
+  </EntityType>
+  <EntityType Name="SelectionStates">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="UITemplates">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="Content" Type="nvarchar(max)" />
+    <Property Name="Stylesheet" Type="nvarchar(max)" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastModifiedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Email" Type="nvarchar" MaxLength="50" />
+    <Property Name="Password" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <Association Name="FK_Attributes_Attribute_DataTypes">
+    <End Role="Attribute_DataTypes" Type="OpenConfigurator_Model.Store.Attribute_DataTypes" Multiplicity="1" />
+    <End Role="Attributes" Type="OpenConfigurator_Model.Store.Attributes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Attribute_DataTypes">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Attributes">
+        <PropertyRef Name="DataTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Attributes_Attribute_Types">
+    <End Role="Attribute_Types" Type="OpenConfigurator_Model.Store.Attribute_Types" Multiplicity="1" />
+    <End Role="Attributes" Type="OpenConfigurator_Model.Store.Attributes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Attribute_Types">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Attributes">
+        <PropertyRef Name="AttributeTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Attributes_Features">
+    <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Attributes" Type="OpenConfigurator_Model.Store.Attributes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Features">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Attributes">
+        <PropertyRef Name="FeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AttributeValues_Attributes">
+    <End Role="Attributes" Type="OpenConfigurator_Model.Store.Attributes" Multiplicity="1" />
+    <End Role="AttributeValues" Type="OpenConfigurator_Model.Store.AttributeValues" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Attributes">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="AttributeValues">
+        <PropertyRef Name="AttributeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AttributeValues_FeatureSelections">
+    <End Role="FeatureSelections" Type="OpenConfigurator_Model.Store.FeatureSelections" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="AttributeValues" Type="OpenConfigurator_Model.Store.AttributeValues" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="FeatureSelections">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="AttributeValues">
+        <PropertyRef Name="FeatureSelectionID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CompositionRules_CompositionRule_Types">
+    <End Role="CompositionRule_Types" Type="OpenConfigurator_Model.Store.CompositionRule_Types" Multiplicity="1" />
+    <End Role="CompositionRules" Type="OpenConfigurator_Model.Store.CompositionRules" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CompositionRule_Types">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="CompositionRules">
+        <PropertyRef Name="CompositionRuleTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CompositionRules_Features_FirstFeature">
+    <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+    <End Role="CompositionRules" Type="OpenConfigurator_Model.Store.CompositionRules" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Features">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="CompositionRules">
+        <PropertyRef Name="FirstFeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CompositionRules_Features_SecondFeature">
+    <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+    <End Role="CompositionRules" Type="OpenConfigurator_Model.Store.CompositionRules" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Features">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="CompositionRules">
+        <PropertyRef Name="SecondFeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CompositionRules_Models">
+    <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="CompositionRules" Type="OpenConfigurator_Model.Store.CompositionRules" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Models">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="CompositionRules">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Configurations_Models">
+    <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Configurations" Type="OpenConfigurator_Model.Store.Configurations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Models">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Configurations">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Configurations_UITemplates">
+    <End Role="UITemplates" Type="OpenConfigurator_Model.Store.UITemplates" Multiplicity="1" />
+    <End Role="Configurations" Type="OpenConfigurator_Model.Store.Configurations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UITemplates">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Configurations">
+        <PropertyRef Name="UITemplateID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomFunctions_Models">
+    <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="CustomFunctions" Type="OpenConfigurator_Model.Store.CustomFunctions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Models">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="CustomFunctions">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FeatureGroups_Models">
+    <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="GroupRelations" Type="OpenConfigurator_Model.Store.GroupRelations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Models">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="GroupRelations">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Features_Models">
+    <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Models">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Features">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FeatureSelections_Configurations">
+    <End Role="Configurations" Type="OpenConfigurator_Model.Store.Configurations" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="FeatureSelections" Type="OpenConfigurator_Model.Store.FeatureSelections" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Configurations">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="FeatureSelections">
+        <PropertyRef Name="ConfigurationID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FeatureSelections_SelectionStates">
+    <End Role="SelectionStates" Type="OpenConfigurator_Model.Store.SelectionStates" Multiplicity="1" />
+    <End Role="FeatureSelections" Type="OpenConfigurator_Model.Store.FeatureSelections" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SelectionStates">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="FeatureSelections">
+        <PropertyRef Name="SelectionStateID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_GroupRelations_GroupRelation_Types">
+    <End Role="GroupRelation_Types" Type="OpenConfigurator_Model.Store.GroupRelation_Types" Multiplicity="1" />
+    <End Role="GroupRelations" Type="OpenConfigurator_Model.Store.GroupRelations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GroupRelation_Types">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="GroupRelations">
+        <PropertyRef Name="GroupRelationTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_GroupRelations_To_Features_ChildFeature">
+    <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+    <End Role="GroupRelations_To_Features" Type="OpenConfigurator_Model.Store.GroupRelations_To_Features" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Features">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="GroupRelations_To_Features">
+        <PropertyRef Name="ChildFeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_GroupRelations_To_Features_GroupRelations">
+    <End Role="GroupRelations" Type="OpenConfigurator_Model.Store.GroupRelations" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="GroupRelations_To_Features" Type="OpenConfigurator_Model.Store.GroupRelations_To_Features" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GroupRelations">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="GroupRelations_To_Features">
+        <PropertyRef Name="GroupRelationID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_GroupRelations_To_Features_ParentFeature">
+    <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+    <End Role="GroupRelations_To_Features" Type="OpenConfigurator_Model.Store.GroupRelations_To_Features" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Features">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="GroupRelations_To_Features">
+        <PropertyRef Name="ParentFeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Models_Users">
+    <End Role="Users" Type="OpenConfigurator_Model.Store.Users" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Models">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Relations_Features_ChildF">
+    <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+    <End Role="Relations" Type="OpenConfigurator_Model.Store.Relations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Features">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Relations">
+        <PropertyRef Name="ChildFeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Relations_Features_ParentF">
+    <End Role="Features" Type="OpenConfigurator_Model.Store.Features" Multiplicity="1" />
+    <End Role="Relations" Type="OpenConfigurator_Model.Store.Relations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Features">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Relations">
+        <PropertyRef Name="ParentFeatureID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Relations_Models">
+    <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Relations" Type="OpenConfigurator_Model.Store.Relations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Models">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Relations">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Relations_Relation_Types">
+    <End Role="Relation_Types" Type="OpenConfigurator_Model.Store.Relation_Types" Multiplicity="1" />
+    <End Role="Relations" Type="OpenConfigurator_Model.Store.Relations" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Relation_Types">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Relations">
+        <PropertyRef Name="RelationTypeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Rules_Models">
+    <End Role="Models" Type="OpenConfigurator_Model.Store.Models" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="CustomRules" Type="OpenConfigurator_Model.Store.CustomRules" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Models">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="CustomRules">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UITemplates_Users">
+    <End Role="Users" Type="OpenConfigurator_Model.Store.Users" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="UITemplates" Type="OpenConfigurator_Model.Store.UITemplates" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="UITemplates">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
