@@ -1,0 +1,443 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/UseCaseModel"
+  dslVersion="1.0.0.0"
+  Id="85c86a5b-97fe-4ebe-b5d0-5ef0922076a7"
+  name="UITemplateEditor" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <ownedCommentsInternal>
+    <comment
+      Id="cd526b68-6345-4d70-914b-30cf8cc0520f">
+      <body>Binding Type
+
+Static  binding
+Dynamic binding
+Unbound</body>
+      <annotatedElements>
+        <classMoniker
+          Id="64b41606-d45b-4420-88cc-8033081f173e"
+          LastKnownName="UI Control Tags"
+          LastKnownLocation="Package_2216.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="d306e369-dd2d-480d-ba3f-0135f4da4525">
+      <body>Binding restrictions:
+
+Free expression (anything)
+Single/multiple Feature(s)
+Single/multiple Attribute(s)</body>
+      <annotatedElements>
+        <classMoniker
+          Id="56e841f9-897d-4adc-83b0-a76e2728d049"
+          LastKnownName="Binding restrictions"
+          LastKnownLocation="Package_2216.uml" />
+        <classMoniker
+          Id="43681ca6-99b7-4621-a6b1-1d2bbb3814e9"
+          LastKnownName="UI Control Type"
+          LastKnownLocation="Package_2216.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="401b0a2f-b4c5-452a-9f7a-984133ac090f">
+      <body>User Interaction 
+
+Read-only
+Editable
+</body>
+      <annotatedElements>
+        <classMoniker
+          Id="64b41606-d45b-4420-88cc-8033081f173e"
+          LastKnownName="UI Control Tags"
+          LastKnownLocation="Package_2216.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="66146626-bd55-4c96-ab2a-d436ae809cc7">
+      <body>Can contain other controls or HTML</body>
+      <annotatedElements>
+        <classMoniker
+          Id="9fff4f60-6694-4d94-b674-8d71436f384d"
+          LastKnownName="Composite control"
+          LastKnownLocation="Package_2216.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="2c30fbce-4a55-4c73-a705-d43f7e78549c">
+      <body>Panel
+Tabs
+FrameArea</body>
+      <annotatedElements>
+        <classMoniker
+          Id="9fff4f60-6694-4d94-b674-8d71436f384d"
+          LastKnownName="Composite control"
+          LastKnownLocation="Package_2216.uml" />
+      </annotatedElements>
+    </comment>
+    <comment
+      Id="ddd71ba3-7c54-4f62-bd67-06e0dd16da89">
+      <body>Label
+Textbox
+Textarea
+Checkbox
+CheckboxList
+DropDown
+Radiobutton List
+Button</body>
+      <annotatedElements>
+        <classMoniker
+          Id="dec67331-ff4e-4b20-b222-75d2fc7dc2b5"
+          LastKnownName="Simple control"
+          LastKnownLocation="Package_2216.uml" />
+      </annotatedElements>
+    </comment>
+  </ownedCommentsInternal>
+  <packagedElements>
+    <packageHasNamedElement>
+      <class
+        Id="b06d9a5c-8d79-4b58-8e56-657500a5e67c"
+        name="UI Template"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="e6390d8b-fbe8-4d88-b86e-41dd9abf84e7"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            name="Consists of"
+            isAbstract="false">
+            <classMoniker
+              Id="1e6a49de-219f-4e61-a5de-e12c1ef9cab5"
+              LastKnownName="MetaHTML"
+              LastKnownLocation="Package_2216.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4f440580-33f4-4e4c-bf1b-135974bb0f2f"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="a5349b71-abea-455b-92fa-43077aa6f3e9"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="62fbd21d-ce64-4932-8972-f6f8a805eb14"
+            name="Name"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="64b41606-d45b-4420-88cc-8033081f173e"
+        name="UI Control Tags"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="5583f811-efe9-4c49-afa6-c0786c2ccb5d"
+            isSubstitutable="false">
+            <classMoniker
+              Id="43681ca6-99b7-4621-a6b1-1d2bbb3814e9"
+              LastKnownName="UI Control Type"
+              LastKnownLocation="Package_2216.uml" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association
+            Id="57d2964c-5e8a-472c-b9f2-9b5f1ee29b6b"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="0cfc1d7a-1e29-4823-ba76-f308f494652f"
+              LastKnownName="Binding type"
+              LastKnownLocation="Package_2216.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="826fe10a-9431-49f5-97eb-a2daa5234a9a"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ecb1ed17-0d10-4013-874a-6e8ec5547ff5"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="0b4a31dc-508b-4602-871a-6d38d399f5bf"
+            name="UserInteraction"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="30b3705e-dc9d-46b5-a9f6-bae5ce449da0"
+            name="BindingType"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="4a4653eb-27f0-4e7e-8456-ea66d3549b64"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="4ffac801-1d44-4948-9f50-96fb32cee54e"
+        name="UI Control Type"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="43681ca6-99b7-4621-a6b1-1d2bbb3814e9"
+        name="UI Control Type"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="544e9038-0145-48da-9f15-4baff56d6067"
+            name="BindingSupport"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="e6c5a2b3-57d9-4c36-96c7-fd691ce77c18"
+        name="Type"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="0cfc1d7a-1e29-4823-ba76-f308f494652f"
+        name="Binding type"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="56e841f9-897d-4adc-83b0-a76e2728d049"
+        name="Binding restrictions"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f88967f3-019c-4f49-a7e9-0bb9d260e659"
+        name="InteractionType"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="1e6a49de-219f-4e61-a5de-e12c1ef9cab5"
+        name="MetaHTML"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="7953d20c-264f-482f-9462-496860112838"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="63eb60db-1f3d-4d5d-9f91-3bd1cbb852eb"
+              LastKnownName="HTML"
+              LastKnownLocation="Package_2216.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="28f8e986-3d59-4d63-be88-d42acc9dd819"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="a66ea381-b472-4b84-8304-7a19c02a497d"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="bcd2d74e-741b-45dc-ba8d-310ccda66601"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="64b41606-d45b-4420-88cc-8033081f173e"
+              LastKnownName="UI Control Tags"
+              LastKnownLocation="Package_2216.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="e8e0ab27-f85e-40da-84d7-6284120d7eb1"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8ef44960-8cc6-451f-bcfb-257455787b2d"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="63eb60db-1f3d-4d5d-9f91-3bd1cbb852eb"
+        name="HTML"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="dec67331-ff4e-4b20-b222-75d2fc7dc2b5"
+        name="Simple control"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="9f929ae1-fc1e-4e7e-8137-e10f2cd76ece"
+            isSubstitutable="false">
+            <classMoniker
+              Id="43681ca6-99b7-4621-a6b1-1d2bbb3814e9"
+              LastKnownName="UI Control Type"
+              LastKnownLocation="Package_2216.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9fff4f60-6694-4d94-b674-8d71436f384d"
+        name="Composite control"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="003dd0a7-2fc6-4ae0-85d9-92d7cea18742"
+            isSubstitutable="false">
+            <classMoniker
+              Id="43681ca6-99b7-4621-a6b1-1d2bbb3814e9"
+              LastKnownName="UI Control Type"
+              LastKnownLocation="Package_2216.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+  </packagedElements>
+</package>

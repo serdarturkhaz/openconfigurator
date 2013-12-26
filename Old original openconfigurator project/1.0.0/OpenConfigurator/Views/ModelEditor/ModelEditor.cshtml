@@ -1,0 +1,255 @@
+﻿@{
+    ViewBag.Title = "Edit Model";
+    Layout = "~/Views/Master/_LoggedInLayout.cshtml";
+}
+@section headerscripts{
+    <script type="text/javascript" src="../../Scripts/Pages/ModelEditor.js"></script>
+    <script type="text/javascript">
+        //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        var modelId = '@(ViewBag.ModelId)';
+        var diagramDataModel = null, clientController = null;
+
+        function calcWidth() {
+
+            //Set width for ModelsBox
+            var containerWidth = $(".OuterContentArea .InnerContentArea").width();
+            var marginWidth = 31;
+            var toolboxBoxWidth = $("#ToolBox").width();
+            var propertiesBoxWidth = $("#PropertiesBox").width();
+            var modelsBoxWidth = containerWidth - marginWidth * 2 - toolboxBoxWidth - propertiesBoxWidth;
+            $('#ModelDiagramBox').css("width", modelsBoxWidth + "px");
+        }
+        function addNewConfiguration(modelID) {
+
+            //Create new Configuration in DB
+            var id = null;
+            $.ajax({
+                url: "/Models/AddNewConfiguration",
+                data: JSON.stringify({ modelID: modelID }),
+                async: false,
+                success: function (configurationID) {
+                    //Redirect to the new Configuration
+                    id = configurationID;
+                }
+            });
+            return id;
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        $(document).ready(function () {
+            //Event handlers-------------------------------------------------------------------
+
+            //Button handlers
+            $("#SaveButton").bind("click", function () {
+                clientController.SaveData();
+            });
+            $("#ZoomOutButton").bind("click", function () {
+                clientController.ZoomOut();
+            });
+            $("#ZoomInButton").bind("click", function () {
+                clientController.ZoomIn();
+            });
+            $("#ToggleOrientationButton").bind("click", function () {
+                clientController.ToggleOrientation();
+            });
+            $("#NewFeatureButton").bind("click", function () {
+                clientController.CreateNewFeature();
+            });
+            $("#NewRelationButton").bind("click", function () {
+                clientController.CreateNewRelation();
+            });
+            $("#NewGroupRelationButton").bind("click", function () {
+                clientController.CreateNewGroupRelation();
+            });
+            $("#NewCompositionRuleButton").bind("click", function () {
+                clientController.CreateNewCompositionRule();
+            });
+            $("#NewCustomRuleButton").bind("click", function () {
+                clientController.CreateNewCustomRule();
+            });
+            $("#NewCustomFunctionButton").bind("click", function () {
+                clientController.CreateNewCustomFunction();
+            });
+
+            //Key handlers
+            $(document).keydown(function (e) {
+                if (e.which == 46) { //del key
+                    clientController.Delete();
+                }
+                $.ctrl('F', function () { //create Feature
+                    clientController.CreateNewFeature();
+                });
+                $.ctrl('R', function () { //create Relation
+                    clientController.CreateNewRelation();
+                });
+                $.ctrl('G', function () { //create GroupRelation
+                    clientController.CreateNewGroupRelation();
+                });
+                $.ctrl('M', function () { //create CompositionRule
+                    clientController.CreateNewCompositionRule();
+                });
+                $.ctrl('U', function () { //create CustomRule
+                    clientController.CreateNewCustomRule();
+                });
+                $.ctrl('S', function () { //Save data
+                    clientController.SaveData();
+                });
+                $.ctrl('C', function () { //Copy element 
+                    clientController.CopyElement();
+                });
+                $.ctrl('V', function () { //Paste given element
+                    clientController.PasteElement();
+                });
+            });
+            //---------------------------------------------------------------------------------
+
+            //Initialize 
+            calcWidth();
+            calcWidth();
+            $(window).resize(function () {
+                calcWidth();
+                calcWidth();
+            });
+            $("#ModelsMenuItem").attr("selected", "selected");
+
+            //Load data
+            $.timer(300, function () {
+
+                //Instantiate/Initialize controls
+                diagramDataModel = new DiagramDataModel(modelId);
+                diagramDataModel.Initialize();
+                clientController = new ClientController($("#SVGCanvas")[0], $("#PropertiesBox"), $("#ModelExplorerTree"), $("#ModelNameTextbox"), $("#ZoomLevelIndicator"), diagramDataModel);
+                clientController.Initialize();
+
+
+            });
+
+
+        });
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    </script>
+}
+@section RootBreadCrumb {
+Edit Model
+}
+@section SubMenuSpecialBar{
+    <div class="MenuItemSeparator">
+        ></div>
+    <div class="SubMenuSpecialBar">
+        <input id="ModelNameTextbox" class="Textbox" type="text" value="Please wait..." />
+        <div class="Button-Toolbar" id="SaveButton">
+            <img src="../../Content/themes/base/images/Icons/save.png" />
+            <span>Save</span>
+        </div>
+        @*<div class="Button-Toolbar" id="ConfigureButton">
+            <img src="../../Content/themes/base/images/Icons/configure-toolbar.png" />
+            <span>Configure</span>
+        </div>*@
+    </div>
+}
+<div class="LeftColumn">
+    @*Toolbox*@
+    <div id="ToolBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Toolbox</span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <ul class="ActionList">
+                <li class="Button-Normal" id="NewFeatureButton">
+                    <img src="../../Content/themes/base/images/Icons/Toolbox/feature.png" />
+                    <span><span class="underline">F</span>eature</span> </li>
+                <li class="Button-Normal" id="NewRelationButton">
+                    <img src="../../Content/themes/base/images/Icons/Toolbox/relation.png" />
+                    <span><span class="underline">R</span>elation</span> </li>
+                <li class="Button-Normal" id="NewGroupRelationButton">
+                    <img src="../../Content/themes/base/images/Icons/Toolbox/grouprelation.png" />
+                    <span><span class="underline">G</span>roup Relation</span> </li>
+                <li class="Button-Normal" id="NewCompositionRuleButton">
+                    <img src="../../Content/themes/base/images/Icons/Toolbox/compositionrule.png" />
+                    <span>Co<span class="underline">m</span>position Rule</span> </li>
+                <li class="Button-Normal" id="NewCustomRuleButton">
+                    <img src="../../Content/themes/base/images/Icons/Toolbox/customrule.png" />
+                    <span>C<span class="underline">u</span>stom Rule</span> </li>
+                <li class="Button-Normal" id="NewCustomFunctionButton">
+                    <img src="../../Content/themes/base/images/Icons/Toolbox/customrule.png" />
+                    <span>Custom Fun<span class="underline">c</span>tion </span></li>
+            </ul>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+    @*ModelExplorerBox*@
+    <div id="ModelExplorerBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Model Explorer</span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div class="TreeArea">
+                <div id="ModelExplorerTree">
+                </div>
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="RightColumn">
+    @*Properties*@
+    <div id="PropertiesBox" class="PropertiesBox RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Properties - <span id="SetTypeLabel"></span></span>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div id="MainContainer">
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="CenterColumn">
+    @*ModelDiagram*@
+    <div id="ModelDiagramBox" class="RoundedBox">
+        <div class="BoxHeader">
+            <div class="BoxInnerHeader">
+                <span class="HeaderLabel">Model Diagram</span>
+                <div class="ViewToolBar">
+                    <div class="ZoomLabel" id="ZoomLevelIndicator">
+                        75%
+                    </div>
+                    <div class="Button-Toolbar" id="ZoomOutButton">
+                        <img src="../../Content/themes/base/images/Icons/Toolbar/zoom-out.png" />
+                    </div>
+                    <div class="Button-Toolbar" id="ZoomInButton">
+                        <img src="../../Content/themes/base/images/Icons/Toolbar/zoom-in.png" />
+                    </div>
+                    <div class="Button-Toolbar" id="ToggleOrientationButton">
+                        <img src="../../Content/themes/base/images/Icons/Toolbar/toggle-orientation.png" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="BoxContent">
+            <div id="SVGCanvasWrapper">
+                <div id="SVGCanvas">
+                </div>
+            </div>
+        </div>
+        <div class="BoxFooter">
+            <div class="BoxInnerFooter">
+            </div>
+        </div>
+    </div>
+</div>

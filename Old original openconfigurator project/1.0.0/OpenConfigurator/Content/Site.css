@@ -1,0 +1,2162 @@
+﻿/*Templates and layout**************************************************************************/
+body
+{
+    background: #e8e8dd;
+    font-family: Arial;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 40px;
+}
+
+/*OuterLayout-------------------------------------------------------------------*/
+.OuterHeaderArea
+{
+    width: 100%;
+    background: #42494c url(themes/base/images/layout/header-bar.png) repeat-x left top;
+    height: 87px;
+}
+.OuterHeaderArea .InnerHeaderArea #LogoElement
+{
+    display: block;
+    float: left;
+    margin-top: 8px;
+    font-family: Tahoma;
+    font-size: 22px;
+    color: #E6E6E6;
+    letter-spacing: 1.9px;
+}
+.OuterHeaderArea .InnerHeaderArea #SettingsArea
+{
+    display: block;
+    float: right;
+    margin-top: 10px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    color: #E6E6E6;
+}
+.OuterHeaderArea .InnerHeaderArea #SettingsArea a
+{
+    color: #FFCC00;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+}
+
+.TopMenuBar
+{
+    width: 100%;
+    float: left;
+    margin-top: 25px;
+}
+.TopMenuBar .TopMenuItem
+{
+    float: left;
+}
+.TopMenuBar .TopMenuItem a
+{
+    color: #818181;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    padding: 8px 12px 9px 12px;
+    border: solid 1px transparent;
+    text-transform: uppercase;
+}
+.TopMenuBar .TopMenuItem[selected] a
+{
+    color: #FFCC00;
+    border: solid 1px #616161;
+    border-bottom: solid 1px transparent;
+    background-color: #50585b;
+}
+.TopMenuBar .TopMenuItem a:hover
+{
+    text-decoration: none;
+    color: #FFCC00;
+    border: solid 1px #616161;
+    border-bottom: solid 1px transparent;
+    background-color: #52595c;
+}
+
+.OuterLowerMenuArea
+{
+    width: 100%;
+    background: url(themes/base/images/layout/menu-bar.png) repeat-x left top;
+    height: 30px;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea .BreadCrumbRoot
+{
+    height: 30px;
+    float: left;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    display: block;
+    padding: 6px 15px 10px 15px;
+    float: left;
+    background-color: #6c7275;
+    font-size: 13px;
+    color: #FFEFAE;
+    font-family: Arial;
+    letter-spacing: 2.5px;
+    text-align: center;
+    width: 184px;
+}
+
+.OuterContentArea
+{
+    width: 100%;
+    background: #e8e8dd url(themes/base/images/layout/content-bg.png) repeat-x left top;
+    min-height: 700px;
+}
+.OuterHeaderArea .InnerHeaderArea
+{
+    width: 95%;
+    height: 77px;
+    margin: 0 auto;
+    color: White;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea
+{
+    width: 95%;
+    height: 40px;
+    margin: 0 auto;
+}
+.OuterContentArea .InnerContentArea
+{
+    width: 95%;
+    min-height: 700px;
+    margin: 0 auto;
+}
+/*------------------------------------------------------------------------------*/
+/***********************************************************************************************/
+/*Reusable elements*****************************************************************************/
+/*RoundedBox--------------------------------------------------------------------*/
+.RoundedBox
+{
+}
+.RoundedBox .BoxHeader
+{
+    background: url(themes/base/images/layout/roundedbox-header-right.png) no-repeat right top;
+    width: 100%;
+    height: 33px;
+    padding-right: 20px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.RoundedBox .BoxHeader .BoxInnerHeader
+{
+    background: url(themes/base/images/layout/roundedbox-header-left.png) no-repeat left top;
+    width: 100%;
+    height: 23px;
+    padding: 5px 5px 5px 10px;
+}
+
+/*ViewToolBar*/
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar
+{
+    float: right;
+    width: 300px;
+    padding-top: 7px;
+    margin-top: -6px;
+}
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .ZoomLabel
+{
+    float: right;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: white;
+    height: 18px;
+    margin-left: 3px;
+    border: 1px solid #676767;
+    margin-top: -3px;
+    padding: 4px 2px 2px 2px;
+    width: 40px;
+    text-align: right;
+    background: #4B5254;
+}
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .Button-Toolbar
+{
+    float: right;
+    margin-top: -3px;
+    cursor: pointer;
+    border: 1px solid #676767;
+    height: 24px;
+    background: #4B5254;
+    padding-left: 3px;
+}
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .Button-Toolbar img
+{
+    margin-top: 0;
+}
+.RoundedBox .BoxHeader .BoxInnerHeader .ViewToolBar .Button-Toolbar:hover
+{
+    float: right;
+    margin-top: -3px;
+    cursor: pointer;
+    background: #A68500;
+    border: 1px solid #E1B500;
+}
+
+.RoundedBox .BoxContent
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    background: white;
+    padding: 10px;
+    padding-bottom: 5px;
+}
+
+.RoundedBox .BoxBottomActions
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    height: 50px;
+    background: white;
+    padding: 10px;
+}
+.RoundedBox .BoxFooter
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: url(themes/base/images/layout/roundedbox-footer-right.png) no-repeat right top;
+    width: 100%;
+    height: 6px;
+    padding-right: 20px;
+}
+.RoundedBox .BoxInnerFooter
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    background: url(themes/base/images/layout/roundedbox-footer-left.png) no-repeat left top;
+    width: 100%;
+    height: 6px;
+}
+/*------------------------------------------------------------------------------*/
+/*Grid--------------------------------------------------------------------------*/
+.grid
+{
+    width: 100%;
+}
+.grid thead th
+{
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #FFE784;
+    text-align: left;
+    padding: 10px 5px 10px 5px;
+    letter-spacing: 0.9px;
+    white-space: nowrap;
+}
+.grid tbody td
+{
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    padding: 0px 5px 0px 5px;
+    background-color: #FFF7D7;
+    border-bottom: solid 1px #FFEFB0;
+    height: 40px;
+}
+
+.grid tbody tr:hover td
+{
+    background-color: #FFF3C4;
+}
+.grid tbody td.FirstColumn
+{
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #3a4043;
+}
+.grid tbody td span
+{
+    color: #3a4043;
+}
+.grid tbody td.FirstColumn a
+{
+    color: #3a4043;
+}
+.grid tbody td.FirstColumn img
+{
+    margin-right: 5px;
+    vertical-align: middle;
+    margin-top: -3px;
+}
+
+.grid tbody tr:hover td
+{
+}
+.grid tbody td.ActionsTD .SingleWrapper
+{
+    margin-left: auto;
+    margin-right: auto;
+    height: 40px;
+    width: 40px;
+}
+.grid tbody td.ActionsTD .MultiWrapper
+{
+    margin-left: auto;
+    margin-right: auto;
+    height: 40px;
+    width: 100px;
+}
+.grid tbody td.ActionsTD .Wrapper .IconButton-Normal
+{
+    display: inline-block;
+    margin-left: 5px;
+    float: left;
+}
+/*------------------------------------------------------------------------------*/
+/*BlockUI-----------------------------------------------------------------------*/
+div.blockMsg
+{
+    padding: 5px !important;
+    display: table-cell;
+    width: 150px !important;
+    height: 70px;
+    border: 1px solid #FFDC51;
+    background-color: #ffe784;
+}
+div.blockMsg div.wrapperdiv
+{
+    margin-left: auto;
+    margin-right: auto;
+}
+div.blockMsg span
+{
+    display: block;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    color: #3a4043;
+}
+div.blockMsg img
+{
+}
+/*------------------------------------------------------------------------------*/
+/*Accordion---------------------------------------------------------------------*/
+.Accordion
+{
+}
+
+.Accordion-Item
+{
+    border-bottom: 1px solid #F2C100;
+    padding: 3px 8px 3px 8px;
+    cursor: pointer;
+    height: 20px;
+    min-width: 60px;
+    border-bottom-color: #FFCF11;
+}
+.Accordion-Item:hover
+{
+    background: #FFCC00;
+}
+.Accordion-Item span
+{
+    display: block;
+    margin-top: 4px;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #3a4043;
+}
+
+.ui-accordion .ui-accordion-header
+{
+    cursor: default;
+    position: relative;
+    margin-top: -1px;
+    zoom: 1;
+    width: 151px;
+    display: block;
+    padding: 6px 3px 6px 9px;
+    font-size: 13px;
+    color: #79858A;
+    background: #fbfbfb;
+    border: 1px solid #EEEEEE;
+}
+.ui-accordion .ui-accordion-header:hover
+{
+    color: #3a4043;
+    background: #f7f7f7;
+}
+.ui-accordion .ui-state-active
+{
+    color: #3a4043;
+    font-weight: bold;
+    border: 1px solid #C19B00;
+    background: #FFDE5B !important;
+}
+.ui-accordion .ui-accordion-header a
+{
+    display: block;
+}
+
+.ui-accordion .ui-accordion-content
+{
+    padding: 10px;
+    border-top: 0;
+    margin-top: -2px;
+    position: relative;
+    top: 1px;
+    margin-bottom: 2px;
+    overflow: auto;
+    display: none;
+    zoom: 1;
+}
+.ui-accordion .ui-accordion-content-active
+{
+    display: block;
+    background: #ffe784;
+    border: solid 1px #C19B00;
+    border-top: none;
+}
+/*------------------------------------------------------------------------------*/
+/* CodeMirror editor------------------------------------------------------------*/
+.CodeMirror
+{
+    line-height: 1em;
+    font-family: monospace; /* Necessary so the scrollbar can be absolutely positioned within the wrapper on Lion. */
+    position: relative; /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
+    overflow: hidden;
+}
+.CodeMirror-scroll
+{
+    overflow: auto;
+    height: 300px; /* This is needed to prevent an IE[67] bug where the scrolled content      is visible outside of the scrolling box. */
+    position: relative;
+    outline: none;
+}
+
+/* Vertical scrollbar */
+.CodeMirror-scrollbar
+{
+    position: absolute;
+    right: 0;
+    top: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    z-index: 5;
+}
+.CodeMirror-scrollbar-inner
+{
+    /* This needs to have a nonzero width in order for the scrollbar to appear      in Firefox and IE9. */
+    width: 1px;
+}
+.CodeMirror-scrollbar.cm-sb-overlap
+{
+    /* Ensure that the scrollbar appears in Lion, and that it overlaps the content      rather than sitting to the right of it. */
+    position: absolute;
+    z-index: 1;
+    float: none;
+    right: 0;
+    min-width: 12px;
+}
+.CodeMirror-scrollbar.cm-sb-nonoverlap
+{
+    min-width: 12px;
+}
+.CodeMirror-scrollbar.cm-sb-ie7
+{
+    min-width: 18px;
+}
+
+.CodeMirror-gutter
+{
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    background-color: #f7f7f7;
+    border-right: 1px solid #eee;
+    min-width: 2em;
+    height: 100%;
+}
+.CodeMirror-gutter-text
+{
+    color: #aaa;
+    text-align: right;
+    padding: .4em .2em .4em .4em;
+    white-space: pre !important;
+    cursor: default;
+}
+.CodeMirror-lines
+{
+    padding: .4em;
+    white-space: pre;
+    cursor: text;
+}
+
+.CodeMirror pre
+{
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    border-width: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+    margin: 0;
+    white-space: pre;
+    word-wrap: normal;
+    line-height: inherit;
+    color: inherit;
+    overflow: visible;
+}
+.CodeMirror-wrap pre
+{
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    word-break: normal;
+}
+.CodeMirror-wrap .CodeMirror-scroll
+{
+    overflow-x: hidden;
+}
+.CodeMirror textarea
+{
+    outline: none !important;
+}
+
+.CodeMirror pre.CodeMirror-cursor
+{
+    z-index: 10;
+    position: absolute;
+    visibility: hidden;
+    border-left: 1px solid black;
+    border-right: none;
+    width: 0;
+}
+.cm-keymap-fat-cursor pre.CodeMirror-cursor
+{
+    width: auto;
+    border: 0;
+    background: transparent;
+    background: rgba(0, 200, 0, .4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#6600c800, endColorstr=#4c00c800);
+}
+
+/* Kludge to turn off filter in ie9+, which also accepts rgba */
+.cm-keymap-fat-cursor pre.CodeMirror-cursor:not(#nonsense_id)
+{
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite
+{
+}
+.CodeMirror-focused pre.CodeMirror-cursor
+{
+    visibility: visible;
+}
+
+div.CodeMirror-selected
+{
+    background: #d9d9d9;
+}
+.CodeMirror-focused div.CodeMirror-selected
+{
+    background: #d7d4f0;
+}
+
+.CodeMirror-searching
+{
+    background: #ffa;
+    background: rgba(255, 255, 0, .4);
+}
+
+/* Default theme */
+.cm-s-default span.cm-keyword
+{
+    color: #708;
+}
+.cm-s-default span.cm-atom
+{
+    color: #219;
+}
+.cm-s-default span.cm-number
+{
+    color: #164;
+}
+.cm-s-default span.cm-def
+{
+    color: #00f;
+}
+.cm-s-default span.cm-variable
+{
+    color: black;
+}
+.cm-s-default span.cm-variable-2
+{
+    color: #05a;
+}
+.cm-s-default span.cm-variable-3
+{
+    color: #085;
+}
+.cm-s-default span.cm-property
+{
+    color: black;
+}
+.cm-s-default span.cm-operator
+{
+    color: black;
+}
+.cm-s-default span.cm-comment
+{
+    color: #a50;
+}
+.cm-s-default span.cm-string
+{
+    color: #a11;
+}
+.cm-s-default span.cm-string-2
+{
+    color: #f50;
+}
+.cm-s-default span.cm-meta
+{
+    color: #555;
+}
+.cm-s-default span.cm-error
+{
+    color: #f00;
+}
+.cm-s-default span.cm-qualifier
+{
+    color: #555;
+}
+.cm-s-default span.cm-builtin
+{
+    color: #30a;
+}
+.cm-s-default span.cm-bracket
+{
+    color: #997;
+}
+.cm-s-default span.cm-tag
+{
+    color: #170;
+}
+.cm-s-default span.cm-attribute
+{
+    color: #00c;
+}
+.cm-s-default span.cm-header
+{
+    color: blue;
+}
+.cm-s-default span.cm-quote
+{
+    color: #090;
+}
+.cm-s-default span.cm-hr
+{
+    color: #999;
+}
+.cm-s-default span.cm-link
+{
+    color: #00c;
+}
+
+span.cm-header, span.cm-strong
+{
+    font-weight: bold;
+}
+span.cm-em
+{
+    font-style: italic;
+}
+span.cm-emstrong
+{
+    font-style: italic;
+    font-weight: bold;
+}
+span.cm-link
+{
+    text-decoration: underline;
+}
+
+span.cm-invalidchar
+{
+    color: #f00;
+}
+
+div.CodeMirror span.CodeMirror-matchingbracket
+{
+    color: #0f0;
+}
+div.CodeMirror span.CodeMirror-nonmatchingbracket
+{
+    color: #f22;
+}
+/*------------------------------------------------------------------------------*/
+/*PinesNotify-------------------------------------------------------------------*/
+.ui-pnotify
+{
+    top: 18px;
+    right: 18px;
+    position: absolute;
+    height: auto;
+    border: 1px solid #ffe784;
+    background-color: #fff7d7; /* Ensure that the notices are on top of everything else. */
+    z-index: 9999;
+}
+
+/* This hides position: fixed from IE6, which doesn't understand it. */
+html > body .ui-pnotify
+{
+    position: fixed;
+}
+.ui-pnotify .ui-pnotify-shadow
+{
+    margin: 0;
+    position: absolute;
+    top: .1em;
+    left: .1em;
+    bottom: -.2em;
+    right: -.2em;
+    z-index: -1;
+}
+.ui-pnotify-container
+{
+    background-position: 0 0;
+    padding: 10px;
+    height: 100%;
+}
+.ui-pnotify-closer
+{
+    float: right;
+    margin-left: .2em;
+    background: solid 1px red;
+}
+.ui-pnotify-title
+{
+    display: block;
+    font-size: 1.2em;
+    float: left;
+    width: 70%;
+    margin-top: 5px;
+}
+.ui-pnotify-text
+{
+    display: block;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    color: #3a4043;
+    float: left;
+    padding: 10px;
+}
+.ui-pnotify-icon, .ui-pnotify-icon span
+{
+    display: block;
+    float: left;
+    margin-right: 5px;
+}
+
+.pnotifyNoticeIcon
+{
+    width: 32px;
+    height: 32px;
+    background: url(themes/base/images/icons/success-notification.png) no-repeat center center;
+}
+.pnotifyErrorIcon
+{
+    width: 32px;
+    height: 32px;
+    background: url(themes/base/images/icons/error-notification.png) no-repeat center center;
+}
+
+/*History Pulldown*/
+.ui-pnotify-history-container
+{
+    position: absolute;
+    top: 0;
+    right: 18px;
+    width: 70px;
+    border-top: none; /* Ensure that the history container is on top of the notices. */
+    z-index: 10000;
+}
+.ui-pnotify-history-container .ui-pnotify-history-header
+{
+    padding: 2px;
+}
+.ui-pnotify-history-container button
+{
+    cursor: pointer;
+    display: block;
+    width: 100%;
+}
+.ui-pnotify-history-container .ui-pnotify-history-pulldown
+{
+    display: block;
+    margin: 0 auto;
+}
+.ui-pnotify .picon
+{
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 17px;
+    height: 17px;
+}
+/*------------------------------------------------------------------------------*/
+/*UIDialog----------------------------------------------------------------------*/
+.ui-dialog
+{
+    
+}
+.ui-dialog .ui-dialog-titlebar
+{
+    background: #3a4043;
+    padding:5px 5px 5px 10px;
+    border: 1px solid #3a4043;
+    border-bottom:none;
+   
+    height:23px;
+    position: relative;
+    
+    color: #E0E0E0;
+    font-size: 13px;
+    font-family: Arial;
+    letter-spacing: 0.9px;
+}
+.ui-dialog .ui-dialog-title
+{
+    float: left;
+    margin-top:3px;
+}
+.ui-dialog .ui-dialog-titlebar-close
+{
+    position: absolute;
+    right: .3em;
+    top: 50%;
+    width: 19px;
+    margin: -10px 0 0 0;
+    padding: 1px;
+    height: 18px;
+}
+.ui-dialog .ui-dialog-titlebar-close span
+{
+    display: block;
+    margin: 1px;
+}
+.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus
+{
+}
+.ui-dialog .ui-dialog-content
+{
+    position: relative;
+    zoom: 1;
+    padding: 15px;
+    padding-top:25px;
+    
+    background: white;
+    border: 1px solid #BFBFBF;
+    border-top:none;
+    border-bottom:none;
+}
+.ui-dialog .ui-dialog-buttonpane
+{
+    background: white;
+    border: 1px solid #BFBFBF;
+    border-top:none;
+    padding:15px;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset
+{
+    float: right;
+}
+.ui-dialog .ui-dialog-buttonpane button
+{
+    margin-left:10px; 
+    cursor: pointer;
+    float:right;
+}
+.ui-dialog .ui-resizable-se
+{
+    width: 14px;
+    height: 14px;
+    right: 3px;
+    bottom: 3px;
+}
+.ui-draggable .ui-dialog-titlebar
+{
+    cursor: move;
+}
+
+/* Buttons */
+.ui-dialog .OkButton
+{
+    background: #ffe784;
+}
+
+/* Overlays */
+.ui-widget-overlay
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    background: #e8e8dd ;
+    opacity: .8;
+    filter: Alpha(Opacity=80);
+}
+.ui-widget-shadow
+{
+    margin: -8px 0 0 -8px;
+    padding: 8px;
+    background: #e8e8dd ;
+    opacity: .8;
+    filter: Alpha(Opacity=80);
+    -moz-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+}
+
+/* States and images */
+.ui-icon
+{
+    width: 16px;
+    height: 16px;
+}
+.ui-icon-closethick
+{
+    width: 16px;
+    height: 16px;
+    background-image: url(themes/base/images/icons/close.png);
+}
+
+/* Layout helpers*/
+.ui-helper-hidden
+{
+    display: none;
+}
+.ui-helper-hidden-accessible
+{
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+.ui-helper-reset
+{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    line-height: 1.3;
+    text-decoration: none;
+    font-size: 100%;
+    list-style: none;
+}
+.ui-helper-clearfix:before, .ui-helper-clearfix:after
+{
+    content: "";
+    display: table;
+}
+.ui-helper-clearfix:after
+{
+    clear: both;
+}
+.ui-helper-clearfix
+{
+    zoom: 1;
+}
+.ui-helper-zfix
+{
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    opacity: 0;
+    filter: Alpha(Opacity=0);
+}
+/*------------------------------------------------------------------------------*/
+/*SimpleTree--------------------------------------------------------------------*/
+.simpleTree
+{
+    background: #f7f7f7;
+}
+.simpleTree ul
+{
+    padding: 0;
+    margin: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.simpleTree ul.root
+{
+}
+.simpleTree ul.level0
+{
+    padding-left: 12px;
+}
+.simpleTree li.row
+{
+    list-style-type: none;
+}
+
+.simpleTree li.row .node
+{
+    width: 100%;
+    float: left;
+}
+
+.simpleTree li.row .node div.expander
+{
+    width: 12px;
+    height: 20px;
+    float: left;
+}
+.simpleTree li.row .node[nodeDisplayState=expanded] div.expander
+{
+    background: url(themes/base/images/controls/simpletree/minus.png) no-repeat center center;
+    cursor: pointer;
+}
+.simpleTree li.row .node[nodeDisplayState=collapsed] div.expander
+{
+    background: url(themes/base/images/controls/simpletree/plus.png) no-repeat center center;
+    cursor: pointer;
+}
+
+.simpleTree li.row .node .innerNode
+{
+    width: auto;
+    float: left;
+    min-height: 16px;
+    cursor: default;
+    padding: 2px 2px 2px 2px;
+    border: solid 1px transparent;
+}
+.simpleTree li.row .node .innerNode:hover
+{
+    background-color: #E8E8FF;
+}
+.simpleTree li.row .node[selected] .innerNode
+{
+    background-color: #e1e9ff;
+    border: solid 1px black;
+}
+
+.simpleTree li.row .node .innerNode div.icon
+{
+    float: left;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    cursor: default;
+}
+.simpleTree li.row .node .innerNode div.name
+{
+    float: left;
+    margin-top: 2px;
+    margin-left: 3px;
+    vertical-align: middle;
+    display: inline-block;
+    cursor: default;
+}
+
+/*Font styles*/
+.simpleTree ul.root li.row .node .innerNode div.name
+{
+    font-family: Arial;
+    letter-spacing: 0.3px;
+    font-size: 11px;
+    color: #2F3335;
+}
+.simpleTree ul.level0 li.row .node .innerNode div.name
+{
+    font-family: Arial;
+    font-size: 9px;
+    color: #2F3335;
+    max-width: 100px;
+    overflow: hidden;
+}
+
+/*Types*/
+.simpleTree li.row .folder .innerNode div.icon
+{
+    background: url(themes/base/images/controls/simpletree/folder-closed.png) no-repeat left top;
+}
+.simpleTree li.row .folder[nodeDisplayState=expanded] .innerNode div.icon
+{
+    background: url(themes/base/images/controls/simpletree/folder-open.png) no-repeat left top;
+}
+.simpleTree li.row .feature .innerNode div.icon
+{
+    background: url(themes/base/images/controls/simpletree/feature.png) no-repeat left top;
+}
+.simpleTree li.row .compositionRule .innerNode div.icon
+{
+    background: url(themes/base/images/controls/simpletree/elementx.png) no-repeat left top;
+}
+.simpleTree li.row .customRule .innerNode div.icon
+{
+    background: url(themes/base/images/controls/simpletree/elementx.png) no-repeat left top;
+}
+.simpleTree li.row .customFunction .innerNode div.icon
+{
+    background: url(themes/base/images/controls/simpletree/elementx.png) no-repeat left top;
+}
+/*------------------------------------------------------------------------------*/
+/***********************************************************************************************/
+/*HTML and fonts********************************************************************************/
+.Textbox
+{
+    border: 1px solid #E6E6E6;
+    padding: 5px;
+    width: 215px;
+}
+.Textbox[invalid]
+{
+    border: 1px solid red;
+}
+.Dropdown
+{
+    border: 1px solid #E6E6E6;
+    padding: 5px;
+}
+.Label
+{
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    color: #4F575B;
+}
+.Textarea
+{
+    border: 1px solid #E6E6E6;
+    padding: 5px;
+    width: 215px;
+    height: 100px;
+}
+.Textarea[invalid]
+{
+    border: 1px solid red;
+}
+.Checkbox
+{
+    padding-top: 8px;
+}
+.Label-Small
+{
+    font-family: Arial;
+    letter-spacing: 0.3px;
+    font-size: 10px;
+    color: #4F575B;
+}
+.HeaderLabel
+{
+    color: #E0E0E0;
+    font-size: 13px;
+    font-family: Arial;
+    letter-spacing: 0.9px;
+}
+a
+{
+    text-decoration: none;
+}
+a:hover
+{
+    text-decoration: underline;
+}
+
+/*FormTable*/
+.FormTable 
+{
+    min-width:95%;
+    margin-left:auto;
+    margin-right:auto;
+}
+.FormTable td
+{
+    text-align:right;
+    padding-right:10px;
+}
+.FormTable .LabelTD
+{
+    min-width:80px;   
+    white-space:nowrap;
+    text-align:left;
+    padding-left:10px;
+}
+.FormTable .SeparatorTD 
+{
+    padding-left:0;
+    padding-right:0;
+}
+.FormTable .SeparatorTD div
+{
+    height: 1px;
+    width: 100%;
+    border-bottom: dashed 1px #BFBFBF;
+    padding-top: 8px;
+    margin-bottom: 8px;
+    border-bottom-color: #F0F0F0;
+}
+
+/*ActionList*/
+.ActionList
+{
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.ActionList li
+{
+    width: 150px;
+    margin-bottom: 2px;
+}
+.ActionList li:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+
+/*Buttons*/
+.Button-Normal
+{
+    border: 1px solid #FFDC51;
+    background: #ffe784;
+    padding: 6px;
+    cursor: pointer;
+    height: 20px;
+    min-width: 80px;
+}
+.Button-Normal:hover, .Button-Normal-Focus
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+.Button-Normal span
+{
+    display: block;
+    margin-top: 3px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #3a4043;
+}
+.Button-Normal span span.underline
+{
+    display: inline-block;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #3a4043;
+    text-decoration: underline;
+}
+.Button-Normal img
+{
+    float: right;
+    margin-top: -2px;
+}
+.Button-Normal[disabled=disabled]
+{
+    border: 1px solid #D8D8D8;
+    background: #D8D8D8;
+    cursor: default;
+}
+.Button-Normal[disabled=disabled]:hover
+{
+    border: 1px solid #D8D8D8;
+    background: #D8D8D8;
+    cursor: default;
+}
+
+.Button-Thin
+{
+    border: 1px solid #E6E6E6;
+    background-color: #EFEFEF;
+    padding: 3px 8px 3px 8px;
+    cursor: pointer;
+    height: 20px;
+    min-width: 80px;
+}
+.Button-Thin:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+.Button-Thin span
+{
+    display: block;
+    margin-top: 4px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #3a4043;
+}
+.Button-Thin img
+{
+    float: right;
+    margin-top: 2px;
+}
+
+.ui-button
+{
+    border: 1px solid #E6E6E6 !important;
+    background-color: #EFEFEF;
+    padding: 5px 8px 5px 8px;
+    cursor: pointer;
+    min-width: 80px;
+}
+.ui-button:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500 !important;
+}
+.ui-button .ui-button-text
+{
+    display: block;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #3a4043;
+}
+
+.IconButton-Normal
+{
+    border: 1px solid transparent;
+    padding: 6px 6px 1px 6px;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+    height: 31px;
+}
+.IconButton-Normal:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+.IconButton-Normal img
+{
+    float: left;
+    clear: both;
+    margin-bottom: 3px;
+    margin-left: 6px;
+}
+.IconButton-Normal span
+{
+    display: block;
+    float: left;
+    font-size: 8px;
+    clear: both;
+    text-align: center;
+}
+
+.IconButton-Simple
+{
+    border: 1px solid transparent;
+    padding: 2px;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+}
+.IconButton-Simple:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+.IconButton-Simple img
+{
+    float: left;
+    clear: both;
+}
+/***********************************************************************************************/
+/*Popups****************************************************************************************/
+.NewConfigurationPopup table
+{
+    
+}
+.NewConfigurationPopup .Dropdown {
+  width:250px;
+}
+/***********************************************************************************************/
+/*Pages*****************************************************************************************/
+/*Login-------------------------------------------------------------------------*/
+#LoginBox
+{
+    margin-top: 150px;
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#LoginBox #LoginButton
+{
+    float: right;
+}
+/*------------------------------------------------------------------------------*/
+/*Models------------------------------------------------------------------------*/
+#ModelsActionsBox
+{
+    float: left;
+    margin-top: 30px;
+}
+#ModelsBox
+{
+    float: right;
+    margin-top: 30px;
+    width: 80%;
+}
+/*------------------------------------------------------------------------------*/
+/*UITemplates-------------------------------------------------------------------*/
+#UITemplatesActionsBox
+{
+    float: left;
+    margin-top: 30px;
+}
+#UITemplatesBox
+{
+    float: right;
+    margin-top: 30px;
+    width: 80%;
+}
+/*------------------------------------------------------------------------------*/
+/*Configurations----------------------------------------------------------------*/
+#ConfigurationsActionsBox
+{
+    float: left;
+    margin-top: 30px;
+}
+#ConfigurationsBox
+{
+    float: right;
+    margin-top: 30px;
+    width: 80%;
+}
+/*------------------------------------------------------------------------------*/
+/*Editors common stuff----------------------------------------------------------*/
+.LeftColumn
+{
+    float: left;
+}
+.CenterColumn
+{
+    float: right;
+}
+.RightColumn
+{
+    float: right;
+}
+
+.SingleColumn
+{
+    float: left;
+    width:100%;
+}
+
+/*Properties box*/
+.PropertiesBox table
+{
+    width: 100%;
+}
+.PropertiesBox table tbody td
+{
+    vertical-align: top;
+}
+.PropertiesBox table tbody td .Label-Small
+{
+    display: block;
+    margin-top: 8px;
+    float: left;
+    white-space: nowrap;
+}
+.PropertiesBox .Textbox, #PropertiesBox .Dropdown, #PropertiesBox .Textarea
+{
+    width: 100%;
+    min-width: 150px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.PropertiesBox .Textarea
+{
+    height: auto;
+    overflow: hidden;
+    min-height: 100px;
+}
+.PropertiesBox .AreaDiv
+{
+    background-color: #F7F7F7;
+    padding: 5px;
+}
+.PropertiesBox .AreaDiv .InnerContainer
+{
+    padding: 5px;
+}
+.PropertiesBox .AreaDiv .InnerContainer .ListDiv
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    width: 100%;
+    padding: 5px;
+    padding-bottom: 5px;
+}
+.PropertiesBox .AreaDiv .InnerContainer .ListDiv .ListActionsDiv
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    margin-bottom: 10px;
+}
+.PropertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    width: 100%;
+    border: 1px solid #E6E6E6;
+    background-color: #EFEFEF;
+    text-align: left;
+    padding: 8px;
+    margin-top: 2px;
+    cursor: default;
+}
+.PropertiesBox .AreaDiv .InnerContainer .ListDiv .Selected
+{
+    background-color: #FFEDA4;
+    border: 1px solid #FFDB48;
+}
+.PropertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement:hover
+{
+    background-color: #FFEDA4;
+    border: 1px solid #FFDB48;
+}
+.PropertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement .IconButton-Simple
+{
+    float: right;
+}
+.PropertiesBox .AreaDiv .InnerContainer .DetailsDiv
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    clear: both;
+    float: left;
+    border-top: 1px solid #DDDDDD;
+    padding: 5px;
+    overflow: auto;
+    background-color: #fff7d7;
+}
+.PropertiesBox .AreaDiv .InnerContainer .DetailsDiv .CompositeList
+{
+    width: 100%;
+}
+
+/*MainViewTabs*/
+.MainViewTabs
+{
+    width: 100%;
+}
+.MainViewTabs .ui-tabs-nav
+{
+    list-style: none;
+    position: relative;
+    margin-top: -41px;
+    float: right;
+    margin-right: 1px;
+    padding-top: 5px;
+}
+.MainViewTabs .ui-tabs-nav li
+{
+    position: relative;
+    float: left;
+    cursor: pointer;
+    border: 1px solid #676767;
+    height: 24px;
+    margin-left: 3px;
+    border: 1px solid #676767;
+    margin-top: -3px;
+    background: #4B5254;
+}
+.MainViewTabs .ui-tabs-nav li a
+{
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: white;
+    display: block;
+    height: 20px;
+    text-align: right;
+    text-decoration: none;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+    padding-bottom: 2px;
+}
+.MainViewTabs .ui-tabs-nav li a span
+{
+    display: block;
+    width: 100%;
+}
+.MainViewTabs .ui-tabs-nav li.ui-tabs-active, .MainViewTabs .ui-tabs-nav li.ui-tabs-active:hover
+{
+    cursor: default !important;
+    background: #A68500;
+    border: 1px solid #E1B500;
+}
+.MainViewTabs .ui-tabs-nav li.ui-tabs-active a, .MainViewTabs .ui-tabs-nav li.ui-tabs-active:hover a
+{
+}
+.MainViewTabs .ui-tabs-nav li:hover
+{
+    background: #A68500;
+    border: 1px solid #E1B500;
+}
+.MainViewTabs .ui-tabs-nav li:hover a
+{
+}
+.MainViewTabs .ui-tabs-panel
+{
+    min-height: 350px;
+    display: block;
+}
+.MainViewTabs .ui-tabs-hide
+{
+    display: none !important;
+}
+
+/*Overriden stuff*/
+.OuterLowerMenuArea .InnerLowerMenuArea .MenuItemSeparator
+{
+    float: left;
+    color: #E8E9EA;
+    font-size: 17px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    height: 20px;
+    text-align: center;
+    width: 33px;
+    padding-top: 6px;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea .SubMenuSpecialBar
+{
+    height: 20px;
+    float: left;
+    width: 70%;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea .SubMenuSpecialBar .Textbox
+{
+    background-color: transparent;
+    float: left;
+    width: 250px;
+    padding-left: 9px !important;
+    height: 17px !important;
+    margin-top: 1px;
+    border: none;
+    font-size: 14px;
+    color: #E8E9EA;
+    font-family: Arial;
+    letter-spacing: 2.3px;
+    border-right: 1px solid #707070;
+    border-left: 1px solid #707070;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea .SubMenuSpecialBar .Textbox:focus
+{
+    background-color: white;
+    color: Black;
+}
+.OuterLowerMenuArea .InnerLowerMenuArea .SubMenuSpecialBar .Button-Toolbar
+{
+    border-right: 1px solid #707070;
+    padding: 5px 12px 0 12px;
+    cursor: pointer;
+    float: left;
+    height: 23px;
+    vertical-align: middle;
+}
+.Button-Toolbar:hover
+{
+    background: #4B5254;
+}
+
+.Button-Toolbar span
+{
+    display: block;
+    margin-top: 3px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #E8E9EA;
+    float: right;
+}
+.Button-Toolbar img
+{
+    float: left;
+    margin-top: -2px;
+    margin-right: 3px;
+    vertical-align: middle;
+}
+/*------------------------------------------------------------------------------*/
+/*ModelEditor-------------------------------------------------------------------*/
+
+/*ToolBox*/
+#ToolBox
+{
+    float: left;
+    margin-top: 30px;
+    width: 185px;
+}
+
+/*PropertiesBox*/
+#PropertiesBox
+{
+    float: right;
+    margin-top: 30px;
+    width: 300px;
+}
+
+/*ModelDiagramBox*/
+#ModelDiagramBox
+{
+    float: right;
+    margin-top: 30px;
+    margin-left: 25px;
+    margin-right: 29px;
+    width: 80%;
+}
+#ModelDiagramBox #SVGCanvasWrapper
+{
+    overflow: scroll;
+    width: 100%;
+    height: 700px;
+}
+#ModelDiagramBox #SVGCanvasWrapper #SVGCanvas
+{
+    width: 6500px;
+    height: 4500px;
+    background-color: White;
+}
+.Inputbox
+{
+    border: 1px solid #E6E6E6;
+    font-size: 11px;
+    text-align: center;
+}
+
+/*ExplorerBox*/
+#ModelExplorerBox
+{
+    float: left;
+    margin-top: 30px;
+    width: 185px;
+    height: 414px;
+    clear: left;
+}
+#ModelExplorerBox .TreeArea
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: #F7F7F7;
+    padding: 5px 0px 5px 2px;
+    height: 100%;
+    overflow: auto;
+}
+/*------------------------------------------------------------------------------*/
+/*UITemplateEditor--------------------------------------------------------------*/
+#UITemplateToolBox
+{
+    float: left;
+    margin-top: 30px;
+    width: 185px;
+}
+#UITemplateToolBox .BoxContent
+{
+    padding-top: 12px;
+}
+#UITemplateCodeBox
+{
+    float: right;
+    margin-top: 30px;
+    margin-left: 25px;
+    margin-right: 29px;
+    width: 80%;
+}
+#UITemplatePropertiesBox
+{
+    float: right;
+    margin-top: 30px;
+    width: 300px;
+}
+
+#UITemplateCodeBox .CodeMirror
+{
+    width: 100%;
+    border: 1px solid #E6E6E6;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#UITemplateCodeBox .CodeMirror-scroll
+{
+    height: 670px;
+}
+
+/*Visual view - iframe*/
+#VisualViewIframe
+{
+    min-height: 668px;
+    border: none;
+    width: 100%;
+    
+    /*zoom: 0.75;
+    -moz-transform: scale(0.75);
+    -moz-transform-origin: 0 0;
+    -o-transform: scale(0.75);
+    -o-transform-origin: 0 0;
+    -webkit-transform: scale(0.75);
+    -webkit-transform-origin: 0 0;*/
+}
+
+/*Hide divs*/
+#HideToolboxDiv
+{
+    float: left;
+    width: 100%;
+    height: 400px;
+    margin-top: -350px;
+    background: #e8e8dd url(themes/base/images/layout/content-bg.png) repeat-x left top;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+    display: none;
+}
+#HidePropertiesboxDiv
+{
+    float: left;
+    width: 100%;
+    height: 100px;
+    margin-top: -55px;
+    background: #e8e8dd url(themes/base/images/layout/content-bg.png) repeat-x left top;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+}
+/*------------------------------------------------------------------------------*/
+/*ConfigurationEditor-----------------------------------------------------------*/
+
+/*InteractiveViewBox*/
+#InteractiveViewBox
+{
+    float: left;
+    margin-top: 12px;
+    width: 100%;
+}
+#InteractiveViewBox #InnerViewArea
+{
+    min-height: 670px;
+    padding: 15px;
+}
+#InteractiveViewBox #InnerViewArea #InnerIframe
+{
+    min-height: 670px;
+    border: none;
+    width: 100%; 
+}
+
+
+/*Old standard view*/
+#StandardViewBox .Entry
+{
+    float: left;
+    clear: both;
+    padding-top: 15px;
+    background: url(themes/base/images/Controls/featureSelectionConnector-verticalline.png) repeat-y 75px -20px;
+}
+#StandardViewBox .Entry > .Connector
+{
+    width: 130px;
+    height: 30px;
+    float: left;
+    background: url(themes/base/images/Controls/featureSelectionConnector-standard.png) no-repeat 75px -23px;
+}
+#StandardViewBox .Entry[last]
+{
+    background: url(themes/base/images/Controls/featureSelectionConnector-last.png) no-repeat 75px 0;
+}
+#StandardViewBox .Entry[last] > .Connector
+{
+    background: none;
+}
+#StandardViewBox .Entry[root]
+{
+    background: none;
+}
+#StandardViewBox .Entry[root] > .Connector
+{
+    display: none;
+}
+
+/*FeatureControl*/
+#StandardViewBox .Entry > .FeatureControl
+{
+    float: right;
+}
+#StandardViewBox .Entry > .FeatureControl .InnerFeatureArea
+{
+    float: left;
+    clear: both;
+    border: solid 1px #CECECE;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: 180px;
+    background: #E1E9FF;
+    cursor: default;
+}
+#StandardViewBox .Entry > .FeatureControl .InnerFeatureArea:hover
+{
+    background: #D7E1FF !important;
+}
+#StandardViewBox .Entry > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    width: 16px;
+    height: 16px;
+    margin-top: 8px;
+    padding: 0;
+    float: right;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea
+{
+    float: left;
+    clear: both;
+    border: solid 1px #D7D7D7;
+    border-top: none;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: 180px;
+    cursor: default;
+    background: #FFFFD5;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute
+{
+    line-height: 36px;
+    height: 36px;
+    float: left;
+    clear: both;
+    font-size: 9px;
+    font-family: Arial;
+    letter-spacing: 0.9px;
+    color: Gray;
+    width: 100%;
+    border-bottom: 1px solid #EEEEEE;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute:last-child
+{
+    border-bottom: none;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute .Textbox
+{
+    width: 90px;
+    height: 10px;
+    margin-top: 7px;
+    font-size: 10px;
+    font-family: Arial;
+    letter-spacing: 0.9px;
+    float: right;
+    border: 1px solid #D7D7D7;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute .InnerCheckbox
+{
+    margin-top: 7px;
+    float: right;
+}
+#StandardViewBox .Entry > .FeatureControl > .AttributesArea .Attribute .Textbox[disabled]
+{
+    margin-top: 8px;
+    border: none;
+    background: transparent;
+    color: Black !important;
+}
+
+#StandardViewBox .Entry .FeatureControl .HeaderDiv
+{
+}
+#StandardViewBox .Entry .FeatureControl .HeaderDiv .NameLabel
+{
+    line-height: 32px;
+    height: 32px;
+    float: left;
+    font-size: 12px;
+    font-family: Arial;
+    letter-spacing: 1.3px;
+}
+#StandardViewBox .Entry .FeatureControl .ChildFeaturesArea
+{
+    float: left;
+    width: auto;
+    clear: both;
+}
+
+
+/*GroupControl*/
+#StandardViewBox .Entry > .GroupControl
+{
+    float: right;
+    border: 5px solid #EEEEEE;
+    padding: 5px;
+    padding-top: 0px;
+    background: white;
+}
+#StandardViewBox .Entry > .GroupControl > .ChildFeaturesArea > .Entry > .Connector
+{
+    display: none;
+}
+#StandardViewBox .Entry > .GroupControl > .ChildFeaturesArea > .Entry
+{
+    background: none;
+    padding-top: 5px;
+}
+
+/*Selected*/
+#StandardViewBox .Entry[featureSelectionState='selected'] > .FeatureControl > .InnerFeatureArea
+{
+    border: 1px solid #909090;
+    background: #CEDBFF;
+}
+#StandardViewBox .Entry[featureSelectionState='selected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-selected.png) no-repeat center center;
+}
+#StandardViewBox .Entry[featureSelectionState='selected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel
+{
+    color: black;
+}
+/*Unselected*/
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .InnerFeatureArea
+{
+    background: #F4F4F4;
+    border: 1px solid #D7D7D7;
+}
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-unselected.png) no-repeat center center;
+}
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel
+{
+    color: #808080;
+}
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .AttributesArea
+{
+    display: none;
+}
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl > .AttributesArea .Attribute
+{
+    display: none;
+}
+#StandardViewBox .Entry[featureSelectionState='unselected'] > .FeatureControl .ChildFeaturesArea
+{
+    /*display:none;*/
+}
+/*Deselected*/
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea
+{
+    background: #FFE1D7;
+    border: 1px solid #D7D7D7;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-deselected.png) no-repeat center center;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel
+{
+    color: #808080;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .AttributesArea
+{
+    display: none;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl > .AttributesArea .Attribute
+{
+    display: none;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'] > .FeatureControl .ChildFeaturesArea
+{
+    /*display:none;*/
+}
+
+/*Selected-Disabled*/
+#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea
+{
+    background: #EAF0FF;
+    border: solid 1px #D7D7D7 !important;
+}
+#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea:hover
+{
+    background: #EAF0FF !important;
+    border: solid 1px #CECECE !important;
+}
+#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-selected-disabled.png) no-repeat center center;
+}
+#StandardViewBox .Entry[featureSelectionState='selected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel
+{
+    color: black;
+}
+
+/*Deselected-Disabled*/
+#StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea
+{
+    background: #FEF0EB;
+    border: solid 1px #D7D7D7 !important;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea:hover
+{
+    background: #FEF0EB !important;
+    border: solid 1px #CECECE !important;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .Checkbox
+{
+    background: url(themes/base/images/Controls/check-deselected-disabled.png) no-repeat center center;
+}
+#StandardViewBox .Entry[featureSelectionState='deselected'][isdisabled] > .FeatureControl > .InnerFeatureArea > .HeaderDiv .NameLabel
+{
+    color: black;
+}
+/*------------------------------------------------------------------------------*/
+/***********************************************************************************************/
+
+
