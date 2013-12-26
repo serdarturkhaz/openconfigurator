@@ -1,0 +1,840 @@
+﻿/*Templates and layout**************************************************************************/
+body
+{
+    background: #F8F8F8;
+    font-family: Arial;
+    margin: 0;
+    padding: 0;
+    -ms-scrollbar-face-color: #F4F4F4;
+    -ms-scrollbar-shadow-color: #F4F4F4;
+}
+
+#frame
+{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+#frame #headerArea #topMenuBar
+{
+    width: 100%;
+    height: 40px;
+    background: #62605E;
+}
+#frame #headerArea #topMenuBar #logo
+{
+    float: left;
+    margin-top: 1px;
+    padding-left: 14px;
+    width: 188px;
+    height: 37px;
+    background: url(images/layout/logo2.png) no-repeat center top;
+}
+#frame #headerArea #topMenuBar #topMenu
+{
+    width: 300px;
+    float: left;
+    margin-top: 4px;
+}
+#frame #bodyArea
+{
+    width: 100%;
+    min-height: 700px;
+}
+
+#frame #bodyArea #sidePanel
+{
+    float: left;
+    padding: 10px;
+    padding-top:15px;
+    width: 180px;
+    height: 900px;
+    background: #E9E9E9;
+    border-right: solid 1px #E1E1E1;
+    overflow-y: scroll;
+    direction: rtl;
+    
+    -ms-scrollbar-base-color: #e1e1e1;
+    -ms-scrollbar-track-color: #e1e1e1;
+    -ms-scrollbar-darkshadow-color: #e1e1e1;
+    -ms-scrollbar-face-color: #D2D2D2;
+    -ms-scrollbar-shadow-color: #e1e1e1;
+    border-right-color: #DFDFDF;
+}
+#frame #bodyArea #mainPanel
+{
+    float: right;
+}
+/***********************************************************************************************/
+/*High level components ************************************************************************/
+
+/*Toolbar*/
+#toolBar
+{
+    height: 28px;
+    width: 100%;
+    float: left;
+    clear: both;
+    margin-bottom: 11px;
+    margin-top: 15px;
+    margin-left:20px;
+}
+#toolBar .toolBar-item
+{
+    width: 22px;
+    height: 22px;
+    float: left;
+    padding: 5px;
+    border: solid 1px transparent;
+    cursor: pointer;
+    background: #EFEFEF;
+    border-radius: 6px;
+    margin-left: 3px;
+}
+#toolBar .toolBar-item:hover
+{
+    background: #BCEA51;
+}
+#toolBar #leftItemsArea
+{
+    float: left;
+}
+#toolBar #rightItemsArea
+{
+    float: right;
+}
+
+/*Diagram box*/
+#modelDiagramBox
+{
+    height: 830px;
+    float: left;
+    margin-left: 20px;
+}
+#modelDiagramBox .boxContent
+{
+    overflow: scroll;
+}
+#modelDiagramBox #SVGCanvasWrapper
+{
+    width: 100%;
+    height: 100%;
+}
+#modelDiagramBox #SVGCanvasWrapper #SVGCanvas
+{
+    width: 2500px;
+    height: 2500px;
+}
+
+/*Properties box*/
+#propertiesBox
+{
+    width: 242px;
+    float: right;
+    margin-right: 30px;
+}
+#propertiesBox  .boxHeader
+{
+    /*border:solid 1px #bcea51;
+    border-bottom:none;*/
+}
+#propertiesBox  .boxContent
+{
+    /*border:solid 1px #bcea51;
+    border-top:none;*/
+}
+#propertiesBox table
+{
+    width: 100%;
+}
+#propertiesBox table tbody td
+{
+    vertical-align: top;
+    padding-bottom: 8px;
+}
+#propertiesBox table tbody td .label-Small
+{
+    display: block;
+    float: left;
+    white-space: nowrap;
+}
+#propertiesBox .Textbox, #propertiesBox .Dropdown, #propertiesBox .Textarea
+{
+    width: 200px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#propertiesBox .Textarea
+{
+    height: auto;
+    overflow: hidden;
+    min-height: 100px;
+}
+#propertiesBox .AreaDiv
+{
+}
+#propertiesBox .AreaDiv .InnerContainer
+{
+    padding: 5px;
+}
+#propertiesBox .AreaDiv .InnerContainer .ListDiv
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    width: 100%;
+    padding: 5px;
+    padding-bottom: 5px;
+}
+#propertiesBox .AreaDiv .InnerContainer .ListDiv .ListActionsDiv
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    margin-bottom: 10px;
+}
+#propertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    width: 100%;
+    border: 1px solid #e1e9ff;
+    background-color: #EAEFFF;
+    text-align: left;
+    padding: 3px 8px 3px 8px;
+    margin-top: 2px;
+    cursor: default;
+}
+#propertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement:hover
+{
+    background-color: #ffeda6;
+    border: 1px solid #B1B1B1;
+}
+#propertiesBox .AreaDiv .InnerContainer .ListDiv .Selected
+{
+    background-color: #ffeda6;
+    border: 1px solid #B1B1B1;
+}
+#propertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement .iconButton-Simple
+{
+    float: right;
+}
+#propertiesBox .AreaDiv .InnerContainer .DetailsDiv
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    clear: both;
+    float: left;
+    padding: 5px;
+    overflow: auto;
+    background-color: #FFF9DD;
+    border-top: solid 1px #B1B1B1;
+    margin-top: 10px;
+}
+#propertiesBox .DetailsDiv .Textbox, #propertiesBox .DetailsDiv .Dropdown, #propertiesBox .DetailsDiv .Textarea
+{
+    width: 185px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#propertiesBox .AreaDiv .InnerContainer .DetailsDiv .CompositeList
+{
+    width: 100%;
+}
+
+/*RoundedBox*/
+.roundedBox
+{
+}
+.roundedBox .boxHeader
+{
+    width: 100%;
+    height: 25px;
+    border-radius: 4px 4px 0 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 2px 5px 5px 10px;
+    background: white;
+    border: solid 1px #F3F3F3;
+    border-bottom: none;
+}
+.roundedBox .boxContent
+{
+    border-radius: 0 0 4px 4px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    background: white;
+    padding: 10px;
+    padding-bottom: 5px;
+    border: solid 1px #F3F3F3;
+    border-top: none;
+}
+.roundedBox .boxBottomActions
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    height: 50px;
+    background: white;
+    padding: 10px;
+}
+.roundedBox .boxFooter
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: url(images/layout/roundedbox-footer-right.png) no-repeat right top;
+    width: 100%;
+    height: 6px;
+    padding-right: 20px;
+}
+.roundedBox .boxInnerFooter
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    background: url(images/layout/roundedbox-footer-left.png) no-repeat left top;
+    width: 100%;
+    height: 6px;
+}
+/***********************************************************************************************/
+/*Controls**************************************************************************************/
+.headerLabel
+{
+    font-size: 11px;
+    color: black;
+    letter-spacing: 1.2px;
+    font-weight: bold;
+}
+.label-Small
+{
+    font-size: 11px;
+    color: #696969;
+}
+.Label
+{
+    font-size: 12px;
+    color: #696969;
+}
+.Textbox
+{
+    height: 25px;
+}
+.Textbox[disabled]
+{
+    background: #F5F5F5;
+}
+.Textbox, .Textarea
+{
+    border: 1px solid #E0E0E0;
+    padding: 3px;
+    font-size: 12px;
+}
+.Textbox:focus, .Textarea:focus
+{
+    border: 1px solid #9B9B9B;
+}
+.Dropdown
+{
+    border: 1px solid #E0E0E0;
+    font-size: 12px;
+    height: 25px;
+}
+.Button-Thin
+{
+    background-color: #EEEEEE;
+    border: 1px solid #D8D8D8;
+    padding: 3px 8px 3px 8px;
+    cursor: pointer;
+    height: 20px;
+    min-width: 80px;
+}
+.Button-Thin:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+.Button-Thin span
+{
+    display: block;
+    margin-top: 4px;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #3a4043;
+}
+.Button-Thin img
+{
+    float: right;
+    margin-top: 2px;
+}
+
+.iconButton-Simple
+{
+    border: 1px solid transparent;
+    padding: 2px;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+}
+.iconButton-Simple:hover
+{
+    background: #FFCC00;
+    border: 1px solid #E1B500;
+}
+.iconButton-Simple img
+{
+    float: left;
+    clear: both;
+}
+
+/*Menu*/
+.simpleMenu
+{
+    float: right;
+    height: 28px;
+    list-style-type: none;
+    margin: 0;
+    margin-bottom: 2px;
+    padding: 0;
+}
+.simpleMenu li
+{
+    float: left;
+    position: relative;
+}
+.simpleMenu li.rootMenuItem a
+{
+    display: block;
+    font-family: Arial;
+    letter-spacing: 2.8px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 8px 10px 8px 10px;
+    border: solid 1px transparent;
+    cursor: default;
+    color: #EBEBEB;
+    text-decoration: none;
+}
+.simpleMenu li a:hover, .simpleMenu li a.itemActive
+{
+    color: #cde753;
+    background-color: #464646;
+}
+.simpleMenu li ul.submenu
+{
+    z-index: 999;
+    position: absolute;
+    top: 31px;
+    left: 0;
+    width: 120px;
+    background: #464646;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border: solid 1px #3a4144;
+}
+.simpleMenu li ul.submenu a:hover
+{
+    background: black;
+}
+.simpleMenu li.childMenuItem
+{
+    clear: both;
+    width: 100%;
+    list-style-image: url(data:0);
+    float: left;
+}
+.simpleMenu li.childMenuItem a
+{
+    height: 15px;
+    padding: 5px 5px 5px 12px;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+}
+
+/*PinesNotify*/
+.ui-pnotify
+{
+    top: 18px;
+    right: 18px;
+    position: absolute;
+    height: auto;
+    border: 1px solid #ffe784;
+    background-color: #fff7d7; /* Ensure that the notices are on top of everything else. */
+    z-index: 9999;
+}
+html > body .ui-pnotify
+{
+    position: fixed;
+}
+.ui-pnotify .ui-pnotify-shadow
+{
+    margin: 0;
+    position: absolute;
+    top: .1em;
+    left: .1em;
+    bottom: -.2em;
+    right: -.2em;
+    z-index: -1;
+}
+.ui-pnotify-container
+{
+    background-position: 0 0;
+    padding: 10px;
+    height: 100%;
+}
+.ui-pnotify-closer
+{
+    float: right;
+    margin-left: .2em;
+    background: solid 1px red;
+}
+.ui-pnotify-title
+{
+    display: block;
+    font-size: 1.2em;
+    float: left;
+    width: 70%;
+    margin-top: 5px;
+}
+.ui-pnotify-text
+{
+    display: block;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    color: #3a4043;
+    float: left;
+    padding: 10px;
+}
+.ui-pnotify-icon, .ui-pnotify-icon span
+{
+    display: block;
+    float: left;
+    margin-right: 5px;
+}
+.pnotifyNoticeIcon
+{
+    width: 32px;
+    height: 32px;
+    background: url(images/icons/success-notification.png) no-repeat center center;
+}
+.pnotifyErrorIcon
+{
+    width: 32px;
+    height: 32px;
+    background: url(images/icons/error-notification.png) no-repeat center center;
+}
+.ui-pnotify-history-container
+{
+    position: absolute;
+    top: 0;
+    right: 18px;
+    width: 70px;
+    border-top: none; /* Ensure that the history container is on top of the notices. */
+    z-index: 10000;
+}
+.ui-pnotify-history-container .ui-pnotify-history-header
+{
+    padding: 2px;
+}
+.ui-pnotify-history-container button
+{
+    cursor: pointer;
+    display: block;
+    width: 100%;
+}
+.ui-pnotify-history-container .ui-pnotify-history-pulldown
+{
+    display: block;
+    margin: 0 auto;
+}
+.ui-pnotify .picon
+{
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 17px;
+    height: 17px;
+}
+
+/*BlockUI*/
+div.blockMsg
+{
+    padding: 5px !important;
+    display: table-cell;
+    width: 150px !important;
+    height: 70px;
+    background-color: white;
+    border-radius: 4px;
+    border: solid 1px #EBEBEB;
+}
+div.blockMsg div.wrapperdiv
+{
+    margin-left: auto;
+    margin-right: auto;
+}
+div.blockMsg span
+{
+    display: block;
+    font-family: Arial;
+    letter-spacing: 0.8px;
+    font-size: 13px;
+    color: #3a4043;
+}
+div.blockMsg img
+{
+}
+
+/*SimpleTree*/
+.simpleTree
+{
+    background: #f7f7f7;
+}
+.simpleTree ul
+{
+    padding: 0;
+    margin: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+}
+.simpleTree ul.root
+{
+}
+.simpleTree ul.level0
+{
+    padding-left: 10px;
+}
+.simpleTree li.row
+{
+    list-style-type: none;
+}
+.simpleTree li.row .node
+{
+    width: 100%;
+    float: left;
+}
+.simpleTree li.row .node div.expander
+{
+    width: 12px;
+    height: 20px;
+    float: left;
+}
+.simpleTree li.row .node[nodeDisplayState=expanded] div.expander
+{
+    background: transparent url(images/controls/simpletree/minus.png) no-repeat center center;
+    cursor: pointer;
+}
+.simpleTree li.row .node[nodeDisplayState=collapsed] div.expander
+{
+    background: transparent url(images/controls/simpletree/plus.png) no-repeat center center;
+    cursor: pointer;
+}
+.simpleTree li.row .node .innerNode
+{
+    width: auto;
+    float: left;
+    min-height: 16px;
+    cursor: default;
+    padding: 2px 5px 2px 5px;
+    border: solid 1px transparent;
+}
+.simpleTree li.row .node .innerNode:hover
+{
+    background-color: #F5F5F5;
+}
+.simpleTree li.row .node[selected] .innerNode
+{
+    background-color: #BCEA51;
+    border: solid 1px black;
+}
+.simpleTree li.row .node .innerNode div.icon
+{
+    float: left;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    cursor: default;
+}
+.simpleTree li.row .node .innerNode div.name
+{
+    float: left;
+    margin-top: 2px;
+    margin-left: 3px;
+    vertical-align: middle;
+    display: inline-block;
+    cursor: default;
+}
+.simpleTree ul.root li.row .node .innerNode div.name
+{
+    font-family: Arial;
+    font-size: 11px;
+    color: #2F3335;
+}
+.simpleTree ul.level0 li.row .node .innerNode div.name
+{
+    font-family: Arial;
+    font-size: 10px;
+    color: #2F3335;
+    max-width: 100px;
+    overflow: hidden;
+}
+.simpleTree li.row .folder .innerNode div.icon
+{
+    background: url(images/controls/simpletree/folder-closed.png) no-repeat left top;
+}
+.simpleTree li.row .folder[nodeDisplayState=expanded] .innerNode div.icon
+{
+    background: transparent url(images/controls/simpletree/folder-open.png) no-repeat left top;
+}
+.simpleTree li.row .feature .innerNode div.icon
+{
+    background: url(images/controls/simpletree/feature.png) no-repeat left top;
+}
+.simpleTree li.row .compositionRule .innerNode div.icon
+{
+    background: url(images/controls/simpletree/elementx.png) no-repeat left top;
+}
+.simpleTree li.row .customRule .innerNode div.icon
+{
+    background: url(images/controls/simpletree/elementx.png) no-repeat left top;
+}
+.simpleTree li.row .customFunction .innerNode div.icon
+{
+    background: url(images/controls/simpletree/elementx.png) no-repeat left top;
+}
+
+/*TipTip*/
+#tiptip_holder
+{
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+}
+#tiptip_holder.tip_top
+{
+    padding-bottom: 5px;
+}
+#tiptip_holder.tip_bottom
+{
+    padding-top: 5px;
+}
+#tiptip_holder.tip_right
+{
+    padding-left: 5px;
+}
+#tiptip_holder.tip_left
+{
+    padding-right: 5px;
+}
+#tiptip_content
+{
+    font-size: 11px;
+    color: #fff;
+    text-shadow: 0 0 2px #000;
+    padding: 4px 8px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background-color: rgb(25,25,25);
+    background-color: rgba(25,25,25,0.92);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(transparent), to(#000));
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    box-shadow: 0 0 3px #555;
+    -webkit-box-shadow: 0 0 3px #555;
+    -moz-box-shadow: 0 0 3px #555;
+}
+#tiptip_arrow, #tiptip_arrow_inner
+{
+    position: absolute;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 6px;
+    height: 0;
+    width: 0;
+}
+#tiptip_holder.tip_top #tiptip_arrow
+{
+    border-top-color: #fff;
+    border-top-color: rgba(255,255,255,0.35);
+}
+#tiptip_holder.tip_bottom #tiptip_arrow
+{
+    border-bottom-color: #fff;
+    border-bottom-color: rgba(255,255,255,0.35);
+}
+#tiptip_holder.tip_right #tiptip_arrow
+{
+    border-right-color: #fff;
+    border-right-color: rgba(255,255,255,0.35);
+}
+#tiptip_holder.tip_left #tiptip_arrow
+{
+    border-left-color: #fff;
+    border-left-color: rgba(255,255,255,0.35);
+}
+#tiptip_holder.tip_top #tiptip_arrow_inner
+{
+    margin-top: -7px;
+    margin-left: -6px;
+    border-top-color: rgb(25,25,25);
+    border-top-color: rgba(25,25,25,0.92);
+}
+#tiptip_holder.tip_bottom #tiptip_arrow_inner
+{
+    margin-top: -5px;
+    margin-left: -6px;
+    border-bottom-color: rgb(25,25,25);
+    border-bottom-color: rgba(25,25,25,0.92);
+}
+#tiptip_holder.tip_right #tiptip_arrow_inner
+{
+    margin-top: -6px;
+    margin-left: -5px;
+    border-right-color: rgb(25,25,25);
+    border-right-color: rgba(25,25,25,0.92);
+}
+#tiptip_holder.tip_left #tiptip_arrow_inner
+{
+    margin-top: -6px;
+    margin-left: -7px;
+    border-left-color: rgb(25,25,25);
+    border-left-color: rgba(25,25,25,0.92);
+}
+@media screen and (-webkit-min-device-pixel-ratio:0)
+{
+    #tiptip_content
+    {
+        padding: 4px 8px 5px 8px;
+        background-color: rgba(45,45,45,0.88);
+    }
+    #tiptip_holder.tip_bottom #tiptip_arrow_inner
+    {
+        border-bottom-color: rgba(45,45,45,0.88);
+    }
+    #tiptip_holder.tip_top #tiptip_arrow_inner
+    {
+        border-top-color: rgba(20,20,20,0.92);
+    }
+}
+/***********************************************************************************************/
+
+
