@@ -32,66 +32,7 @@ $.pnotify.defaults.pnotify_opacity = 1;
 //Special objects/classes*****************************************************************************************
 
 //Events
-var Event = function () {
 
-    // Fields
-    var _handlers = [];
-
-    // Methods
-    this.AddHandler = function (handler) {
-        _handlers.push(handler);
-    }
-    this.RaiseEvent = function () { // can be called with any number of arbitrary arguments (both as an array: [arg1, arg2] or directly as: arg1,arg2)
-
-        // Variables
-        var argsArray;
-        if (arguments.length === 1 && $.isArray(arguments[0])) {
-            argsArray = arguments[0]; // passed as array ([arg1, arg2])
-        } else {
-           argsArray = Array.prototype.slice.call(arguments, 0); // passed directly (arg1,arg2)
-        }
-        var eventRaiseObj = new EventRaiseDetails();
-
-        // Call each of the handlers
-        for (var i = 0; i < _handlers.length; i++) {
-            _handlers[i].NotifyEventRaised.call(undefined, argsArray, eventRaiseObj);
-        }
-
-        // Return the eventRaiseDetails object associated with this event raise
-        return eventRaiseObj;
-    }
-}
-var EventHandler = function (func) {
-
-    // Fields
-    var _func = func;
-
-    // Methods
-    this.NotifyEventRaised = function (argsArray, eventRaiseObj) {
-
-        // Variables
-        var mergedArgs = argsArray.slice(0);
-        mergedArgs.push(eventRaiseObj);
-
-        // Call function
-        _func.apply(this, mergedArgs);
-    }
-}
-var EventRaiseDetails = function () {
-
-    // Fields
-    var _cancelled = false;
-
-    // Propertes
-    this.CancelTriggered = function () {
-        return _cancelled;
-    }
-
-    // Methods
-    this.TriggerCancel = function () {
-        _cancelled = true;
-    }
-}
 //****************************************************************************************************************
 //Helper methods/small plugins************************************************************************************
 
