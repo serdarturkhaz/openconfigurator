@@ -173,6 +173,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Application\common.js" />
+    <Content Include="Scripts\Application\coreFramework.js" />
     <Content Include="Scripts\Application\modeleditor.js" />
     <Content Include="Scripts\Frameworks\knockout-3.0.0.debug.js" />
     <Content Include="Scripts\old_modeleditor.js" />
