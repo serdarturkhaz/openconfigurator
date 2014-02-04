@@ -216,6 +216,7 @@
   <ItemGroup>
     <None Include="Content\Images\Layout\logo2.xcf" />
     <None Include="Content\Images\Layout\logo3.xcf" />
+    <Content Include="Scripts\Plugins\jquery.withinBox.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
