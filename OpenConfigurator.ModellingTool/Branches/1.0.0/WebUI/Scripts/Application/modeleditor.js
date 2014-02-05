@@ -838,6 +838,15 @@ UIControls.VisualView = function (container, dataModel) {
             _this.SelectionCleared.RaiseEvent();
         }
     }
+    function selectElementsInArea(targetBbox) {
+        for (var clientid in _visualUIElems) {
+            var elem = _visualUIElems[clientid];
+
+            if (elem.IsWithinBounds(targetBbox)) {
+                setElementSelected(elem);
+            }
+        }
+    }
 
     // Init
     this.Initialize = function () {
@@ -848,7 +857,7 @@ UIControls.VisualView = function (container, dataModel) {
         _canvas = Raphael($(_canvasContainer).children("#SVGCanvas")[0], "100%", "100%");
         _innerModeManager = new InnerModeManager(UIControls.VisualView.InnerModes, UIControls.VisualView.InnerModes.Default.Name);
         _innerModeManager.Initialize(); // setup mode manager and enter initial mode
-
+        
         // Handler for onFocus
         $(_container).bind("click", function (e) {
             _this.Focus.RaiseEvent();
@@ -919,8 +928,10 @@ UIControls.VisualView = function (container, dataModel) {
             Name: "Default",
             EnterMode: function () {
 
-                // Handlers for canvas rectangle mousedown selection
+                // Variables
                 var selectionRectangle = null, mouseDownPoint = null;
+
+                // Mousedown handler
                 $(_canvasContainer).bind("mousedown.canvas", function (e) {
                     if (e.target.nodeName === "svg" && e.ctrlKey !== true) {
                         var initialX = e.pageX - $(_canvasContainer).offset().left + 0.5;
@@ -929,14 +940,22 @@ UIControls.VisualView = function (container, dataModel) {
                         selectionRectangle = _canvas.rect(mouseDownPoint.x, mouseDownPoint.y, 0, 0, 0).attr(UIStyles.Common.SelectionRectangle.Box.attr);
                     }
                 });
+
+                // Mouseup handler
                 $(_canvasContainer).bind("mouseup.canvas", function (e) {
                     if (mouseDownPoint !== null) {
+
+                        // Clear any previously selected elements and try to select elements lying within the selectionRectangle
                         clearSelection(true);
+                        selectElementsInArea(selectionRectangle.getBBox());
+
+                        //
                         mouseDownPoint = null;
                         selectionRectangle.remove();
-
                     }
                 });
+
+                // Mousemove handler
                 $(_canvasContainer).bind("mousemove.canvas", function (e) {
                     // Mouse move
                     if (mouseDownPoint !== null) {
@@ -999,7 +1018,6 @@ UIControls.VisualView = function (container, dataModel) {
         }
     }
 }
-
 UIControls.VisualView.ElemTypes = {
     FeatureElem: "FeatureElem"
 }
@@ -1151,6 +1169,16 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     }
 
     // Public methods
+    this.IsWithinBounds = function (targetBbox) {
+
+        // Check whether the points are within the targetBbox
+        var ownBbox = _outerElement.getBBox();
+        if (Raphael.isPointInsideBBox(targetBbox, ownBbox.x, ownBbox.y) && Raphael.isPointInsideBBox(targetBbox, ownBbox.x2, ownBbox.y2)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     this.Remove = function () {
 
     }
