@@ -828,6 +828,7 @@ UIControls.VisualView = function (container, dataModel) {
             uiElem.SetSelectedState(Enums.UIElementStates.Unselected);
         }
     }
+
     function clearSelection(raiseEvents) {
         for (var i = _selectedElements.length - 1; i >= 0; i--) {
             deselectElement(_selectedElements[i]);
@@ -837,6 +838,9 @@ UIControls.VisualView = function (container, dataModel) {
         if (raiseEvents === true) {
             _this.SelectionCleared.RaiseEvent();
         }
+    }
+    function findElementsInArea(x, y, width, height) {
+
     }
 
     // Init
@@ -919,47 +923,38 @@ UIControls.VisualView = function (container, dataModel) {
             Name: "Default",
             EnterMode: function () {
 
-                // Handler for canvas click - clear selection
-                $(_canvasContainer).bind("click.canvas", function (e) {
-                    if (e.target.nodeName === "svg" && e.ctrlKey !== true) {
-                        clearSelection(true);
-                    }
-                });
-
-
-                // Handlers for canvas rectangle mousedown selection----------------------------
+                // Handlers for canvas rectangle mousedown selection
                 var selectionRectangle = null, mouseDownPoint = null;
                 $(_canvasContainer).bind("mousedown.canvas", function (e) {
-                    // Mouse down
                     if (e.target.nodeName === "svg" && e.ctrlKey !== true) {
                         var initialX = e.pageX - $(_canvasContainer).offset().left + 0.5;
                         var initialY = e.pageY - $(_canvasContainer).offset().top + 0.5;
                         mouseDownPoint = { x: initialX, y: initialY };
-                        //selectionRectangle = _canvas.rect(mouseDownPoint.x, mouseDownPoint.y, 0, 0, 0).attr(UIStyles.Common.SelectionRectangle.Box.attr);
-                        //$(_canvasContainer).triggerHandler("click.canvas");
+                        selectionRectangle = _canvas.rect(mouseDownPoint.x, mouseDownPoint.y, 0, 0, 0).attr(UIStyles.Common.SelectionRectangle.Box.attr);
                     }
                 });
                 $(_canvasContainer).bind("mouseup.canvas", function (e) {
-                    // Mouse up
-                    mouseDownPoint = null;
-                    if (selectionRectangle !== null)
+                    if (mouseDownPoint !== null) {
+                        clearSelection(true);
+                        mouseDownPoint = null;
                         selectionRectangle.remove();
-                });
-                //$(_canvasContainer).bind("mousemove.canvas", function (e) {
-                //    // Mouse move
-                //    if (mouseDownPoint !== null) {
-                //        var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
-                //        var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
-                //        var dx = screenPosX - mouseDownPoint.x;
-                //        var dy = screenPosY - mouseDownPoint.y;
 
-                //        var xOffset = (dx < 0) ? dx : 0;
-                //        var yOffset = (dy < 0) ? dy : 0;
-                //        selectionRectangle.transform("T" + xOffset + "," + yOffset);
-                //        selectionRectangle.attr({ "width": Math.abs(dx), "height": Math.abs(dy) });
-                //    }
-                //});
-                //------------------------------------------------------------------------------
+                    }
+                });
+                $(_canvasContainer).bind("mousemove.canvas", function (e) {
+                    // Mouse move
+                    if (mouseDownPoint !== null) {
+                        var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
+                        var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
+                        var dx = screenPosX - mouseDownPoint.x;
+                        var dy = screenPosY - mouseDownPoint.y;
+
+                        var xOffset = (dx < 0) ? dx : 0;
+                        var yOffset = (dy < 0) ? dy : 0;
+                        selectionRectangle.transform("T" + xOffset + "," + yOffset);
+                        selectionRectangle.attr({ "width": Math.abs(dx), "height": Math.abs(dy) });
+                    }
+                });
             },
             LeaveMode: function () {
                 $(_canvasContainer).unbind("click.canvas");
@@ -1008,7 +1003,6 @@ UIControls.VisualView = function (container, dataModel) {
         }
     }
 }
-
 UIControls.VisualView.ElemTypes = {
     FeatureElem: "FeatureElem"
 }
