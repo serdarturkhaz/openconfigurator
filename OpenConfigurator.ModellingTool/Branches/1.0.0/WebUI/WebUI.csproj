@@ -181,7 +181,6 @@
     <Content Include="Scripts\CustomPlugins\jquery.simpleMenu.js" />
     <Content Include="Scripts\CustomPlugins\jquery.simpleTree.js" />
     <Content Include="Scripts\Frameworks\jquery-1.9.1.js" />
-    <Content Include="Scripts\raphael.js" />
     <Content Include="Scripts\Plugins\jquery.autogrowtextarea.js" />
     <Content Include="Scripts\Plugins\jquery.blockUI.js" />
     <Content Include="Scripts\Plugins\jquery.guid.js" />
