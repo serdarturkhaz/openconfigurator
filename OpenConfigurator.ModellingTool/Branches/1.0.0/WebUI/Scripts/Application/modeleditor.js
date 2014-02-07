@@ -310,9 +310,10 @@ var Controller = function () {
         // Setup events and handlers
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
-        _visualView.ElementSelectToggled.AddHandler(new EventHandler(_modelExplorer.OnRelatedViewElementSelectToggled));
-        _visualView.SelectionCleared.AddHandler(new EventHandler(_modelExplorer.OnRelatedViewSelectionCleared));
-        _modelExplorer.ElementSelectToggled.AddHandler(new EventHandler(_visualView.OnRelatedViewElementSelectToggled));
+        _visualView.UIElementSelected.AddHandler(new EventHandler(_modelExplorer.OnRelatedViewUIElementSelected));
+        _visualView.UIElementDeselected.AddHandler(new EventHandler(_modelExplorer.OnRelatedViewUIElementDeselected));
+        _modelExplorer.UIElementSelected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementSelected));
+        _modelExplorer.UIElementDeselected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementDeselected));
 
         // Key handlers
         $(document).keydown(function (e) {
@@ -506,49 +507,6 @@ DataModel.BLOService = function () {
 }
 
 // UIControls
-var InnerModeManager = function (targetModesReference, initialModeName, targetChangedEvent) {
-
-    // Fields
-    var _targetModesReference = targetModesReference, _initialModeName = initialModeName;
-    var _targetChangedEvent = targetChangedEvent;
-    var _currentModeName = null;
-    var _this = this;
-
-    // Init
-    this.Initialize = function () {
-
-        // Enter the initial state
-        _currentModeName = _initialModeName;
-        var currentMode = targetModesReference[_currentModeName];
-        currentMode.EnterMode();
-    }
-
-    // Public methods
-    this.GetCurrentModeName = function () {
-        return _currentModeName;
-    }
-    this.SwitchToMode = function (newModeName) {
-
-        // Switch to the new state, as long as it is not the same
-        if (newModeName !== _currentModeName) {
-
-            // Remember the old UI state and set the new
-            var oldModeName = _currentModeName;
-            _currentModeName = newModeName;
-
-            // Leave the old state and enter the new one
-            var oldMode = _targetModesReference[oldModeName];
-            var newMode = _targetModesReference[newModeName];
-            oldMode.LeaveMode();
-            newMode.EnterMode();
-
-            // Raise event
-            if (_targetChangedEvent !== undefined && _targetChangedEvent !== null) {
-                _targetChangedEvent.RaiseEvent(oldModeName, newModeName);
-            }
-        }
-    }
-}
 var UIControls = {};
 UIControls.CommandToolbar = function (container, controller) {
 
@@ -655,49 +613,12 @@ UIControls.ModelExplorer = function (container, dataModel) {
                 selectable: true
             }
         },
-        onNodeClicked: function (node, ctrl) {
-            toggleElementSelect(node, ctrl, true);
-        }
+        onNodeClicked: onNodeClicked
     };
+    var _selectedElements = [];
     var _this = this;
 
     // Private methods
-    function setElementSelected(node) {
-        $(node).setNodeSelected();
-    }
-    function setElementUnselected(node) {
-        $(node).setNodeUnselected();
-    }
-    function clearSelection(raiseEvents) {
-        $(_tree).deselectAll();
-
-        //Raise events
-        if (raiseEvents == true) {
-            _this.SelectionCleared.RaiseEvent();
-        }
-    }
-    function toggleElementSelect(node, ctrl, raiseEvents) {
-        if (ctrl !== true) {
-            clearSelection();
-        }
-
-        // Select and remember the state
-        var newState = null;
-        var isSelected = $(node).isNodeSelected();
-        if (isSelected == true) {
-            $(node).setNodeUnselected();
-            newState = Enums.UIElementStates.Unselected;
-        } else {
-            $(node).setNodeSelected();
-            newState = Enums.UIElementStates.Selected;
-        }
-
-        // Raise events
-        if (raiseEvents == true) {
-            var clientID = $(node).getNodeDataID();
-            _this.ElementSelectToggled.RaiseEvent([clientID, ctrl, newState]);
-        }
-    }
     function addElement(clo, nodeType) {
 
         // Create a new element 
@@ -720,6 +641,36 @@ UIControls.ModelExplorer = function (container, dataModel) {
         //
         return newNode;
     }
+    function selectElement(node, raiseEvents) {
+
+        // Set the node to be selected
+        $(node).setNodeSelected();
+        _selectedElements.push(node);
+
+        // Raise events
+        if (raiseEvents === true) {
+            var clientid = $(node).getNodeDataID();
+            _this.UIElementSelected.RaiseEvent(clientid);
+        }
+    }
+    function deselectElement(node, raiseEvents) {
+
+        // Deselect the node and remove it from the collection
+        var index = $(_selectedElements).index(node);
+        _selectedElements.splice(index, 1);
+        $(node).setNodeUnselected();
+
+        // Raise events
+        if (raiseEvents === true) {
+            var clientid = $(node).getNodeDataID();
+            _this.UIElementDeselected.RaiseEvent(clientid);
+        }
+    }
+    function clearSelection() {
+        for (var i = _selectedElements.length - 1; i >= 0; i--) {
+            deselectElement(_selectedElements[i], true);
+        }
+    }
 
     // Init
     this.Initialize = function () {
@@ -734,8 +685,9 @@ UIControls.ModelExplorer = function (container, dataModel) {
     }
 
     // Events
-    this.ElementSelectToggled = new Event();
     this.Focus = new Event();
+    this.UIElementSelected = new Event();
+    this.UIElementDeselected = new Event();
 
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
@@ -744,15 +696,32 @@ UIControls.ModelExplorer = function (container, dataModel) {
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
         modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCompositionRuleAdded));
     }
-    this.OnRelatedViewElementSelectToggled = function (clientid, ctrl, newState) {
+    this.OnRelatedViewUIElementSelected = function (clientid) {
         var node = $(_tree).getNode(clientid);
         if (node != null) {
-            toggleElementSelect(node, ctrl);
+            selectElement(node);
         }
     }
-    this.OnRelatedViewSelectionCleared = function () {
-        clearSelection();
+    this.OnRelatedViewUIElementDeselected = function (clientid) {
+        var node = $(_tree).getNode(clientid);
+        if (node != null) {
+            deselectElement(node);
+        }
     }
+    function onNodeClicked(node, ctrlKey) {
+
+        // If control key isnt used, clear out any currently selected elements
+        if (ctrlKey !== true) {
+            clearSelection();
+        }
+
+        // Select or deselect the uiElem
+        if ($(node).isNodeSelected() === true) {
+            deselectElement(node, true);
+        } else {
+            selectElement(node, true);
+        }
+    };
     var modelHandlers = {
         onFeatureAdded: function (featureCLO) {
             addElement(featureCLO, "feature");
@@ -795,55 +764,44 @@ UIControls.VisualView = function (container, dataModel) {
             featureElemHandlers.onFeatureMoving(newFeatureElem, dx, dy);
         }));
     }
-    function toggleElementSelect(uiElem, ctrl, raiseEvents) {
+    function selectElement(uiElem, raiseEvents) {
 
-        if (ctrl !== true) {
-            clearSelection(); // if control key isnt used, clear out any currently selected elements, before selecting the new one
+        // Add it to the local collection and set its selectionState
+        _selectedElements.push(uiElem);
+        uiElem.SetSelectedState(Enums.UIElementStates.Selected);
+
+        // Raise events
+        if (raiseEvents === true) {
+            _this.UIElementSelected.RaiseEvent(uiElem.GetCLO().GetClientID());
         }
+    }
+    function deselectElement(uiElem, raiseEvents) {
 
-        // Select or deselect the uiElem
-        var newState = null;
-        if (uiElem.IsSelected() === true) { // deselect it, if it's already selected
-            deselectElement(uiElem);
-            newState = Enums.UIElementStates.Unselected;
-        } else { // select it, if its unselected
-            setElementSelected(uiElem);
-            newState = Enums.UIElementStates.Selected;
+        // Remove it from the local collection and sets its selectionState
+        if (uiElem.IsSelected() == true) {
+            var index = $(_selectedElements).index(uiElem);
+            _selectedElements.splice(index, 1);
+            uiElem.SetSelectedState(Enums.UIElementStates.Unselected);
         }
 
         // Raise events
         if (raiseEvents === true) {
-            _this.ElementSelectToggled.RaiseEvent(uiElem.GetCLO().GetClientID(), ctrl, newState);
+            _this.UIElementDeselected.RaiseEvent(uiElem.GetCLO().GetClientID());
         }
     }
-    function setElementSelected(uiElem) {
-        _selectedElements.push(uiElem); // add it to the local collection
-        uiElem.SetSelectedState(Enums.UIElementStates.Selected);
-
-    }
-    function deselectElement(uiElem) {
-        if (uiElem.IsSelected() == true) {
-            var index = $(_selectedElements).index(uiElem);
-            _selectedElements.splice(index, 1); // remove it from the local collection
-            uiElem.SetSelectedState(Enums.UIElementStates.Unselected);
-        }
-    }
-    function clearSelection(raiseEvents) {
+    function clearSelection() {
         for (var i = _selectedElements.length - 1; i >= 0; i--) {
-            deselectElement(_selectedElements[i]);
-        }
-
-        //Raise events
-        if (raiseEvents === true) {
-            _this.SelectionCleared.RaiseEvent();
+            deselectElement(_selectedElements[i], true);
         }
     }
     function selectElementsInArea(targetBbox) {
+
+        // Loop through all selected UI elements and select them if they are within the targetBox bounds
         for (var clientid in _visualUIElems) {
             var elem = _visualUIElems[clientid];
 
             if (elem.IsWithinBounds(targetBbox)) {
-                setElementSelected(elem);
+                selectElement(elem, true);
             }
         }
     }
@@ -857,7 +815,7 @@ UIControls.VisualView = function (container, dataModel) {
         _canvas = Raphael($(_canvasContainer).children("#SVGCanvas")[0], "100%", "100%");
         _innerModeManager = new InnerModeManager(UIControls.VisualView.InnerModes, UIControls.VisualView.InnerModes.Default.Name);
         _innerModeManager.Initialize(); // setup mode manager and enter initial mode
-        
+
         // Handler for onFocus
         $(_container).bind("click", function (e) {
             _this.Focus.RaiseEvent();
@@ -871,8 +829,8 @@ UIControls.VisualView = function (container, dataModel) {
 
     // Events
     this.Focus = new Event();
-    this.ElementSelectToggled = new Event();
-    this.SelectionCleared = new Event();
+    this.UIElementSelected = new Event();
+    this.UIElementDeselected = new Event();
 
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
@@ -881,12 +839,20 @@ UIControls.VisualView = function (container, dataModel) {
         _currentModelCLO = modelCLO;
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
     }
-    this.OnRelatedViewElementSelectToggled = function (clientid, ctrl, newState) {
+    this.OnRelatedViewUIElementSelected = function (clientid) {
+        
+        // Find the uiElem and sync its selectionState
         var uiElem = _visualUIElems[clientid];
         if (uiElem !== undefined) {
-            toggleElementSelect(uiElem, ctrl);
-        } else {
-            clearSelection();
+            selectElement(uiElem);
+        }
+    }
+    this.OnRelatedViewUIElementDeselected = function (clientid) {
+
+        // Find the uiElem and sync its selectionState
+        var uiElem = _visualUIElems[clientid];
+        if (uiElem !== undefined) {
+            deselectElement(uiElem);
         }
     }
     var modelHandlers = {
@@ -896,7 +862,17 @@ UIControls.VisualView = function (container, dataModel) {
     }
     var featureElemHandlers = {
         onClicked: function (uiElem, ctrlKey) {
-            toggleElementSelect(uiElem, ctrlKey, true);
+            // If control key isnt used, clear out any currently selected elements
+            if (ctrlKey !== true) {
+                clearSelection();
+            }
+
+            // Select or deselect the uiElem
+            if (uiElem.IsSelected() === true) {
+                deselectElement(uiElem, true);
+            } else {
+                selectElement(uiElem, true);
+            }
         },
         onFeatureMoveStarted: function (uiElem) {
             if (_selectedElements.length > 1) {
