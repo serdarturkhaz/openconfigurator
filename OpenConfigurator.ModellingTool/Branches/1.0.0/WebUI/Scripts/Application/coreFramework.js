@@ -167,3 +167,47 @@ var EventRaiseDetails = function () {
     }
 }
 /*#endregion*/
+
+var InnerModeManager = function (targetModesReference, initialModeName, targetChangedEvent) {
+
+    // Fields
+    var _targetModesReference = targetModesReference, _initialModeName = initialModeName;
+    var _targetChangedEvent = targetChangedEvent;
+    var _currentModeName = null;
+    var _this = this;
+
+    // Init
+    this.Initialize = function () {
+
+        // Enter the initial state
+        _currentModeName = _initialModeName;
+        var currentMode = targetModesReference[_currentModeName];
+        currentMode.EnterMode();
+    }
+
+    // Public methods
+    this.GetCurrentModeName = function () {
+        return _currentModeName;
+    }
+    this.SwitchToMode = function (newModeName) {
+
+        // Switch to the new state, as long as it is not the same
+        if (newModeName !== _currentModeName) {
+
+            // Remember the old UI state and set the new
+            var oldModeName = _currentModeName;
+            _currentModeName = newModeName;
+
+            // Leave the old state and enter the new one
+            var oldMode = _targetModesReference[oldModeName];
+            var newMode = _targetModesReference[newModeName];
+            oldMode.LeaveMode();
+            newMode.EnterMode();
+
+            // Raise event
+            if (_targetChangedEvent !== undefined && _targetChangedEvent !== null) {
+                _targetChangedEvent.RaiseEvent(oldModeName, newModeName);
+            }
+        }
+    }
+}
