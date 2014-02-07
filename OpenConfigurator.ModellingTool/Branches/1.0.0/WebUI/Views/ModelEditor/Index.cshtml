@@ -6,19 +6,20 @@
     <script type="text/javascript">
         //General functions~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         var controller = null;
-        function calcWidth() {
+        function adjustLayout() {
 
-            //Variables
-            var totalWidth = $("#bodyArea").width();
-            var sidePanelWidth = $("#sidePanel").width();
-            var propertiesBoxWidth = $("#propertiesBox").width();
-
-            //Set width for mainPanel and modelDiagramBox
-            var mainPanelWidth = totalWidth - sidePanelWidth;
-            $("#mainPanel").css("width", mainPanelWidth - 21 + "px");
-            var diagramBoxWidth = mainPanelWidth - propertiesBoxWidth - 80;
+            // Set widths for mainPanel and modelDiagramBox
+            var mainPanelWidth = $("#bodyArea").outerWidth(true) - $("#sidePanel").outerWidth(true);
+            $("#mainPanel").css("width", mainPanelWidth  + "px");
+            var diagramBoxWidth = mainPanelWidth - $("#propertiesBox").outerWidth(true) - 30; // -30 is the distance to the propertiesbox
             $("#modelDiagramBox").css("width", diagramBoxWidth + "px");
             $("#toolBar").css("width", diagramBoxWidth + "px");
+
+            // Set heights
+            var bodyAreaHeight = $(window).height() - $("#headerArea").outerHeight(true);
+            $("#bodyArea").css("height", bodyAreaHeight + "px");
+            var diagramBoxHeight = bodyAreaHeight - $("#toolBar").outerHeight(true);
+            $("#modelDiagramBox").css("height", diagramBoxHeight - 40 + "px");
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //Load~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,9 +27,9 @@
 
             // Setup page layout and simple controls
             $("#topMenu").simpleMenu();
-            calcWidth(); calcWidth();
+            adjustLayout(); adjustLayout();
             $(window).resize(function () {
-                calcWidth();
+                adjustLayout();
             });
             $("#toolBar").find(".toolBar-item").tipTip();
 

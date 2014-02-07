@@ -156,6 +156,7 @@ var ModelCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Model;
     }
+    this.Name = new ObservableField(_innerBLO, "Name");
     this.Features = new ObservableCollection();
     this.CompositionRules = new ObservableCollection();
 
@@ -198,6 +199,33 @@ var ModelCLO = function (clientID, blo) {
         }
     }
 }
+var RelationCLO = function (clientID, blo) {
+
+    // Fields
+    var _clientID = clientID, _innerBLO = blo;
+    var _parentFeatureCLO = null, _childFeatureCLO = null;
+
+    var _this = this;
+
+    // Properties
+    this.GetClientID = function () {
+        return _clientID;
+    };
+    this.GetType = function() {
+        return CLOTypes.Relation;
+    };
+    this.ParentFeature = _parentFeatureCLO;
+    this.ChildFeature = _childFeatureCLO;
+    this.Name = new ObservableField(_innerBLO, "Name");
+    this.Features = new ObservableCollection();
+    this.CompositionRules = new ObservableCollection();
+
+    // Init
+    this.Initialize = function () {
+
+    }
+}
+
 var FeatureCLO = function (clientID, blo) {
 
     // Fields
@@ -213,11 +241,10 @@ var FeatureCLO = function (clientID, blo) {
         return CLOTypes.Feature;
     }
     this.Attributes = new ObservableCollection();
-    this.Identifier = ko.observable(_innerBLO.Identifier);
-    //this.Name = ko.observable(_innerBLO.Name);
+    this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
-    this.XPos = ko.observable(_innerBLO.XPos);
-    this.YPos = ko.observable(_innerBLO.YPos);
+    this.XPos = new ObservableField(_innerBLO, "XPos");
+    this.YPos = new ObservableField(_innerBLO, "YPos");
 
     // Init
     this.Initialize = function () {
@@ -320,8 +347,11 @@ var Controller = function () {
             if (e.which == 46) { //del key
                 _this.Delete();
             }
-            $.ctrl('F', function () { //create Feature
+            $.ctrl('F', function () { // create Feature
                 _this.AddNewFeature();
+            });
+            $.ctrl('R', function () { // create Relation
+                _this.AddNewRelation();
             });
         });
 
@@ -341,6 +371,9 @@ var Controller = function () {
     }
     this.AddNewFeature = function () {
         _visualView.StartCreateFeature();
+    }
+    this.AddNewRelation = function () {
+        _visualView.StartCreateRelation();
     }
     this.AddNewCompositionRule = function () {
         var newCompRuleCLO = _dataModel.CreateNewCLO(CLOTypes.CompositionRule);
@@ -422,6 +455,16 @@ DataModel.CLOFactory = function (bloService) {
             //
             var newClientID = getNewClientID();
             var newCLO = new FeatureCLO(newClientID, blo);
+            newCLO.Initialize();
+
+            //
+            return newCLO;
+        },
+        Relation: function (blo) {
+
+            //
+            var newClientID = getNewClientID();
+            var newCLO = new RelationCLO(newClientID, blo);
             newCLO.Initialize();
 
             //
@@ -826,6 +869,9 @@ UIControls.VisualView = function (container, dataModel) {
     this.StartCreateFeature = function () {
         _innerModeManager.SwitchToMode(UIControls.VisualView.InnerModes.CreatingNewFeature.Name);
     }
+    this.StartCreateRelation = function () {
+        _innerModeManager.SwitchToMode(UIControls.VisualView.InnerModes.CreatingNewRelation.Name);
+    }
 
     // Events
     this.Focus = new Event();
@@ -991,11 +1037,22 @@ UIControls.VisualView = function (container, dataModel) {
             LeaveMode: function () {
                 $(_canvasContainer).unbind("click.createFeature");
             }
+        },
+        CreatingNewRelation: {
+            Name: "CreatingNewRelation",
+            EnterMode: function () {
+                alert("create relation !");
+                
+            },
+            LeaveMode: function () {
+                
+            }
         }
     }
 }
 UIControls.VisualView.ElemTypes = {
-    FeatureElem: "FeatureElem"
+    FeatureElem: "FeatureElem",
+    RelationElem : "RelationElem"
 }
 UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) {
 
@@ -1173,4 +1230,7 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     this.Clicked = new Event();
     this.MoveStarted = new Event();
     this.Moving = new Event();
+}
+UIControls.VisualView.RelationElem = function(relationCLO, parentCanvasInstance) {
+
 }
