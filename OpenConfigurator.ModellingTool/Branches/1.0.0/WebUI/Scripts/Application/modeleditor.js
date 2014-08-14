@@ -211,7 +211,7 @@ var RelationCLO = function (clientID, blo) {
     this.GetClientID = function () {
         return _clientID;
     };
-    this.GetType = function() {
+    this.GetType = function () {
         return CLOTypes.Relation;
     };
     this.ParentFeature = _parentFeatureCLO;
@@ -501,7 +501,7 @@ DataModel.CLOFactory = function (bloService) {
     this.GetByClientID = function (clientID) {
         return _factoryCLORegister[clientID];
     }
-    this.CreateCLOFromBLO = function (cloType, blo) {
+    this.ConvertToCLOFromBLO = function (cloType, blo) {
 
         // Create the CLO
         var newCLO = FromBLO[cloType](blo);
@@ -782,7 +782,7 @@ UIControls.VisualView = function (container, dataModel) {
     var _innerElems = {
         headerLabel: null
     };
-    var _innerModeManager = null;
+    var _innerStateManager = null;
     var _scaleModifier = 1;
     var _currentModelCLO = null;
     var _visualUIElems = {}, _selectedElements = [];
@@ -856,8 +856,8 @@ UIControls.VisualView = function (container, dataModel) {
         _canvasContainer = $(_container).find("#SVGCanvasWrapper");
         _innerElems.headerLabel = $(_container).find(".headerLabel");
         _canvas = Raphael($(_canvasContainer).children("#SVGCanvas")[0], "100%", "100%");
-        _innerModeManager = new InnerModeManager(UIControls.VisualView.InnerModes, UIControls.VisualView.InnerModes.Default.Name);
-        _innerModeManager.Initialize(); // setup mode manager and enter initial mode
+        _innerStateManager = new InnerStateManager(UIControls.VisualView.InnerStates, UIControls.VisualView.InnerStates.Default.Name);
+        _innerStateManager.Initialize(); // setup mode manager and enter initial mode
 
         // Handler for onFocus
         $(_container).bind("click", function (e) {
@@ -867,10 +867,10 @@ UIControls.VisualView = function (container, dataModel) {
 
     // Public methods
     this.StartCreateFeature = function () {
-        _innerModeManager.SwitchToMode(UIControls.VisualView.InnerModes.CreatingNewFeature.Name);
+        _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewFeature.Name);
     }
     this.StartCreateRelation = function () {
-        _innerModeManager.SwitchToMode(UIControls.VisualView.InnerModes.CreatingNewRelation.Name);
+        _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewRelation.Name);
     }
 
     // Events
@@ -886,7 +886,7 @@ UIControls.VisualView = function (container, dataModel) {
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
-        
+
         // Find the uiElem and sync its selectionState
         var uiElem = _visualUIElems[clientid];
         if (uiElem !== undefined) {
@@ -945,41 +945,24 @@ UIControls.VisualView = function (container, dataModel) {
     }
 
     // Inner modes
-    UIControls.VisualView.InnerModes = {
+    UIControls.VisualView.InnerStates = {
         Default: {
             Name: "Default",
-            EnterMode: function () {
-
+            EnterState: function () {
                 // Variables
                 var selectionRectangle = null, mouseDownPoint = null;
 
-                // Mousedown handler
+                // Handlers for selection rectangle functionality
                 $(_canvasContainer).bind("mousedown.canvas", function (e) {
-                    if (e.target.nodeName === "svg" && e.ctrlKey !== true) {
+
+                    if (e.target.nodeName === "svg") {
                         var initialX = e.pageX - $(_canvasContainer).offset().left + 0.5;
                         var initialY = e.pageY - $(_canvasContainer).offset().top + 0.5;
                         mouseDownPoint = { x: initialX, y: initialY };
                         selectionRectangle = _canvas.rect(mouseDownPoint.x, mouseDownPoint.y, 0, 0, 0).attr(UIStyles.Common.SelectionRectangle.Box.attr);
                     }
                 });
-
-                // Mouseup handler
-                $(_canvasContainer).bind("mouseup.canvas", function (e) {
-                    if (mouseDownPoint !== null) {
-
-                        // Clear any previously selected elements and try to select elements lying within the selectionRectangle
-                        clearSelection(true);
-                        selectElementsInArea(selectionRectangle.getBBox());
-
-                        //
-                        mouseDownPoint = null;
-                        selectionRectangle.remove();
-                    }
-                });
-
-                // Mousemove handler
                 $(_canvasContainer).bind("mousemove.canvas", function (e) {
-                    // Mouse move
                     if (mouseDownPoint !== null) {
                         var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5);
                         var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5);
@@ -992,8 +975,21 @@ UIControls.VisualView = function (container, dataModel) {
                         selectionRectangle.attr({ "width": Math.abs(dx), "height": Math.abs(dy) });
                     }
                 });
+                $(_canvasContainer).bind("mouseup.canvas", function (e) {
+                    if (mouseDownPoint !== null) {
+
+                        // Select elements lying within the selectionRectangle
+                        if (e.ctrlKey !== true)
+                            clearSelection(); // clear selection ONLY if ctrl is not pressed
+                        selectElementsInArea(selectionRectangle.getBBox());
+
+                        // Clear variables and remove selection rectangle
+                        mouseDownPoint = null;
+                        selectionRectangle.remove();
+                    }
+                });
             },
-            LeaveMode: function () {
+            LeaveState: function () {
                 $(_canvasContainer).unbind("click.canvas");
                 $(_canvasContainer).unbind("mousedown.canvas");
                 $(_canvasContainer).unbind("mouseup.canvas");
@@ -1002,7 +998,7 @@ UIControls.VisualView = function (container, dataModel) {
         },
         CreatingNewFeature: {
             Name: "CreatingNewFeature",
-            EnterMode: function () {
+            EnterState: function () {
 
                 // Create a wireframe
                 var boxWidth = UIStyles.Feature.General.Box.Dimensions.width * _scaleModifier;
@@ -1031,28 +1027,28 @@ UIControls.VisualView = function (container, dataModel) {
 
                     // Remove the wireframe
                     wireframe.remove();
-                    _innerModeManager.SwitchToMode(UIControls.VisualView.InnerModes.Default.Name);
+                    _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
                 });
             },
-            LeaveMode: function () {
+            LeaveState: function () {
                 $(_canvasContainer).unbind("click.createFeature");
             }
         },
         CreatingNewRelation: {
             Name: "CreatingNewRelation",
-            EnterMode: function () {
+            EnterState: function () {
                 alert("create relation !");
-                
+
             },
-            LeaveMode: function () {
-                
+            LeaveState: function () {
+
             }
         }
     }
 }
 UIControls.VisualView.ElemTypes = {
     FeatureElem: "FeatureElem",
-    RelationElem : "RelationElem"
+    RelationElem: "RelationElem"
 }
 UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) {
 
@@ -1231,6 +1227,6 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     this.MoveStarted = new Event();
     this.Moving = new Event();
 }
-UIControls.VisualView.RelationElem = function(relationCLO, parentCanvasInstance) {
+UIControls.VisualView.RelationElem = function (relationCLO, parentCanvasInstance) {
 
 }

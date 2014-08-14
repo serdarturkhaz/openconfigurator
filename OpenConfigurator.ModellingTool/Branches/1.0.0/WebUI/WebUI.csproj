@@ -177,6 +177,7 @@
     <Content Include="Scripts\Application\modeleditor.js" />
     <Content Include="Scripts\Frameworks\knockout-3.0.0.debug.js" />
     <Content Include="Scripts\Frameworks\raphael.2.1.2.js" />
+    <Content Include="Scripts\Frameworks\underscore-min.js" />
     <Content Include="Scripts\old_modeleditor.js" />
     <Content Include="Scripts\CustomPlugins\jquery.simpleMenu.js" />
     <Content Include="Scripts\CustomPlugins\jquery.simpleTree.js" />
@@ -211,7 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
-    <Folder Include="ModelFiles\" />
+    <Folder Include="FeatureModelFiles\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Images\Layout\logo2.xcf" />

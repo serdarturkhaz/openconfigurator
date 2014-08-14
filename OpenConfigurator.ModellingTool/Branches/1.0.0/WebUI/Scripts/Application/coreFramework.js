@@ -167,47 +167,48 @@ var EventRaiseDetails = function () {
     }
 }
 /*#endregion*/
-
-var InnerModeManager = function (targetModesReference, initialModeName, targetChangedEvent) {
+/*#region States*/
+var InnerStateManager = function (targetStatesReference, initialStateName, targetChangedEvent) {
 
     // Fields
-    var _targetModesReference = targetModesReference, _initialModeName = initialModeName;
+    var _targetStatesReference = targetStatesReference, _initialStateName = initialStateName;
     var _targetChangedEvent = targetChangedEvent;
-    var _currentModeName = null;
+    var _currentStateName = null;
     var _this = this;
 
     // Init
     this.Initialize = function () {
 
         // Enter the initial state
-        _currentModeName = _initialModeName;
-        var currentMode = targetModesReference[_currentModeName];
-        currentMode.EnterMode();
+        _currentStateName = _initialStateName;
+        var currentState = targetStatesReference[_currentStateName];
+        currentState.EnterState();
     }
 
     // Public methods
-    this.GetCurrentModeName = function () {
-        return _currentModeName;
+    this.GetCurrentStateName = function () {
+        return _currentStateName;
     }
-    this.SwitchToMode = function (newModeName) {
+    this.SwitchToState = function (newStateName) {
 
         // Switch to the new state, as long as it is not the same
-        if (newModeName !== _currentModeName) {
+        if (newStateName !== _currentStateName) {
 
             // Remember the old UI state and set the new
-            var oldModeName = _currentModeName;
-            _currentModeName = newModeName;
+            var oldStateName = _currentStateName;
+            _currentStateName = newStateName;
 
             // Leave the old state and enter the new one
-            var oldMode = _targetModesReference[oldModeName];
-            var newMode = _targetModesReference[newModeName];
-            oldMode.LeaveMode();
-            newMode.EnterMode();
+            var oldState = _targetStatesReference[oldStateName];
+            var newState = _targetStatesReference[newStateName];
+            oldState.LeaveState();
+            newState.EnterState();
 
             // Raise event
             if (_targetChangedEvent !== undefined && _targetChangedEvent !== null) {
-                _targetChangedEvent.RaiseEvent(oldModeName, newModeName);
+                _targetChangedEvent.RaiseEvent(oldStateName, newStateName);
             }
         }
     }
 }
+/*#endregion*/

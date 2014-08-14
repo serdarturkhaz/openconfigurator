@@ -1,25 +1,25 @@
 (function ($) {
 
-    //Global variables
+    // Global variables
     var openSubmenuIndex = false;
 
-    //JQuery constructor method
+    // JQuery constructor method
     $.fn.simpleMenu = function (opts) {
 
-        //Initialize the dropdown menu
+        // Initialize the dropdown menu
         var options = $.extend({}, $.fn.simpleMenu.defaults, opts);
         return this.each(function () {
 
-            //Variables
+            // Variables
             var dropdownElem = $(this);
             var rootMenuItems = $(dropdownElem).children("li").addClass("rootMenuItem");
             var childMenuItems = $(dropdownElem).find("li ul li").addClass("childMenuItem");
 
-            //Init properties for the dropdown menu
+            // Init properties for the dropdown menu
             $(dropdownElem).addClass("simpleMenu");
             $(rootMenuItems).children("ul").hide();
 
-            //RootMenuItems event handlers
+            // RootMenuItems event handlers
             $(rootMenuItems).each(function (index) {
                 var rootItem = rootMenuItems[index];
 
@@ -46,15 +46,14 @@
                 });
             });
 
-            //ChildMenuItems event handlers
+            // ChildMenuItems event handlers
             $(childMenuItems).bind("click", function (e) {
-                //Call handler
                 var childMenuItem = $(this);
                 options.onChildMenuItemClicked(childMenuItem, options);
                 
             });
 
-            //Page hideall click event
+            // Page hideall click event
             $('html').click(function (e) {
                 if (openSubmenuIndex !== false && !$(e.target).hasClass("childMenuItem")) {
                     hideAll(dropdownElem, options);
@@ -63,14 +62,14 @@
         });
     }
 
-    //Default settings
+    // Default settings
     $.fn.simpleMenu.defaults = {
         onChildMenuItemClicked: function (childMenuItem, opts) {
             alert($(childMenuItem).children("a").text());
         }
     };
 
-    //Private functions****************************************************************************************************************
+    // Private functions***************************************************************************************************************
     var showSubmenu = function (rootItem, itemIndex, opts) {
         var submenu = $(rootItem).children("ul");
 
