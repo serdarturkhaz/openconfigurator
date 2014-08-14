@@ -663,8 +663,8 @@ div.blockMsg img
 }
 .simpleTree li.row .node[selected] .innerNode
 {
-    background-color: #BCEA51;
-    border: solid 1px black;
+    background-color: #D5F192;
+    border: 1px solid #CECECE;
 }
 .simpleTree li.row .node .innerNode div.icon
 {
