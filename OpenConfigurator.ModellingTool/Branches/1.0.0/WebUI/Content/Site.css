@@ -95,6 +95,10 @@ body
 }
 #toolBar .toolBar-item:hover
 {
+    background: #D0F086;
+}
+#toolBar .toolBar-item-active
+{
     background: #BCEA51;
 }
 #toolBar #leftItemsArea

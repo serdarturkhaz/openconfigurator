@@ -146,6 +146,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="%40JSense.js" />
     <Content Include="Content\Images\Controls\progress.gif" />
     <Content Include="Content\Images\Controls\simpleTree\elementx.png" />
     <Content Include="Content\Images\Controls\simpleTree\feature.png" />
@@ -198,7 +199,6 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Scripts\_references.js" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\ModelEditor\Index.cshtml" />
