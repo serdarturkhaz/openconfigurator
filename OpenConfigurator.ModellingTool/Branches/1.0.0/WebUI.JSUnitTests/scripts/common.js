@@ -29,18 +29,14 @@ $.pnotify.defaults.pnotify_error_icon = "pnotifyErrorIcon";
 $.pnotify.defaults.pnotify_history = false;
 $.pnotify.defaults.pnotify_opacity = 1;
 //****************************************************************************************************************
-//Special objects/classes*****************************************************************************************
 
-//Events
-
-//****************************************************************************************************************
 //Helper methods/small plugins************************************************************************************
 
 //Key press plugin method
 var readyToPress = true;
 $.ctrl = function (key, callback, args) {
     $(document).keydown(function (e) {
-        if (e.keyCode == key.charCodeAt(0) && e.ctrlKey) {
+        if (e.keyCode === key.charCodeAt(0) && e.ctrlKey) {
             if (readyToPress) {
                 readyToPress = false;
 

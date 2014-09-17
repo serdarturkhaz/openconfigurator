@@ -204,7 +204,7 @@ var InnerStateManager = function (targetStatesReference, initialStateName, targe
             oldState.LeaveState();
             newState.EnterState();
 
-            // Raise event
+            // Raise target "changed" event, if one is provided
             if (_targetChangedEvent !== undefined && _targetChangedEvent !== null) {
                 _targetChangedEvent.RaiseEvent(oldStateName, newStateName);
             }
