@@ -344,17 +344,12 @@ var Controller = function () {
         _modelExplorer.UIElementSelected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementSelected));
         _modelExplorer.UIElementDeselected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementDeselected));
 
-        // Key handlers
+        // Global key handlers
         $(document).keydown(function (e) {
             if (e.which == 46) { //del key
                 _this.Delete();
             }
-            $.ctrl('F', function () { // create Feature
-                _this.AddNewFeature();
-            });
-            $.ctrl('R', function () { // create Relation
-                _this.AddNewRelation();
-            });
+           
         });
 
         // Focus handlers
@@ -614,7 +609,8 @@ UIControls.CommandToolbar = function (container, controller) {
 
         // Key shortcut handlers
         $(document).keydown(function(e) {
-            
+            $.ctrl('F', toolbarItemHandlers.newFeatureItemTriggered);
+            $.ctrl('R', toolbarItemHandlers.newRelationItemTriggered);
 
         });
 
@@ -626,6 +622,7 @@ UIControls.CommandToolbar = function (container, controller) {
         // Mappings from VisualView states to item buttons in command bar
         var itemToVisualViewStateMappings = {};
         itemToVisualViewStateMappings[Enums.VisualViewStateNames.CreatingNewFeature] = _innerElems.modelManipulationItems.newFeatureItem;
+        itemToVisualViewStateMappings[Enums.VisualViewStateNames.CreatingNewRelation] = _innerElems.modelManipulationItems.newRelationItem;
 
         // Handle the states
         if (newStateName === Enums.VisualViewStateNames.Default) {
@@ -637,6 +634,9 @@ UIControls.CommandToolbar = function (container, controller) {
     var toolbarItemHandlers = {
         newFeatureItemTriggered: function() {
             _controller.AddNewFeature();
+        },
+        newRelationItemTriggered: function () {
+            _controller.AddNewRelation();
         }
     };
 }
@@ -818,10 +818,14 @@ UIControls.VisualView = function (container, dataModel) {
     var _container = container, _dataModel = dataModel;
     var _canvasContainer = null, _canvas = null;
     var _innerElems = {
-        headerLabel: null
+        headerLabel: null,
+        infoMsgOverlay : null
+    };
+    var _wireframes = {
+        featureWireframe : null
     };
     var _innerStateManager = null,  _currentFeatureModelCLO = null;;
-    var _scaleModifier = 1, _featureWireframe = null;
+    var _scaleModifier = 1;
     var _visualUIElems = {}, _selectedElements = [];
     var _this = this;
 
@@ -889,9 +893,10 @@ UIControls.VisualView = function (container, dataModel) {
     // Init
     this.Initialize = function () {
 
-        // Setup
+        // Get references to dom elements
         _canvasContainer = $(_container).find("#SVGCanvasWrapper");
         _innerElems.headerLabel = $(_container).find(".headerLabel");
+        _innerElems.infoMsgOverlay = $(_container).find(".infoMsgOverlay");
         _canvas = Raphael($(_canvasContainer).children("#SVGCanvas")[0], "100%", "100%");
         _innerStateManager = new InnerStateManager(UIControls.VisualView.InnerStates, UIControls.VisualView.InnerStates.Default.Name, _this.StateChanged);
         _innerStateManager.Initialize(); // setup mode manager and enter initial mode
@@ -899,6 +904,13 @@ UIControls.VisualView = function (container, dataModel) {
         // Handler for onFocus
         $(_container).bind("click", function (e) {
             _this.Focus.RaiseEvent();
+        });
+
+        // Handler for ESC key - should always revert to default State
+        $(document).bind("keydown.escape", function (e) {
+            if (e.which == 27) { //esc key
+                _innerStateManager.SwitchToState(Enums.VisualViewStateNames.Default);
+            }
         });
     };
 
@@ -1037,16 +1049,17 @@ UIControls.VisualView = function (container, dataModel) {
     UIControls.VisualView.InnerStates[Enums.VisualViewStateNames.CreatingNewFeature] = {
         Name: "CreatingNewFeature",
         EnterState: function () {
+            _innerElems.infoMsgOverlay.html("Click to add a new feature...").show();
 
             // Create a wireframe
             var boxWidth = UIStyles.Feature.General.Box.Dimensions.width * _scaleModifier;
             var boxHeight = UIStyles.Feature.General.Box.Dimensions.height * _scaleModifier;
-            _featureWireframe = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIStyles.Feature.States.Wireframe.Box.attr);
+            _wireframes.featureWireframe = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIStyles.Feature.States.Wireframe.Box.attr);
             // Attach a mouse move handler for the wireframe
             $(_canvasContainer).bind("mousemove.moveWireframeFeature", function (e) {
                 var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2);
                 var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2);
-                _featureWireframe.attr({ x: screenPosX, y: screenPosY });
+                _wireframes.featureWireframe.attr({ x: screenPosX, y: screenPosY });
             });
             // Attach click handler to create the actual Feature when clicked
             $(_canvasContainer).bind("click.createFeature", function (e) {
@@ -1064,32 +1077,24 @@ UIControls.VisualView = function (container, dataModel) {
                 // Remove the wireframe
                 _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
             });
-
-
-            // Esc key cancels create new feature 
-            $(document).bind("keydown.escape", function (e) {
-                if (e.which == 27) { //esc key
-                    _innerStateManager.SwitchToState(Enums.VisualViewStateNames.Default);
-                }
-            });
+            
         },
         LeaveState: function () {
+            _innerElems.infoMsgOverlay.html("").hide();
 
             // Clear handlers
             $(_canvasContainer).unbind("click.createFeature");
             $(_canvasContainer).unbind("mousemove.moveWireframeFeature");
-            _featureWireframe.remove();
-            $(document).unbind("keydown.escape");
+            _wireframes.featureWireframe.remove();
         }
     };
     UIControls.VisualView.InnerStates[Enums.VisualViewStateNames.CreatingNewRelation] = {
         Name: "CreatingNewRelation",
         EnterState: function () {
-            alert("create relation !");
-
+            _innerElems.infoMsgOverlay.html("Select the parent feature for the relation...").show();
         },
         LeaveState: function () {
-
+            _innerElems.infoMsgOverlay.html("").hide();
         }
     }
 }
