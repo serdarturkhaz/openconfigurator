@@ -964,7 +964,7 @@ UIControls.VisualView = function (container, dataModel) {
             }
 
             // Select or deselect the uiElem
-            if (uiElem.IsSelected() === true) {
+            if (featureElem.IsSelected() === true) {
                 deselectElement(featureElem, true);
             } else {
                 selectElement(featureElem, true);
