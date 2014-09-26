@@ -117,6 +117,21 @@ body
     float: left;
     margin-left: 20px;
 }
+#modelDiagramBox .boxHeader .infoMsgOverlay
+{
+    height: 22px;
+    width: 240px;
+    border: solid 1px #FFFFCC;
+    background: #FFFFE6;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -13px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 11px;
+    font-family: Arial;
+    color: #CC9900;
+}
 #modelDiagramBox .boxContent
 {
     overflow: scroll;
@@ -387,7 +402,6 @@ body
     float: right;
     margin-top: 2px;
 }
-
 .iconButton-Simple
 {
     border: 1px solid transparent;
