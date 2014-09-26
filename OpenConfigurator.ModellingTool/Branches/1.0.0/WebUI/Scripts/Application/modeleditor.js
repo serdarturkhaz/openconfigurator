@@ -1075,7 +1075,7 @@ UIControls.VisualView = function (container, dataModel) {
                 newFeatureCLO.YPos(absolutePosY);
                 _dataModel.GetCurrentFeatureModelCLO().Features.Add(newFeatureCLO);
 
-                // Remove the wireframe
+                // Go back to default state
                 _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
             });
 
@@ -1096,14 +1096,28 @@ UIControls.VisualView = function (container, dataModel) {
             _innerElems.infoMsgOverlay.html("Select the parent feature for the relation...").show();
 
             // Variables
+            var parentFeatureElem, childFeatureElem;
 
-            // First step handlers (select parent feature)
+            // First step handlers (select parent feature and then child feature)--------------------------
             this.normalFeatureElemOnclick = featureElemHandlers.onClicked; // store the usual feature onclick handler
-            featureElemHandlers.onClicked = function(featureElem) {
+            featureElemHandlers.onClicked = firstStepClickHandler;
+            function firstStepClickHandler(featureElem) {
                 selectElement(featureElem, true);
-            }
 
-            // Second step handlers (show select child feature)
+                // Prepare for the second step
+                featureElemHandlers.onClicked = secondStepClickHandler;
+                _innerElems.infoMsgOverlay.html("Now select the child feature for the relation...").show();
+            }
+            //-------------------------------------------------------------------------------------------
+
+            // Second step handlers (show select child feature)-------------------------------------------
+            function secondStepClickHandler(featureElem) {
+                selectElement(featureElem, true);
+
+                // Go back to default state
+                _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+            }
+            //-------------------------------------------------------------------------------------------
         },
         LeaveState: function () {
             _innerElems.infoMsgOverlay.html("").hide();
