@@ -6,15 +6,9 @@ using System.Threading.Tasks;
 
 namespace OpenConfigurator.Core.DTOs
 {
-
     // DataObjects
-    public class Model : iDTO
+    public class FeatureModel : iDTO
     {
-        public virtual int ID
-        {
-            get;
-            set;
-        }
         public virtual string Name
         {
             get;
@@ -28,16 +22,6 @@ namespace OpenConfigurator.Core.DTOs
     }
     public class Feature : iDTO
     {
-        public virtual int ID
-        {
-            get;
-            set;
-        }
-        public virtual int ModelID
-        {
-            get;
-            set;
-        }
         public virtual string Identifier
         {
             get;
@@ -51,16 +35,6 @@ namespace OpenConfigurator.Core.DTOs
     }
     public class Attribute : iDTO
     {
-        public virtual int ID
-        {
-            get;
-            set;
-        }
-        public virtual int FeatureID
-        {
-            get;
-            set;
-        }
         public virtual string Identifier
         {
             get;
@@ -79,27 +53,17 @@ namespace OpenConfigurator.Core.DTOs
     }
     public class Relation : iDTO
     {
-        public virtual int ID
-        {
-            get;
-            set;
-        }
-        public virtual int ModelID
-        {
-            get;
-            set;
-        }
         public virtual int RelationTypeID
         {
             get;
             set;
         }
-        public virtual int ParentFeatureID
+        public virtual Feature ParentFeature
         {
             get;
             set;
         }
-        public virtual int ChildFeatureID
+        public virtual Feature ChildFeature
         {
             get;
             set;
@@ -122,17 +86,7 @@ namespace OpenConfigurator.Core.DTOs
     }
     public class GroupRelation : iDTO
     {
-        public virtual int ID
-        {
-            get;
-            set;
-        }
-        public virtual int ModelID
-        {
-            get;
-            set;
-        }
-        public virtual int GroupRelationTypeID
+        public virtual int GroupRelationType
         {
             get;
             set;
@@ -155,27 +109,17 @@ namespace OpenConfigurator.Core.DTOs
     }
     public class CompositionRule : iDTO
     {
-        public virtual int ID
-        {
-            get;
-            set;
-        }
-        public virtual int ModelID
-        {
-            get;
-            set;
-        }
         public virtual int CompositionRuleTypeID
         {
             get;
             set;
         }
-        public virtual int FirstFeatureID
+        public virtual Feature FirstFeature
         {
             get;
             set;
         }
-        public virtual int SecondFeatureID
+        public virtual Feature SecondFeatureID
         {
             get;
             set;
@@ -198,16 +142,6 @@ namespace OpenConfigurator.Core.DTOs
     }
     public class CustomRule : iDTO
     {
-        public virtual int ID
-        {
-            get;
-            set;
-        }
-        public virtual int ModelID
-        {
-            get;
-            set;
-        }
         public virtual string Identifier
         {
             get;
@@ -231,16 +165,6 @@ namespace OpenConfigurator.Core.DTOs
     }
     public class CustomFunction : iDTO
     {
-        public virtual int ID
-        {
-            get;
-            set;
-        }
-        public virtual int ModelID
-        {
-            get;
-            set;
-        }
         public virtual string Identifier
         {
             get;
@@ -263,7 +187,7 @@ namespace OpenConfigurator.Core.DTOs
         }
     }
 
-    // Interface
+    // Interfaces
     public interface iDTO
     {
 

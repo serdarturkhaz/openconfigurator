@@ -7,24 +7,28 @@ using OpenConfigurator.Core.DTOs;
 
 namespace OpenConfigurator.Core.BLOs
 {
-    public class Model : iBLO
+    // Enums
+    public enum RelationTypes
+    {
+        Mandatory,
+        Optional,
+        Cloneable
+    };
+    public enum GroupRelationTypes
+    {
+        OR,
+        XOR,
+        Cardinal
+    };
+
+    // Core BLOs
+    public class FeatureModel : iBLO
     {
         // Fields
-        protected DTOs.Model innerDTO;
+        protected DTOs.FeatureModel innerDTO;
         protected List<Feature> features;
 
         // Properties
-        public virtual int ID
-        {
-            get
-            {
-                return innerDTO.ID;
-            }
-            set
-            {
-                innerDTO.ID = value;
-            }
-        }
         public virtual string Name
         {
             get
@@ -49,11 +53,11 @@ namespace OpenConfigurator.Core.BLOs
         }
 
         // Constructors
-        public Model()
+        public FeatureModel()
         {
 
         }
-        public Model(DTOs.Model dataObj)
+        public FeatureModel(DTOs.FeatureModel dataObj)
         {
             this.innerDTO = dataObj;
         }
@@ -64,28 +68,6 @@ namespace OpenConfigurator.Core.BLOs
         protected DTOs.Feature innerDTO;
 
         // Properties
-        public virtual int ID
-        {
-            get
-            {
-                return innerDTO.ID;
-            }
-            set
-            {
-                innerDTO.ID = value;
-            }
-        }
-        public virtual int ModelID
-        {
-            get
-            {
-                return innerDTO.ModelID;
-            }
-            set
-            {
-                innerDTO.ModelID = value;
-            }
-        }
         public virtual string Identifier
         {
             get
@@ -125,60 +107,26 @@ namespace OpenConfigurator.Core.BLOs
         protected DTOs.Relation innerDTO;
 
         // Properties
-        public virtual int ID
+        public virtual RelationTypes RelationType
         {
             get
             {
-                return innerDTO.ID;
+                return (RelationTypes) Enum.Parse(typeof(RelationTypes), ((OpenConfigurator.Core.DTOs.Relation)innerDTO).RelationTypeID.ToString());
             }
             set
             {
-                innerDTO.ID = value;
+                innerDTO.RelationTypeID = (int)value;
             }
         }
-        public virtual int ModelID
+        public virtual Feature ChildFeature
         {
-            get
-            {
-                return innerDTO.ModelID;
-            }
-            set
-            {
-                innerDTO.ModelID = value;
-            }
+            get;
+            set;
         }
-        public virtual int RelationTypeID
+        public virtual Feature ParentFeature
         {
-            get
-            {
-                return innerDTO.RelationTypeID;
-            }
-            set
-            {
-                innerDTO.RelationTypeID = value;
-            }
-        }
-        public virtual int ChildFeatureID
-        {
-            get
-            {
-                return innerDTO.ChildFeatureID;
-            }
-            set
-            {
-                innerDTO.ChildFeatureID = value;
-            }
-        }
-        public virtual int ParentFeatureID
-        {
-            get
-            {
-                return innerDTO.ParentFeatureID;
-            }
-            set
-            {
-                innerDTO.ParentFeatureID = value;
-            }
+            get;
+            set;
         }
 
         // Constructors
@@ -213,94 +161,72 @@ namespace OpenConfigurator.Core.BLOs
         protected DTOs.CompositionRule innerDTO;
 
         // Properties
-        public virtual int ID
-        {
-            get
-            {
-                return innerDTO.ID;
-            }
-            set
-            {
-                innerDTO.ID = value;
-            }
-        }
-        public virtual int ModelID
-        {
-            get
-            {
-                return innerDTO.ModelID;
-            }
-            set
-            {
-                innerDTO.ModelID = value;
-            }
-        }
-        public virtual int CompositionRuleTypeID
-        {
-            get
-            {
-                return innerDTO.CompositionRuleTypeID;
-            }
-            set
-            {
-                innerDTO.CompositionRuleTypeID = value;
-            }
-        }
-        public virtual int FirstFeatureID
-        {
-            get
-            {
-                return innerDTO.FirstFeatureID;
-            }
-            set
-            {
-                innerDTO.FirstFeatureID = value;
-            }
-        }
-        public virtual int SecondFeatureID
-        {
-            get
-            {
-                return innerDTO.SecondFeatureID;
-            }
-            set
-            {
-                innerDTO.SecondFeatureID = value;
-            }
-        }
-        public virtual string Identifier
-        {
-            get
-            {
-                return innerDTO.Identifier;
-            }
-            set
-            {
-                innerDTO.Identifier = value;
-            }
-        }
-        public virtual string Name
-        {
-            get
-            {
-                return innerDTO.Name;
-            }
-            set
-            {
-                innerDTO.Name = value;
-            }
-        }
-        public virtual string Description
-        {
-            get
-            {
-                return innerDTO.Description;
-            }
-            set
-            {
-                innerDTO.Description = value;
-            }
-        }
+        //public virtual int CompositionRuleTypeID
+        //{
+        //    get
+        //    {
+        //        return innerDTO.CompositionRuleTypeID;
+        //    }
+        //    set
+        //    {
+        //        innerDTO.CompositionRuleTypeID = value;
+        //    }
+        //}
+        //public virtual int FirstFeature
+        //{
+        //    get
+        //    {
+        //        return innerDTO.FirstFeatureID;
+        //    }
+        //    set
+        //    {
+        //        innerDTO.FirstFeatureID = value;
+        //    }
+        //}
+        //public virtual int SecondFeature
+        //{
+        //    get
+        //    {
+        //        return innerDTO.SecondFeatureID;
+        //    }
+        //    set
+        //    {
+        //        innerDTO.SecondFeatureID = value;
+        //    }
+        //}
+        //public virtual string Identifier
+        //{
+        //    get
+        //    {
+        //        return innerDTO.Identifier;
+        //    }
+        //    set
+        //    {
+        //        innerDTO.Identifier = value;
+        //    }
+        //}
+        //public virtual string Name
+        //{
+        //    get
+        //    {
+        //        return innerDTO.Name;
+        //    }
+        //    set
+        //    {
+        //        innerDTO.Name = value;
+        //    }
+        //}
+        //public virtual string Description
+        //{
+        //    get
+        //    {
+        //        return innerDTO.Description;
+        //    }
+        //    set
+        //    {
+        //        innerDTO.Description = value;
+        //    }
+        //}
 
         // Constructors
         public CompositionRule()
@@ -319,28 +245,6 @@ namespace OpenConfigurator.Core.BLOs
         protected DTOs.CustomRule innerDTO;
 
         // Properties
-        public virtual int ID
-        {
-            get
-            {
-                return innerDTO.ID;
-            }
-            set
-            {
-                innerDTO.ID = value;
-            }
-        }
-        public virtual int ModelID
-        {
-            get
-            {
-                return innerDTO.ModelID;
-            }
-            set
-            {
-                innerDTO.ModelID = value;
-            }
-        }
         public virtual string Identifier
         {
             get
@@ -380,28 +284,6 @@ namespace OpenConfigurator.Core.BLOs
         protected DTOs.CustomFunction innerDTO;
 
         // Properties
-        public virtual int ID
-        {
-            get
-            {
-                return innerDTO.ID;
-            }
-            set
-            {
-                innerDTO.ID = value;
-            }
-        }
-        public virtual int ModelID
-        {
-            get
-            {
-                return innerDTO.ModelID;
-            }
-            set
-            {
-                innerDTO.ModelID = value;
-            }
-        }
         public virtual string Identifier
         {
             get
