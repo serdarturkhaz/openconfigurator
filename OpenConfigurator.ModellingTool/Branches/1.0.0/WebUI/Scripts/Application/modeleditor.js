@@ -349,7 +349,7 @@ var Controller = function () {
             if (e.which == 46) { //del key
                 _this.Delete();
             }
-           
+
         });
 
         // Focus handlers
@@ -608,7 +608,7 @@ UIControls.CommandToolbar = function (container, controller) {
         });
 
         // Key shortcut handlers
-        $(document).keydown(function(e) {
+        $(document).keydown(function (e) {
             $.ctrl('F', toolbarItemHandlers.newFeatureItemTriggered);
             $.ctrl('R', toolbarItemHandlers.newRelationItemTriggered);
 
@@ -632,7 +632,7 @@ UIControls.CommandToolbar = function (container, controller) {
         }
     }
     var toolbarItemHandlers = {
-        newFeatureItemTriggered: function() {
+        newFeatureItemTriggered: function () {
             _controller.AddNewFeature();
         },
         newRelationItemTriggered: function () {
@@ -789,7 +789,7 @@ UIControls.ModelExplorer = function (container, dataModel) {
             deselectElement(node);
         }
     }
-    function onNodeClicked (node, ctrlKey) {
+    function onNodeClicked(node, ctrlKey) {
 
         // If control key isnt used, clear out any currently selected elements
         if (ctrlKey !== true) {
@@ -819,12 +819,12 @@ UIControls.VisualView = function (container, dataModel) {
     var _canvasContainer = null, _canvas = null;
     var _innerElems = {
         headerLabel: null,
-        infoMsgOverlay : null
+        infoMsgOverlay: null
     };
     var _wireframes = {
-        featureWireframe : null
+        featureWireframe: null
     };
-    var _innerStateManager = null,  _currentFeatureModelCLO = null;;
+    var _innerStateManager = null, _currentFeatureModelCLO = null;;
     var _scaleModifier = 1;
     var _visualUIElems = {}, _selectedElements = [];
     var _this = this;
@@ -957,7 +957,7 @@ UIControls.VisualView = function (container, dataModel) {
         }
     }
     var featureElemHandlers = {
-        onClicked: function (uiElem, ctrlKey) {
+        onClicked: function (featureElem, ctrlKey) {
             // If control key isnt used, clear out any currently selected elements
             if (ctrlKey !== true) {
                 clearSelection();
@@ -965,9 +965,9 @@ UIControls.VisualView = function (container, dataModel) {
 
             // Select or deselect the uiElem
             if (uiElem.IsSelected() === true) {
-                deselectElement(uiElem, true);
+                deselectElement(featureElem, true);
             } else {
-                selectElement(uiElem, true);
+                selectElement(featureElem, true);
             }
         },
         onFeatureMoveStarted: function (uiElem) {
@@ -1049,6 +1049,7 @@ UIControls.VisualView = function (container, dataModel) {
     UIControls.VisualView.InnerStates[Enums.VisualViewStateNames.CreatingNewFeature] = {
         Name: "CreatingNewFeature",
         EnterState: function () {
+            clearSelection();
             _innerElems.infoMsgOverlay.html("Click to add a new feature...").show();
 
             // Create a wireframe
@@ -1077,7 +1078,7 @@ UIControls.VisualView = function (container, dataModel) {
                 // Remove the wireframe
                 _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
             });
-            
+
         },
         LeaveState: function () {
             _innerElems.infoMsgOverlay.html("").hide();
@@ -1091,10 +1092,25 @@ UIControls.VisualView = function (container, dataModel) {
     UIControls.VisualView.InnerStates[Enums.VisualViewStateNames.CreatingNewRelation] = {
         Name: "CreatingNewRelation",
         EnterState: function () {
+            clearSelection();
             _innerElems.infoMsgOverlay.html("Select the parent feature for the relation...").show();
+
+            // Variables
+
+            // First step handlers (select parent feature)
+            this.normalFeatureElemOnclick = featureElemHandlers.onClicked; // store the usual feature onclick handler
+            featureElemHandlers.onClicked = function(featureElem) {
+                selectElement(featureElem, true);
+            }
+
+            // Second step handlers (show select child feature)
         },
         LeaveState: function () {
             _innerElems.infoMsgOverlay.html("").hide();
+
+            // Restore the old feature onclick handler
+            featureElemHandlers.onClicked = this.normalFeatureElemOnclick;
+            delete this.normalFeatureElemOnclick;
         }
     }
 }
