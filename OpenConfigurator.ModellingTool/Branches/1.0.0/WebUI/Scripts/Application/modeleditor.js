@@ -220,9 +220,6 @@ var RelationCLO = function (clientID, blo) {
     };
     this.ParentFeature = _parentFeatureCLO;
     this.ChildFeature = _childFeatureCLO;
-    this.Name = new ObservableField(_innerBLO, "Name");
-    this.Features = new ObservableCollection();
-    this.CompositionRules = new ObservableCollection();
 
     // Init
     this.Initialize = function () {
@@ -604,9 +601,7 @@ UIControls.CommandToolbar = function (container, controller) {
         _innerElems.modelManipulationItems.newCompositionRuleItem = $(_container).find("#newCompositionRuleItem");
 
         // Set event handlers
-        $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", function () {
-            _controller.AddNewFeature();
-        });
+        $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
         $(_innerElems.modelManipulationItems.newRelationItem).bind("click", function () {
             _controller.AddNewRelation();
         });
@@ -616,6 +611,13 @@ UIControls.CommandToolbar = function (container, controller) {
         $(_innerElems.modelManipulationItems.newCompositionRuleItem).bind("click", function () {
             _controller.AddNewCompositionRule();
         });
+
+        // Key shortcut handlers
+        $(document).keydown(function(e) {
+            
+
+        });
+
     }
 
     // Event handlers
@@ -632,6 +634,11 @@ UIControls.CommandToolbar = function (container, controller) {
             addToggleEffect(itemToVisualViewStateMappings[newStateName]);
         }
     }
+    var toolbarItemHandlers = {
+        newFeatureItemTriggered: function() {
+            _controller.AddNewFeature();
+        }
+    };
 }
 UIControls.ModelExplorer = function (container, dataModel) {
 
@@ -782,7 +789,7 @@ UIControls.ModelExplorer = function (container, dataModel) {
             deselectElement(node);
         }
     }
-    var onNodeClicked = function (node, ctrlKey) {
+    function onNodeClicked (node, ctrlKey) {
 
         // If control key isnt used, clear out any currently selected elements
         if (ctrlKey !== true) {
