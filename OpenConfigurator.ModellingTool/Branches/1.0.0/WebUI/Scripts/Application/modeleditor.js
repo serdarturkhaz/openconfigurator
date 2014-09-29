@@ -1,6 +1,8 @@
 ﻿// Settings and defaults
 var Settings = {
-
+    UIOrientation: "Vertical", //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
+    DrawCurves: true,
+    ScaleModifier : 1
 }
 var UIStyles = {
     Common: {
@@ -134,6 +136,70 @@ var Enums = {
         Default: "Default",
         CreatingNewFeature: "CreatingNewFeature",
         CreatingNewRelation: "CreatingNewRelation"
+    }
+}
+var SystemDefaults = {
+    Orientations: {
+        Horizontal: {
+            name: "horizontal",
+            opposite: "vertical",
+            cardinalityDistances: {
+                groupRelation: 45,
+                relation: 30
+            },
+            arcModifiers: { rx: 6, ry: 12 },
+            arcDirection: {
+                leftToRight: {
+                    check: function (rootPoint, pointA) {
+                        if (rootPoint.x < pointA.x) {
+                            return true;
+                        }
+                    },
+                    arcSweep: 0
+                },
+                rightToLeft: {
+                    check: function (rootPoint, pointA) {
+                        if (rootPoint.x > pointA.x) {
+                            return true;
+                        }
+                    },
+                    arcSweep: 1
+                }
+            },
+            connections: [["left", "right"], ["right", "left"]],
+            curveModifiers: [{ x: -40, y: 0 }, { x: +40, y: 0 }],
+            angleIntervals: [{ min: 0, max: 45 }, { min: 136, max: 224 }, { min: 316, max: 359 }]
+        },
+        Vertical: {
+            name: "vertical",
+            opposite: "horizontal",
+            cardinalityDistances: {
+                groupRelation: 45,
+                relation: 30
+            },
+            arcModifiers: { rx: 12, ry: 6 },
+            arcDirection: {
+                upToDown: {
+                    check: function (rootPoint, pointA) {
+                        if (rootPoint.y < pointA.y) {
+                            return true;
+                        }
+                    },
+                    arcSweep: 0
+                },
+                downToUp: {
+                    check: function (rootPoint, pointA) {
+                        if (rootPoint.y > pointA.y) {
+                            return true;
+                        }
+                    },
+                    arcSweep: 1
+                }
+            },
+            connections: [["top", "bottom"], ["bottom", "top"]],
+            curveModifiers: [{ x: 0, y: -40 }, { x: 0, y: +40 }],
+            angleIntervals: [{ min: 46, max: 135 }, { min: 225, max: 315 }]
+        }
     }
 }
 
@@ -824,7 +890,6 @@ UIControls.VisualView = function (container, dataModel) {
         featureWireframe: null
     };
     var _innerStateManager = null, _currentFeatureModelCLO = null;;
-    var _scaleModifier = 1;
     var _visualUIElems = {}, _selectedElements = [];
     var _this = this;
 
@@ -846,6 +911,24 @@ UIControls.VisualView = function (container, dataModel) {
         newFeatureElem.Moving.AddHandler(new EventHandler(function (dx, dy) {
             featureElemHandlers.onFeatureMoving(newFeatureElem, dx, dy);
         }));
+    }
+    function addRelationElem(relationCLO) {
+
+        // Create a new relation
+        var newRelationElem = new UIControls.VisualView.RelationElem(relationCLO, _visualUIElems[relationCLO.ParentFeature.GetClientID()], _visualUIElems[relationCLO.ChildFeature.GetClientID()], _canvas);
+        newRelationElem.Initialize();
+        _visualUIElems[relationCLO.GetClientID()] = newRelationElem;
+
+        // Bind to it
+        //newFeatureElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
+        //    featureElemHandlers.onClicked(newFeatureElem, ctrlKey);
+        //}));
+        //newFeatureElem.MoveStarted.AddHandler(new EventHandler(function () {
+        //    featureElemHandlers.onFeatureMoveStarted(newFeatureElem);
+        //}));
+        //newFeatureElem.Moving.AddHandler(new EventHandler(function (dx, dy) {
+        //    featureElemHandlers.onFeatureMoving(newFeatureElem, dx, dy);
+        //}));
     }
     function selectElement(uiElem, raiseEvents) {
 
@@ -956,8 +1039,7 @@ UIControls.VisualView = function (container, dataModel) {
             addFeatureElem(featureCLO);
         },
         onRelationAdded: function (relationCLO) {
-            debugger;
-            //addRelationElem(relationCLO);
+            addRelationElem(relationCLO);
         }
     }
     var featureElemHandlers = {
@@ -1057,8 +1139,8 @@ UIControls.VisualView = function (container, dataModel) {
             _innerElems.infoMsgOverlay.html("Click to add a new feature...").show();
 
             // Create a wireframe
-            var boxWidth = UIStyles.Feature.General.Box.Dimensions.width * _scaleModifier;
-            var boxHeight = UIStyles.Feature.General.Box.Dimensions.height * _scaleModifier;
+            var boxWidth = UIStyles.Feature.General.Box.Dimensions.width * Settings.ScaleModifier;
+            var boxHeight = UIStyles.Feature.General.Box.Dimensions.height * Settings.ScaleModifier;
             _wireframes.featureWireframe = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIStyles.Feature.States.Wireframe.Box.attr);
             // Attach a mouse move handler for the wireframe
             $(_canvasContainer).bind("mousemove.moveWireframeFeature", function (e) {
@@ -1070,8 +1152,8 @@ UIControls.VisualView = function (container, dataModel) {
             $(_canvasContainer).bind("click.createFeature", function (e) {
 
                 // Get the position
-                var absolutePosX = (e.pageX - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2) / _scaleModifier;
-                var absolutePosY = (e.pageY - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2) / _scaleModifier;
+                var absolutePosX = (e.pageX - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2) / Settings.ScaleModifier;
+                var absolutePosY = (e.pageY - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2) / Settings.ScaleModifier;
 
                 // Create a new clientObject in the diagramDataModel
                 var newFeatureCLO = _dataModel.CreateNewCLO(CLOTypes.Feature);
@@ -1174,6 +1256,9 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     this.IsSelected = function () {
         return _currentState === Enums.UIElementStates.Selected;
     }
+    this.GetBox = function () {
+        return _innerElements.box;
+    };
 
     // Private methods
     function makeSelectable() {
@@ -1324,7 +1409,7 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     this.MoveStarted = new Event();
     this.Moving = new Event();
 }
-UIControls.VisualView.RelationElem = function (relationCLO, parentCanvasInstance) {
+UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, childFeatureElem, parentCanvasInstance) {
 
     // Fields
     var _relationCLO = relationCLO, _canvasInstance = parentCanvasInstance;
@@ -1334,8 +1419,8 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentCanvasInstance
         cardinalityElement: null,
         connection: null
     };
-    var _lowerBound = lowerBound, _upperBound = upperBound;
-    var _relationType = relationType;
+    var _lowerBound = 0, _upperBound = 0;
+    var _relationType = null;
     var _this = this;
 
     // Properties
@@ -1352,9 +1437,9 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentCanvasInstance
     // Init
     this.Initialize = function () {
 
-        //// Create a new UIConnection
-        //_innerElements.connection = new UIConnection(_thisUIRelation.GetType(), _thisUIRelation.GetSubTypeName(), parentFeature.InnerElements.box, childFeature.InnerElements.box);
-        //_innerElements.connection.Initialize();
+        // Create a new UIConnection
+        _innerElements.connection = new UIControls.VisualView.ConnectionElem(parentFeatureElem.GetBox(), childFeatureElem.GetBox(), _canvasInstance);
+        _innerElements.connection.Initialize();
 
         //// Add references
         //parentFeature.RelatedCompositeElements.push(_thisUIRelation);
@@ -1416,8 +1501,8 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentCanv
 
         //Determine the orientation
         var currentOrientation = null;
-        if (_fixedOrientation != false) {
-            currentOrientation = _fixedOrientation; //use default fixed orientation without calculating angle
+        if (Settings.UIOrientation !== false) {
+            currentOrientation = Settings.UIOrientation; //use default fixed orientation without calculating angle
         }
         else {
             var centerdx = objBcenter.x - objAcenter.x, centerdy = objBcenter.y - objAcenter.y;
@@ -1425,8 +1510,8 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentCanv
             angle = parseInt(angle.toFixed());
             if (angle < 0)
                 angle += 360;
-            for (var key in systemDefaults.orientations) {
-                var orientation = systemDefaults.orientations[key];
+            for (var key in SystemDefaults.Orientations) {
+                var orientation = SystemDefaults.Orientations[key];
                 for (var i = 0; i < orientation.angleIntervals.length; i++) {
                     if (angle >= orientation.angleIntervals[i].min && angle <= orientation.angleIntervals[i].max) {
                         currentOrientation = orientation.name;
@@ -1437,14 +1522,13 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentCanv
         }
 
         //Invert orientation if necessary
-        if (invertOrientation)
-            currentOrientation = systemDefaults.orientations[currentOrientation].opposite;
-
+        //if (invertOrientation)
+        //    currentOrientation = systemDefaults.orientations[currentOrientation].opposite;
 
         //Determine which connection points in the current orientation make the shortest path
         var distances = [], points = {};
-        for (var i = 0; i < systemDefaults.orientations[currentOrientation].connections.length; i++) {
-            var con = systemDefaults.orientations[currentOrientation].connections[i];
+        for (var i = 0; i < SystemDefaults.Orientations[currentOrientation].connections.length; i++) {
+            var con = SystemDefaults.Orientations[currentOrientation].connections[i];
             var x1 = connectionPoints.firstObject[con[0]].x, y1 = connectionPoints.firstObject[con[0]].y;
             var x2 = connectionPoints.secondObject[con[1]].x, y2 = connectionPoints.secondObject[con[1]].y;
 
@@ -1458,20 +1542,20 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentCanv
                 y1: y1,
                 x2: x2,
                 y2: y2,
-                curveModifier: systemDefaults.orientations[currentOrientation].curveModifiers[i]
+                curveModifier: SystemDefaults.Orientations[currentOrientation].curveModifiers[i]
             };
         }
         var closestConnection = points[Math.min.apply(Math, distances)];
 
         //Create path
         var path = null;
-        if (settings.diagramContext.drawCurves == true) {
+        if (Settings.DrawCurves === true) {
             path = [["M", closestConnection.x1.toFixed(1), closestConnection.y1.toFixed(1)],
             ["C",
-            closestConnection.x1 + closestConnection.curveModifier.x * _scaleModifier,
-            closestConnection.y1 + closestConnection.curveModifier.y * _scaleModifier,
-            closestConnection.x2 - closestConnection.curveModifier.x * _scaleModifier,
-            closestConnection.y2 - closestConnection.curveModifier.y * _scaleModifier,
+            closestConnection.x1 + closestConnection.curveModifier.x * Settings.ScaleModifier,
+            closestConnection.y1 + closestConnection.curveModifier.y * Settings.ScaleModifier,
+            closestConnection.x2 - closestConnection.curveModifier.x * Settings.ScaleModifier,
+            closestConnection.y2 - closestConnection.curveModifier.y * Settings.ScaleModifier,
             closestConnection.x2.toFixed(1), closestConnection.y2.toFixed(1)]];
         } else {
             path = ["M", closestConnection.x1.toFixed(3), closestConnection.y1.toFixed(3), "L", closestConnection.x2.toFixed(3), closestConnection.y2.toFixed(3)].join(","); //line
