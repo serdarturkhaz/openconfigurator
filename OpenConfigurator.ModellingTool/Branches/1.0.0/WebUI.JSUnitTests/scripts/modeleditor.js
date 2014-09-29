@@ -163,7 +163,7 @@ var FeatureModelCLO = function (clientID, blo) {
     }
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Features = new ObservableCollection();
-    this.CompositionRules = new ObservableCollection();
+    this.Relations = new ObservableCollection();
 
     // Private methods
     function getNewIdentifier(cloType, collection) {
@@ -196,40 +196,13 @@ var FeatureModelCLO = function (clientID, blo) {
             clo.Name(identity.name);
         }
 
-        //
+        // Knockout test
         if (_this.Features.GetLength() > 0) {
 
             _this.Features.GetAt(0).Name("Newname");
         }
     }
 }
-var RelationCLO = function (clientID, blo) {
-
-    // Fields
-    var _clientID = clientID, _innerBLO = blo;
-    var _parentFeatureCLO = null, _childFeatureCLO = null;
-
-    var _this = this;
-
-    // Properties
-    this.GetClientID = function () {
-        return _clientID;
-    };
-    this.GetType = function () {
-        return CLOTypes.Relation;
-    };
-    this.ParentFeature = _parentFeatureCLO;
-    this.ChildFeature = _childFeatureCLO;
-    this.Name = new ObservableField(_innerBLO, "Name");
-    this.Features = new ObservableCollection();
-    this.CompositionRules = new ObservableCollection();
-
-    // Init
-    this.Initialize = function () {
-
-    }
-}
-
 var FeatureCLO = function (clientID, blo) {
 
     // Fields
@@ -249,6 +222,29 @@ var FeatureCLO = function (clientID, blo) {
     this.Name = new ObservableField(_innerBLO, "Name");
     this.XPos = new ObservableField(_innerBLO, "XPos");
     this.YPos = new ObservableField(_innerBLO, "YPos");
+
+    // Init
+    this.Initialize = function () {
+
+    }
+}
+var RelationCLO = function (clientID, blo) {
+
+    // Fields
+    var _clientID = clientID, _innerBLO = blo;
+    var _parentFeatureCLO = null, _childFeatureCLO = null;
+
+    var _this = this;
+
+    // Properties
+    this.GetClientID = function () {
+        return _clientID;
+    };
+    this.GetType = function () {
+        return CLOTypes.Relation;
+    };
+    this.ParentFeature = _parentFeatureCLO;
+    this.ChildFeature = _childFeatureCLO;
 
     // Init
     this.Initialize = function () {
@@ -347,17 +343,12 @@ var Controller = function () {
         _modelExplorer.UIElementSelected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementSelected));
         _modelExplorer.UIElementDeselected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementDeselected));
 
-        // Key handlers
+        // Global key handlers
         $(document).keydown(function (e) {
             if (e.which == 46) { //del key
                 _this.Delete();
             }
-            $.ctrl('F', function () { // create Feature
-                _this.AddNewFeature();
-            });
-            $.ctrl('R', function () { // create Relation
-                _this.AddNewRelation();
-            });
+
         });
 
         // Focus handlers
@@ -604,9 +595,7 @@ UIControls.CommandToolbar = function (container, controller) {
         _innerElems.modelManipulationItems.newCompositionRuleItem = $(_container).find("#newCompositionRuleItem");
 
         // Set event handlers
-        $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", function () {
-            _controller.AddNewFeature();
-        });
+        $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
         $(_innerElems.modelManipulationItems.newRelationItem).bind("click", function () {
             _controller.AddNewRelation();
         });
@@ -616,6 +605,14 @@ UIControls.CommandToolbar = function (container, controller) {
         $(_innerElems.modelManipulationItems.newCompositionRuleItem).bind("click", function () {
             _controller.AddNewCompositionRule();
         });
+
+        // Key shortcut handlers
+        $(document).keydown(function (e) {
+            $.ctrl('F', toolbarItemHandlers.newFeatureItemTriggered);
+            $.ctrl('R', toolbarItemHandlers.newRelationItemTriggered);
+
+        });
+
     }
 
     // Event handlers
@@ -624,6 +621,7 @@ UIControls.CommandToolbar = function (container, controller) {
         // Mappings from VisualView states to item buttons in command bar
         var itemToVisualViewStateMappings = {};
         itemToVisualViewStateMappings[Enums.VisualViewStateNames.CreatingNewFeature] = _innerElems.modelManipulationItems.newFeatureItem;
+        itemToVisualViewStateMappings[Enums.VisualViewStateNames.CreatingNewRelation] = _innerElems.modelManipulationItems.newRelationItem;
 
         // Handle the states
         if (newStateName === Enums.VisualViewStateNames.Default) {
@@ -632,6 +630,14 @@ UIControls.CommandToolbar = function (container, controller) {
             addToggleEffect(itemToVisualViewStateMappings[newStateName]);
         }
     }
+    var toolbarItemHandlers = {
+        newFeatureItemTriggered: function () {
+            _controller.AddNewFeature();
+        },
+        newRelationItemTriggered: function () {
+            _controller.AddNewRelation();
+        }
+    };
 }
 UIControls.ModelExplorer = function (container, dataModel) {
 
@@ -768,7 +774,7 @@ UIControls.ModelExplorer = function (container, dataModel) {
 
         // Bind to it
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
-        modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCompositionRuleAdded));
+        //modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCompositionRuleAdded));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
         var node = $(_tree).getNode(clientid);
@@ -782,7 +788,7 @@ UIControls.ModelExplorer = function (container, dataModel) {
             deselectElement(node);
         }
     }
-    var onNodeClicked = function (node, ctrlKey) {
+    function onNodeClicked(node, ctrlKey) {
 
         // If control key isnt used, clear out any currently selected elements
         if (ctrlKey !== true) {
@@ -811,10 +817,14 @@ UIControls.VisualView = function (container, dataModel) {
     var _container = container, _dataModel = dataModel;
     var _canvasContainer = null, _canvas = null;
     var _innerElems = {
-        headerLabel: null
+        headerLabel: null,
+        infoMsgOverlay: null
     };
-    var _innerStateManager = null,  _currentFeatureModelCLO = null;;
-    var _scaleModifier = 1, _featureWireframe = null;
+    var _wireframes = {
+        featureWireframe: null
+    };
+    var _innerStateManager = null, _currentFeatureModelCLO = null;;
+    var _scaleModifier = 1;
     var _visualUIElems = {}, _selectedElements = [];
     var _this = this;
 
@@ -882,9 +892,10 @@ UIControls.VisualView = function (container, dataModel) {
     // Init
     this.Initialize = function () {
 
-        // Setup
+        // Get references to dom elements
         _canvasContainer = $(_container).find("#SVGCanvasWrapper");
         _innerElems.headerLabel = $(_container).find(".headerLabel");
+        _innerElems.infoMsgOverlay = $(_container).find(".infoMsgOverlay");
         _canvas = Raphael($(_canvasContainer).children("#SVGCanvas")[0], "100%", "100%");
         _innerStateManager = new InnerStateManager(UIControls.VisualView.InnerStates, UIControls.VisualView.InnerStates.Default.Name, _this.StateChanged);
         _innerStateManager.Initialize(); // setup mode manager and enter initial mode
@@ -892,6 +903,13 @@ UIControls.VisualView = function (container, dataModel) {
         // Handler for onFocus
         $(_container).bind("click", function (e) {
             _this.Focus.RaiseEvent();
+        });
+
+        // Handler for ESC key - should always revert to default State
+        $(document).bind("keydown.escape", function (e) {
+            if (e.which == 27) { //esc key
+                _innerStateManager.SwitchToState(Enums.VisualViewStateNames.Default);
+            }
         });
     };
 
@@ -915,6 +933,7 @@ UIControls.VisualView = function (container, dataModel) {
         // Bind to it
         _currentFeatureModelCLO = modelCLO;
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
+        modelCLO.Relations.Added.AddHandler(new EventHandler(modelHandlers.onRelationAdded));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
 
@@ -935,20 +954,24 @@ UIControls.VisualView = function (container, dataModel) {
     var modelHandlers = {
         onFeatureAdded: function (featureCLO) {
             addFeatureElem(featureCLO);
+        },
+        onRelationAdded: function (relationCLO) {
+            debugger;
+            //addRelationElem(relationCLO);
         }
     }
     var featureElemHandlers = {
-        onClicked: function (uiElem, ctrlKey) {
+        onClicked: function (featureElem, ctrlKey) {
             // If control key isnt used, clear out any currently selected elements
             if (ctrlKey !== true) {
                 clearSelection();
             }
 
             // Select or deselect the uiElem
-            if (uiElem.IsSelected() === true) {
-                deselectElement(uiElem, true);
+            if (featureElem.IsSelected() === true) {
+                deselectElement(featureElem, true);
             } else {
-                selectElement(uiElem, true);
+                selectElement(featureElem, true);
             }
         },
         onFeatureMoveStarted: function (uiElem) {
@@ -1030,16 +1053,18 @@ UIControls.VisualView = function (container, dataModel) {
     UIControls.VisualView.InnerStates[Enums.VisualViewStateNames.CreatingNewFeature] = {
         Name: "CreatingNewFeature",
         EnterState: function () {
+            clearSelection();
+            _innerElems.infoMsgOverlay.html("Click to add a new feature...").show();
 
             // Create a wireframe
             var boxWidth = UIStyles.Feature.General.Box.Dimensions.width * _scaleModifier;
             var boxHeight = UIStyles.Feature.General.Box.Dimensions.height * _scaleModifier;
-            _featureWireframe = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIStyles.Feature.States.Wireframe.Box.attr);
+            _wireframes.featureWireframe = _canvas.rect(-100, -100, boxWidth, boxHeight, 0).attr(UIStyles.Feature.States.Wireframe.Box.attr);
             // Attach a mouse move handler for the wireframe
             $(_canvasContainer).bind("mousemove.moveWireframeFeature", function (e) {
                 var screenPosX = (e.pageX - $(_canvasContainer).offset().left + 0.5 - boxWidth / 2);
                 var screenPosY = (e.pageY - $(_canvasContainer).offset().top + 0.5 - boxHeight / 2);
-                _featureWireframe.attr({ x: screenPosX, y: screenPosY });
+                _wireframes.featureWireframe.attr({ x: screenPosX, y: screenPosY });
             });
             // Attach click handler to create the actual Feature when clicked
             $(_canvasContainer).bind("click.createFeature", function (e) {
@@ -1054,35 +1079,66 @@ UIControls.VisualView = function (container, dataModel) {
                 newFeatureCLO.YPos(absolutePosY);
                 _dataModel.GetCurrentFeatureModelCLO().Features.Add(newFeatureCLO);
 
-                // Remove the wireframe
+                // Go back to default state
                 _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
             });
 
-
-            // Esc key cancels create new feature 
-            $(document).bind("keydown.escape", function (e) {
-                if (e.which == 27) { //esc key
-                    _innerStateManager.SwitchToState(Enums.VisualViewStateNames.Default);
-                }
-            });
         },
         LeaveState: function () {
+            _innerElems.infoMsgOverlay.html("").hide();
 
             // Clear handlers
             $(_canvasContainer).unbind("click.createFeature");
             $(_canvasContainer).unbind("mousemove.moveWireframeFeature");
-            _featureWireframe.remove();
-            $(document).unbind("keydown.escape");
+            _wireframes.featureWireframe.remove();
         }
     };
     UIControls.VisualView.InnerStates[Enums.VisualViewStateNames.CreatingNewRelation] = {
         Name: "CreatingNewRelation",
         EnterState: function () {
-            alert("create relation !");
+            clearSelection();
+            _innerElems.infoMsgOverlay.html("Select the parent feature for the relation...").show();
 
+            // Variables
+            var parentFeatureElem, childFeatureElem;
+
+            // First step handlers (let user select parent feature)
+            this.normalFeatureElemOnclick = featureElemHandlers.onClicked; // store the usual feature onclick handler
+            featureElemHandlers.onClicked = firstStepClickHandler;
+            function firstStepClickHandler(featureElem) {
+                parentFeatureElem = featureElem;
+                selectElement(parentFeatureElem, true);
+
+                // Prepare for the second step
+                featureElemHandlers.onClicked = secondStepClickHandler;
+                _innerElems.infoMsgOverlay.html("Now select the child feature for the relation...").show();
+            }
+
+            // Second step handlers (let user select child feature)
+            function secondStepClickHandler(featureElem) {
+                if (featureElem === parentFeatureElem) { // check whether the user is trying to select the same feature twice
+                    _innerElems.infoMsgOverlay.html("Select a different child feature...");
+                } else {
+                    childFeatureElem = featureElem;
+                    selectElement(featureElem, true);
+
+                    // Create a new clientObject in the diagramDataModel
+                    var newRelationCLO = _dataModel.CreateNewCLO(CLOTypes.Relation);
+                    newRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
+                    newRelationCLO.ChildFeature = childFeatureElem.GetCLO();
+                    _dataModel.GetCurrentFeatureModelCLO().Relations.Add(newRelationCLO);
+
+                    // Go back to default state
+                    _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+                }
+            }
         },
         LeaveState: function () {
+            _innerElems.infoMsgOverlay.html("").hide();
 
+            // Restore the old feature onclick handler
+            featureElemHandlers.onClicked = this.normalFeatureElemOnclick;
+            delete this.normalFeatureElemOnclick;
         }
     }
 }
@@ -1269,5 +1325,239 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     this.Moving = new Event();
 }
 UIControls.VisualView.RelationElem = function (relationCLO, parentCanvasInstance) {
+
+    // Fields
+    var _relationCLO = relationCLO, _canvasInstance = parentCanvasInstance;
+    var _currentState = Enums.UIElementStates.Unselected;
+    var _outerElement = null, _glow = null;
+    var _innerElements = {
+        cardinalityElement: null,
+        connection: null
+    };
+    var _lowerBound = lowerBound, _upperBound = upperBound;
+    var _relationType = relationType;
+    var _this = this;
+
+    // Properties
+    this.GetCLO = function () {
+        return _relationCLO;
+    }
+    this.GetType = function () {
+        return UIControls.VisualView.ElemTypes.RelationElem;
+    }
+    this.IsSelected = function () {
+        return _currentState === Enums.UIElementStates.Selected;
+    }
+
+    // Init
+    this.Initialize = function () {
+
+        //// Create a new UIConnection
+        //_innerElements.connection = new UIConnection(_thisUIRelation.GetType(), _thisUIRelation.GetSubTypeName(), parentFeature.InnerElements.box, childFeature.InnerElements.box);
+        //_innerElements.connection.Initialize();
+
+        //// Add references
+        //parentFeature.RelatedCompositeElements.push(_thisUIRelation);
+        //childFeature.RelatedCompositeElements.push(_thisUIRelation);
+
+        //// Setup cardinality element
+        //toggleCardinalityElement();
+
+        //// Setup
+        //makeSelectable();
+    }
+
+}
+UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentCanvasInstance) {
+
+    // Fields
+    var _canvasInstance = parentCanvasInstance;
+    var _innerElements = {
+        line: null,
+        connectors: {
+            startConnector: null,
+            endConnector: null
+        }
+    };
+    var _currentPath = null;
+    var _glow = null, _handlers = null;
+    var _currentState = Enums.UIElementStates.Unselected;
+    var _outerElement = null;
+    var _this = this;
+
+    // Private methods
+    function getPath(objA, objB) {
+
+        //Variables
+        var bb1 = objA.getBBox();
+        var bb2 = objB.getBBox();
+        var objAcenter = {
+            x: bb1.x + bb1.width / 2,
+            y: bb1.y + bb1.height / 2
+        };
+        var objBcenter = {
+            x: bb2.x + bb2.width / 2,
+            y: bb2.y + bb2.height / 2
+        };
+        var connectionPoints = {
+            firstObject: {
+                top: { x: bb1.x + bb1.width / 2, y: bb1.y - 1 },
+                bottom: { x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1 },
+                left: { x: bb1.x - 1, y: bb1.y + bb1.height / 2 },
+                right: { x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2 }
+            },
+            secondObject: {
+                top: { x: bb2.x + bb2.width / 2, y: bb2.y - 1 },
+                bottom: { x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1 },
+                left: { x: bb2.x - 1, y: bb2.y + bb2.height / 2 },
+                right: { x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2 }
+            }
+        };
+
+        //Determine the orientation
+        var currentOrientation = null;
+        if (_fixedOrientation != false) {
+            currentOrientation = _fixedOrientation; //use default fixed orientation without calculating angle
+        }
+        else {
+            var centerdx = objBcenter.x - objAcenter.x, centerdy = objBcenter.y - objAcenter.y;
+            var angle = Math.atan2(-centerdy, centerdx) * 180 / Math.PI;
+            angle = parseInt(angle.toFixed());
+            if (angle < 0)
+                angle += 360;
+            for (var key in systemDefaults.orientations) {
+                var orientation = systemDefaults.orientations[key];
+                for (var i = 0; i < orientation.angleIntervals.length; i++) {
+                    if (angle >= orientation.angleIntervals[i].min && angle <= orientation.angleIntervals[i].max) {
+                        currentOrientation = orientation.name;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Invert orientation if necessary
+        if (invertOrientation)
+            currentOrientation = systemDefaults.orientations[currentOrientation].opposite;
+
+
+        //Determine which connection points in the current orientation make the shortest path
+        var distances = [], points = {};
+        for (var i = 0; i < systemDefaults.orientations[currentOrientation].connections.length; i++) {
+            var con = systemDefaults.orientations[currentOrientation].connections[i];
+            var x1 = connectionPoints.firstObject[con[0]].x, y1 = connectionPoints.firstObject[con[0]].y;
+            var x2 = connectionPoints.secondObject[con[1]].x, y2 = connectionPoints.secondObject[con[1]].y;
+
+            var dx = Math.abs(x1 - x2);
+            var dy = Math.abs(y1 - y2);
+            var distance = dx + dy;
+
+            distances[i] = distance;
+            points[distance] = {
+                x1: x1,
+                y1: y1,
+                x2: x2,
+                y2: y2,
+                curveModifier: systemDefaults.orientations[currentOrientation].curveModifiers[i]
+            };
+        }
+        var closestConnection = points[Math.min.apply(Math, distances)];
+
+        //Create path
+        var path = null;
+        if (settings.diagramContext.drawCurves == true) {
+            path = [["M", closestConnection.x1.toFixed(1), closestConnection.y1.toFixed(1)],
+            ["C",
+            closestConnection.x1 + closestConnection.curveModifier.x * _scaleModifier,
+            closestConnection.y1 + closestConnection.curveModifier.y * _scaleModifier,
+            closestConnection.x2 - closestConnection.curveModifier.x * _scaleModifier,
+            closestConnection.y2 - closestConnection.curveModifier.y * _scaleModifier,
+            closestConnection.x2.toFixed(1), closestConnection.y2.toFixed(1)]];
+        } else {
+            path = ["M", closestConnection.x1.toFixed(3), closestConnection.y1.toFixed(3), "L", closestConnection.x2.toFixed(3), closestConnection.y2.toFixed(3)].join(","); //line
+        }
+
+
+        var returnObj = {
+            path: path,
+            startObj: objA,
+            endObj: objB,
+            startPoint: {
+                x: closestConnection.x1,
+                y: closestConnection.y1
+            },
+            endPoint: {
+                x: closestConnection.x2,
+                y: closestConnection.y2
+            }
+        };
+        return returnObj;
+    }
+    function makeSelectable() {
+        if (_handlers != null) {
+            //Selectable
+            _outerElement.click(function (e) {
+                _handlers.onClick(e);
+            });
+
+            //Hoverable
+            _outerElement.mouseover(function (e) {
+                _handlers.onMouseOver(e);
+            }).mouseout(function (e) {
+                _handlers.onMouseOut(e);
+            });
+        }
+    }
+    function refresh() {
+        //Calculate a new path
+        _currentPath = getPath(parentBox, childBox);
+
+        //Refresh line 
+        var line = _innerElements.line;
+        _outerElement.attr({ path: _currentPath.path });
+        line.attr({ path: _currentPath.path });
+
+        //Refresh position of connectors
+        if (_innerElements.startConnector != null) {
+            _innerElements.startConnector.RefreshGraphicalRepresentation();
+        }
+        if (_innerElements.endConnector != null) {
+            _innerElements.endConnector.RefreshGraphicalRepresentation();
+        }
+    }
+    function getCurrentStyle() {
+        var commonStyle = commonStyles.connection.states[_currentState];
+        var generalStyle = UIObjectStyles[_parentElementType].general.connection;
+        var subTypeStyle = UIObjectStyles[_parentElementType].subTypes[_parentElementSubType].connection;
+        var currentStyle = $.extend(true, {}, commonStyle, generalStyle, subTypeStyle);
+
+        return currentStyle;
+    }
+
+    // Initialize
+    this.Initialize = function () {
+
+        // Create line
+        _currentPath = getPath(parentBox, childBox);
+        _innerElements.line = _canvasInstance.path(_currentPath.path);
+        //_innerElements.line.attr(currentStyle.line.attr);
+
+        ////Create startConnector
+        //if (currentStyle.connectors.startConnector != undefined) {
+        //    _innerElements.startConnector = new UIConnectorElement(_thisUIConnection, currentStyle.connectors.startConnector, currentStyle.connectors.startConnector.attr, "startPoint");
+        //    _innerElements.startConnector.CreateGraphicalRepresentation();
+        //}
+
+        ////Create endConnector
+        //if (currentStyle.connectors.endConnector != undefined) {
+        //    _innerElements.endConnector = new UIConnectorElement(_thisUIConnection, currentStyle.connectors.endConnector, currentStyle.connectors.endConnector.attr, "endPoint");
+        //    _innerElements.endConnector.CreateGraphicalRepresentation();
+        //}
+
+        ////Create the main outer element
+        //_outerElement = _canvas.path(_currentPath.path).attr(systemDefaults.common.outerElement.attr);
+    }
+
+    // Public methods
 
 }

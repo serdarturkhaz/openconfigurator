@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BLOFactory.cs" />
-    <Compile Include="ModelManager.cs" />
+    <Compile Include="BLOManagers\ModelManager.cs" />
     <Compile Include="BLOs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -53,6 +53,9 @@
       <Project>{aba46652-56ef-480b-97f8-d0138b6495aa}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BLOs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

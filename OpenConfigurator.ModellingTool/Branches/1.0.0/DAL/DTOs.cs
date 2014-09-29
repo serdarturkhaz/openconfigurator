@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenConfigurator;
 
-
 namespace DAL.DTOs
 {
 

@@ -19,7 +19,7 @@
 
     //JQuery constructor method
     $.fn.simpleTree = function (opts) {
-
+        
         //Initialize the options
         var options = $.extend({}, $.fn.simpleTree.defaults, opts);
 
@@ -38,6 +38,7 @@
         data: null,
         types: null,
         onNodeClicked: function (node, ctrl) {
+            alert("wtf");
         }
     };
 

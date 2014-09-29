@@ -120,15 +120,16 @@ body
 #modelDiagramBox .boxHeader .wrapper
 {
     position: relative;
-    background: red;
     right: 50%;
     float: right;
 }
 #modelDiagramBox .boxHeader .wrapper .infoMsgOverlay
 {
+    position:relative;
+    right:-50%;
+    float:right;
+
     height: 19px;
-    width: 100%;
-    margin-top: -19px;
     text-align: center;
     font-size: 11px;
     font-family: Arial;
@@ -140,8 +141,8 @@ body
     vertical-align: middle;
     white-space: nowrap;
     display: inline-block;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 #modelDiagramBox .boxContent
 {
