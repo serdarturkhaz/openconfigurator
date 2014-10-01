@@ -968,8 +968,8 @@ UIControls.VisualView = function (container, dataModel) {
         newFeatureElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
             featureElemHandlers.onClicked(newFeatureElem, ctrlKey);
         }));
-        newFeatureElem.MoveStarted.AddHandler(new EventHandler(function () {
-            featureElemHandlers.onFeatureMoveStarted(newFeatureElem);
+        newFeatureElem.DragStarted.AddHandler(new EventHandler(function () {
+            featureElemHandlers.onFeatureDragStarted(newFeatureElem);
         }));
         newFeatureElem.Moving.AddHandler(new EventHandler(function (dx, dy) {
             featureElemHandlers.onFeatureMoving(newFeatureElem, dx, dy);
@@ -1113,7 +1113,7 @@ UIControls.VisualView = function (container, dataModel) {
                 selectElement(featureElem, true);
             }
         },
-        onFeatureMoveStarted: function (uiElem) {
+        onFeatureDragStarted: function (uiElem) {
             if (_selectedElements.length > 1) {
 
                 // Start move for all the other selected featureElems
@@ -1410,7 +1410,7 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
 
         // Raise events
         if (supressEvents !== true) {
-            _this.MoveStarted.RaiseEvent();
+            _this.DragStarted.RaiseEvent();
         }
     }
     function moveXYBy(dx, dy, supressEvents) {
@@ -1475,7 +1475,7 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
 
     // Events
     this.Clicked = new Event();
-    this.MoveStarted = new Event();
+    this.DragStarted = new Event();
     this.Moving = new Event();
 }
 UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, childFeatureElem, parentCanvasInstance) {

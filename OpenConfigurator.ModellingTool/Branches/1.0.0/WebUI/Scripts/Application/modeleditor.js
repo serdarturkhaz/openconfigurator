@@ -974,11 +974,11 @@ UIControls.VisualView = function (container, dataModel) {
         newFeatureElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
             featureElemHandlers.onClicked(newFeatureElem, ctrlKey);
         }));
-        newFeatureElem.MoveStarted.AddHandler(new EventHandler(function () {
-            featureElemHandlers.onFeatureMoveStarted(newFeatureElem);
+        newFeatureElem.DragStarted.AddHandler(new EventHandler(function () {
+            featureElemHandlers.onFeatureDragStarted(newFeatureElem);
         }));
-        newFeatureElem.Moving.AddHandler(new EventHandler(function (dx, dy) {
-            featureElemHandlers.onFeatureMoving(newFeatureElem, dx, dy);
+        newFeatureElem.Dragging.AddHandler(new EventHandler(function (dx, dy) {
+            featureElemHandlers.onFeatureDragging(newFeatureElem, dx, dy);
         }));
     }
     function addRelationElem(relationCLO) {
@@ -1119,23 +1119,22 @@ UIControls.VisualView = function (container, dataModel) {
                 selectElement(featureElem, true);
             }
         },
-        onFeatureMoveStarted: function (uiElem) {
-            if (_selectedElements.length > 1) {
+        onFeatureDragStarted: function (uiElem) {
+            if (uiElem.IsSelected() === true) {
 
-                // Start move for all the other selected featureElems
+                // Start move for all the selected featureElems
                 for (var i = 0; i < _selectedElements.length; i++) {
-                    if (uiElem !== _selectedElements[i] && _selectedElements[i].GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
+                    if (_selectedElements[i].GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
                         _selectedElements[i].StartMove();
                     }
                 }
             }
         },
-        onFeatureMoving: function (uiElem, dx, dy) {
-            if (_selectedElements.length > 1) {
-
-                // Move  all the other selected featureElems
+        onFeatureDragging: function (uiElem, dx, dy) {
+            if (uiElem.IsSelected() === true) {
+                // Move all the selected featureElems
                 for (var i = 0; i < _selectedElements.length; i++) {
-                    if (uiElem !== _selectedElements[i] && _selectedElements[i].GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
+                    if (_selectedElements[i].GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
                         _selectedElements[i].MoveXYBy(dx, dy);
                     }
                 }
@@ -1308,7 +1307,7 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     var _featureCLO = featureCLO, _canvasInstance = parentCanvasInstance;
     var _currentState = Enums.UIElementStates.Unselected;
     var _outerElement = null, _glow = null;
-    var _cancelNextClick = false; // special variable used to disable the click event being triggered when dragging an element
+    var _cancelClickPropagation = false; // special variable used to disable the click event being triggered when dragging an element
     var _innerElements = {
         box: null,
         text: null
@@ -1337,7 +1336,6 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     };
     this.RelatedElements = _relatedElems;
 
-
     // Private methods
     function makeSelectable() {
 
@@ -1357,10 +1355,10 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
         _outerElement.click(function (e) {
 
             // Raise events
-            if (_cancelNextClick === false) {
+            if (_cancelClickPropagation === false) {
                 _this.Clicked.RaiseEvent(e.ctrlKey);
             } else {
-                _cancelNextClick = false; // reset the variable so future clicks can be registered
+                _cancelClickPropagation = false; // reset the variable so future clicks can be registered
             }
 
             // Prevent dom propagation - so VisualView canvas click bind doesnt get triggered
@@ -1372,7 +1370,8 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
         // Drag and droppable
         var wasMoved = false;
         var start = function () {
-            startMove();
+            //startMove();
+            _this.DragStarted.RaiseEvent();
         };
         move = function (dx, dy) {
             wasMoved = true;
@@ -1381,13 +1380,15 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
                 _glow = null;
             }
 
-            // Update position 
-            moveXYBy(dx, dy);
+            //// Update position 
+            //moveXYBy(dx, dy);
+
+            _this.Dragging.RaiseEvent(dx, dy);
         };
         up = function () {
 
             if (wasMoved === true) {
-                _cancelNextClick = true;
+                _cancelClickPropagation = true;
             }
 
             //if (wasMoved == true) {
@@ -1405,36 +1406,6 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
             wasMoved = false;
         };
         _outerElement.drag(move, start, up);
-    }
-    function startMove(supressEvents) {
-
-        // Store original coordinates for self and inner elements
-        _outerElement.originalx = _outerElement.attr("x");
-        _outerElement.originaly = _outerElement.attr("y");
-        for (var innerElemKey in _innerElements) {
-            var innerElem = _innerElements[innerElemKey];
-            innerElem.originalx = innerElem.attr("x");
-            innerElem.originaly = innerElem.attr("y");
-        }
-
-        // Raise events
-        if (supressEvents !== true) {
-            _this.MoveStarted.RaiseEvent();
-        }
-    }
-    function moveXYBy(dx, dy, supressEvents) {
-
-        // Update pos of outerElement and all innerElems
-        _outerElement.attr({ x: _outerElement.originalx + dx, y: _outerElement.originaly + dy });
-        for (var innerElemKey in _innerElements) {
-            var innerElem = _innerElements[innerElemKey];
-            innerElem.attr({ x: innerElem.originalx + dx, y: innerElem.originaly + dy });
-        }
-
-        // Raise events
-        if (supressEvents !== true) {
-            _this.Moving.RaiseEvent(dx, dy);
-        }
     }
 
     // Init
@@ -1476,15 +1447,33 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
         _innerElements.box.attr(UIStyles.Feature.States[state].Box.attr);
     }
     this.StartMove = function () {
-        startMove(true);
+
+        // Store original coordinates for self and inner elements
+        _outerElement.originalx = _outerElement.attr("x");
+        _outerElement.originaly = _outerElement.attr("y");
+        for (var innerElemKey in _innerElements) {
+            var innerElem = _innerElements[innerElemKey];
+            innerElem.originalx = innerElem.attr("x");
+            innerElem.originaly = innerElem.attr("y");
+        }
     }
     this.MoveXYBy = function (dx, dy) {
-        moveXYBy(dx, dy, true);
+
+        // Update pos of outerElement and all innerElems
+        _outerElement.attr({ x: _outerElement.originalx + dx, y: _outerElement.originaly + dy });
+        for (var innerElemKey in _innerElements) {
+            var innerElem = _innerElements[innerElemKey];
+            innerElem.attr({ x: innerElem.originalx + dx, y: innerElem.originaly + dy });
+        }
+
+        // Raise events
+        _this.Moving.RaiseEvent(dx, dy);
     }
 
     // Events
     this.Clicked = new Event();
-    this.MoveStarted = new Event();
+    this.DragStarted = new Event();
+    this.Dragging = new Event();
     this.Moving = new Event();
 }
 UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, childFeatureElem, parentCanvasInstance) {
@@ -1545,9 +1534,9 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
 
         // Add references and bind to them
         parentFeatureElem.RelatedElements.Relations.push(_this);
-        parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoved));
+        parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving));
         childFeatureElem.RelatedElements.Relations.push(_this);
-        childFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoved));
+        childFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving));
 
         //// Setup cardinality element
         //toggleCardinalityElement();
@@ -1569,7 +1558,7 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
     this.Clicked = new Event();
 
     // Event handlers
-    var onRelatedFeatureMoved = function () {
+    var onRelatedFeatureMoving = function () {
         refresh();
     }
 }
@@ -1854,7 +1843,6 @@ UIControls.VisualView.ConnectorElem = function (parentConnection, raphaelConnect
 
     // Public methods
     this.RefreshGraphicalRepresentation = function () {
-        $(".boxHeader .headerLabel").html("wtf");
         refresh();
     }
     this.Delete = function () {
