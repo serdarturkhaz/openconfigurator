@@ -29,9 +29,19 @@ var ObservableCollection = function () {
         _innerArray.splice(index, 1);
         _this.Removed.RaiseEvent(removedObject);
     }
+    this.Remove = function (obj) {
+        for (var index = 0; index < _innerArray.length; index++) {
+            if (_innerArray[index] === obj) {
+                break;
+            }
+        }
+
+        _this.RemoveAt(index);
+    }
     this.GetAt = function (index) {
         return _innerArray[index];
     }
+
     this.GetByCustomField = function (fieldName, fieldValue) {
         var object = null;
         for (var i = 0; i < _innerArray; i++) {
@@ -48,7 +58,7 @@ var ObservableCollection = function () {
     this.Added = new Event();
     this.Removed = new Event();
 }
-var ObservableField = function (sourceParent, fieldName) {
+/*var ObservableField = function (sourceParent, fieldName) {
 
     // Fields
     var _sourceParent = sourceParent, _fieldName = fieldName;
@@ -59,7 +69,7 @@ var ObservableField = function (sourceParent, fieldName) {
 
     // Returns special function which:
     // Can be called with () or with (newValue)
-    // Can be subscribed to by adding an event handler ( ex CLO.Field.OnChanged.AddHandler())
+    // Can be subscribed to by adding an event handler ( ex CLO.Field.Changed.AddHandler())
     var returnFunc = function (value) {
 
         if (value === undefined) {
@@ -73,6 +83,30 @@ var ObservableField = function (sourceParent, fieldName) {
     }
     returnFunc.Changed = _this.Changed;
     return returnFunc;
+}*/
+var ObservableField = function (sourceFieldParent, sourceFieldName) {
+
+    // Variables
+    var koObservable;
+
+    // Implicit constructor logic
+    if (sourceFieldParent !== undefined && sourceFieldName !== undefined) {
+        var koObservable = ko.observable(sourceFieldParent[sourceFieldName]); // set the initial value for the koObservable to be that of the source field
+        koObservable.subscribe(function (newVal) { // bind the koObs so it updates the value of the source field whenever it is changed itself
+            sourceFieldParent[sourceFieldName] = newVal;
+        });
+    } else {
+        koObservable = ko.observable();
+    }
+
+    // Setup extra stuff
+    koObservable.Changed = new Event();
+    koObservable.subscribe(function (newVal) { 
+        koObservable.Changed.RaiseEvent(newVal);
+    });
+
+
+    return koObservable;
 }
 /*#endregion*/
 /*#region Events*/
@@ -212,3 +246,4 @@ var InnerStateManager = function (targetStatesReference, initialStateName, targe
     }
 }
 /*#endregion*/
+

@@ -511,11 +511,7 @@ var Controller = function () {
         _dataModel.GetCurrentFeatureModelCLO().CompositionRules.Add(newCompRuleCLO);
     }
     this.Delete = function () {
-        if (_currentControlFocus === _visualView) {
-            alert("delete within visual view!");
-        } else if (_currentControlFocus === _modelExplorer) {
-            alert("delete within model explorer view!");
-        }
+        _currentControlFocus.DeleteSelection();
     }
 
     // Event handlers
@@ -557,6 +553,14 @@ var DataModel = function (bloService, cloFactory) {
     }
     this.GetByClientID = function (clientID) {
         return _cloFactory.GetByClientID(clientID);
+    }
+    this.DeleteByClientID = function (clientID) {
+        var clo = _this.GetByClientID(clientID);
+        switch (clo.GetType()) {
+            case CLOTypes.Feature:
+                _currentFeatureModelCLO.Features.Remove(clo);
+                break;
+        }
     }
     this.LoadNewModel = function () {
 
@@ -899,6 +903,12 @@ UIControls.ModelExplorer = function (container, dataModel) {
         });
     }
 
+    // Public methods
+    this.DeleteSelection = function () {
+        alert('trying to delete selection within model explorer');
+    }
+
+
     // Events
     this.Focus = new Event();
     this.UIElementSelected = new Event();
@@ -1066,6 +1076,12 @@ UIControls.VisualView = function (container, dataModel) {
     this.StartCreateRelation = function () {
         _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewRelation.Name);
     }
+    this.DeleteSelection = function () {
+        for (var i = 0; i < _selectedElements.length ; i++) {
+            _dataModel.DeleteByClientID(_selectedElements[i].GetCLO().GetClientID());
+        }
+        _selectedElements = [];
+    }
 
     // Events
     this.Focus = new Event();
@@ -1079,6 +1095,7 @@ UIControls.VisualView = function (container, dataModel) {
         // Bind to it
         _currentFeatureModelCLO = modelCLO;
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
+        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onFeatureRemoved));
         modelCLO.Relations.Added.AddHandler(new EventHandler(modelHandlers.onRelationAdded));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
@@ -1103,24 +1120,34 @@ UIControls.VisualView = function (container, dataModel) {
         },
         onRelationAdded: function (relationCLO) {
             addRelationElem(relationCLO);
+        },
+        onFeatureRemoved: function (featureCLO) {
+            var featureElem = _visualUIElems[featureCLO.GetClientID()];
+            delete _visualUIElems[featureCLO.GetClientID()];
+            featureElem.RemoveSelf();
         }
     }
     var featureElemHandlers = {
         onClicked: function (featureElem, ctrlKey) {
-            // If control key isnt used, clear out any currently selected elements
-            if (ctrlKey !== true) {
-                clearSelection();
+            // Control key down
+            if (ctrlKey === true) {
+                if (featureElem.IsSelected()) {
+                    deselectElement(featureElem, true); // deselect
+                }
+                else {
+                    selectElement(featureElem, true); // add to selection
+                }
             }
-
-            // Select or deselect the uiElem
-            if (featureElem.IsSelected() === true) {
-                deselectElement(featureElem, true);
-            } else {
-                selectElement(featureElem, true);
+            else {
+                // No control key
+                clearSelection();
+                if (!featureElem.IsSelected()) {
+                    selectElement(featureElem, true); // add to selection
+                }
             }
         },
-        onFeatureDragStarted: function (uiElem) {
-            if (uiElem.IsSelected() === true) {
+        onFeatureDragStarted: function (featureElem) {
+            if (featureElem.IsSelected() === true) {
 
                 // Start move for all the selected featureElems
                 for (var i = 0; i < _selectedElements.length; i++) {
@@ -1130,8 +1157,8 @@ UIControls.VisualView = function (container, dataModel) {
                 }
             }
         },
-        onFeatureDragging: function (uiElem, dx, dy) {
-            if (uiElem.IsSelected() === true) {
+        onFeatureDragging: function (featureElem, dx, dy) {
+            if (featureElem.IsSelected() === true) {
                 // Move all the selected featureElems
                 for (var i = 0; i < _selectedElements.length; i++) {
                     if (_selectedElements[i].GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
@@ -1307,7 +1334,7 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     var _featureCLO = featureCLO, _canvasInstance = parentCanvasInstance;
     var _currentState = Enums.UIElementStates.Unselected;
     var _outerElement = null, _glow = null;
-    var _cancelClickPropagation = false; // special variable used to disable the click event being triggered when dragging an element
+    var _dontTriggerClickOnMouseUp = false; // special variable to avoid click being triggered on mouseup after a selected feature has been dragged (which would result in all the other selected ones being deselected)
     var _innerElements = {
         box: null,
         text: null
@@ -1353,57 +1380,35 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
 
         // Make it clickable 
         _outerElement.click(function (e) {
-
-            // Raise events
-            if (_cancelClickPropagation === false) {
+            if (_dontTriggerClickOnMouseUp === false) {
+                // Raise events
                 _this.Clicked.RaiseEvent(e.ctrlKey);
-            } else {
-                _cancelClickPropagation = false; // reset the variable so future clicks can be registered
             }
-
-            // Prevent dom propagation - so VisualView canvas click bind doesnt get triggered
-            e.stopPropagation();
+            else {
+                _dontTriggerClickOnMouseUp = false;
+            }
         });
     }
     function makeDraggable() {
 
         // Drag and droppable
-        var wasMoved = false;
         var start = function () {
-            //startMove();
             _this.DragStarted.RaiseEvent();
         };
         move = function (dx, dy) {
-            wasMoved = true;
             if (_glow !== null) {
                 _glow.remove();
                 _glow = null;
             }
 
-            //// Update position 
-            //moveXYBy(dx, dy);
+            if (dx !== 0 && _this.IsSelected()) {
+                _dontTriggerClickOnMouseUp = true;
+            }
 
             _this.Dragging.RaiseEvent(dx, dy);
         };
         up = function () {
 
-            if (wasMoved === true) {
-                _cancelClickPropagation = true;
-            }
-
-            //if (wasMoved == true) {
-
-            //    // Notify related CompositeElements
-            //    if (settings.diagramContext.dynamicRefresh == false) {
-            //        for (var j = 0; j < _relatedCompositeElements.length; j++) {
-            //            _relatedCompositeElements[j].OnAdjacentFeatureMoved(_thisUIFeature);
-            //        }
-            //        for (var j = 0; j < _attributeElements.length; j++) {
-            //            _attributeElements[j].OnFeatureMoved(_thisUIFeature);
-            //        }
-            //    }
-
-            wasMoved = false;
         };
         _outerElement.drag(move, start, up);
     }
@@ -1439,8 +1444,14 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
             return false;
         }
     }
-    this.Remove = function () {
+    this.RemoveSelf = function () {
 
+        // Remove elements
+        _outerElement.remove();
+        _innerElements.box.remove();
+        _innerElements.text.remove();
+        if (_glow !== null)
+            _glow.remove();
     }
     this.SetSelectedState = function (state) {
         _currentState = state;
