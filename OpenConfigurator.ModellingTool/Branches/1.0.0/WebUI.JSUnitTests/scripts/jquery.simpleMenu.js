@@ -49,7 +49,7 @@
             // ChildMenuItems event handlers
             $(childMenuItems).bind("click", function (e) {
                 var childMenuItem = $(this);
-                options.onChildMenuItemClicked(childMenuItem, options);
+                options.onChildMenuItemMouseDown(childMenuItem, options);
                 
             });
 
@@ -64,7 +64,7 @@
 
     // Default settings
     $.fn.simpleMenu.defaults = {
-        onChildMenuItemClicked: function (childMenuItem, opts) {
+        onChildMenuItemMouseDown: function (childMenuItem, opts) {
             alert($(childMenuItem).children("a").text());
         }
     };

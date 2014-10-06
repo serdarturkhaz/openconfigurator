@@ -38,7 +38,7 @@
         data: null,
         types: null,
         onNodeClicked: function (node, ctrl) {
-            alert("wtf");
+            
         }
     };
 
