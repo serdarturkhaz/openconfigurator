@@ -559,6 +559,7 @@ var DataModel = function (bloService, cloFactory) {
         switch (clo.GetType()) {
             case CLOTypes.Feature:
                 _currentFeatureModelCLO.Features.Remove(clo);
+
                 break;
         }
     }
@@ -1077,9 +1078,12 @@ UIControls.VisualView = function (container, dataModel) {
         _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewRelation.Name);
     }
     this.DeleteSelection = function () {
-        for (var i = 0; i < _selectedElements.length ; i++) {
-            _dataModel.DeleteByClientID(_selectedElements[i].GetCLO().GetClientID());
+        var oldSelectedElements = _selectedElements.slice();
+        for (var i = 0; i < oldSelectedElements.length ; i++) {
+            deselectElement(oldSelectedElements[i], true);
+            _dataModel.DeleteByClientID(oldSelectedElements[i].GetCLO().GetClientID());
         }
+        
     }
 
     // Events
@@ -1121,7 +1125,9 @@ UIControls.VisualView = function (container, dataModel) {
             addRelationElem(relationCLO);
         },
         onFeatureRemoved: function (featureCLO) {
-            featureCLO.RemoveSelf();
+            var featureElem = _visualUIElems[featureCLO.GetClientID()];
+            delete _visualUIElems[featureCLO.GetClientID()];
+            featureElem.RemoveSelf();
         }
     }
     var featureElemHandlers = {
