@@ -559,6 +559,7 @@ var DataModel = function (bloService, cloFactory) {
         switch (clo.GetType()) {
             case CLOTypes.Feature:
                 _currentFeatureModelCLO.Features.Remove(clo);
+
                 break;
         }
     }
@@ -890,6 +891,9 @@ UIControls.ModelExplorer = function (container, dataModel) {
             deselectElement(_selectedElements[i], true);
         }
     }
+    function removeElement(node) {
+        $(node).deleteNode();
+    }
 
     // Init
     this.Initialize = function () {
@@ -905,9 +909,11 @@ UIControls.ModelExplorer = function (container, dataModel) {
 
     // Public methods
     this.DeleteSelection = function () {
-        alert('trying to delete selection within model explorer');
+        var oldSelectedElements = _selectedElements.slice();
+        for (var i = 0; i < oldSelectedElements.length ; i++) {
+            _dataModel.DeleteByClientID(oldSelectedElements[i].getNodeDataID());
+        }
     }
-
 
     // Events
     this.Focus = new Event();
@@ -919,7 +925,7 @@ UIControls.ModelExplorer = function (container, dataModel) {
 
         // Bind to it
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
-        //modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCompositionRuleAdded));
+        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onFeatureRemoved));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
         var node = $(_tree).getNode(clientid);
@@ -953,6 +959,11 @@ UIControls.ModelExplorer = function (container, dataModel) {
         },
         onCompositionRuleAdded: function (compRuleCLO) {
             addElement(compRuleCLO, "compositionRule");
+        },
+        onFeatureRemoved: function (featureCLO) {
+            var nodeElem = $(_tree).getNode(featureCLO.GetClientID());
+            deselectElement(nodeElem, false);
+            removeElement(nodeElem);
         }
     }
 }
@@ -1057,7 +1068,7 @@ UIControls.VisualView = function (container, dataModel) {
         _innerStateManager.Initialize(); // setup mode manager and enter initial mode
 
         // Handler for onFocus
-        $(_container).bind("click", function (e) {
+        $(_container).mousedown(function (e) {
             _this.Focus.RaiseEvent();
         });
 
@@ -1077,10 +1088,10 @@ UIControls.VisualView = function (container, dataModel) {
         _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewRelation.Name);
     }
     this.DeleteSelection = function () {
-        for (var i = 0; i < _selectedElements.length ; i++) {
-            _dataModel.DeleteByClientID(_selectedElements[i].GetCLO().GetClientID());
+        var oldSelectedElements = _selectedElements.slice();
+        for (var i = 0; i < oldSelectedElements.length ; i++) {
+            _dataModel.DeleteByClientID(oldSelectedElements[i].GetCLO().GetClientID());
         }
-        _selectedElements = [];
     }
 
     // Events
@@ -1123,6 +1134,7 @@ UIControls.VisualView = function (container, dataModel) {
         },
         onFeatureRemoved: function (featureCLO) {
             var featureElem = _visualUIElems[featureCLO.GetClientID()];
+            deselectElement(featureElem, false);
             delete _visualUIElems[featureCLO.GetClientID()];
             featureElem.RemoveSelf();
         }
