@@ -205,6 +205,12 @@ var Enums = {
     ConnectorPositionType: {
         EndPoint: "EndPoint",
         StartPoint: "StartPoint"
+    },
+    CLODataStates: {
+        Unchanged: "Unchanged",
+        Modified: "Modified",
+        Deleted: "Deleted",
+        New: "New"
     }
 }
 var SystemDefaults = {
@@ -290,6 +296,7 @@ var FeatureModelCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
+    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -316,7 +323,7 @@ var FeatureModelCLO = function (clientID, blo) {
 
         // Bind to collections
         _this.Features.Adding.AddHandler(new EventHandler(onCLOAdding));
-        //_compositionRulesCollection.CLOAdding.AddHandler(new EventHandler(onCLOAdding));
+        _this.Features.Removed.AddHandler(new EventHandler(onFeatureCLORemoved));
     }
 
     // Event handlers
@@ -337,6 +344,9 @@ var FeatureModelCLO = function (clientID, blo) {
             _this.Features.GetAt(0).Name("Newname");
         }
     }
+    var onFeatureCLORemoved = function (featureCLO) {
+        
+    }
 }
 var FeatureCLO = function (clientID, blo) {
 
@@ -346,6 +356,7 @@ var FeatureCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
+    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -372,6 +383,7 @@ var RelationCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
+    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -394,6 +406,7 @@ var CompositionRuleCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
+    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -414,6 +427,7 @@ var CustomRuleCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
+    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -434,6 +448,7 @@ var CustomFunctionCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
+    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -526,6 +541,7 @@ var DataModel = function (bloService, cloFactory) {
     // Fields
     var _bloService = bloService, _cloFactory = cloFactory;
     var _currentFeatureModelCLO = null;
+    var _dirtyCLOs = {};
     var _this = this;
 
     // Properties
@@ -555,12 +571,24 @@ var DataModel = function (bloService, cloFactory) {
         return _cloFactory.GetByClientID(clientID);
     }
     this.DeleteByClientID = function (clientID) {
-        var clo = _this.GetByClientID(clientID);
-        switch (clo.GetType()) {
-            case CLOTypes.Feature:
-                _currentFeatureModelCLO.Features.Remove(clo);
 
-                break;
+        // Get the clo 
+        var clo = _this.GetByClientID(clientID);
+
+        // If it is not already deleted
+        if (clo.DataState !== Enums.CLODataStates.Deleted) {
+            clo.DataState = Enums.CLODataStates.Deleted; // mark it as deleted
+            _dirtyCLOs[clientID] = clo; // add it to the dirty clo collection
+
+            // Handle clo type specific delete operation
+            switch (clo.GetType()) {
+                case CLOTypes.Feature:
+                    _currentFeatureModelCLO.Features.Remove(clo);
+                    break;
+                case CLOTypes.Relation:
+                    _currentFeatureModelCLO.Relations.Remove(clo);
+                    break;
+            }
         }
     }
     this.LoadNewModel = function () {
@@ -640,21 +668,23 @@ DataModel.CLOFactory = function (bloService) {
     this.ConvertToCLOFromBLO = function (cloType, blo) {
 
         // Create the CLO
-        var newCLO = FromBLO[cloType](blo);
+        var convertedCLO = FromBLO[cloType](blo);
+        convertedCLO.DataState = Enums.CLODataStates.Unchanged;
 
         // Register and return it
-        _factoryCLORegister[newCLO.GetClientID()] = newCLO;
-        return newCLO;
+        _factoryCLORegister[convertedCLO.GetClientID()] = convertedCLO;
+        return convertedCLO;
     }
     this.CreateNewCLO = function (cloType) {
 
         // Create the CLO
-        var defaultBLO = _bloService.GetDefaultBLO(cloType);
-        var newDefaultCLO = FromBLO[cloType](defaultBLO);
+        var newBLO = _bloService.GetDefaultBLO(cloType);
+        var newCLO = FromBLO[cloType](newBLO);
+        newCLO.DataState = Enums.CLODataStates.New;
 
         // Register and return it
-        _factoryCLORegister[newDefaultCLO.GetClientID()] = newDefaultCLO;
-        return newDefaultCLO;
+        _factoryCLORegister[newCLO.GetClientID()] = newCLO;
+        return newCLO;
     }
 }
 DataModel.BLOService = function () {
@@ -891,6 +921,9 @@ UIControls.ModelExplorer = function (container, dataModel) {
             deselectElement(_selectedElements[i], true);
         }
     }
+    function removeElement(node) {
+        $(node).deleteNode();
+    }
 
     // Init
     this.Initialize = function () {
@@ -906,9 +939,11 @@ UIControls.ModelExplorer = function (container, dataModel) {
 
     // Public methods
     this.DeleteSelection = function () {
-        alert('trying to delete selection within model explorer');
+        var oldSelectedElements = _selectedElements.slice();
+        for (var i = 0; i < oldSelectedElements.length ; i++) {
+            _dataModel.DeleteByClientID(oldSelectedElements[i].getNodeDataID());
+        }
     }
-
 
     // Events
     this.Focus = new Event();
@@ -920,7 +955,7 @@ UIControls.ModelExplorer = function (container, dataModel) {
 
         // Bind to it
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
-        //modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCompositionRuleAdded));
+        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onFeatureRemoved));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
         var node = $(_tree).getNode(clientid);
@@ -954,6 +989,11 @@ UIControls.ModelExplorer = function (container, dataModel) {
         },
         onCompositionRuleAdded: function (compRuleCLO) {
             addElement(compRuleCLO, "compositionRule");
+        },
+        onFeatureRemoved: function (featureCLO) {
+            var nodeElem = $(_tree).getNode(featureCLO.GetClientID());
+            deselectElement(nodeElem, false);
+            removeElement(nodeElem);
         }
     }
 }
@@ -1058,7 +1098,7 @@ UIControls.VisualView = function (container, dataModel) {
         _innerStateManager.Initialize(); // setup mode manager and enter initial mode
 
         // Handler for onFocus
-        $(_container).bind("click", function (e) {
+        $(_container).mousedown(function (e) {
             _this.Focus.RaiseEvent();
         });
 
@@ -1080,10 +1120,8 @@ UIControls.VisualView = function (container, dataModel) {
     this.DeleteSelection = function () {
         var oldSelectedElements = _selectedElements.slice();
         for (var i = 0; i < oldSelectedElements.length ; i++) {
-            deselectElement(oldSelectedElements[i], true);
             _dataModel.DeleteByClientID(oldSelectedElements[i].GetCLO().GetClientID());
         }
-        
     }
 
     // Events
@@ -1100,6 +1138,7 @@ UIControls.VisualView = function (container, dataModel) {
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
         modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onFeatureRemoved));
         modelCLO.Relations.Added.AddHandler(new EventHandler(modelHandlers.onRelationAdded));
+        modelCLO.Relations.Removed.AddHandler(new EventHandler(modelHandlers.onRelationRemoved));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
 
@@ -1126,8 +1165,15 @@ UIControls.VisualView = function (container, dataModel) {
         },
         onFeatureRemoved: function (featureCLO) {
             var featureElem = _visualUIElems[featureCLO.GetClientID()];
+            deselectElement(featureElem, false);
             delete _visualUIElems[featureCLO.GetClientID()];
             featureElem.RemoveSelf();
+        },
+        onRelationRemoved: function (relationCLO) {
+            var relationElem = _visualUIElems[relationCLO.GetClientID()];
+            deselectElement(relationElem, false);
+            delete _visualUIElems[relationCLO.GetClientID()];
+            relationElem.RemoveSelf();
         }
     }
     var featureElemHandlers = {
