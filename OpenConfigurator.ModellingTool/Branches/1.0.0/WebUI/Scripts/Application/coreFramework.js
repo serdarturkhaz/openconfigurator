@@ -41,7 +41,6 @@ var ObservableCollection = function () {
     this.GetAt = function (index) {
         return _innerArray[index];
     }
-
     this.GetByCustomField = function (fieldName, fieldValue) {
         var object = null;
         for (var i = 0; i < _innerArray; i++) {
@@ -149,7 +148,7 @@ var Event = function () {
     this.RemoveAllHandlers = function () {
         _handlers = {};
     }
-    this.RemoveHandlerByName = function (name) {
+    this.RemoveHandler = function (name) {
         for (var i = 0; i < _handlers.length; i++) {
             if (_handlers[i].GetName() === name) {
                 _handlers.splice(i, 1);

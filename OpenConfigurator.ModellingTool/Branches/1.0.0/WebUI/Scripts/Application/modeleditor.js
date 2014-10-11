@@ -323,14 +323,14 @@ var FeatureModelCLO = function (clientID, blo) {
 
         // Bind to collections
         _this.Features.Adding.AddHandler(new EventHandler(onCLOAdding));
-        _this.Features.Removed.AddHandler(new EventHandler(onFeatureCLORemoved));
+        _this.Relations.Adding.AddHandler(new EventHandler(onCLOAdding));
     }
 
     // Event handlers
     var onCLOAdding = function (clo, eventRaiseDetails) {
 
         // If the clo to be added doesnt have an identifier (it is new), provide it with one
-        if (clo.Identifier() === null) {
+        if (clo.Identifer !== undefined && clo.Identifier() === null) {
             var collection = _this[clo.GetType() + "s"]; // get the collection corresponding to the type of the given CLO 
             var identity = getNewIdentifier(clo.GetType(), collection);
 
@@ -344,30 +344,27 @@ var FeatureModelCLO = function (clientID, blo) {
             _this.Features.GetAt(0).Name("Newname");
         }
     }
-    var onFeatureCLORemoved = function (featureCLO) {
-        
-    }
 }
 var FeatureCLO = function (clientID, blo) {
 
     // Fields
     var _clientID = clientID, _innerBLO = blo;
-    var _attributes = [];
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
     this.GetType = function () {
         return CLOTypes.Feature;
     }
+    this.DataState = null;
     this.Attributes = new ObservableCollection();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
     this.XPos = new ObservableField(_innerBLO, "XPos");
     this.YPos = new ObservableField(_innerBLO, "YPos");
+    this.AdjacentRelations = new ObservableCollection();
 
     // Init
     this.Initialize = function () {
@@ -584,11 +581,18 @@ var DataModel = function (bloService, cloFactory) {
             switch (clo.GetType()) {
                 case CLOTypes.Feature:
                     _currentFeatureModelCLO.Features.Remove(clo);
+                    for (var i = clo.AdjacentRelations.GetLength() ; i > 0; i--) {
+                        _this.DeleteByClientID(clo.AdjacentRelations.GetAt(i - 1).GetClientID());
+                    }
+
                     break;
                 case CLOTypes.Relation:
+                    clo.ParentFeature.AdjacentRelations.Remove(clo);
+                    clo.ChildFeature.AdjacentRelations.Remove(clo);
                     _currentFeatureModelCLO.Relations.Remove(clo);
                     break;
             }
+
         }
     }
     this.LoadNewModel = function () {
@@ -1357,13 +1361,15 @@ UIControls.VisualView = function (container, dataModel) {
                     childFeatureElem = featureElem;
                     selectElement(featureElem, true);
 
-                    // Create a new clientObject in the diagramDataModel
+                    // Create a new CLO
                     var newRelationCLO = _dataModel.CreateNewCLO(CLOTypes.Relation);
                     newRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
                     newRelationCLO.ChildFeature = childFeatureElem.GetCLO();
-                    _dataModel.GetCurrentFeatureModelCLO().Relations.Add(newRelationCLO);
+                    parentFeatureElem.GetCLO().AdjacentRelations.Add(newRelationCLO);
+                    childFeatureElem.GetCLO().AdjacentRelations.Add(newRelationCLO);
 
-                    // Go back to default state
+                    // Add it to the FeatureModel and then switch to default state
+                    _dataModel.GetCurrentFeatureModelCLO().Relations.Add(newRelationCLO);
                     _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
                 }
             }
@@ -1593,10 +1599,8 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
         _innerElements.connection.Initialize();
 
         // Add references and bind to them
-        parentFeatureElem.RelatedElements.Relations.push(_this);
-        parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving));
-        childFeatureElem.RelatedElements.Relations.push(_this);
-        childFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving));
+        parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
+        childFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
 
         //// Setup cardinality element
         //toggleCardinalityElement();
@@ -1617,6 +1621,10 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
 
         // Remove elements
         _innerElements.connection.RemoveSelf();
+
+        // Remove references and bind to them
+        parentFeatureElem.Moving.RemoveHandler("Relation_" + _relationCLO.GetClientID() + "_OnMoving");
+        childFeatureElem.Moving.RemoveHandler("Relation_" + _relationCLO.GetClientID() + "_OnMoving");
     }
 
 

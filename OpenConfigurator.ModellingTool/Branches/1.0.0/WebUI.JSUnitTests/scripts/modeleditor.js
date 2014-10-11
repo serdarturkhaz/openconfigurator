@@ -323,7 +323,7 @@ var FeatureModelCLO = function (clientID, blo) {
 
         // Bind to collections
         _this.Features.Adding.AddHandler(new EventHandler(onCLOAdding));
-        _this.Features.Removed.AddHandler(new EventHandler(onFeatureCLORemoved));
+        _this.Relations.Adding.AddHandler(new EventHandler(onCLOAdding));
     }
 
     // Event handlers
@@ -344,30 +344,27 @@ var FeatureModelCLO = function (clientID, blo) {
             _this.Features.GetAt(0).Name("Newname");
         }
     }
-    var onFeatureCLORemoved = function (featureCLO) {
-        
-    }
 }
 var FeatureCLO = function (clientID, blo) {
 
     // Fields
     var _clientID = clientID, _innerBLO = blo;
-    var _attributes = [];
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
     this.GetType = function () {
         return CLOTypes.Feature;
     }
+    this.DataState = null;
     this.Attributes = new ObservableCollection();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
     this.XPos = new ObservableField(_innerBLO, "XPos");
     this.YPos = new ObservableField(_innerBLO, "YPos");
+    this.AdjacentRelations = new ObservableCollection();
 
     // Init
     this.Initialize = function () {
@@ -584,6 +581,8 @@ var DataModel = function (bloService, cloFactory) {
             switch (clo.GetType()) {
                 case CLOTypes.Feature:
                     _currentFeatureModelCLO.Features.Remove(clo);
+                    clo.
+
                     break;
                 case CLOTypes.Relation:
                     _currentFeatureModelCLO.Relations.Remove(clo);
@@ -1361,6 +1360,8 @@ UIControls.VisualView = function (container, dataModel) {
                     var newRelationCLO = _dataModel.CreateNewCLO(CLOTypes.Relation);
                     newRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
                     newRelationCLO.ChildFeature = childFeatureElem.GetCLO();
+                    newRelationCLO.ParentFeature.AdjacentRelations.Add(newRelationCLO);
+                    newRelationCLO.ChildFeature.AdjacentRelations.Add(newRelationCLO);
                     _dataModel.GetCurrentFeatureModelCLO().Relations.Add(newRelationCLO);
 
                     // Go back to default state
@@ -1613,6 +1614,12 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
     this.IsWithinBounds = function (targetBbox) {
         return _innerElements.connection.IsWithinBounds(targetBbox);
     }
+    this.RemoveSelf = function () {
+
+        // Remove elements
+        _innerElements.connection.RemoveSelf();
+    }
+
 
     // Events
     this.Clicked = new Event();
@@ -1854,6 +1861,25 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
         _handlers = handlers;
         makeSelectable();
     }
+    this.RemoveSelf = function () {
+
+        //Remove Raphael objects
+        _innerElements.line.remove();
+        if (_innerElements.connectors.endConnector != null) {
+            _innerElements.connectors.endConnector.RemoveSelf();
+            _innerElements.connectors.endConnector = null;
+        }
+        if (_innerElements.connectors.startConnector != null) {
+            _innerElements.connectors.startConnector.RemoveSelf();
+            _innerElements.connectors.startConnector = null;
+        }
+        _outerElement.remove();
+        _outerElement = null;
+        if (_glow != null) {
+            _glow.remove();
+            _glow = null;
+        }
+    }
 }
 UIControls.VisualView.ConnectorElem = function (parentConnection, raphaelConnectorType, connectorStyle, positionType, parentCanvasInstance) {
 
@@ -1911,5 +1937,9 @@ UIControls.VisualView.ConnectorElem = function (parentConnection, raphaelConnect
     }
     this.Update = function (newConnectorStyle) {
         _innerElements.raphaelElem.attr(newConnectorStyle);
+    }
+    this.RemoveSelf = function () {
+        _innerElements.raphaelElem.remove();
+        _innerElements.raphaelElem = null;
     }
 }
