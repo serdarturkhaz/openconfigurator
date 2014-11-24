@@ -280,7 +280,7 @@ var SystemDefaults = {
 
 // CLOs
 var CLOTypes = {
-    Model: "Model",
+    FeatureModel: "FeatureModel",
     Feature: "Feature",
     Attribute: "Attribute",
     Relation: "Relation",
@@ -301,7 +301,7 @@ var FeatureModelCLO = function (clientID, blo) {
         return _clientID;
     };
     this.GetType = function () {
-        return CLOTypes.Model;
+        return CLOTypes.FeatureModel;
     }
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Features = new ObservableCollection();
@@ -352,13 +352,13 @@ var FeatureCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
+    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
     this.GetType = function () {
         return CLOTypes.Feature;
     }
-    this.DataState = null;
     this.Attributes = new ObservableCollection();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
@@ -376,7 +376,6 @@ var RelationCLO = function (clientID, blo) {
     // Fields
     var _clientID = clientID, _innerBLO = blo;
     var _parentFeatureCLO = null, _childFeatureCLO = null;
-
     var _this = this;
 
     // Properties
@@ -389,6 +388,33 @@ var RelationCLO = function (clientID, blo) {
     };
     this.ParentFeature = _parentFeatureCLO;
     this.ChildFeature = _childFeatureCLO;
+    this.RelationType = new ObservableField(_innerBLO, "RelationType");
+    this.UpperBound = new ObservableField(_innerBLO, "UpperBound");
+    this.LowerBound = new ObservableField(_innerBLO, "LowerBound");
+
+    // Init
+    this.Initialize = function () {
+
+    }
+}
+var GroupRelationCLO = function (clientID, blo) {
+
+    // Fields
+    var _clientID = clientID, _innerBLO = blo;
+    var _parentFeatureCLO = null, _childFeatureCLOs = [];
+
+    var _this = this;
+
+    // Properties
+    this.DataState = null;
+    this.GetClientID = function () {
+        return _clientID;
+    };
+    this.GetType = function () {
+        return CLOTypes.Relation;
+    };
+    this.ParentFeature = _parentFeatureCLO;
+    this.ChildFeatures = _childFeatureCLOs;
 
     // Init
     this.Initialize = function () {
@@ -522,6 +548,11 @@ var Controller = function () {
         var newCompRuleCLO = _dataModel.CreateNewCLO(CLOTypes.CompositionRule);
         _dataModel.GetCurrentFeatureModelCLO().CompositionRules.Add(newCompRuleCLO);
     }
+    this.AddNewGroupRelation = function () {
+        var newGroupRelationCLO = _dataModel.CreateNewCLO(CLOTypes.GroupRelation);
+        debugger;
+        //_dataModel.GetCurrentFeatureModelCLO().CompositionRules.Add(newCompRuleCLO);
+    }
     this.Delete = function () {
         _currentControlFocus.DeleteSelection();
     }
@@ -598,7 +629,7 @@ var DataModel = function (bloService, cloFactory) {
     this.LoadNewModel = function () {
 
         // Init a new FeatureModelCLO
-        _currentFeatureModelCLO = _cloFactory.CreateNewCLO(CLOTypes.Model);
+        _currentFeatureModelCLO = _cloFactory.CreateNewCLO(CLOTypes.FeatureModel);
         _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
     }
 
@@ -608,7 +639,7 @@ var DataModel = function (bloService, cloFactory) {
 DataModel.CLOFactory = function (bloService) {
 
     var FromBLO = {
-        Model: function (blo) {
+        FeatureModel: function (blo) {
 
             //
             var newClientID = getNewClientID();
@@ -770,21 +801,17 @@ UIControls.CommandToolbar = function (container, controller) {
 
         // Set event handlers
         $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
-        $(_innerElems.modelManipulationItems.newRelationItem).bind("click", function () {
-            _controller.AddNewRelation();
-        });
-        $(_innerElems.modelManipulationItems.newGroupRelationItem).bind("click", function () {
-            _controller.AddNewGroupRelation();
-        });
+        $(_innerElems.modelManipulationItems.newRelationItem).bind("click", toolbarItemHandlers.newRelationItemTriggered);
+        $(_innerElems.modelManipulationItems.newGroupRelationItem).bind("click", toolbarItemHandlers.newGroupRelationItemTriggered);
         $(_innerElems.modelManipulationItems.newCompositionRuleItem).bind("click", function () {
-            _controller.AddNewCompositionRule();
+            //_controller.AddNewCompositionRule();
         });
 
         // Key shortcut handlers
         $(document).keydown(function (e) {
             $.ctrl('F', toolbarItemHandlers.newFeatureItemTriggered);
             $.ctrl('R', toolbarItemHandlers.newRelationItemTriggered);
-
+            $.ctrl('G', toolbarItemHandlers.newGroupRelationItemTriggered);
         });
 
     }
@@ -810,7 +837,10 @@ UIControls.CommandToolbar = function (container, controller) {
         },
         newRelationItemTriggered: function () {
             _controller.AddNewRelation();
-        }
+        },
+        newGroupRelationItemTriggered: function () {
+            _controller.AddNewGroupRelation();
+        },
     };
 }
 UIControls.ModelExplorer = function (container, dataModel) {
@@ -1590,6 +1620,50 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
         if (_innerElements.cardinalityElement != null)
             _innerElements.cardinalityElement.RefreshGraphicalRepresentation();
     }
+    function getCardinalityElemPosition() {
+        var cardinalityDistance = systemDefaults.orientations[_fixedOrientation].cardinalityDistances.relation;
+        var line = _innerElements.connection.InnerElements.line;
+        var labelPoint = line.getPointAtLength(line.getTotalLength() - cardinalityDistance);
+        return labelPoint;
+    }
+    function toggleCardinalityElement() {
+        var displayCardinalitiesMode = settings.diagramContext.displayCardinalities;
+        switch (displayCardinalitiesMode) {
+            case "full":
+                if (_innerElements.cardinalityElement == null) {
+                    _innerElements.cardinalityElement = new UICardinalityLabel(_lowerBound, _upperBound, getCardinalityElemPosition);
+                    _innerElements.cardinalityElement.CreateGraphicalRepresentation();
+                }
+                //
+                _innerElements.cardinalityElement.Update(_lowerBound, _upperBound);
+                break;
+            case "partial":
+                //only show for cloneable
+                if (_relationType == systemDefaults.enums.relationTypes.cloneable.id) {
+                    if (_innerElements.cardinalityElement == null) {
+                        _innerElements.cardinalityElement = new UICardinalityLabel(_lowerBound, _upperBound, getCardinalityElemPosition);
+                        _innerElements.cardinalityElement.CreateGraphicalRepresentation();
+                    }
+
+                    //
+                    _innerElements.cardinalityElement.Update(_lowerBound, _upperBound);
+                } else
+                    //hide for others
+                {
+                    if (_innerElements.cardinalityElement != null) {
+                        _innerElements.cardinalityElement.Delete();
+                        _innerElements.cardinalityElement = null;
+                    }
+                }
+                break;
+            case false:
+                if (_innerElements.cardinalityElement != null) {
+                    _innerElements.cardinalityElement.Delete();
+                    _innerElements.cardinalityElement = null;
+                }
+                break;
+        }
+    }
 
     // Init
     this.Initialize = function () {
@@ -1948,5 +2022,63 @@ UIControls.VisualView.ConnectorElem = function (parentConnection, raphaelConnect
     this.RemoveSelf = function () {
         _innerElements.raphaelElem.remove();
         _innerElements.raphaelElem = null;
+    }
+}
+UIControls.VisualView.CardinalityLabel = function (firstNumber, secondNumber, calculatePositionFunction) {
+
+    //Fields
+    var _innerElements = {
+        box: null,
+        text: null
+    };
+    var _outerElement = null;
+    var _firstNumber = firstNumber, _secondNumber = secondNumber;
+    var _boxWidth = commonStyles.cardinalityLabel.box.dimensions.width * _scaleModifier, _boxHeight = commonStyles.cardinalityLabel.box.dimensions.height * _scaleModifier;
+    var _thisUICardinalityLabel = this;
+
+    //Properties
+    this.InnerElements = _innerElements;
+
+    //Private methods
+    function refresh() {
+
+        //Scale
+        _boxWidth = commonStyles.cardinalityLabel.box.dimensions.width * _scaleModifier;
+        _boxHeight = commonStyles.cardinalityLabel.box.dimensions.height * _scaleModifier
+        _innerElements.box.attr({ width: _boxWidth, height: _boxHeight });
+        _innerElements.text.attr({ "font-size": parseFloat(commonStyles.cardinalityLabel.text.attr["font-size"]) * _scaleModifier });
+
+        //
+        var labelPoint = calculatePositionFunction();
+        _innerElements.box.attr({ x: labelPoint.x - _boxWidth / 2, y: labelPoint.y - _boxHeight / 2 });
+        _innerElements.text.attr({ x: labelPoint.x, y: labelPoint.y });
+
+    }
+
+    //Public methods
+    this.Initialize = function () {
+
+        //Create box and text
+        var labelPoint = calculatePositionFunction();
+        _innerElements.box = _canvas.rect(labelPoint.x - _boxWidth / 2, labelPoint.y - _boxHeight / 2, _boxWidth, _boxHeight, 0);
+        _innerElements.box.attr(commonStyles.cardinalityLabel.box.attr);
+        _innerElements.text = _canvas.text(labelPoint.x, labelPoint.y, "[" + _firstNumber + ".." + _secondNumber + "]");
+        _innerElements.text.attr({ "font-size": parseFloat(commonStyles.cardinalityLabel.text.attr["font-size"]) * _scaleModifier });
+    }
+    this.RefreshGraphicalRepresentation = function () {
+        refresh();
+    }
+    this.Delete = function () {
+        _innerElements.text.remove();
+        _innerElements.text = null;
+        _innerElements.box.remove();
+        _innerElements.box = null;
+    }
+    this.Update = function (newFirstNumber, newSecondNumber) {
+        //
+        _firstNumber = newFirstNumber;
+        _secondNumber = newSecondNumber
+        //Update visuals
+        _innerElements.text.attr({ text: "[" + _firstNumber + ".." + _secondNumber + "]" });
     }
 }
