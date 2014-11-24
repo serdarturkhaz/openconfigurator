@@ -280,7 +280,7 @@ var SystemDefaults = {
 
 // CLOs
 var CLOTypes = {
-    Model: "Model",
+    FeatureModel: "FeatureModel",
     Feature: "Feature",
     Attribute: "Attribute",
     Relation: "Relation",
@@ -301,7 +301,7 @@ var FeatureModelCLO = function (clientID, blo) {
         return _clientID;
     };
     this.GetType = function () {
-        return CLOTypes.Model;
+        return CLOTypes.FeatureModel;
     }
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Features = new ObservableCollection();
@@ -330,7 +330,7 @@ var FeatureModelCLO = function (clientID, blo) {
     var onCLOAdding = function (clo, eventRaiseDetails) {
 
         // If the clo to be added doesnt have an identifier (it is new), provide it with one
-        if (clo.Identifier() === null) {
+        if (clo.Identifer !== undefined && clo.Identifier() === null) {
             var collection = _this[clo.GetType() + "s"]; // get the collection corresponding to the type of the given CLO 
             var identity = getNewIdentifier(clo.GetType(), collection);
 
@@ -376,7 +376,6 @@ var RelationCLO = function (clientID, blo) {
     // Fields
     var _clientID = clientID, _innerBLO = blo;
     var _parentFeatureCLO = null, _childFeatureCLO = null;
-
     var _this = this;
 
     // Properties
@@ -389,6 +388,30 @@ var RelationCLO = function (clientID, blo) {
     };
     this.ParentFeature = _parentFeatureCLO;
     this.ChildFeature = _childFeatureCLO;
+
+    // Init
+    this.Initialize = function () {
+
+    }
+}
+var GroupRelationCLO = function (clientID, blo) {
+
+    // Fields
+    var _clientID = clientID, _innerBLO = blo;
+    var _parentFeatureCLO = null, _childFeatureCLOs = [];
+
+    var _this = this;
+
+    // Properties
+    this.DataState = null;
+    this.GetClientID = function () {
+        return _clientID;
+    };
+    this.GetType = function () {
+        return CLOTypes.Relation;
+    };
+    this.ParentFeature = _parentFeatureCLO;
+    this.ChildFeatures = _childFeatureCLOs;
 
     // Init
     this.Initialize = function () {
@@ -522,6 +545,11 @@ var Controller = function () {
         var newCompRuleCLO = _dataModel.CreateNewCLO(CLOTypes.CompositionRule);
         _dataModel.GetCurrentFeatureModelCLO().CompositionRules.Add(newCompRuleCLO);
     }
+    this.AddNewGroupRelation = function () {
+        var newGroupRelationCLO = _dataModel.CreateNewCLO(CLOTypes.GroupRelation);
+        debugger;
+        //_dataModel.GetCurrentFeatureModelCLO().CompositionRules.Add(newCompRuleCLO);
+    }
     this.Delete = function () {
         _currentControlFocus.DeleteSelection();
     }
@@ -581,19 +609,24 @@ var DataModel = function (bloService, cloFactory) {
             switch (clo.GetType()) {
                 case CLOTypes.Feature:
                     _currentFeatureModelCLO.Features.Remove(clo);
-                    clo.
+                    for (var i = clo.AdjacentRelations.GetLength() ; i > 0; i--) {
+                        _this.DeleteByClientID(clo.AdjacentRelations.GetAt(i - 1).GetClientID());
+                    }
 
                     break;
                 case CLOTypes.Relation:
+                    clo.ParentFeature.AdjacentRelations.Remove(clo);
+                    clo.ChildFeature.AdjacentRelations.Remove(clo);
                     _currentFeatureModelCLO.Relations.Remove(clo);
                     break;
             }
+
         }
     }
     this.LoadNewModel = function () {
 
         // Init a new FeatureModelCLO
-        _currentFeatureModelCLO = _cloFactory.CreateNewCLO(CLOTypes.Model);
+        _currentFeatureModelCLO = _cloFactory.CreateNewCLO(CLOTypes.FeatureModel);
         _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
     }
 
@@ -603,7 +636,7 @@ var DataModel = function (bloService, cloFactory) {
 DataModel.CLOFactory = function (bloService) {
 
     var FromBLO = {
-        Model: function (blo) {
+        FeatureModel: function (blo) {
 
             //
             var newClientID = getNewClientID();
@@ -765,21 +798,17 @@ UIControls.CommandToolbar = function (container, controller) {
 
         // Set event handlers
         $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
-        $(_innerElems.modelManipulationItems.newRelationItem).bind("click", function () {
-            _controller.AddNewRelation();
-        });
-        $(_innerElems.modelManipulationItems.newGroupRelationItem).bind("click", function () {
-            _controller.AddNewGroupRelation();
-        });
+        $(_innerElems.modelManipulationItems.newRelationItem).bind("click", toolbarItemHandlers.newRelationItemTriggered);
+        $(_innerElems.modelManipulationItems.newGroupRelationItem).bind("click", toolbarItemHandlers.newGroupRelationItemTriggered);
         $(_innerElems.modelManipulationItems.newCompositionRuleItem).bind("click", function () {
-            _controller.AddNewCompositionRule();
+            //_controller.AddNewCompositionRule();
         });
 
         // Key shortcut handlers
         $(document).keydown(function (e) {
             $.ctrl('F', toolbarItemHandlers.newFeatureItemTriggered);
             $.ctrl('R', toolbarItemHandlers.newRelationItemTriggered);
-
+            $.ctrl('G', toolbarItemHandlers.newGroupRelationItemTriggered);
         });
 
     }
@@ -805,7 +834,10 @@ UIControls.CommandToolbar = function (container, controller) {
         },
         newRelationItemTriggered: function () {
             _controller.AddNewRelation();
-        }
+        },
+        newGroupRelationItemTriggered: function () {
+            _controller.AddNewGroupRelation();
+        },
     };
 }
 UIControls.ModelExplorer = function (container, dataModel) {
@@ -1356,15 +1388,15 @@ UIControls.VisualView = function (container, dataModel) {
                     childFeatureElem = featureElem;
                     selectElement(featureElem, true);
 
-                    // Create a new clientObject in the diagramDataModel
+                    // Create a new CLO
                     var newRelationCLO = _dataModel.CreateNewCLO(CLOTypes.Relation);
                     newRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
                     newRelationCLO.ChildFeature = childFeatureElem.GetCLO();
-                    newRelationCLO.ParentFeature.AdjacentRelations.Add(newRelationCLO);
-                    newRelationCLO.ChildFeature.AdjacentRelations.Add(newRelationCLO);
-                    _dataModel.GetCurrentFeatureModelCLO().Relations.Add(newRelationCLO);
+                    parentFeatureElem.GetCLO().AdjacentRelations.Add(newRelationCLO);
+                    childFeatureElem.GetCLO().AdjacentRelations.Add(newRelationCLO);
 
-                    // Go back to default state
+                    // Add it to the FeatureModel and then switch to default state
+                    _dataModel.GetCurrentFeatureModelCLO().Relations.Add(newRelationCLO);
                     _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
                 }
             }
@@ -1594,10 +1626,8 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
         _innerElements.connection.Initialize();
 
         // Add references and bind to them
-        parentFeatureElem.RelatedElements.Relations.push(_this);
-        parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving));
-        childFeatureElem.RelatedElements.Relations.push(_this);
-        childFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving));
+        parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
+        childFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
 
         //// Setup cardinality element
         //toggleCardinalityElement();
@@ -1618,6 +1648,10 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
 
         // Remove elements
         _innerElements.connection.RemoveSelf();
+
+        // Remove references and bind to them
+        parentFeatureElem.Moving.RemoveHandler("Relation_" + _relationCLO.GetClientID() + "_OnMoving");
+        childFeatureElem.Moving.RemoveHandler("Relation_" + _relationCLO.GetClientID() + "_OnMoving");
     }
 
 
