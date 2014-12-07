@@ -150,9 +150,9 @@ var UIStyles = {
             Connection: {
                 Connectors: {
                     EndConnector: {
-                        raphaelType: "circle",
-                        dimensionModifier: 0,
-                        dimensions: {
+                        RaphaelType: "circle",
+                        DimensionModifier: 0,
+                        Dimensions: {
                             r: 5 //radius
                         }
                     }
@@ -198,6 +198,88 @@ var UIStyles = {
             }
         }
 
+    },
+    GroupRelation: {
+        General: {
+            RootArc: {
+                attr: {
+                    stroke: "Black",
+                    "stroke-width": 1
+                },
+                Dimensions: {
+                    Length: 35
+                }
+            },
+            Connection: {
+                Connectors: {
+                    EndConnector: {
+                        RaphaelType: "rect",
+                        DimensionModifier: 5, //used to center rect
+                        Dimensions: {
+                            width: 11,
+                            height: 11
+                        }
+                    }
+                }
+            }
+        },
+        SubTypes: {
+            OR: {
+                RootArc: {
+                    attr: {
+                        fill: "Black",
+                        opacity: 1
+                    }
+                },
+                Connection: {
+                    Connectors: {
+                        EndConnector: {
+                            attr: {
+                                fill: "black",
+                                opacity: 1
+                            }
+                        }
+                    }
+                }
+            },
+            XOR: {
+                RootArc: {
+                    attr: {
+                        fill: "#ffffff",
+                        opacity: 1
+                    }
+                },
+                Connection: {
+                    Connectors: {
+                        EndConnector: {
+                            attr: {
+
+                                fill: "#fff7d7",
+                                opacity: 1
+                            }
+                        }
+                    }
+                }
+            },
+            Cardinal: {
+                RootArc: {
+                    attr: {
+                        fill: "#ffffff",
+                        opacity: 0
+                    }
+                },
+                Connection: {
+                    Connectors: {
+                        EndConnector: {
+                            attr: {
+                                fill: "#fff7d7",
+                                opacity: 0
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 var Enums = {
@@ -224,6 +306,11 @@ var Enums = {
         Optional: 1,
         Cloneable: 2
     },
+    GroupRelationTypes: {
+        OR: 0,
+        XOR: 1,
+        Cardinal: 2
+    },
     ConnectorPositionType: {
         EndPoint: "EndPoint",
         StartPoint: "StartPoint"
@@ -238,23 +325,23 @@ var Enums = {
 var SystemDefaults = {
     Orientations: {
         Horizontal: {
-            Name: "horizontal",
-            Opposite: "vertical",
+            Name: "Horizontal",
+            Opposite: "Vertical",
             CardinalityDistances: {
-                groupRelation: 45,
-                relation: 30
+                GroupRelation: 45,
+                Relation: 30
             },
             ArcModifiers: { rx: 6, ry: 12 },
             ArcDirection: {
-                leftToRight: {
-                    check: function (rootPoint, pointA) {
+                LeftToRight: {
+                    Check: function (rootPoint, pointA) {
                         if (rootPoint.x < pointA.x) {
                             return true;
                         }
                     },
-                    arcSweep: 0
+                    ArcSweep: 0
                 },
-                rightToLeft: {
+                RightToLeft: {
                     check: function (rootPoint, pointA) {
                         if (rootPoint.x > pointA.x) {
                             return true;
@@ -268,8 +355,8 @@ var SystemDefaults = {
             AngleIntervals: [{ min: 0, max: 45 }, { min: 136, max: 224 }, { min: 316, max: 359 }]
         },
         Vertical: {
-            Name: "vertical",
-            Opposite: "horizontal",
+            Name: "Vertical",
+            Opposite: "Horizontal",
             CardinalityDistances: {
                 GroupRelation: 45,
                 Relation: 30
@@ -277,20 +364,20 @@ var SystemDefaults = {
             ArcModifiers: { rx: 12, ry: 6 },
             ArcDirection: {
                 UpToDown: {
-                    check: function (rootPoint, pointA) {
+                    Check: function (rootPoint, pointA) {
                         if (rootPoint.y < pointA.y) {
                             return true;
                         }
                     },
-                    arcSweep: 0
+                    ArcSweep: 0
                 },
                 DownToUp: {
-                    check: function (rootPoint, pointA) {
+                    Check: function (rootPoint, pointA) {
                         if (rootPoint.y > pointA.y) {
                             return true;
                         }
                     },
-                    arcSweep: 1
+                    ArcSweep: 1
                 }
             },
             Connections: [["top", "bottom"], ["bottom", "top"]],
@@ -328,6 +415,7 @@ var FeatureModelCLO = function (clientID, blo) {
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Features = new ObservableCollection();
     this.Relations = new ObservableCollection();
+    this.GroupRelations = new ObservableCollection();
 
     // Private methods
     function getNewIdentifier(cloType, collection) {
@@ -346,6 +434,7 @@ var FeatureModelCLO = function (clientID, blo) {
         // Bind to collections
         _this.Features.Adding.AddHandler(new EventHandler(onCLOAdding));
         _this.Relations.Adding.AddHandler(new EventHandler(onCLOAdding));
+        _this.GroupRelations.Adding.AddHandler(new EventHandler(onCLOAdding));
     }
 
     // Event handlers
@@ -386,7 +475,7 @@ var FeatureCLO = function (clientID, blo) {
     this.Name = new ObservableField(_innerBLO, "Name");
     this.XPos = new ObservableField(_innerBLO, "XPos");
     this.YPos = new ObservableField(_innerBLO, "YPos");
-    this.AdjacentRelations = new ObservableCollection();
+    this.RelatedCLOS = new ObservableCollection();
 
     // Init
     this.Initialize = function () {
@@ -397,7 +486,6 @@ var RelationCLO = function (clientID, blo) {
 
     // Fields
     var _clientID = clientID, _innerBLO = blo;
-    var _parentFeatureCLO = null, _childFeatureCLO = null;
     var _this = this;
 
     // Properties
@@ -408,8 +496,8 @@ var RelationCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Relation;
     };
-    this.ParentFeature = _parentFeatureCLO;
-    this.ChildFeature = _childFeatureCLO;
+    this.ParentFeature = null;
+    this.ChildFeature = null;
     this.RelationType = new ObservableField(_innerBLO, "RelationType");
     this.UpperBound = new ObservableField(_innerBLO, "UpperBound");
     this.LowerBound = new ObservableField(_innerBLO, "LowerBound");
@@ -423,7 +511,6 @@ var GroupRelationCLO = function (clientID, blo) {
 
     // Fields
     var _clientID = clientID, _innerBLO = blo;
-    var _parentFeatureCLO = null, _childFeatureCLOs = [];
     var _this = this;
 
     // Properties
@@ -434,8 +521,8 @@ var GroupRelationCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.GroupRelation;
     };
-    this.ParentFeature = _parentFeatureCLO;
-    this.ChildFeatures = _childFeatureCLOs;
+    this.ParentFeature = null;
+    this.ChildFeatures = new ObservableCollection();
     this.GroupRelationType = new ObservableField(_innerBLO, "GroupRelationType");
     this.UpperBound = new ObservableField(_innerBLO, "UpperBound");
     this.LowerBound = new ObservableField(_innerBLO, "LowerBound");
@@ -636,15 +723,23 @@ var DataModel = function (bloService, cloFactory) {
             switch (clo.GetType()) {
                 case CLOTypes.Feature:
                     _currentFeatureModelCLO.Features.Remove(clo);
-                    for (var i = clo.AdjacentRelations.GetLength() ; i > 0; i--) {
-                        _this.DeleteByClientID(clo.AdjacentRelations.GetAt(i - 1).GetClientID());
+                    for (var i = clo.RelatedCLOS.GetLength() ; i > 0; i--) {
+                        _this.DeleteByClientID(clo.RelatedCLOS.GetAt(i - 1).GetClientID());
                     }
-
                     break;
                 case CLOTypes.Relation:
-                    clo.ParentFeature.AdjacentRelations.Remove(clo);
-                    clo.ChildFeature.AdjacentRelations.Remove(clo);
                     _currentFeatureModelCLO.Relations.Remove(clo);
+                    clo.ParentFeature.RelatedCLOS.Remove(clo);
+                    clo.ChildFeature.RelatedCLOS.Remove(clo);
+                    break;
+
+                case CLOTypes.GroupRelation:
+                    _currentFeatureModelCLO.GroupRelations.Remove(clo);
+                    clo.ParentFeature.RelatedCLOS.Remove(clo);
+                    for (var i = 0; i < clo.ChildFeatures.GetLength() ; i++) {
+                        clo.ChildFeatures.GetAt(i).RelatedCLOS.Remove(clo);
+                    }
+                    
                     break;
             }
 
@@ -1112,6 +1207,24 @@ UIControls.VisualView = function (container, dataModel) {
             relationElemHandlers.onClicked(newRelationElem, ctrlKey);
         }));
     }
+    function addGroupRelationElem(groupRelationCLO) {
+
+        //
+        var childFeatureElems = [];
+        for (var i = 0; i < groupRelationCLO.ChildFeatures.GetLength() ; i++) {
+            childFeatureElems.push(_visualUIElems[groupRelationCLO.ChildFeatures.GetAt(i).GetClientID()]);
+        }
+
+        // Create a new group relation
+        var newGroupRelationElem = new UIControls.VisualView.GroupRelationElem(groupRelationCLO, _visualUIElems[groupRelationCLO.ParentFeature.GetClientID()], childFeatureElems, _canvas);
+        newGroupRelationElem.Initialize();
+        _visualUIElems[groupRelationCLO.GetClientID()] = newGroupRelationElem;
+
+        // Bind to it
+        newGroupRelationElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
+            groupRelationElemHandlers.onClicked(newGroupRelationElem, ctrlKey);
+        }));
+    }
     function selectElement(uiElem, raiseEvents) {
 
         // Add it to the local collection and set its selectionState
@@ -1204,12 +1317,16 @@ UIControls.VisualView = function (container, dataModel) {
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
 
-        // Bind to it
+        // On Added handlers
         _currentFeatureModelCLO = modelCLO;
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
-        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onFeatureRemoved));
         modelCLO.Relations.Added.AddHandler(new EventHandler(modelHandlers.onRelationAdded));
-        modelCLO.Relations.Removed.AddHandler(new EventHandler(modelHandlers.onRelationRemoved));
+        modelCLO.GroupRelations.Added.AddHandler(new EventHandler(modelHandlers.onGroupRelationAdded));
+
+        // On Removed handlers
+        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+        modelCLO.Relations.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+        modelCLO.GroupRelations.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
 
@@ -1234,17 +1351,16 @@ UIControls.VisualView = function (container, dataModel) {
         onRelationAdded: function (relationCLO) {
             addRelationElem(relationCLO);
         },
-        onFeatureRemoved: function (featureCLO) {
-            var featureElem = _visualUIElems[featureCLO.GetClientID()];
-            deselectElement(featureElem, false);
-            delete _visualUIElems[featureCLO.GetClientID()];
-            featureElem.RemoveSelf();
+        onGroupRelationAdded: function (groupRelationCLO) {
+            addGroupRelationElem(groupRelationCLO);
         },
-        onRelationRemoved: function (relationCLO) {
-            var relationElem = _visualUIElems[relationCLO.GetClientID()];
-            deselectElement(relationElem, false);
-            delete _visualUIElems[relationCLO.GetClientID()];
-            relationElem.RemoveSelf();
+        onCLORemoved: function (clo) {
+            var elem = _visualUIElems[clo.GetClientID()];
+            if (elem !== undefined) {
+                deselectElement(elem, false);
+                delete _visualUIElems[clo.GetClientID()];
+                elem.RemoveSelf();
+            }
         }
     }
     var featureElemHandlers = {
@@ -1300,6 +1416,21 @@ UIControls.VisualView = function (container, dataModel) {
                 deselectElement(relationElem, true);
             } else {
                 selectElement(relationElem, true);
+            }
+        }
+    }
+    var groupRelationElemHandlers = {
+        onClicked: function (groupRelationElem, ctrlKey) {
+            // If control key isnt used, clear out any currently selected elements
+            if (ctrlKey !== true) {
+                clearSelection();
+            }
+
+            // Select or deselect the uiElem
+            if (groupRelationElem.IsSelected() === true) {
+                deselectElement(groupRelationElem, true);
+            } else {
+                selectElement(groupRelationElem, true);
             }
         }
     }
@@ -1432,8 +1563,8 @@ UIControls.VisualView = function (container, dataModel) {
                     var newRelationCLO = _dataModel.CreateNewCLO(CLOTypes.Relation);
                     newRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
                     newRelationCLO.ChildFeature = childFeatureElem.GetCLO();
-                    parentFeatureElem.GetCLO().AdjacentRelations.Add(newRelationCLO);
-                    childFeatureElem.GetCLO().AdjacentRelations.Add(newRelationCLO);
+                    parentFeatureElem.GetCLO().RelatedCLOS.Add(newRelationCLO);
+                    childFeatureElem.GetCLO().RelatedCLOS.Add(newRelationCLO);
 
                     // Add it to the FeatureModel and then switch to default state
                     _dataModel.GetCurrentFeatureModelCLO().Relations.Add(newRelationCLO);
@@ -1454,8 +1585,65 @@ UIControls.VisualView = function (container, dataModel) {
         EnterState: function () {
             clearSelection();
             _innerElems.infoMsgOverlay.html("Select the parent feature for the group relation...").show();
+
+            // Variables
+            var parentFeatureElem, childFeatureElems = [];
+
+            // First step handlers (let user select parent feature)
+            this.normalFeatureElemOnclick = featureElemHandlers.onClicked; // store the usual feature onclick handler
+            featureElemHandlers.onClicked = firstStepClickHandler;
+            function firstStepClickHandler(featureElem) {
+                parentFeatureElem = featureElem;
+                selectElement(parentFeatureElem, true);
+
+                // Prepare for the second step
+                featureElemHandlers.onClicked = secondStepClickHandler;
+                _innerElems.infoMsgOverlay.html("Now select the child features and press ENTER when done...").show();
+            }
+
+            // Second step handlers (let user select child features)
+            function secondStepClickHandler(featureElem) {
+                if (featureElem === parentFeatureElem) { // check whether the user is trying to select the same feature twice
+                    _innerElems.infoMsgOverlay.html("Select a different child feature...");
+                } else {
+
+                    childFeatureElems.push(featureElem);
+                    selectElement(featureElem, true);
+                }
+            }
+
+            // Handler when enter is pressed
+            $(document).bind("keydown.enter", function (e) {
+                if (e.which === 13) { //enter key
+                    if (parentFeatureElem && childFeatureElems.length > 1) { // there should be at least 2 child features
+
+                        // Create a new CLO
+                        var newGroupRelationCLO = _dataModel.CreateNewCLO(CLOTypes.GroupRelation);
+                        newGroupRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
+                        for (var i = 0; i < childFeatureElems.length; i++) {
+                            newGroupRelationCLO.ChildFeatures.Add(childFeatureElems[i].GetCLO());
+                            childFeatureElems[i].GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
+                        }
+                        parentFeatureElem.GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
+                        
+
+                        // Add it to the FeatureModel and then switch to default state
+                        _dataModel.GetCurrentFeatureModelCLO().GroupRelations.Add(newGroupRelationCLO);
+                        _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+                    }
+                }
+            });
         },
-        LeaveState: function () { }
+        LeaveState: function () {
+            _innerElems.infoMsgOverlay.html("").hide();
+
+            // Restore the old feature onclick handler
+            featureElemHandlers.onClicked = this.normalFeatureElemOnclick;
+            delete this.normalFeatureElemOnclick;
+
+            // Remove other handlers
+            $(document).unbind("keydown.enter");
+        }
     }
 }
 UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) {
@@ -1473,9 +1661,6 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
         width: UIStyles.Feature.General.Box.Dimensions.width,
         height: UIStyles.Feature.General.Box.Dimensions.height
     }
-    var _relatedElems = {
-        Relations: []
-    };
     var _this = this;
 
     // Properties
@@ -1491,7 +1676,6 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     this.GetBox = function () {
         return _outerElement;
     };
-    this.RelatedElements = _relatedElems;
 
     // Private methods
     function makeSelectable() {
@@ -1675,16 +1859,16 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
         switch (Settings.DisplayCardinalities) {
             // Full
             case "Full": // show for everything
-                if (_innerElements.cardinalityElement === null) { 
+                if (_innerElements.cardinalityElement === null) {
                     _innerElements.cardinalityElement = new UIControls.VisualView.CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                     _innerElements.cardinalityElement.Initialize();
                 }
                 _innerElements.cardinalityElement.Update(_relationCLO.LowerBound(), _relationCLO.UpperBound());
                 break;
 
-            // Partial
+                // Partial
             case "Partial": // only show for cloneable Relations
-                if (_relationCLO.RelationType() === Enums.RelationTypes.Cloneable) { 
+                if (_relationCLO.RelationType() === Enums.RelationTypes.Cloneable) {
                     if (_innerElements.cardinalityElement == null) {
                         _innerElements.cardinalityElement = new UIControls.VisualView.CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                         _innerElements.cardinalityElement.Initialize();
@@ -1698,7 +1882,7 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
                 }
                 break;
 
-            // None
+                // None
             case "None": // hide all
                 if (_innerElements.cardinalityElement != null) {
                     _innerElements.cardinalityElement.Delete();
@@ -1712,16 +1896,16 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
     this.Initialize = function () {
 
         // Create a new UIConnection
-        var relationType = getEnumEntryNameByID(Enums.RelationTypes, relationCLO.RelationType());
+        var relationType = getEnumEntryNameByID(Enums.RelationTypes, _relationCLO.RelationType());
         _innerElements.connection = new UIControls.VisualView.ConnectionElem(parentFeatureElem.GetBox(), childFeatureElem.GetBox(), _relationCLO.GetType(), relationType, _canvasInstance);
         _innerElements.connection.Initialize();
 
-        // Add references and bind to them
+        // Add handlers when parent/child feature elems are moving
         parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
         childFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
 
         // Setup cardinality element
-       toggleCardinalityElement();
+        toggleCardinalityElement();
 
         // Setup
         makeSelectable();
@@ -1753,6 +1937,242 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
     // Event handlers
     var onRelatedFeatureMoving = function () {
         refresh();
+    }
+}
+UIControls.VisualView.GroupRelationElem = function (groupRelationCLO, parentFeatureElem, childFeatureElems, parentCanvasInstance) {
+
+    // Fields
+    var _groupRelationCLO = groupRelationCLO, _canvasInstance = parentCanvasInstance;
+    var _currentState = Enums.UIElementStates.Unselected;
+    var _innerElements = {
+        cardinalityElement: null,
+        connections: [],
+        rootArc: null
+    };
+    var _this = this;
+
+    // Properties
+    this.GetType = function () {
+        return Enums.VisualView.ElemTypes.GroupRelationElem;
+    }
+    this.GetCLO = function () {
+        return _groupRelationCLO;
+    }
+    this.IsSelected = function () {
+        return _currentState === Enums.UIElementStates.Selected;
+    }
+
+    // Private methods
+    function makeSelectable() {
+        //
+        var handlers = {
+            onClick: function (e) {
+                _this.Clicked.RaiseEvent(e.ctrlKey);
+
+                // Prevent dom propagation - so VisualView canvas click bind doesnt get triggered
+                e.stopPropagation();
+            },
+            onMouseOver: function (e) {
+                for (var i = 0; i < _innerElements.connections.length; i++) {
+                    _innerElements.connections[i].ShowGlow();
+                }
+            },
+            onMouseOut: function (e) {
+                for (var i = 0; i < _innerElements.connections.length; i++) {
+                    _innerElements.connections[i].HideGlow();
+                }
+            }
+        }
+        for (var i = 0; i < _innerElements.connections.length; i++) {
+            _innerElements.connections[i].MakeSelectable(handlers);
+        }
+
+        ////
+        //var handlers = {
+        //    onClick: function (e) {
+        //        toggleElementSelect(_thisUIGroupRelation, e.ctrlKey, true);
+        //    },
+        //    onMouseOver: function (e) {
+        //        if (_innerMode != innerState.dragging) {
+        //            for (var i = 0; i < _innerElements.connections.length; i++) {
+        //                _innerElements.connections[i].ShowGlow();
+        //            }
+        //        }
+        //    },
+        //    onMouseOut: function (e) {
+        //        if (_innerMode != innerState.dragging) {
+        //            for (var i = 0; i < _innerElements.connections.length; i++) {
+        //                _innerElements.connections[i].HideGlow();
+        //            }
+        //        }
+        //    }
+        //}
+        
+    }
+    function refresh() {
+        for (var i = 0; i < _innerElements.connections.length; i++) {
+            _innerElements.connections[i].RefreshGraphicalRepresentation();
+        }
+
+        if (_innerElements.cardinalityElement != null)
+            _innerElements.cardinalityElement.RefreshGraphicalRepresentation();
+    }
+    function getArcPath(firstConnection, lastConnection) {
+
+        // Get points
+        var rootPoint = firstConnection.InnerElements.line.getPointAtLength(0);
+        var pointA = firstConnection.InnerElements.line.getPointAtLength(UIStyles.GroupRelation.General.RootArc.Dimensions.Length * Settings.ScaleModifier);
+        var pointB = lastConnection.InnerElements.line.getPointAtLength(UIStyles.GroupRelation.General.RootArc.Dimensions.Length * Settings.ScaleModifier);
+
+        // Get arc modifiers
+        var rx = SystemDefaults.Orientations[Settings.UIOrientation].ArcModifiers.rx;
+        var ry = SystemDefaults.Orientations[Settings.UIOrientation].ArcModifiers.ry;
+        var arcSweep = null;
+
+        for (var key in SystemDefaults.Orientations[Settings.UIOrientation].ArcDirection) {
+            var arcDirection = SystemDefaults.Orientations[Settings.UIOrientation].ArcDirection[key];
+            if (arcDirection.Check(rootPoint, pointA) === true) {
+                arcSweep = arcDirection.ArcSweep;
+                break;
+            }
+        }
+        // Create the path
+        var path = ["M", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3),
+                "L", pointA.x.toFixed(3), pointA.y.toFixed(3),
+        //"L", pointB.x.toFixed(3), pointB.y.toFixed(3), - straight lines
+                "A", rx, ry, 0, 0, arcSweep, pointB.x.toFixed(3), pointB.y.toFixed(3),
+                "L", rootPoint.x.toFixed(3), rootPoint.y.toFixed(3)].join(",");
+        return path;
+    }
+    function refreshArc() {
+
+        //Get the new path
+        var newPath = getArcPath(_innerElements.connections[0], _innerElements.connections[_innerElements.connections.length - 1]);
+        _innerElements.rootArc.attr({ path: newPath });
+    }
+    function getCardinalityElemPosition() {
+        var cardinalityDistance = SystemDefaults.Orientations[Settings.UIOrientation].CardinalityDistances.Relation;
+        var line = _innerElements.connection.InnerElements.line;
+        var labelPoint = line.getPointAtLength(line.getTotalLength() - cardinalityDistance);
+        return labelPoint;
+    }
+    function toggleCardinalityElement() {
+
+        //
+        switch (Settings.DisplayCardinalities) {
+            // Full
+            case "Full": // show for everything
+                if (_innerElements.cardinalityElement === null) {
+                    _innerElements.cardinalityElement = new UIControls.VisualView.CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
+                    _innerElements.cardinalityElement.Initialize();
+                }
+                _innerElements.cardinalityElement.Update(_relationCLO.LowerBound(), _relationCLO.UpperBound());
+                break;
+
+                // Partial
+            case "Partial": // only show for cloneable Relations
+                if (_relationCLO.RelationType() === Enums.RelationTypes.Cloneable) {
+                    if (_innerElements.cardinalityElement == null) {
+                        _innerElements.cardinalityElement = new UIControls.VisualView.CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
+                        _innerElements.cardinalityElement.Initialize();
+                    }
+                    _innerElements.cardinalityElement.Update(_relationCLO.LowerBound(), _relationCLO.UpperBound());
+                } else {
+                    if (_innerElements.cardinalityElement !== null) {
+                        _innerElements.cardinalityElement.Delete();
+                        _innerElements.cardinalityElement = null;
+                    }
+                }
+                break;
+
+                // None
+            case "None": // hide all
+                if (_innerElements.cardinalityElement != null) {
+                    _innerElements.cardinalityElement.Delete();
+                    _innerElements.cardinalityElement = null;
+                }
+                break;
+        }
+    }
+
+    // Init
+    this.Initialize = function () {
+
+        // Create UIConnections for each child Feature
+        var groupRelationType = getEnumEntryNameByID(Enums.GroupRelationTypes, _groupRelationCLO.GroupRelationType());
+        for (var i = 0; i < childFeatureElems.length; i++) {
+            var newConnection = new UIControls.VisualView.ConnectionElem(parentFeatureElem.GetBox(), childFeatureElems[i].GetBox(), _groupRelationCLO.GetType(), groupRelationType, _canvasInstance);
+            newConnection.Initialize();
+            _innerElements.connections.push(newConnection);
+        }
+
+        // Create Arc
+        var arcPath = getArcPath(_innerElements.connections[0], _innerElements.connections[_innerElements.connections.length - 1]);
+        _innerElements.rootArc = _canvasInstance.path(arcPath).attr(UIStyles.GroupRelation.General.RootArc.attr);
+        _innerElements.rootArc.attr(UIStyles.GroupRelation.SubTypes[groupRelationType].RootArc.attr);
+
+        // Add handlers when parent/child feature elems are moving
+        parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "GroupRelation_" + _groupRelationCLO.GetClientID() + "_OnMoving"));
+        for (var i = 0; i < childFeatureElems.length; i++) {
+            childFeatureElems[i].Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "GroupRelation_" + _groupRelationCLO.GetClientID() + "_OnMoving"));
+        }
+
+        // Make selectable
+        makeSelectable();
+    }
+
+    // Public methods
+    this.SetSelectedState = function (state) {
+        _currentState = state;
+        for (var i = 0; i < _innerElements.connections.length; i++) {
+            _innerElements.connections[i].SetSelectedState(state);
+        }
+
+    }
+    this.IsWithinBounds = function (targetBbox) {
+        var allConnectionsAreInBounds = true;
+        for (var i = 0; i < _innerElements.connections.length; i++) {
+            if (!_innerElements.connections[i].IsWithinBounds(targetBbox)) {
+                allConnectionsAreInBounds = false;
+                break;
+            }
+        }
+
+        return allConnectionsAreInBounds;
+    }
+    this.RemoveSelf = function () {
+
+        // Remove elements
+        for (var i = 0; i < _innerElements.connections.length; i++) {
+            _innerElements.connections[i].RemoveSelf();
+        }
+        if (_innerElements.cardinalityElement !== null)
+            _innerElements.cardinalityElement.RemoveSelf();
+
+        // Remove handlers when parent/child feature elems are moving
+        parentFeatureElem.Moving.RemoveHandler("GroupRelation_" + _groupRelationCLO.GetClientID() + "_OnMoving");
+        for (var i = 0; i < childFeatureElems.length; i++) {
+            childFeatureElems[i].Moving.RemoveHandler("GroupRelation_" + _groupRelationCLO.GetClientID() + "_OnMoving");
+        }
+
+        //Remove Arc
+        _innerElements.rootArc.remove();
+        _innerElements.rootArc = null;
+
+        //Remove CardinalityText
+        if (_innerElements.cardinalityElement !== null) {
+            _innerElements.cardinalityElement.RemoveSelf();
+            _innerElements.cardinalityElement = null
+        }
+    }
+
+    // Events
+    this.Clicked = new Event();
+
+    // Event handlers
+    var onRelatedFeatureMoving = function () {
+        refresh();
+        refreshArc();
     }
 }
 UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElemType, parentElemSubType, parentCanvasInstance) {
@@ -2025,12 +2445,12 @@ UIControls.VisualView.ConnectorElem = function (parentConnection, raphaelConnect
     function refresh() {
 
         //
-        var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.dimensionModifier * Settings.ScaleModifier;
-        var yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.dimensionModifier * Settings.ScaleModifier;
+        var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.DimensionModifier * Settings.ScaleModifier;
+        var yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.DimensionModifier * Settings.ScaleModifier;
         _innerElements.raphaelElem.attr({ cx: xPos, cy: yPos, x: xPos, y: yPos });
 
         //
-        var scaledDimensions = $.extend(true, {}, raphaelConnectorType.dimensions);
+        var scaledDimensions = $.extend(true, {}, raphaelConnectorType.Dimensions);
         for (var dimensionKey in scaledDimensions) {
             var originalValue = scaledDimensions[dimensionKey];
             scaledDimensions[dimensionKey] = originalValue * Settings.ScaleModifier;
@@ -2042,15 +2462,15 @@ UIControls.VisualView.ConnectorElem = function (parentConnection, raphaelConnect
     this.Initialize = function () {
 
         //Create raphaelElem
-        var scaledDimensions = $.extend(true, {}, raphaelConnectorType.dimensions);
+        var scaledDimensions = $.extend(true, {}, raphaelConnectorType.Dimensions);
         for (var dimensionKey in scaledDimensions) {
             var originalValue = scaledDimensions[dimensionKey];
             scaledDimensions[dimensionKey] = originalValue * Settings.ScaleModifier;
         }
 
-        var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.dimensionModifier * Settings.ScaleModifier;
-        var yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.dimensionModifier * Settings.ScaleModifier; //position for endConnector
-        _innerElements.raphaelElem = eval("_canvasInstance." + raphaelConnectorType.raphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
+        var xPos = _connectionElement.GetCurrentPath()[positionType].x - raphaelConnectorType.DimensionModifier * Settings.ScaleModifier;
+        var yPos = _connectionElement.GetCurrentPath()[positionType].y - raphaelConnectorType.DimensionModifier * Settings.ScaleModifier; //position for endConnector
+        _innerElements.raphaelElem = eval("_canvasInstance." + raphaelConnectorType.RaphaelType + "(xPos, yPos" + paramsToString(scaledDimensions) + ")");
         _innerElements.raphaelElem.attr(connectorStyle);
     }
 
@@ -2104,7 +2524,7 @@ UIControls.VisualView.CardinalityLabel = function (firstNumber, secondNumber, ca
 
     // Public methods
     this.Initialize = function () {
-        
+
         // Create box and text
         var labelPoint = calculatePositionFunction();
         _innerElements.box = _canvasInstance.rect(labelPoint.x - _boxWidth / 2, labelPoint.y - _boxHeight / 2, _boxWidth, _boxHeight, 0);
