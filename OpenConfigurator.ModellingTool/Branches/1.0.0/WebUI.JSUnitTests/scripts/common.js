@@ -56,11 +56,11 @@ $.ctrl = function (key, callback, args) {
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
-function getEnumEntryByID(collection, id) {
-    for (var key in collection) {
-        var enumEntry = collection[key];
-        if (enumEntry.id == id) {
-            return enumEntry;
+function getEnumEntryNameByID(enumeration, id) {
+    for (var key in enumeration) {
+
+        if (enumeration[key] === id) {
+            return key;
         }
     }
 }

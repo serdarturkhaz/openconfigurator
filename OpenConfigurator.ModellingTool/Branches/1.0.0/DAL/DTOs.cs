@@ -70,17 +70,17 @@ namespace DAL.DTOs
             get;
             set;
         }
+        public virtual string Identifier
+        {
+            get;
+            set;
+        }
         public virtual Feature ParentFeature
         {
             get;
             set;
         }
         public virtual Feature ChildFeature
-        {
-            get;
-            set;
-        }
-        public virtual string Identifier
         {
             get;
             set;
@@ -108,12 +108,23 @@ namespace DAL.DTOs
             get;
             set;
         }
-        public virtual Nullable<int> LowerBound
+        public virtual Feature ParentFeature
         {
             get;
             set;
         }
-        public virtual Nullable<int> UpperBound
+        public virtual List<Feature> ChildFeatures
+        {
+            get;
+            set;
+        }
+
+        public virtual int? LowerBound
+        {
+            get;
+            set;
+        }
+        public virtual int? UpperBound
         {
             get;
             set;
