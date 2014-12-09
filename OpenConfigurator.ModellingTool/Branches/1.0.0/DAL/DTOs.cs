@@ -98,12 +98,13 @@ namespace DAL.DTOs
     }
     public class GroupRelation : iDTO
     {
-        public virtual int GroupRelationTypeID
+        public virtual string Identifier
         {
             get;
             set;
         }
-        public virtual string Identifier
+
+        public virtual int GroupRelationTypeID
         {
             get;
             set;
@@ -132,6 +133,11 @@ namespace DAL.DTOs
     }
     public class CompositionRule : iDTO
     {
+        public virtual string Identifier
+        {
+            get;
+            set;
+        }
         public virtual int CompositionRuleTypeID
         {
             get;
@@ -142,16 +148,12 @@ namespace DAL.DTOs
             get;
             set;
         }
-        public virtual Feature SecondFeatureID
+        public virtual Feature SecondFeature
         {
             get;
             set;
         }
-        public virtual string Identifier
-        {
-            get;
-            set;
-        }
+        
         public virtual string Name
         {
             get;
