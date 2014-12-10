@@ -1325,7 +1325,7 @@ UIControls.VisualView = function (container, dataModel) {
 
         // Bind to it
         newRelationElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
-            relationElemHandlers.onClicked(newRelationElem, ctrlKey);
+            standardOnElemClicked(newRelationElem, ctrlKey);
         }));
     }
     function addGroupRelationElem(groupRelationCLO) {
@@ -1343,7 +1343,7 @@ UIControls.VisualView = function (container, dataModel) {
 
         // Bind to it
         newGroupRelationElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
-            groupRelationElemHandlers.onClicked(newGroupRelationElem, ctrlKey);
+            standardOnElemClicked(newGroupRelationElem, ctrlKey);
         }));
     }
     function addCompositionRuleElem(compositionRuleCLO) {
@@ -1355,9 +1355,9 @@ UIControls.VisualView = function (container, dataModel) {
         _visualUIElems[compositionRuleCLO.GetClientID()] = newCompositionRuleElem;
 
         // Bind to it
-        //newRelationElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
-        //    relationElemHandlers.onClicked(newRelationElem, ctrlKey);
-        //}));
+        newCompositionRuleElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
+            standardOnElemClicked(newCompositionRuleElem, ctrlKey);
+        }));
     }
     function selectElement(uiElem, raiseEvents) {
 
@@ -1546,36 +1546,20 @@ UIControls.VisualView = function (container, dataModel) {
             }
         }
     }
-    var relationElemHandlers = {
-        onClicked: function (relationElem, ctrlKey) {
-            // If control key isnt used, clear out any currently selected elements
-            if (ctrlKey !== true) {
-                clearSelection();
-            }
+    var standardOnElemClicked = function (elem, ctrlKey) {
+        // If control key isnt used, clear out any currently selected elements
+        if (ctrlKey !== true) {
+            clearSelection();
+        }
 
-            // Select or deselect the uiElem
-            if (relationElem.IsSelected() === true) {
-                deselectElement(relationElem, true);
-            } else {
-                selectElement(relationElem, true);
-            }
+        // Select or deselect the uiElem
+        if (elem.IsSelected() === true) {
+            deselectElement(elem, true);
+        } else {
+            selectElement(elem, true);
         }
     }
-    var groupRelationElemHandlers = {
-        onClicked: function (groupRelationElem, ctrlKey) {
-            // If control key isnt used, clear out any currently selected elements
-            if (ctrlKey !== true) {
-                clearSelection();
-            }
 
-            // Select or deselect the uiElem
-            if (groupRelationElem.IsSelected() === true) {
-                deselectElement(groupRelationElem, true);
-            } else {
-                selectElement(groupRelationElem, true);
-            }
-        }
-    }
 
     // Inner modes
     UIControls.VisualView.InnerStates = {};
@@ -2357,7 +2341,7 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
         return Enums.VisualView.ElemTypes.CompositionRuleElem;
     }
     this.GetCLO = function () {
-        return _relationCLO;
+        return _compositionRuleCLO;
     }
     this.IsSelected = function () {
         return _currentState === Enums.UIElementStates.Selected;
@@ -2384,8 +2368,6 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
     }
     function refresh() {
         _innerElements.connection.RefreshGraphicalRepresentation();
-        if (_innerElements.cardinalityElement != null)
-            _innerElements.cardinalityElement.RefreshGraphicalRepresentation();
     }
 
     // Init
@@ -2400,8 +2382,8 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
         firstFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving"));
         secondFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving"));
 
-        //// Setup other characteristics and elements
-        //makeSelectable();
+        // Setup other characteristics and elements
+        makeSelectable();
     }
 
     // Public methods
@@ -2416,8 +2398,6 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
 
         // Remove elements
         _innerElements.connection.RemoveSelf();
-        if (_innerElements.cardinalityElement !== null)
-            _innerElements.cardinalityElement.RemoveSelf();
 
         // Remove references and bind to them
         firstFeatureElem.Moving.RemoveHandler("CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving");
