@@ -840,6 +840,7 @@ var DataModel = function (bloService, cloFactory) {
                         _this.DeleteByClientID(clo.RelatedCLOS.GetAt(i - 1).GetClientID());
                     }
                     break;
+
                 case CLOTypes.Relation:
                     _currentFeatureModelCLO.Relations.Remove(clo);
                     clo.ParentFeature.RelatedCLOS.Remove(clo);
@@ -852,7 +853,12 @@ var DataModel = function (bloService, cloFactory) {
                     for (var i = 0; i < clo.ChildFeatures.GetLength() ; i++) {
                         clo.ChildFeatures.GetAt(i).RelatedCLOS.Remove(clo);
                     }
+                    break;
 
+                case CLOTypes.CompositionRule:
+                    _currentFeatureModelCLO.CompositionRules.Remove(clo);
+                    clo.FirstFeature.RelatedCLOS.Remove(clo);
+                    clo.SecondFeature.RelatedCLOS.Remove(clo);
                     break;
             }
 
@@ -2390,9 +2396,9 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
         _innerElements.connection = new UIControls.VisualView.ConnectionElem(firstFeatureElem.GetBox(), secondFeatureElem.GetBox(), _compositionRuleCLO.GetType(), compositionRuleType, _canvasInstance);
         _innerElements.connection.Initialize();
 
-        //// Add handlers when parent/child feature elems are moving
-        //parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
-        //childFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
+        // Add handlers when parent/child feature elems are moving
+        firstFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving"));
+        secondFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving"));
 
         //// Setup other characteristics and elements
         //makeSelectable();
@@ -2414,8 +2420,8 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
             _innerElements.cardinalityElement.RemoveSelf();
 
         // Remove references and bind to them
-        parentFeatureElem.Moving.RemoveHandler("Relation_" + _relationCLO.GetClientID() + "_OnMoving");
-        childFeatureElem.Moving.RemoveHandler("Relation_" + _relationCLO.GetClientID() + "_OnMoving");
+        firstFeatureElem.Moving.RemoveHandler("CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving");
+        secondFeatureElem.Moving.RemoveHandler("CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving");
     }
 
     // Events
