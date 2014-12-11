@@ -31,7 +31,7 @@ var UIStyles = {
                         attr: {
                             stroke: "Black",
                             fill: "none",
-                            "stroke-width": 2
+                            "stroke-width": 3
                         }
                     }
                 }
@@ -552,19 +552,21 @@ var FeatureModelCLO = function (clientID, blo) {
     var onCLOAdding = function (clo, eventRaiseDetails) {
 
         // If the clo to be added doesnt have an identifier (it is new), provide it with one
-        if (clo.Identifer !== undefined && clo.Identifier() === null) {
+        if (clo.Identifier !== undefined && clo.Identifier() === null) {
             var collection = _this[clo.GetType() + "s"]; // get the collection corresponding to the type of the given CLO 
             var identity = getNewIdentifier(clo.GetType(), collection);
 
             clo.Identifier(identity.identifier);
-            clo.Name(identity.name);
+            if (clo.Name !== undefined)
+                clo.Name(identity.name);
         }
 
-        // Knockout test
-        if (_this.Features.GetLength() > 0) {
 
+        // Knockout test///////////////////////////
+        if (_this.Features.GetLength() > 0) {
             _this.Features.GetAt(0).Name("Newname");
         }
+        ////////////////////////////////////////////
     }
 }
 var FeatureCLO = function (clientID, blo) {
@@ -659,6 +661,7 @@ var CompositionRuleCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CompositionRule;
     }
+    this.Name = new ObservableField(_innerBLO, "Identifier");
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.FirstFeature = null;
     this.SecondFeature = null;
@@ -840,6 +843,7 @@ var DataModel = function (bloService, cloFactory) {
                         _this.DeleteByClientID(clo.RelatedCLOS.GetAt(i - 1).GetClientID());
                     }
                     break;
+
                 case CLOTypes.Relation:
                     _currentFeatureModelCLO.Relations.Remove(clo);
                     clo.ParentFeature.RelatedCLOS.Remove(clo);
@@ -852,7 +856,12 @@ var DataModel = function (bloService, cloFactory) {
                     for (var i = 0; i < clo.ChildFeatures.GetLength() ; i++) {
                         clo.ChildFeatures.GetAt(i).RelatedCLOS.Remove(clo);
                     }
+                    break;
 
+                case CLOTypes.CompositionRule:
+                    _currentFeatureModelCLO.CompositionRules.Remove(clo);
+                    clo.FirstFeature.RelatedCLOS.Remove(clo);
+                    clo.SecondFeature.RelatedCLOS.Remove(clo);
                     break;
             }
 
@@ -1234,6 +1243,8 @@ UIControls.ModelExplorer = function (container, dataModel) {
         // Bind to it
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
         modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onFeatureRemoved));
+        modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCompositionRuleAdded));
+        modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCompositionRuleRemoved));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
         var node = $(_tree).getNode(clientid);
@@ -1267,6 +1278,11 @@ UIControls.ModelExplorer = function (container, dataModel) {
         },
         onCompositionRuleAdded: function (compRuleCLO) {
             addElement(compRuleCLO, "compositionRule");
+        },
+        onCompositionRuleRemoved: function (compRuleCLO) {
+            var nodeElem = $(_tree).getNode(compRuleCLO.GetClientID());
+            deselectElement(nodeElem, false);
+            removeElement(nodeElem);
         },
         onFeatureRemoved: function (featureCLO) {
             var nodeElem = $(_tree).getNode(featureCLO.GetClientID());
@@ -1319,7 +1335,7 @@ UIControls.VisualView = function (container, dataModel) {
 
         // Bind to it
         newRelationElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
-            relationElemHandlers.onClicked(newRelationElem, ctrlKey);
+            standardOnElemClicked(newRelationElem, ctrlKey);
         }));
     }
     function addGroupRelationElem(groupRelationCLO) {
@@ -1337,7 +1353,7 @@ UIControls.VisualView = function (container, dataModel) {
 
         // Bind to it
         newGroupRelationElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
-            groupRelationElemHandlers.onClicked(newGroupRelationElem, ctrlKey);
+            standardOnElemClicked(newGroupRelationElem, ctrlKey);
         }));
     }
     function addCompositionRuleElem(compositionRuleCLO) {
@@ -1349,9 +1365,9 @@ UIControls.VisualView = function (container, dataModel) {
         _visualUIElems[compositionRuleCLO.GetClientID()] = newCompositionRuleElem;
 
         // Bind to it
-        //newRelationElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
-        //    relationElemHandlers.onClicked(newRelationElem, ctrlKey);
-        //}));
+        newCompositionRuleElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
+            standardOnElemClicked(newCompositionRuleElem, ctrlKey);
+        }));
     }
     function selectElement(uiElem, raiseEvents) {
 
@@ -1540,36 +1556,20 @@ UIControls.VisualView = function (container, dataModel) {
             }
         }
     }
-    var relationElemHandlers = {
-        onClicked: function (relationElem, ctrlKey) {
-            // If control key isnt used, clear out any currently selected elements
-            if (ctrlKey !== true) {
-                clearSelection();
-            }
+    var standardOnElemClicked = function (elem, ctrlKey) {
+        // If control key isnt used, clear out any currently selected elements
+        if (ctrlKey !== true) {
+            clearSelection();
+        }
 
-            // Select or deselect the uiElem
-            if (relationElem.IsSelected() === true) {
-                deselectElement(relationElem, true);
-            } else {
-                selectElement(relationElem, true);
-            }
+        // Select or deselect the uiElem
+        if (elem.IsSelected() === true) {
+            deselectElement(elem, true);
+        } else {
+            selectElement(elem, true);
         }
     }
-    var groupRelationElemHandlers = {
-        onClicked: function (groupRelationElem, ctrlKey) {
-            // If control key isnt used, clear out any currently selected elements
-            if (ctrlKey !== true) {
-                clearSelection();
-            }
 
-            // Select or deselect the uiElem
-            if (groupRelationElem.IsSelected() === true) {
-                deselectElement(groupRelationElem, true);
-            } else {
-                selectElement(groupRelationElem, true);
-            }
-        }
-    }
 
     // Inner modes
     UIControls.VisualView.InnerStates = {};
@@ -2351,7 +2351,7 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
         return Enums.VisualView.ElemTypes.CompositionRuleElem;
     }
     this.GetCLO = function () {
-        return _relationCLO;
+        return _compositionRuleCLO;
     }
     this.IsSelected = function () {
         return _currentState === Enums.UIElementStates.Selected;
@@ -2378,8 +2378,6 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
     }
     function refresh() {
         _innerElements.connection.RefreshGraphicalRepresentation();
-        if (_innerElements.cardinalityElement != null)
-            _innerElements.cardinalityElement.RefreshGraphicalRepresentation();
     }
 
     // Init
@@ -2390,12 +2388,12 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
         _innerElements.connection = new UIControls.VisualView.ConnectionElem(firstFeatureElem.GetBox(), secondFeatureElem.GetBox(), _compositionRuleCLO.GetType(), compositionRuleType, _canvasInstance);
         _innerElements.connection.Initialize();
 
-        //// Add handlers when parent/child feature elems are moving
-        //parentFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
-        //childFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "Relation_" + _relationCLO.GetClientID() + "_OnMoving"));
+        // Add handlers when parent/child feature elems are moving
+        firstFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving"));
+        secondFeatureElem.Moving.AddHandler(new EventHandler(onRelatedFeatureMoving, "CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving"));
 
-        //// Setup other characteristics and elements
-        //makeSelectable();
+        // Setup other characteristics and elements
+        makeSelectable();
     }
 
     // Public methods
@@ -2410,12 +2408,10 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
 
         // Remove elements
         _innerElements.connection.RemoveSelf();
-        if (_innerElements.cardinalityElement !== null)
-            _innerElements.cardinalityElement.RemoveSelf();
 
         // Remove references and bind to them
-        parentFeatureElem.Moving.RemoveHandler("Relation_" + _relationCLO.GetClientID() + "_OnMoving");
-        childFeatureElem.Moving.RemoveHandler("Relation_" + _relationCLO.GetClientID() + "_OnMoving");
+        firstFeatureElem.Moving.RemoveHandler("CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving");
+        secondFeatureElem.Moving.RemoveHandler("CompositionRule_" + _compositionRuleCLO.GetClientID() + "_OnMoving");
     }
 
     // Events
@@ -2643,7 +2639,7 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
         //
         _currentState = state;
         _innerElements.line.attr(UIStyles.Common.Connection.States[_currentState].Line.attr);
-        //_thisUIConnection.Update(_parentElementSubType); //hack-fix for state style overriding line style in CompositionRule
+        _this.Update(_parentElemSubType); //hack-fix for state style overriding line style in CompositionRule
     }
     this.ShowGlow = function () {
         if (_glow === null) {
@@ -2677,6 +2673,24 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
         if (_glow != null) {
             _glow.remove();
             _glow = null;
+        }
+    }
+    this.Update = function (newParentElementSubType) {
+        _parentElementSubType = newParentElementSubType;
+
+        // Get the current style
+        var currentStyle = getCurrentStyle();
+
+        // Update line
+        _innerElements.line.attr(currentStyle.Line.attr);
+
+        // Update Connectors
+        if (_innerElements.startConnector != null) {
+            _innerElements.startConnector.Update(currentStyle.Connectors.StartConnector.attr);
+        }
+        if (_innerElements.endConnector != null) {
+            _innerElements.endConnector.Update(currentStyle.Connectors.EndConnector.attr);
+
         }
     }
 }
