@@ -526,6 +526,8 @@ var FeatureModelCLO = function (clientID, blo) {
     this.Relations = new ObservableCollection();
     this.GroupRelations = new ObservableCollection();
     this.CompositionRules = new ObservableCollection();
+    this.CustomRules = new ObservableCollection();
+    this.CustomFunctions = new ObservableCollection();
 
     // Private methods
     function getNewIdentifier(cloType, collection) {
@@ -546,6 +548,8 @@ var FeatureModelCLO = function (clientID, blo) {
         _this.Relations.Adding.AddHandler(new EventHandler(onCLOAdding));
         _this.GroupRelations.Adding.AddHandler(new EventHandler(onCLOAdding));
         _this.CompositionRules.Adding.AddHandler(new EventHandler(onCLOAdding));
+        _this.CustomRules.Adding.AddHandler(new EventHandler(onCLOAdding));
+        _this.CustomFunctions.Adding.AddHandler(new EventHandler(onCLOAdding));
     }
 
     // Event handlers
@@ -584,8 +588,8 @@ var FeatureCLO = function (clientID, blo) {
         return CLOTypes.Feature;
     }
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
-    this.Attributes = new ObservableCollection();
     this.Name = new ObservableField(_innerBLO, "Name");
+    this.Attributes = new ObservableCollection();
     this.XPos = new ObservableField(_innerBLO, "XPos");
     this.YPos = new ObservableField(_innerBLO, "YPos");
     this.RelatedCLOS = new ObservableCollection();
@@ -687,6 +691,10 @@ var CustomRuleCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CustomRule;
     }
+    this.Identifier = new ObservableField(_innerBLO, "Identifier");
+    this.Name = new ObservableField(_innerBLO, "Name");
+    this.Expression = new ObservableField(_innerBLO, "Expression");
+    this.Description = new ObservableField(_innerBLO, "Description");
 
     // Init
     this.Initialize = function () {
@@ -708,6 +716,10 @@ var CustomFunctionCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CustomFunction;
     }
+    this.Identifier = new ObservableField(_innerBLO, "Identifier");
+    this.Name = new ObservableField(_innerBLO, "Name");
+    this.Expression = new ObservableField(_innerBLO, "Expression");
+    this.Description = new ObservableField(_innerBLO, "Description");
 
     // Init
     this.Initialize = function () {
@@ -779,6 +791,14 @@ var Controller = function () {
     }
     this.AddNewCompositionRule = function () {
         _visualView.StartCreateCompositionRule();
+    }
+    this.AddNewCustomRule = function () {
+        var newCustomRuleCLO = _dataModel.CreateNewCLO(CLOTypes.CustomRule);
+        _dataModel.GetCurrentFeatureModelCLO().CustomRules.Add(newCustomRuleCLO);
+    }
+    this.AddNewCustomFunction = function () {
+        var newCustomFunctionCLO = _dataModel.CreateNewCLO(CLOTypes.CustomFunction);
+        _dataModel.GetCurrentFeatureModelCLO().CustomFunctions.Add(newCustomFunctionCLO);
     }
     this.Delete = function () {
         _currentControlFocus.DeleteSelection();
@@ -863,6 +883,14 @@ var DataModel = function (bloService, cloFactory) {
                     clo.FirstFeature.RelatedCLOS.Remove(clo);
                     clo.SecondFeature.RelatedCLOS.Remove(clo);
                     break;
+
+                case CLOTypes.CustomRule:
+                    _currentFeatureModelCLO.CustomRules.Remove(clo);
+                    break;
+
+                case CLOTypes.CustomFunction:
+                    _currentFeatureModelCLO.CustomFunctions.Remove(clo);
+                    break;
             }
 
         }
@@ -925,6 +953,26 @@ DataModel.CLOFactory = function (bloService) {
             //
             var newClientID = getNewClientID();
             var newCLO = new CompositionRuleCLO(newClientID, blo);
+            newCLO.Initialize();
+
+            //
+            return newCLO;
+        },
+        CustomRule: function (blo) {
+
+            //
+            var newClientID = getNewClientID();
+            var newCLO = new CustomRuleCLO(newClientID, blo);
+            newCLO.Initialize();
+
+            //
+            return newCLO;
+        },
+        CustomFunction: function (blo) {
+
+            //
+            var newClientID = getNewClientID();
+            var newCLO = new CustomFunctionCLO(newClientID, blo);
             newCLO.Initialize();
 
             //
@@ -1049,12 +1097,16 @@ UIControls.CommandToolbar = function (container, controller) {
         _innerElems.modelManipulationItems.newRelationItem = $(_container).find("#newRelationItem");
         _innerElems.modelManipulationItems.newGroupRelationItem = $(_container).find("#newGroupRelationItem");
         _innerElems.modelManipulationItems.newCompositionRuleItem = $(_container).find("#newCompositionRuleItem");
+        _innerElems.modelManipulationItems.newCustomRuleItem = $(_container).find("#newCustomRuleItem");
+        _innerElems.modelManipulationItems.newCustomFunctionItem = $(_container).find("#newCustomFunctionItem");
 
         // Set event handlers
         $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
         $(_innerElems.modelManipulationItems.newRelationItem).bind("click", toolbarItemHandlers.newRelationItemTriggered);
         $(_innerElems.modelManipulationItems.newGroupRelationItem).bind("click", toolbarItemHandlers.newGroupRelationItemTriggered);
         $(_innerElems.modelManipulationItems.newCompositionRuleItem).bind("click", toolbarItemHandlers.newCompositionRuleItemTriggered);
+        $(_innerElems.modelManipulationItems.newCustomRuleItem).bind("click", toolbarItemHandlers.newCustomRuleItemTriggered);
+        $(_innerElems.modelManipulationItems.newCustomFunctionItem).bind("click", toolbarItemHandlers.newCustomFunctionItemTriggered);
 
         // Key shortcut handlers
         $(document).keydown(function (e) {
@@ -1062,6 +1114,8 @@ UIControls.CommandToolbar = function (container, controller) {
             $.ctrl('R', toolbarItemHandlers.newRelationItemTriggered);
             $.ctrl('G', toolbarItemHandlers.newGroupRelationItemTriggered);
             $.ctrl('M', toolbarItemHandlers.newCompositionRuleItemTriggered);
+            $.ctrl('U', toolbarItemHandlers.newCustomRuleItemTriggered);
+            $.ctrl('N', toolbarItemHandlers.newCustomFunctionItemTriggered);
         });
 
     }
@@ -1093,7 +1147,14 @@ UIControls.CommandToolbar = function (container, controller) {
         },
         newCompositionRuleItemTriggered: function () {
             _controller.AddNewCompositionRule();
+        },
+        newCustomRuleItemTriggered: function () {
+            _controller.AddNewCustomRule();
+        },
+        newCustomFunctionItemTriggered: function () {
+            _controller.AddNewCustomFunction();
         }
+
     };
 }
 UIControls.ModelExplorer = function (container, dataModel) {
@@ -1103,48 +1164,48 @@ UIControls.ModelExplorer = function (container, dataModel) {
     var _tree = null, _treeOptions = {
         data: [
                 {
-                    ID: "compositionRulesNode",
+                    ID: "CompositionRulesNode",
                     Name: "Composition Rules",
-                    typeName: "folder"
+                    typeName: "Folder"
                 },
                 {
-                    ID: "customRulesNode",
+                    ID: "CustomRulesNode",
                     Name: "Custom Rules",
-                    typeName: "folder"
+                    typeName: "Folder"
                 },
                 {
-                    ID: "customFunctionsNode",
+                    ID: "CustomFunctionsNode",
                     Name: "Custom Functions",
-                    typeName: "folder"
+                    typeName: "Folder"
                 },
                 {
-                    ID: "featuresNode",
+                    ID: "FeaturesNode",
                     Name: "Features",
-                    typeName: "folder"
+                    typeName: "Folder"
                 }
         ],
         types: {
-            folder: {
+            Folder: {
                 idField: "ID",
                 labelField: "Name",
                 selectable: false
             },
-            feature: {
+            Feature: {
                 idField: "ID",
                 labelField: "Name",
                 selectable: true
             },
-            compositionRule: {
+            CompositionRule: {
                 idField: "ID",
                 labelField: "Name",
                 selectable: true
             },
-            customRule: {
+            CustomRule: {
                 idField: "ID",
                 labelField: "Name",
                 selectable: true
             },
-            customFunction: {
+            CustomFunction: {
                 idField: "ID",
                 labelField: "Name",
                 selectable: true
@@ -1241,10 +1302,15 @@ UIControls.ModelExplorer = function (container, dataModel) {
     this.OnModelLoaded = function (modelCLO) {
 
         // Bind to it
-        modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
-        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onFeatureRemoved));
-        modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCompositionRuleAdded));
-        modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCompositionRuleRemoved));
+        modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
+        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+        modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
+        modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+        modelCLO.CustomRules.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
+        modelCLO.CustomRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+        modelCLO.CustomFunctions.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
+        modelCLO.CustomFunctions.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
         var node = $(_tree).getNode(clientid);
@@ -1273,19 +1339,11 @@ UIControls.ModelExplorer = function (container, dataModel) {
         }
     };
     var modelHandlers = {
-        onFeatureAdded: function (featureCLO) {
-            addElement(featureCLO, "feature");
+        onCLOAdded: function (clo) {
+            addElement(clo, clo.GetType());
         },
-        onCompositionRuleAdded: function (compRuleCLO) {
-            addElement(compRuleCLO, "compositionRule");
-        },
-        onCompositionRuleRemoved: function (compRuleCLO) {
-            var nodeElem = $(_tree).getNode(compRuleCLO.GetClientID());
-            deselectElement(nodeElem, false);
-            removeElement(nodeElem);
-        },
-        onFeatureRemoved: function (featureCLO) {
-            var nodeElem = $(_tree).getNode(featureCLO.GetClientID());
+        onCLORemoved: function (clo) {
+            var nodeElem = $(_tree).getNode(clo.GetClientID());
             deselectElement(nodeElem, false);
             removeElement(nodeElem);
         }
@@ -2422,7 +2480,6 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
         refresh();
     }
 }
-
 UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElemType, parentElemSubType, parentCanvasInstance) {
 
     // Fields
