@@ -444,6 +444,16 @@ namespace BLL.BLOs
                 innerDTO.Name = value;
             }
         }
+        public virtual string Expression
+        {
+            get;
+            set;
+        }
+        public virtual string Description
+        {
+            get;
+            set;
+        }
 
         // Constructors
         public CustomRule()
@@ -454,6 +464,21 @@ namespace BLL.BLOs
         {
             this.innerDTO = dataObj;
         }
+
+        // Static instance creator
+        internal static CustomRule CreateDefault()
+        {
+            // Create underlying DTO
+            DAL.DTOs.CustomRule newDTO = new DAL.DTOs.CustomRule();
+
+            // Create new BLO
+            CustomRule newBLO = new CustomRule(newDTO)
+            {
+                
+            };
+            return newBLO;
+        }
+
     }
     public class CustomFunction : iBLO
     {
@@ -483,6 +508,16 @@ namespace BLL.BLOs
                 innerDTO.Name = value;
             }
         }
+        public virtual string Expression
+        {
+            get;
+            set;
+        }
+        public virtual string Description
+        {
+            get;
+            set;
+        }
 
         // Constructors
         public CustomFunction()
@@ -493,6 +528,21 @@ namespace BLL.BLOs
         {
             this.innerDTO = dataObj;
         }
+
+        // Static instance creator
+        internal static CustomFunction CreateDefault()
+        {
+            // Create underlying DTO
+            DAL.DTOs.CustomFunction newDTO = new DAL.DTOs.CustomFunction();
+
+            // Create new BLO
+            CustomFunction newBLO = new CustomFunction(newDTO)
+            {
+
+            };
+            return newBLO;
+        }
+
     }
 
     //

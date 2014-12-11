@@ -727,27 +727,27 @@ div.blockMsg img
     max-width: 100px;
     overflow: hidden;
 }
-.simpleTree li.row .folder .innerNode div.icon
+.simpleTree li.row .Folder .innerNode div.icon
 {
     background: url(images/controls/simpletree/folder-closed.png) no-repeat left top;
 }
-.simpleTree li.row .folder[nodeDisplayState=expanded] .innerNode div.icon
+.simpleTree li.row .Folder[nodeDisplayState=expanded] .innerNode div.icon
 {
     background: transparent url(images/controls/simpletree/folder-open.png) no-repeat left top;
 }
-.simpleTree li.row .feature .innerNode div.icon
+.simpleTree li.row .Feature .innerNode div.icon
 {
     background: url(images/controls/simpletree/feature.png) no-repeat left top;
 }
-.simpleTree li.row .compositionRule .innerNode div.icon
+.simpleTree li.row .CompositionRule .innerNode div.icon
 {
     background: url(images/controls/simpletree/elementx.png) no-repeat left top;
 }
-.simpleTree li.row .customRule .innerNode div.icon
+.simpleTree li.row .CustomRule .innerNode div.icon
 {
     background: url(images/controls/simpletree/elementx.png) no-repeat left top;
 }
-.simpleTree li.row .customFunction .innerNode div.icon
+.simpleTree li.row .CustomFunction .innerNode div.icon
 {
     background: url(images/controls/simpletree/elementx.png) no-repeat left top;
 }
