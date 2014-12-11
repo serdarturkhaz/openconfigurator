@@ -31,7 +31,7 @@ var UIStyles = {
                         attr: {
                             stroke: "Black",
                             fill: "none",
-                            "stroke-width": 2
+                            "stroke-width": 3
                         }
                     }
                 }
@@ -552,19 +552,21 @@ var FeatureModelCLO = function (clientID, blo) {
     var onCLOAdding = function (clo, eventRaiseDetails) {
 
         // If the clo to be added doesnt have an identifier (it is new), provide it with one
-        if (clo.Identifer !== undefined && clo.Identifier() === null) {
+        if (clo.Identifier !== undefined && clo.Identifier() === null) {
             var collection = _this[clo.GetType() + "s"]; // get the collection corresponding to the type of the given CLO 
             var identity = getNewIdentifier(clo.GetType(), collection);
 
             clo.Identifier(identity.identifier);
-            clo.Name(identity.name);
+            if (clo.Name !== undefined)
+                clo.Name(identity.name);
         }
 
-        // Knockout test
-        if (_this.Features.GetLength() > 0) {
 
+        // Knockout test///////////////////////////
+        if (_this.Features.GetLength() > 0) {
             _this.Features.GetAt(0).Name("Newname");
         }
+        ////////////////////////////////////////////
     }
 }
 var FeatureCLO = function (clientID, blo) {
@@ -659,6 +661,7 @@ var CompositionRuleCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CompositionRule;
     }
+    this.Name = new ObservableField(_innerBLO, "Identifier");
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.FirstFeature = null;
     this.SecondFeature = null;
@@ -1240,6 +1243,8 @@ UIControls.ModelExplorer = function (container, dataModel) {
         // Bind to it
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
         modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onFeatureRemoved));
+        modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCompositionRuleAdded));
+        modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCompositionRuleRemoved));
     }
     this.OnRelatedViewUIElementSelected = function (clientid) {
         var node = $(_tree).getNode(clientid);
@@ -1273,6 +1278,11 @@ UIControls.ModelExplorer = function (container, dataModel) {
         },
         onCompositionRuleAdded: function (compRuleCLO) {
             addElement(compRuleCLO, "compositionRule");
+        },
+        onCompositionRuleRemoved: function (compRuleCLO) {
+            var nodeElem = $(_tree).getNode(compRuleCLO.GetClientID());
+            deselectElement(nodeElem, false);
+            removeElement(nodeElem);
         },
         onFeatureRemoved: function (featureCLO) {
             var nodeElem = $(_tree).getNode(featureCLO.GetClientID());
@@ -2629,7 +2639,7 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
         //
         _currentState = state;
         _innerElements.line.attr(UIStyles.Common.Connection.States[_currentState].Line.attr);
-        //_thisUIConnection.Update(_parentElementSubType); //hack-fix for state style overriding line style in CompositionRule
+        _this.Update(_parentElemSubType); //hack-fix for state style overriding line style in CompositionRule
     }
     this.ShowGlow = function () {
         if (_glow === null) {
@@ -2663,6 +2673,24 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
         if (_glow != null) {
             _glow.remove();
             _glow = null;
+        }
+    }
+    this.Update = function (newParentElementSubType) {
+        _parentElementSubType = newParentElementSubType;
+
+        // Get the current style
+        var currentStyle = getCurrentStyle();
+
+        // Update line
+        _innerElements.line.attr(currentStyle.Line.attr);
+
+        // Update Connectors
+        if (_innerElements.startConnector != null) {
+            _innerElements.startConnector.Update(currentStyle.Connectors.StartConnector.attr);
+        }
+        if (_innerElements.endConnector != null) {
+            _innerElements.endConnector.Update(currentStyle.Connectors.EndConnector.attr);
+
         }
     }
 }
