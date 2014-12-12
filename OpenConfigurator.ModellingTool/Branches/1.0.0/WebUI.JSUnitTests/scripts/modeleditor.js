@@ -1628,7 +1628,6 @@ UIControls.VisualView = function (container, dataModel) {
         }
     }
 
-
     // Inner modes
     UIControls.VisualView.InnerStates = {};
     UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.Default] = {
@@ -1792,7 +1791,7 @@ UIControls.VisualView = function (container, dataModel) {
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
-                _innerElems.infoMsgOverlay.html("Now select the child Features and press ENTER when done...").show();
+                _innerElems.infoMsgOverlay.html("Now select the child Features and double click to finish...").show();
             }
 
             // Second step handlers (let user select child features)
@@ -1807,25 +1806,29 @@ UIControls.VisualView = function (container, dataModel) {
             }
 
             // Handler when enter is pressed
-            $(document).bind("keydown.enter", function (e) {
-                if (e.which === 13) { //enter key
-                    if (parentFeatureElem && childFeatureElems.length > 1) { // there should be at least 2 child features
+            $(_container).bind("mouseDown.groupRelation", function (e) {
+                e.preventDefault();
+            });
+            $(_container).bind("dblclick.groupRelation", function (e) {
+                if (parentFeatureElem && childFeatureElems.length > 1) { // there should be at least 2 child features
 
-                        // Create a new CLO
-                        var newGroupRelationCLO = _dataModel.CreateNewCLO(CLOTypes.GroupRelation);
-                        newGroupRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
-                        for (var i = 0; i < childFeatureElems.length; i++) {
-                            newGroupRelationCLO.ChildFeatures.Add(childFeatureElems[i].GetCLO());
-                            childFeatureElems[i].GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
-                        }
-                        parentFeatureElem.GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
-
-
-                        // Add it to the FeatureModel and then switch to default state
-                        _dataModel.GetCurrentFeatureModelCLO().GroupRelations.Add(newGroupRelationCLO);
-                        _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+                    // Create a new CLO
+                    var newGroupRelationCLO = _dataModel.CreateNewCLO(CLOTypes.GroupRelation);
+                    newGroupRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
+                    for (var i = 0; i < childFeatureElems.length; i++) {
+                        newGroupRelationCLO.ChildFeatures.Add(childFeatureElems[i].GetCLO());
+                        childFeatureElems[i].GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
                     }
+                    parentFeatureElem.GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
+
+
+                    // Add it to the FeatureModel and then switch to default state
+                    _dataModel.GetCurrentFeatureModelCLO().GroupRelations.Add(newGroupRelationCLO);
+                    _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+                } else {
+                    _innerElems.infoMsgOverlay.html("Select at least 1 parent Feature and 2 children Features...");
                 }
+
             });
         },
         LeaveState: function () {
@@ -1836,7 +1839,8 @@ UIControls.VisualView = function (container, dataModel) {
             delete this.normalFeatureElemOnclick;
 
             // Remove other handlers
-            $(document).unbind("keydown.enter");
+            $(_container).unbind("mouseDown.groupRelation");
+            $(_container).unbind("dblclick.groupRelation");
         }
     }
     UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewCompositionRule] = {
