@@ -437,7 +437,7 @@ var SystemDefaults = {
             Name: "Horizontal",
             Opposite: "Vertical",
             CardinalityDistances: {
-                GroupRelation: 35,
+                GroupRelation: 17,
                 Relation: 30
             },
             ArcModifiers: { rx: 6, ry: 12 },
@@ -451,12 +451,12 @@ var SystemDefaults = {
                     ArcSweep: 0
                 },
                 RightToLeft: {
-                    check: function (rootPoint, pointA) {
+                    Check: function (rootPoint, pointA) {
                         if (rootPoint.x > pointA.x) {
                             return true;
                         }
                     },
-                    arcSweep: 1
+                    ArcSweep: 1
                 }
             },
             Connections: [["left", "right"], ["right", "left"]],
@@ -467,7 +467,7 @@ var SystemDefaults = {
             Name: "Vertical",
             Opposite: "Horizontal",
             CardinalityDistances: {
-                GroupRelation: 35,
+                GroupRelation: 17,
                 Relation: 30
             },
             ArcModifiers: { rx: 12, ry: 6 },
@@ -1628,7 +1628,6 @@ UIControls.VisualView = function (container, dataModel) {
         }
     }
 
-
     // Inner modes
     UIControls.VisualView.InnerStates = {};
     UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.Default] = {
@@ -1792,7 +1791,7 @@ UIControls.VisualView = function (container, dataModel) {
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
-                _innerElems.infoMsgOverlay.html("Now select the child Features and press ENTER when done...").show();
+                _innerElems.infoMsgOverlay.html("Now select the child Features and double click to finish...").show();
             }
 
             // Second step handlers (let user select child features)
@@ -1807,25 +1806,29 @@ UIControls.VisualView = function (container, dataModel) {
             }
 
             // Handler when enter is pressed
-            $(document).bind("keydown.enter", function (e) {
-                if (e.which === 13) { //enter key
-                    if (parentFeatureElem && childFeatureElems.length > 1) { // there should be at least 2 child features
+            $(_container).bind("dblclick.groupRelation", function (e) {
+                if (parentFeatureElem && childFeatureElems.length > 1) { // there should be at least 2 child features
 
-                        // Create a new CLO
-                        var newGroupRelationCLO = _dataModel.CreateNewCLO(CLOTypes.GroupRelation);
-                        newGroupRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
-                        for (var i = 0; i < childFeatureElems.length; i++) {
-                            newGroupRelationCLO.ChildFeatures.Add(childFeatureElems[i].GetCLO());
-                            childFeatureElems[i].GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
-                        }
-                        parentFeatureElem.GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
-
-
-                        // Add it to the FeatureModel and then switch to default state
-                        _dataModel.GetCurrentFeatureModelCLO().GroupRelations.Add(newGroupRelationCLO);
-                        _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+                    // Create a new CLO
+                    var newGroupRelationCLO = _dataModel.CreateNewCLO(CLOTypes.GroupRelation);
+                    newGroupRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
+                    for (var i = 0; i < childFeatureElems.length; i++) {
+                        newGroupRelationCLO.ChildFeatures.Add(childFeatureElems[i].GetCLO());
+                        childFeatureElems[i].GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
                     }
+                    parentFeatureElem.GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
+
+
+                    // Add it to the FeatureModel and then switch to default state
+                    _dataModel.GetCurrentFeatureModelCLO().GroupRelations.Add(newGroupRelationCLO);
+                    _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+
+                    document.getSelection().removeAllRanges();
+                } else {
+                    _innerElems.infoMsgOverlay.html("Select at least 1 parent Feature and 2 children Features...");
+                    document.getSelection().removeAllRanges();
                 }
+
             });
         },
         LeaveState: function () {
@@ -1836,7 +1839,7 @@ UIControls.VisualView = function (container, dataModel) {
             delete this.normalFeatureElemOnclick;
 
             // Remove other handlers
-            $(document).unbind("keydown.enter");
+            $(_container).unbind("dblclick.groupRelation");
         }
     }
     UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewCompositionRule] = {
@@ -2443,7 +2446,8 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
 
         // Create a new UIConnection
         var compositionRuleType = getEnumEntryNameByID(Enums.CompositionRuleTypes, _compositionRuleCLO.CompositionRuleType());
-        _innerElements.connection = new UIControls.VisualView.ConnectionElem(firstFeatureElem.GetBox(), secondFeatureElem.GetBox(), _compositionRuleCLO.GetType(), compositionRuleType, _canvasInstance);
+        _innerElements.connection = new UIControls.VisualView.ConnectionElem(firstFeatureElem.GetBox(), secondFeatureElem.GetBox(), _compositionRuleCLO.GetType(), compositionRuleType,
+            _canvasInstance, true);
         _innerElements.connection.Initialize();
 
         // Add handlers when parent/child feature elems are moving
@@ -2480,7 +2484,7 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
         refresh();
     }
 }
-UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElemType, parentElemSubType, parentCanvasInstance) {
+UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElemType, parentElemSubType, parentCanvasInstance, invertOrientation) {
 
     // Fields
     var _canvasInstance = parentCanvasInstance;
@@ -2494,6 +2498,7 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
     var _currentPath = null, _handlers = null;
     var _outerElement = null, _glow = null;
     var _parentElemType = parentElemType, _parentElemSubType = parentElemSubType;
+    var _invertOrientation = (invertOrientation !== undefined) ? invertOrientation : null; //parameter used to force the path to draw in the opposite orientation
     var _currentState = Enums.UIElementStates.Unselected;
     var _this = this;
 
@@ -2505,7 +2510,7 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
 
     // Private methods
     function getPath(objA, objB) {
-
+        
         // Variables
         var bb1 = objA.getBBox();
         var bb2 = objB.getBBox();
@@ -2555,8 +2560,8 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
         }
 
         // Invert orientation if necessary
-        //if (invertOrientation)
-        //    currentOrientation = systemDefaults.orientations[currentOrientation].opposite;
+        if (invertOrientation)
+            currentOrientation = SystemDefaults.Orientations[currentOrientation].Opposite;
 
         // Determine which connection points in the current orientation make the shortest path
         var distances = [], points = {};
