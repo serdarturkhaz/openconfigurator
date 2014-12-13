@@ -57,33 +57,7 @@ var ObservableCollection = function () {
     this.Added = new Event();
     this.Removed = new Event();
 }
-/*var ObservableField = function (sourceParent, fieldName) {
-
-    // Fields
-    var _sourceParent = sourceParent, _fieldName = fieldName;
-    var _this = this;
-
-    // Events
-    _this.Changed = new Event();
-
-    // Returns special function which:
-    // Can be called with () or with (newValue)
-    // Can be subscribed to by adding an event handler ( ex CLO.Field.Changed.AddHandler())
-    var returnFunc = function (value) {
-
-        if (value === undefined) {
-            // Getter
-            return _sourceParent[_fieldName]; 
-        } else {
-            // Setter
-            _sourceParent[_fieldName] = value;
-            _this.Changed.RaiseEvent(value);
-        }
-    }
-    returnFunc.Changed = _this.Changed;
-    return returnFunc;
-}*/
-var ObservableField = function (sourceFieldParent, sourceFieldName) {
+var ObservableField = function (sourceFieldParent, sourceFieldName) { // can also be called without parameters, then it just creates a simple koObservable
 
     // Variables
     var koObservable;
@@ -94,7 +68,7 @@ var ObservableField = function (sourceFieldParent, sourceFieldName) {
         koObservable.subscribe(function (newVal) { // bind the koObs so it updates the value of the source field whenever it is changed itself
             sourceFieldParent[sourceFieldName] = newVal;
         });
-    } else {
+    } else { 
         koObservable = ko.observable();
     }
 
