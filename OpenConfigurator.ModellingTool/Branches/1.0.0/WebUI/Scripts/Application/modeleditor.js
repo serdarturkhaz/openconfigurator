@@ -812,6 +812,12 @@ var Controller = function () {
             _dataModel.DeleteByClientID(selectedCLOs[i].GetClientID());
         }
     }
+    this.ZoomIn = function () {
+        _visualView.ZoomIn();
+    }
+    this.ZoomOut = function () {
+        _visualView.ZoomOut();
+    }
 
     // Event handlers
     var onViewFocused = function (viewInFocus) {
@@ -1177,6 +1183,8 @@ UIControls.CommandToolbar = function (container, controller) {
         _innerElems.modelManipulationItems.newCompositionRuleItem = $(_container).find("#newCompositionRuleItem");
         _innerElems.modelManipulationItems.newCustomRuleItem = $(_container).find("#newCustomRuleItem");
         _innerElems.modelManipulationItems.newCustomFunctionItem = $(_container).find("#newCustomFunctionItem");
+        _innerElems.visualOptionsItems.zoomInItem = $(_container).find("#zoomInItem");
+        _innerElems.visualOptionsItems.zoomOutItem = $(_container).find("#zoomOutItem");
 
         // Set event handlers
         $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
@@ -1185,6 +1193,8 @@ UIControls.CommandToolbar = function (container, controller) {
         $(_innerElems.modelManipulationItems.newCompositionRuleItem).bind("click", toolbarItemHandlers.newCompositionRuleItemTriggered);
         $(_innerElems.modelManipulationItems.newCustomRuleItem).bind("click", toolbarItemHandlers.newCustomRuleItemTriggered);
         $(_innerElems.modelManipulationItems.newCustomFunctionItem).bind("click", toolbarItemHandlers.newCustomFunctionItemTriggered);
+        $(_innerElems.visualOptionsItems.zoomInItem).bind("click", toolbarItemHandlers.zoomInItemTriggered);
+        $(_innerElems.visualOptionsItems.zoomOutItem).bind("click", toolbarItemHandlers.zoomOutItemTriggered);
 
         // Key shortcut handlers
         $(document).keydown(function (e) {
@@ -1205,6 +1215,8 @@ UIControls.CommandToolbar = function (container, controller) {
         var itemToVisualViewStateMappings = {};
         itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewFeature] = _innerElems.modelManipulationItems.newFeatureItem;
         itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewRelation] = _innerElems.modelManipulationItems.newRelationItem;
+        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewGroupRelation] = _innerElems.modelManipulationItems.newGroupRelationItem;
+        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewCompositionRule] = _innerElems.modelManipulationItems.newCompositionRuleItem;
 
         // Handle the states
         if (newStateName === Enums.VisualView.StateNames.Default) {
@@ -1231,6 +1243,12 @@ UIControls.CommandToolbar = function (container, controller) {
         },
         newCustomFunctionItemTriggered: function () {
             _controller.AddNewCustomFunction();
+        },
+        zoomInItemTriggered: function () {
+            _controller.ZoomIn();
+        },
+        zoomOutItemTriggered: function () {
+            _controller.ZoomOut();
         }
 
     };
@@ -1459,6 +1477,13 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
             }
         }
     }
+    function refreshGraphicalReprOfAllUIElems() {
+        for (var clientID in _visualUIElems) {
+            var elem = _visualUIElems[clientID];
+            if (elem !== undefined)
+                elem.RefreshGraphicalRepresentation();
+        }
+    }
 
     // Init
     this.Initialize = function () {
@@ -1496,6 +1521,16 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
     }
     this.StartCreateCompositionRule = function () {
         _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewCompositionRule.Name);
+    }
+    this.ZoomIn = function () {
+
+        // Modify scale
+        if (Settings.ScaleModifier < 2) {
+            Settings.ScaleModifier += 0.25;
+        }
+
+        // Redraw all internal ui elems
+        refreshGraphicalReprOfAllUIElems()
     }
 
     // Events
@@ -1622,7 +1657,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         Name: "CreatingNewFeature",
         EnterState: function () {
             _cloSelectionManager.ClearCLOSelection();
-            _innerElems.infoMsgOverlay.html("Click to add a new Feature...").show();
+            _innerElems.infoMsgOverlay.html("Click to add a new Feature...").visible();
 
             // Create a wireframe
             var boxWidth = UIStyles.Feature.General.Box.Dimensions.width * Settings.ScaleModifier;
@@ -1653,7 +1688,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
         },
         LeaveState: function () {
-            _innerElems.infoMsgOverlay.html("").hide();
+            _innerElems.infoMsgOverlay.html("").hidden();
 
             // Clear handlers
             $(_canvasContainer).unbind("click.createFeature");
@@ -1665,7 +1700,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         Name: "CreatingNewRelation",
         EnterState: function () {
             _cloSelectionManager.ClearCLOSelection();
-            _innerElems.infoMsgOverlay.html("Select the parent feature for the Relation...").show();
+            _innerElems.infoMsgOverlay.html("Select the parent feature for the Relation...").visible();
 
             // Variables
             var parentFeatureElem, childFeatureElem;
@@ -1679,7 +1714,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
-                _innerElems.infoMsgOverlay.html("Now select the child Feature for the Relation...").show();
+                _innerElems.infoMsgOverlay.html("Now select the child Feature for the Relation...").visible();
             }
 
             // Second step handlers (let user select child feature)
@@ -1704,7 +1739,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
             }
         },
         LeaveState: function () {
-            _innerElems.infoMsgOverlay.html("").hide();
+            _innerElems.infoMsgOverlay.html("").hidden();
 
             // Restore the old feature onclick handler
             featureElemHandlers.onClicked = this.normalFeatureElemOnclick;
@@ -1715,7 +1750,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         Name: "CreatingNewGroupRelation",
         EnterState: function () {
             _cloSelectionManager.ClearCLOSelection();
-            _innerElems.infoMsgOverlay.html("Select the parent feature for the Group Relation...").show();
+            _innerElems.infoMsgOverlay.html("Select the parent feature for the Group Relation...").visible();
 
             // Variables
             var parentFeatureElem, childFeatureElems = [];
@@ -1729,7 +1764,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
-                _innerElems.infoMsgOverlay.html("Now select the child Features and double click to finish...").show();
+                _innerElems.infoMsgOverlay.html("Now select the child Features and double click to finish...").visible();
             }
 
             // Second step handlers (let user select child features)
@@ -1770,7 +1805,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
             });
         },
         LeaveState: function () {
-            _innerElems.infoMsgOverlay.html("").hide();
+            _innerElems.infoMsgOverlay.html("").hidden();
 
             // Restore the old feature onclick handler
             featureElemHandlers.onClicked = this.normalFeatureElemOnclick;
@@ -1784,7 +1819,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         Name: "CreatingNewCompositionRule",
         EnterState: function () {
             _cloSelectionManager.ClearCLOSelection();
-            _innerElems.infoMsgOverlay.html("Select the first feature for the Composition Rule...").show();
+            _innerElems.infoMsgOverlay.html("Select the first feature for the Composition Rule...").visible();
 
             // Variables
             var firstFeatureElem, secondFeatureElem;
@@ -1798,7 +1833,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
-                _innerElems.infoMsgOverlay.html("Now select the second Feature...").show();
+                _innerElems.infoMsgOverlay.html("Now select the second Feature...").visible();
             }
 
             // Second step handlers (let user select child feature)
@@ -1823,7 +1858,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
             }
         },
         LeaveState: function () {
-            _innerElems.infoMsgOverlay.html("").hide();
+            _innerElems.infoMsgOverlay.html("").hidden();
 
             // Restore the old feature onclick handler
             featureElemHandlers.onClicked = this.normalFeatureElemOnclick;
@@ -1917,12 +1952,42 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
         };
         _outerElement.drag(move, start, up);
     }
+    //function refresh () {
+
+    //    //
+    //    _innerElements.box.attr({
+    //        x: _screenPos.x,
+    //        y: _screenPos.y,
+    //        width: _boxWidth,
+    //        height: _boxHeight
+    //    });
+    //    //
+    //    _outerElement.attr({
+    //        x: _screenPos.x,
+    //        y: _screenPos.y,
+    //        width: _boxWidth,
+    //        height: _boxHeight
+    //    });
+
+    //    //
+    //    _innerElements.text.attr({
+    //        x: _boxWidth / 2 + _screenPos.x,
+    //        y: UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier / 2 + _screenPos.y,
+    //        "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
+    //    });
+    //}
 
     // Init
     this.Initialize = function () {
 
+        // Calculations
+        var screenPos = {
+            x: featureCLO.XPos() * Settings.ScaleModifier, y: featureCLO.YPos() * Settings.ScaleModifier
+        }
+
         // Create elements            
-        _innerElements.box = _canvasInstance.rect(featureCLO.XPos(), featureCLO.YPos(), _boxDimensions.width, _boxDimensions.height, 0);
+        _innerElements.box = _canvasInstance.rect(featureCLO.XPos() * Settings.ScaleModifier, featureCLO.YPos() * Settings.ScaleModifier,
+            _boxDimensions.width * Settings.ScaleModifier, _boxDimensions.height * Settings.ScaleModifier, 0);
         _innerElements.box.attr(UIStyles.Feature.States[_currentState].Box.attr);
         _innerElements.text = _canvasInstance.text(_boxDimensions.width / 2 + featureCLO.XPos(), _boxDimensions.height / 2 + featureCLO.YPos(), _featureCLO.Name()).attr(UIStyles.Feature.States[_currentState].Text.attr);
         _innerElements.text.attr({ "font-size": parseFloat(UIStyles.Feature.General.Text["font-size"]) });
@@ -1984,6 +2049,10 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
 
         // Raise events
         _this.Moving.RaiseEvent(dx, dy);
+    }
+    this.RefreshGraphicalRepresentation = function () {
+
+
     }
 
     // Events
