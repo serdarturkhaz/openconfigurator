@@ -32,6 +32,15 @@ $.pnotify.defaults.pnotify_opacity = 1;
 
 //Helper methods/small plugins************************************************************************************
 
+// Jquery extensions
+jQuery.fn.visible = function () {
+    return this.css('visibility', 'visible');
+};
+
+jQuery.fn.hidden = function () {
+    return this.css('visibility', 'hidden');
+};
+
 //Key press plugin method
 var readyToPress = true;
 $.ctrl = function (key, callback, args) {
