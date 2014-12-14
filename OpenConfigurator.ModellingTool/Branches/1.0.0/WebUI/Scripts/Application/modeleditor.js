@@ -761,10 +761,7 @@ var Controller = function () {
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
         _visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
-        //_visualView.UIElementSelected.AddHandler(new EventHandler(_modelExplorer.OnRelatedViewUIElementSelected));
-        //_visualView.UIElementDeselected.AddHandler(new EventHandler(_modelExplorer.OnRelatedViewUIElementDeselected));
-        //_modelExplorer.UIElementSelected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementSelected));
-        //_modelExplorer.UIElementDeselected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementDeselected));
+        _dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
 
         // Global key handlers
         $(document).keydown(function (e) {
@@ -809,7 +806,11 @@ var Controller = function () {
         _dataModel.GetCurrentFeatureModelCLO().CustomFunctions.Add(newCustomFunctionCLO);
     }
     this.Delete = function () {
-        _currentControlFocus.DeleteSelection();
+
+        var selectedCLOs = _cloSelectionManager.GetAllSelectedCLOs();
+        for (var i = 0; i < selectedCLOs.length ; i++) {
+            _dataModel.DeleteByClientID(selectedCLOs[i].GetClientID());
+        }
     }
 
     // Event handlers
@@ -818,7 +819,72 @@ var Controller = function () {
             _currentControlFocus = viewInFocus;
         }
     }
-    
+
+}
+var CLOSelectionManager = function () {
+
+    // Fields
+    var _selectedCLOs = {}; // lookup dictionary for all selected CLOs (for efficient retreival)
+    var _this = this;
+
+    // Private methods
+    function selectCLO(clo) {
+        _selectedCLOs[clo.GetClientID()] = clo;
+        clo.Selected(true);
+    }
+    function deselectCLO(clo) {
+        delete _selectedCLOs[clo.GetClientID()];
+        clo.Selected(false);
+    }
+    function clearSelection() {
+        for (var clientID in _selectedCLOs) {
+            deselectCLO(_selectedCLOs[clientID]);
+        }
+    }
+
+    // Init
+    this.Initialize = function () {
+    }
+
+    // Public methods
+    this.GetAllSelectedCLOs = function (cloType) {
+        var selectedCLOArray = [];
+        for (var clientID in _selectedCLOs) {
+            if (cloType !== undefined && cloType !== null) {
+                if (_selectedCLOs[clientID].GetType() === cloType)
+                    selectedCLOArray.push(_selectedCLOs[clientID]);
+            } else {
+                selectedCLOArray.push(_selectedCLOs[clientID]);
+            }
+        }
+        return selectedCLOArray;
+    }
+    this.ToggleCLOSelection = function (clo, ctrlKey) {
+        if (ctrlKey === true) {
+            // Control key down
+            if (clo.Selected())
+                deselectCLO(clo); // deselect
+            else
+                selectCLO(clo); // add to selection
+        }
+        else {
+            // No control key
+            clearSelection();
+            selectCLO(clo); // add to selection
+        }
+    }
+    this.ClearCLOSelection = function () {
+        clearSelection();
+    }
+    this.ForceCLOSelection = function (clo) {
+        selectCLO(clo);
+    }
+
+    // Event handlers
+    this.OnCLODeleted = function (clo) {
+        if (_selectedCLOs[clo.GetClientID()] !== undefined)
+            deselectCLO(clo);
+    }
 }
 var DataModel = function (bloService, cloFactory) {
 
@@ -902,6 +968,8 @@ var DataModel = function (bloService, cloFactory) {
                     break;
             }
 
+            // Raise events
+            _this.CLODeleted.RaiseEvent(clo);
         }
     }
     this.LoadNewModel = function () {
@@ -913,6 +981,7 @@ var DataModel = function (bloService, cloFactory) {
 
     // Events
     this.ModelLoaded = new Event();
+    this.CLODeleted = new Event();
 }
 DataModel.CLOFactory = function (bloService) {
 
@@ -1059,53 +1128,6 @@ DataModel.BLOService = function () {
 }
 
 // UIControls
-var CLOSelectionManager = function () {
-
-    // Fields
-    var _selectedCLOs = {}; // lookup dictionary for all selected CLOs (for efficient retreival)
-    var _this = this;
-
-    // Private methods
-    function selectCLO(clo) {
-        _selectedCLOs[clo.GetClientID()] = clo;
-        clo.Selected(true);
-    }
-    function deselectCLO(clo) {
-        delete _selectedCLOs[clo.GetClientID()];
-        clo.Selected(false);
-    }
-    function clearSelection() {
-        for (var clientID in _selectedCLOs) {
-            deselectCLO(_selectedCLOs[clientID]);
-        }
-    }
-
-    // Init
-    this.Initialize = function () {
-    }
-
-    // Public methods
-    this.ToggleCLOSelection = function (clo, ctrlKey) {
-        if (ctrlKey === true) {
-            // Control key down
-            if (clo.Selected())
-                deselectCLO(clo); // deselect
-            else
-                selectCLO(clo); // add to selection
-        }
-        else {
-            // No control key
-            clearSelection();
-            selectCLO(clo); // add to selection
-        }
-    }
-    this.ClearCLOSelection = function () {
-        clearSelection();
-    }
-    this.ForceCLOSelection = function (clo) {
-        selectCLO(clo);
-    }
-}
 var UIControls = {};
 UIControls.CommandToolbar = function (container, controller) {
 
@@ -1269,7 +1291,6 @@ UIControls.ModelExplorer = function (container, dataModel, cloSelectionManager) 
         },
         onNodeClicked: onNodeClicked
     };
-    var _selectedElements = [];
     var _this = this;
 
     // Private methods
@@ -1291,39 +1312,16 @@ UIControls.ModelExplorer = function (container, dataModel, cloSelectionManager) 
         clo.Name.Changed.AddHandler(new EventHandler(function (newValue) {
             $(newNode).updateNodeName(newValue);
         }));
+        clo.Selected.Changed.AddHandler(new EventHandler(function (newValue) {
+            if (newValue) {
+                $(newNode).setNodeSelected();
+            } else {
+                $(newNode).setNodeUnselected();
+            }
+        }));
 
         //
         return newNode;
-    }
-    function selectElement(node, raiseEvents) {
-
-        // Set the node to be selected
-        $(node).setNodeSelected();
-        _selectedElements.push(node);
-
-        // Raise events
-        if (raiseEvents === true) {
-            var clientid = $(node).getNodeDataID();
-            _this.UIElementSelected.RaiseEvent(clientid);
-        }
-    }
-    function deselectElement(node, raiseEvents) {
-
-        // Deselect the node and remove it from the collection
-        var index = $(_selectedElements).index(node);
-        _selectedElements.splice(index, 1);
-        $(node).setNodeUnselected();
-
-        // Raise events
-        if (raiseEvents === true) {
-            var clientid = $(node).getNodeDataID();
-            _this.UIElementDeselected.RaiseEvent(clientid);
-        }
-    }
-    function clearSelection() {
-        for (var i = _selectedElements.length - 1; i >= 0; i--) {
-            deselectElement(_selectedElements[i], true);
-        }
     }
     function removeElement(node) {
         $(node).deleteNode();
@@ -1341,18 +1339,8 @@ UIControls.ModelExplorer = function (container, dataModel, cloSelectionManager) 
         });
     }
 
-    // Public methods
-    this.DeleteSelection = function () {
-        var oldSelectedElements = _selectedElements.slice();
-        for (var i = 0; i < oldSelectedElements.length ; i++) {
-            _dataModel.DeleteByClientID(oldSelectedElements[i].getNodeDataID());
-        }
-    }
-
     // Events
     this.Focus = new Event();
-    this.UIElementSelected = new Event();
-    this.UIElementDeselected = new Event();
 
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
@@ -1368,31 +1356,9 @@ UIControls.ModelExplorer = function (container, dataModel, cloSelectionManager) 
         modelCLO.CustomFunctions.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
 
     }
-    this.OnRelatedViewUIElementSelected = function (clientid) {
-        var node = $(_tree).getNode(clientid);
-        if (node != null) {
-            selectElement(node);
-        }
-    }
-    this.OnRelatedViewUIElementDeselected = function (clientid) {
-        var node = $(_tree).getNode(clientid);
-        if (node != null) {
-            deselectElement(node);
-        }
-    }
     function onNodeClicked(node, ctrlKey) {
-
-        // If control key isnt used, clear out any currently selected elements
-        if (ctrlKey !== true) {
-            clearSelection();
-        }
-
-        // Select or deselect the uiElem
-        if ($(node).isNodeSelected() === true) {
-            deselectElement(node, true);
-        } else {
-            selectElement(node, true);
-        }
+        var clo = _dataModel.GetByClientID(node.getNodeDataID());
+        _cloSelectionManager.ToggleCLOSelection(clo, ctrlKey);
     };
     var modelHandlers = {
         onCLOAdded: function (clo) {
@@ -1400,7 +1366,6 @@ UIControls.ModelExplorer = function (container, dataModel, cloSelectionManager) 
         },
         onCLORemoved: function (clo) {
             var nodeElem = $(_tree).getNode(clo.GetClientID());
-            deselectElement(nodeElem, false);
             removeElement(nodeElem);
         }
     }
@@ -1418,7 +1383,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         featureWireframe: null
     };
     var _innerStateManager = null;
-    var _visualUIElems = {}, _selectedElements = [];
+    var _visualUIElems = {};
     var _this = this;
 
     // Private methods
@@ -1483,36 +1448,6 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
             onElemClicked(newCompositionRuleElem, ctrlKey);
         }));
     }
-    //function selectElement(uiElem, raiseEvents) {
-
-    //    // Add it to the local collection and set its selectionState
-    //    _selectedElements.push(uiElem);
-    //    uiElem.SetSelectedState(Enums.UIElementStates.Selected);
-
-    //    // Raise events
-    //    if (raiseEvents === true) {
-    //        _this.UIElementSelected.RaiseEvent(uiElem.GetCLO().GetClientID());
-    //    }
-    //}
-    //function deselectElement(uiElem, raiseEvents) {
-
-    //    // Remove it from the local collection and sets its selectionState
-    //    if (uiElem.IsSelected() == true) {
-    //        var index = $(_selectedElements).index(uiElem);
-    //        _selectedElements.splice(index, 1);
-    //        uiElem.SetSelectedState(Enums.UIElementStates.Unselected);
-    //    }
-
-    //    // Raise events
-    //    if (raiseEvents === true) {
-    //        _this.UIElementDeselected.RaiseEvent(uiElem.GetCLO().GetClientID());
-    //    }
-    //}
-    //function clearSelection() {
-    //    for (var i = _selectedElements.length - 1; i >= 0; i--) {
-    //        deselectElement(_selectedElements[i], true);
-    //    }
-    //}
     function selectElementsInArea(targetBbox) {
 
         // Loop through all selected UI elements and select them if they are within the targetBox bounds
@@ -1562,19 +1497,11 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
     this.StartCreateCompositionRule = function () {
         _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewCompositionRule.Name);
     }
-    this.DeleteSelection = function () {
-        var oldSelectedElements = _selectedElements.slice();
-        for (var i = 0; i < oldSelectedElements.length ; i++) {
-            _dataModel.DeleteByClientID(oldSelectedElements[i].GetCLO().GetClientID());
-        }
-    }
 
     // Events
     this.Focus = new Event();
     this.StateChanged = new Event();
     this.CLOElementSelectionTriggered = new Event();
-    //this.UIElementSelected = new Event();
-    //this.UIElementDeselected = new Event();
 
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
@@ -1591,22 +1518,6 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         modelCLO.GroupRelations.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
         modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
     }
-    //this.OnRelatedViewUIElementSelected = function (clientid) {
-
-    //    // Find the uiElem and sync its selectionState
-    //    var uiElem = _visualUIElems[clientid];
-    //    if (uiElem !== undefined) {
-    //        selectElement(uiElem);
-    //    }
-    //}
-    //this.OnRelatedViewUIElementDeselected = function (clientid) {
-
-    //    // Find the uiElem and sync its selectionState
-    //    var uiElem = _visualUIElems[clientid];
-    //    if (uiElem !== undefined) {
-    //        deselectElement(uiElem);
-    //    }
-    //}
     var modelHandlers = {
         onFeatureAdded: function (featureCLO) {
             addFeatureElem(featureCLO);
@@ -1623,34 +1534,30 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         onCLORemoved: function (clo) {
             var elem = _visualUIElems[clo.GetClientID()];
             if (elem !== undefined) {
-                deselectElement(elem, false);
                 delete _visualUIElems[clo.GetClientID()];
                 elem.RemoveSelf();
             }
         }
     }
     var featureElemHandlers = {
-        onClicked : function (elem, ctrlKey) {
+        onClicked: function (elem, ctrlKey) {
             _cloSelectionManager.ToggleCLOSelection(elem.GetCLO(), ctrlKey);
         },
         onFeatureDragStarted: function (featureElem) {
             if (featureElem.IsSelected() === true) {
-
                 // Start move for all the selected featureElems
-                for (var i = 0; i < _selectedElements.length; i++) {
-                    if (_selectedElements[i].GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
-                        _selectedElements[i].StartMove();
-                    }
+                var selectedFeatureCLOs = _cloSelectionManager.GetAllSelectedCLOs(CLOTypes.Feature);
+                for (var i = 0; i < selectedFeatureCLOs.length; i++) {
+                    _visualUIElems[selectedFeatureCLOs[i].GetClientID()].StartMove();
                 }
             }
         },
         onFeatureDragging: function (featureElem, dx, dy) {
             if (featureElem.IsSelected() === true) {
                 // Move all the selected featureElems
-                for (var i = 0; i < _selectedElements.length; i++) {
-                    if (_selectedElements[i].GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
-                        _selectedElements[i].MoveXYBy(dx, dy);
-                    }
+                var selectedFeatureCLOs = _cloSelectionManager.GetAllSelectedCLOs(CLOTypes.Feature);
+                for (var i = 0; i < selectedFeatureCLOs.length; i++) {
+                    _visualUIElems[selectedFeatureCLOs[i].GetClientID()].MoveXYBy(dx, dy);
                 }
             }
         }
