@@ -1532,6 +1532,16 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         // Redraw all internal ui elems
         refreshGraphicalReprOfAllUIElems()
     }
+    this.ZoomOut = function () {
+
+        // Modify scale
+        if (Settings.ScaleModifier >= 0.50) {
+            Settings.ScaleModifier -= 0.25;
+        }
+
+        // Redraw all internal ui elems
+        refreshGraphicalReprOfAllUIElems();
+    }
 
     // Events
     this.Focus = new Event();
@@ -1878,10 +1888,6 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
         box: null,
         text: null
     };
-    var _boxDimensions = {
-        width: UIStyles.Feature.General.Box.Dimensions.width,
-        height: UIStyles.Feature.General.Box.Dimensions.height
-    }
     var _this = this;
 
     // Properties
@@ -1952,46 +1958,34 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
         };
         _outerElement.drag(move, start, up);
     }
-    //function refresh () {
+    function getCalculatedPosAndDimensions() {
+        var parameters = {
+            screenPos: {
+                x: featureCLO.XPos() * Settings.ScaleModifier, y: featureCLO.YPos() * Settings.ScaleModifier
+            },
+            boxDimensions: {
+                width: UIStyles.Feature.General.Box.Dimensions.width * Settings.ScaleModifier,
+                height: UIStyles.Feature.General.Box.Dimensions.height * Settings.ScaleModifier
+            },
+            fontSize: parseFloat(UIStyles.Feature.General.Text["font-size"]) * Settings.ScaleModifier
+        }
 
-    //    //
-    //    _innerElements.box.attr({
-    //        x: _screenPos.x,
-    //        y: _screenPos.y,
-    //        width: _boxWidth,
-    //        height: _boxHeight
-    //    });
-    //    //
-    //    _outerElement.attr({
-    //        x: _screenPos.x,
-    //        y: _screenPos.y,
-    //        width: _boxWidth,
-    //        height: _boxHeight
-    //    });
-
-    //    //
-    //    _innerElements.text.attr({
-    //        x: _boxWidth / 2 + _screenPos.x,
-    //        y: UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier / 2 + _screenPos.y,
-    //        "font-size": parseFloat(UIObjectStyles.feature.general.text["font-size"]) * _scaleModifier
-    //    });
-    //}
+        return parameters;
+    }
 
     // Init
     this.Initialize = function () {
 
-        // Calculations
-        var screenPos = {
-            x: featureCLO.XPos() * Settings.ScaleModifier, y: featureCLO.YPos() * Settings.ScaleModifier
-        }
+        // Size and pos calculations
+        var parameters = getCalculatedPosAndDimensions();
 
         // Create elements            
-        _innerElements.box = _canvasInstance.rect(featureCLO.XPos() * Settings.ScaleModifier, featureCLO.YPos() * Settings.ScaleModifier,
-            _boxDimensions.width * Settings.ScaleModifier, _boxDimensions.height * Settings.ScaleModifier, 0);
+        _innerElements.box = _canvasInstance.rect(parameters.screenPos.x, parameters.screenPos.y, parameters.boxDimensions.width, parameters.boxDimensions.height, 0);
         _innerElements.box.attr(UIStyles.Feature.States[_currentState].Box.attr);
-        _innerElements.text = _canvasInstance.text(_boxDimensions.width / 2 + featureCLO.XPos(), _boxDimensions.height / 2 + featureCLO.YPos(), _featureCLO.Name()).attr(UIStyles.Feature.States[_currentState].Text.attr);
-        _innerElements.text.attr({ "font-size": parseFloat(UIStyles.Feature.General.Text["font-size"]) });
-        _outerElement = _canvasInstance.rect(featureCLO.XPos(), featureCLO.YPos(), _boxDimensions.width, _boxDimensions.height).attr(UIStyles.Common.OuterElement.attr);
+        _innerElements.text = _canvasInstance.text(parameters.boxDimensions.width / 2 + parameters.screenPos.x, parameters.boxDimensions.height / 2 + parameters.screenPos.y,
+            _featureCLO.Name()).attr(UIStyles.Feature.States[_currentState].Text.attr);
+        _innerElements.text.attr({ "font-size": parameters.fontSize });
+        _outerElement = _canvasInstance.rect(parameters.screenPos.x, parameters.screenPos.y, parameters.boxDimensions.width, parameters.boxDimensions.height).attr(UIStyles.Common.OuterElement.attr);
 
         // Setup special handlers for interactions
         makeSelectable();
@@ -2052,7 +2046,27 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     }
     this.RefreshGraphicalRepresentation = function () {
 
+        // Size and pos REcalculations
+        var parameters = getCalculatedPosAndDimensions();
 
+        // Re set parameters
+        _innerElements.box.attr({
+            x: parameters.screenPos.x,
+            y: parameters.screenPos.y,
+            width: parameters.boxDimensions.width,
+            height: parameters.boxDimensions.height
+        });
+        _outerElement.attr({
+            x: parameters.screenPos.x,
+            y: parameters.screenPos.y,
+            width: parameters.boxDimensions.width,
+            height: parameters.boxDimensions.height
+        });
+        _innerElements.text.attr({
+            x: parameters.boxDimensions.width / 2 + parameters.screenPos.x,
+            y: parameters.boxDimensions.height / 2 + parameters.screenPos.y,
+            "font-size": parameters.fontSize
+        });
     }
 
     // Events
