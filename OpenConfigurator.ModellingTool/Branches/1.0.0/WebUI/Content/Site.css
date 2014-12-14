@@ -77,7 +77,7 @@ body
     width: 100%;
     float: left;
     clear: both;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
     margin-top: 15px;
     margin-left:20px;
 }
@@ -91,7 +91,7 @@ body
     cursor: pointer;
     background: #EFEFEF;
     border-radius: 6px;
-    margin-left: 3px;
+    margin-left: 1px;
 }
 #toolBar .toolBar-item:hover
 {
@@ -104,6 +104,12 @@ body
 #toolBar #leftItemsArea
 {
     float: left;
+}
+#toolBar #centerItemsArea
+{
+    width:210px;
+    margin-left:auto;
+    margin-right:auto;
 }
 #toolBar #rightItemsArea
 {
@@ -123,30 +129,39 @@ body
     right: 50%;
     float: right;
 }
-#modelDiagramBox .boxHeader .wrapper .infoMsgOverlay
+.infoMsgWrapperDiv
 {
+    float:left;
+    top:0;
     position:relative;
-    right:-50%;
-    float:right;
-
-    height: 19px;
+    left:50%;
+}
+.infoMsgOverlay
+{
+    position: relative;
+    float: left;
+    left: -50%;
+    height: 0px;
+    margin-right: -20px;
     text-align: center;
-    font-size: 11px;
+    font-size: 12px;
     font-family: Arial;
-    font-weight: bold;
-    color: #333333;
-    border-radius: 5px;
-    background-color: #F4FCE2;
+    color: #89B700;
+    border-radius: 1px; 
+    /*border: 1px solid #FFFFCC;
+    background-color: #FFFFCC;*/
+    letter-spacing:1.5px;
     line-height: 17px;
     vertical-align: middle;
     white-space: nowrap;
-    display: inline-block;
-    padding-left: 20px;
-    padding-right: 20px;
+    display: inline;
 }
 #modelDiagramBox .boxContent
 {
+    
     overflow: scroll;
+    padding:0;
+    border: solid 1px #F3F3F3 !important;
 }
 #modelDiagramBox #SVGCanvasWrapper
 {

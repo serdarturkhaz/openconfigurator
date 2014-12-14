@@ -10,7 +10,7 @@
 
             // Set widths for mainPanel and modelDiagramBox
             var mainPanelWidth = $("#bodyArea").outerWidth(true) - $("#sidePanel").outerWidth(true);
-            $("#mainPanel").css("width", mainPanelWidth  + "px");
+            $("#mainPanel").css("width", mainPanelWidth + "px");
             var diagramBoxWidth = mainPanelWidth - $("#propertiesBox").outerWidth(true) - 30; // -30 is the distance to the propertiesbox
             $("#modelDiagramBox").css("width", diagramBoxWidth + "px");
             $("#toolBar").css("width", diagramBoxWidth + "px");
@@ -61,6 +61,8 @@
             <div class="toolBar-item" id="saveModelItem" title="Save changes">
                 <img src="../../Content/Images/Icons/toolbar/save.png" />
             </div>
+        </div>
+        <div id="centerItemsArea">
             <div class="toolBar-item" id="newFeatureItem" title="Add a new Feature">
                 <img src="../../Content/Images/Icons/toolbar/feature.png" />
             </div>
@@ -93,20 +95,16 @@
         </div>
     </div>
     <div id="modelDiagramBox" class="roundedBox">
-        <div class="boxHeader">
-            <span data-bind="text: Name" class="headerLabel">Model Diagram</span>
-            <div class="wrapper">
-                <div style="display:none" class="infoMsgOverlay"></div>
-            </div>
-        </div>
         <div class="boxContent">
+            <div class="infoMsgWrapperDiv">
+                <div style="visibility: hidden" class="infoMsgOverlay"></div>
+            </div>
             <div id="SVGCanvasWrapper">
                 <div id="SVGCanvas">
                 </div>
             </div>
         </div>
-        <div class="boxFooter">
-        </div>
+
     </div>
     <div id="propertiesBox" class="roundedBox">
         <div class="boxHeader">

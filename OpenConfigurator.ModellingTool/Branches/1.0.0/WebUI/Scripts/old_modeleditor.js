@@ -3425,6 +3425,8 @@ var DiagramContext = function (canvasContainer, diagramDataModelInstance) {
         //Public methods
         this.CreateGraphicalRepresentation = function () {
 
+
+
             //Create inner elements            
             _innerElements.box = _canvas.rect(_screenPos.x, _screenPos.y, _boxWidth, _boxHeight, 0).attr(UIObjectStyles.feature.states[_currentState].box.attr);
             _innerElements.text = _canvas.text(_boxWidth / 2 + _screenPos.x, UIObjectStyles.feature.general.box.dimensions.height * _scaleModifier / 2 + _screenPos.y, this.GetVisibleText(_name)).attr(UIObjectStyles.feature.states[_currentState].text.attr);
