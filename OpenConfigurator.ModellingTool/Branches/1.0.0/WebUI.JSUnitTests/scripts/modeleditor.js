@@ -385,6 +385,12 @@ var UIStyles = {
     }
 }
 var Enums = {
+    CLODataStates: {
+        Unchanged: "Unchanged",
+        Modified: "Modified",
+        Deleted: "Deleted",
+        New: "New"
+    },
     UIElementStates: {
         Selected: "Selected",
         Unselected: "Unselected",
@@ -423,12 +429,6 @@ var Enums = {
     ConnectorPositionType: {
         EndPoint: "EndPoint",
         StartPoint: "StartPoint"
-    },
-    CLODataStates: {
-        Unchanged: "Unchanged",
-        Modified: "Modified",
-        Deleted: "Deleted",
-        New: "New"
     }
 }
 var SystemDefaults = {
@@ -587,6 +587,7 @@ var FeatureCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Feature;
     }
+    this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Attributes = new ObservableCollection();
@@ -613,6 +614,7 @@ var RelationCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Relation;
     };
+    this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.ParentFeature = null;
     this.ChildFeature = null;
@@ -639,6 +641,7 @@ var GroupRelationCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.GroupRelation;
     };
+    this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.ParentFeature = null;
     this.ChildFeatures = new ObservableCollection();
@@ -665,6 +668,7 @@ var CompositionRuleCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CompositionRule;
     }
+    this.Selected = new ObservableField();
     this.Name = new ObservableField(_innerBLO, "Identifier");
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.FirstFeature = null;
@@ -691,6 +695,7 @@ var CustomRuleCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CustomRule;
     }
+    this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Expression = new ObservableField(_innerBLO, "Expression");
@@ -716,6 +721,7 @@ var CustomFunctionCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CustomFunction;
     }
+    this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Expression = new ObservableField(_innerBLO, "Expression");
@@ -732,8 +738,8 @@ var Controller = function () {
 
     // Fields
     var _dataModel = null;
-    var _visualView = null, _commandToolbar = null, _modelExplorer = null;
-    var _currentControlFocus = null; //variable to keep track of where the user executed the last action (clicking)
+    var _visualView = null, _commandToolbar = null, _modelExplorer = null, _cloSelectionManager = null;
+    var _currentControlFocus = null; // variable to keep track of where the user executed the last action (clicking)
     var _this = this;
 
     // Init
@@ -742,9 +748,11 @@ var Controller = function () {
         // Init children
         _dataModel = new DataModel();
         _dataModel.Initialize();
-        _visualView = new UIControls.VisualView($("#modelDiagramBox"), _dataModel);
+        _cloSelectionManager = new CLOSelectionManager();
+        _cloSelectionManager.Initialize();
+        _visualView = new UIControls.VisualView($("#modelDiagramBox"), _dataModel, _cloSelectionManager);
         _visualView.Initialize();
-        _modelExplorer = new UIControls.ModelExplorer($("#modelExplorerTree"), _dataModel);
+        _modelExplorer = new UIControls.ModelExplorer($("#modelExplorerTree"), _dataModel, _cloSelectionManager);
         _modelExplorer.Initialize();
         _commandToolbar = new UIControls.CommandToolbar($("#toolBar"), _this);
         _commandToolbar.Initialize();
@@ -753,10 +761,7 @@ var Controller = function () {
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
         _visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
-        _visualView.UIElementSelected.AddHandler(new EventHandler(_modelExplorer.OnRelatedViewUIElementSelected));
-        _visualView.UIElementDeselected.AddHandler(new EventHandler(_modelExplorer.OnRelatedViewUIElementDeselected));
-        _modelExplorer.UIElementSelected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementSelected));
-        _modelExplorer.UIElementDeselected.AddHandler(new EventHandler(_visualView.OnRelatedViewUIElementDeselected));
+        _dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
 
         // Global key handlers
         $(document).keydown(function (e) {
@@ -801,7 +806,11 @@ var Controller = function () {
         _dataModel.GetCurrentFeatureModelCLO().CustomFunctions.Add(newCustomFunctionCLO);
     }
     this.Delete = function () {
-        _currentControlFocus.DeleteSelection();
+
+        var selectedCLOs = _cloSelectionManager.GetAllSelectedCLOs();
+        for (var i = 0; i < selectedCLOs.length ; i++) {
+            _dataModel.DeleteByClientID(selectedCLOs[i].GetClientID());
+        }
     }
 
     // Event handlers
@@ -809,6 +818,72 @@ var Controller = function () {
         if (_currentControlFocus !== viewInFocus) {
             _currentControlFocus = viewInFocus;
         }
+    }
+
+}
+var CLOSelectionManager = function () {
+
+    // Fields
+    var _selectedCLOs = {}; // lookup dictionary for all selected CLOs (for efficient retreival)
+    var _this = this;
+
+    // Private methods
+    function selectCLO(clo) {
+        _selectedCLOs[clo.GetClientID()] = clo;
+        clo.Selected(true);
+    }
+    function deselectCLO(clo) {
+        delete _selectedCLOs[clo.GetClientID()];
+        clo.Selected(false);
+    }
+    function clearSelection() {
+        for (var clientID in _selectedCLOs) {
+            deselectCLO(_selectedCLOs[clientID]);
+        }
+    }
+
+    // Init
+    this.Initialize = function () {
+    }
+
+    // Public methods
+    this.GetAllSelectedCLOs = function (cloType) {
+        var selectedCLOArray = [];
+        for (var clientID in _selectedCLOs) {
+            if (cloType !== undefined && cloType !== null) {
+                if (_selectedCLOs[clientID].GetType() === cloType)
+                    selectedCLOArray.push(_selectedCLOs[clientID]);
+            } else {
+                selectedCLOArray.push(_selectedCLOs[clientID]);
+            }
+        }
+        return selectedCLOArray;
+    }
+    this.ToggleCLOSelection = function (clo, ctrlKey) {
+        if (ctrlKey === true) {
+            // Control key down
+            if (clo.Selected())
+                deselectCLO(clo); // deselect
+            else
+                selectCLO(clo); // add to selection
+        }
+        else {
+            // No control key
+            clearSelection();
+            selectCLO(clo); // add to selection
+        }
+    }
+    this.ClearCLOSelection = function () {
+        clearSelection();
+    }
+    this.ForceCLOSelection = function (clo) {
+        selectCLO(clo);
+    }
+
+    // Event handlers
+    this.OnCLODeleted = function (clo) {
+        if (_selectedCLOs[clo.GetClientID()] !== undefined)
+            deselectCLO(clo);
     }
 }
 var DataModel = function (bloService, cloFactory) {
@@ -893,6 +968,8 @@ var DataModel = function (bloService, cloFactory) {
                     break;
             }
 
+            // Raise events
+            _this.CLODeleted.RaiseEvent(clo);
         }
     }
     this.LoadNewModel = function () {
@@ -904,6 +981,7 @@ var DataModel = function (bloService, cloFactory) {
 
     // Events
     this.ModelLoaded = new Event();
+    this.CLODeleted = new Event();
 }
 DataModel.CLOFactory = function (bloService) {
 
@@ -1157,10 +1235,10 @@ UIControls.CommandToolbar = function (container, controller) {
 
     };
 }
-UIControls.ModelExplorer = function (container, dataModel) {
+UIControls.ModelExplorer = function (container, dataModel, cloSelectionManager) {
 
     // Fields
-    var _container = container, _dataModel = dataModel;
+    var _container = container, _dataModel = dataModel, _cloSelectionManager = cloSelectionManager;
     var _tree = null, _treeOptions = {
         data: [
                 {
@@ -1285,14 +1363,6 @@ UIControls.ModelExplorer = function (container, dataModel) {
         });
     }
 
-    // Public methods
-    this.DeleteSelection = function () {
-        var oldSelectedElements = _selectedElements.slice();
-        for (var i = 0; i < oldSelectedElements.length ; i++) {
-            _dataModel.DeleteByClientID(oldSelectedElements[i].getNodeDataID());
-        }
-    }
-
     // Events
     this.Focus = new Event();
     this.UIElementSelected = new Event();
@@ -1344,15 +1414,14 @@ UIControls.ModelExplorer = function (container, dataModel) {
         },
         onCLORemoved: function (clo) {
             var nodeElem = $(_tree).getNode(clo.GetClientID());
-            deselectElement(nodeElem, false);
             removeElement(nodeElem);
         }
     }
 }
-UIControls.VisualView = function (container, dataModel) {
+UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
     // Fields
-    var _container = container, _dataModel = dataModel;
+    var _container = container, _dataModel = dataModel, _cloSelectionManager = cloSelectionManager;
     var _canvasContainer = null, _canvas = null;
     var _innerElems = {
         headerLabel: null,
@@ -1361,8 +1430,8 @@ UIControls.VisualView = function (container, dataModel) {
     var _wireframes = {
         featureWireframe: null
     };
-    var _innerStateManager = null, _currentFeatureModelCLO = null;;
-    var _visualUIElems = {}, _selectedElements = [];
+    var _innerStateManager = null;
+    var _visualUIElems = {};
     var _this = this;
 
     // Private methods
@@ -1393,7 +1462,7 @@ UIControls.VisualView = function (container, dataModel) {
 
         // Bind to it
         newRelationElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
-            standardOnElemClicked(newRelationElem, ctrlKey);
+            onElemClicked(newRelationElem, ctrlKey);
         }));
     }
     function addGroupRelationElem(groupRelationCLO) {
@@ -1411,7 +1480,7 @@ UIControls.VisualView = function (container, dataModel) {
 
         // Bind to it
         newGroupRelationElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
-            standardOnElemClicked(newGroupRelationElem, ctrlKey);
+            onElemClicked(newGroupRelationElem, ctrlKey);
         }));
     }
     function addCompositionRuleElem(compositionRuleCLO) {
@@ -1424,38 +1493,8 @@ UIControls.VisualView = function (container, dataModel) {
 
         // Bind to it
         newCompositionRuleElem.Clicked.AddHandler(new EventHandler(function (ctrlKey) {
-            standardOnElemClicked(newCompositionRuleElem, ctrlKey);
+            onElemClicked(newCompositionRuleElem, ctrlKey);
         }));
-    }
-    function selectElement(uiElem, raiseEvents) {
-
-        // Add it to the local collection and set its selectionState
-        _selectedElements.push(uiElem);
-        uiElem.SetSelectedState(Enums.UIElementStates.Selected);
-
-        // Raise events
-        if (raiseEvents === true) {
-            _this.UIElementSelected.RaiseEvent(uiElem.GetCLO().GetClientID());
-        }
-    }
-    function deselectElement(uiElem, raiseEvents) {
-
-        // Remove it from the local collection and sets its selectionState
-        if (uiElem.IsSelected() == true) {
-            var index = $(_selectedElements).index(uiElem);
-            _selectedElements.splice(index, 1);
-            uiElem.SetSelectedState(Enums.UIElementStates.Unselected);
-        }
-
-        // Raise events
-        if (raiseEvents === true) {
-            _this.UIElementDeselected.RaiseEvent(uiElem.GetCLO().GetClientID());
-        }
-    }
-    function clearSelection() {
-        for (var i = _selectedElements.length - 1; i >= 0; i--) {
-            deselectElement(_selectedElements[i], true);
-        }
     }
     function selectElementsInArea(targetBbox) {
 
@@ -1464,7 +1503,7 @@ UIControls.VisualView = function (container, dataModel) {
             var elem = _visualUIElems[clientid];
 
             if (elem.IsWithinBounds(targetBbox)) {
-                selectElement(elem, true);
+                _cloSelectionManager.ForceCLOSelection(elem.GetCLO());
             }
         }
     }
@@ -1506,24 +1545,16 @@ UIControls.VisualView = function (container, dataModel) {
     this.StartCreateCompositionRule = function () {
         _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewCompositionRule.Name);
     }
-    this.DeleteSelection = function () {
-        var oldSelectedElements = _selectedElements.slice();
-        for (var i = 0; i < oldSelectedElements.length ; i++) {
-            _dataModel.DeleteByClientID(oldSelectedElements[i].GetCLO().GetClientID());
-        }
-    }
 
     // Events
     this.Focus = new Event();
     this.StateChanged = new Event();
-    this.UIElementSelected = new Event();
-    this.UIElementDeselected = new Event();
+    this.CLOElementSelectionTriggered = new Event();
 
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
 
         // On Added handlers
-        _currentFeatureModelCLO = modelCLO;
         modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
         modelCLO.Relations.Added.AddHandler(new EventHandler(modelHandlers.onRelationAdded));
         modelCLO.GroupRelations.Added.AddHandler(new EventHandler(modelHandlers.onGroupRelationAdded));
@@ -1534,22 +1565,6 @@ UIControls.VisualView = function (container, dataModel) {
         modelCLO.Relations.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
         modelCLO.GroupRelations.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
         modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-    }
-    this.OnRelatedViewUIElementSelected = function (clientid) {
-
-        // Find the uiElem and sync its selectionState
-        var uiElem = _visualUIElems[clientid];
-        if (uiElem !== undefined) {
-            selectElement(uiElem);
-        }
-    }
-    this.OnRelatedViewUIElementDeselected = function (clientid) {
-
-        // Find the uiElem and sync its selectionState
-        var uiElem = _visualUIElems[clientid];
-        if (uiElem !== undefined) {
-            deselectElement(uiElem);
-        }
     }
     var modelHandlers = {
         onFeatureAdded: function (featureCLO) {
@@ -1567,65 +1582,36 @@ UIControls.VisualView = function (container, dataModel) {
         onCLORemoved: function (clo) {
             var elem = _visualUIElems[clo.GetClientID()];
             if (elem !== undefined) {
-                deselectElement(elem, false);
                 delete _visualUIElems[clo.GetClientID()];
                 elem.RemoveSelf();
             }
         }
     }
     var featureElemHandlers = {
-        onClicked: function (featureElem, ctrlKey) {
-            // Control key down
-            if (ctrlKey === true) {
-                if (featureElem.IsSelected()) {
-                    deselectElement(featureElem, true); // deselect
-                }
-                else {
-                    selectElement(featureElem, true); // add to selection
-                }
-            }
-            else {
-                // No control key
-                clearSelection();
-                if (!featureElem.IsSelected()) {
-                    selectElement(featureElem, true); // add to selection
-                }
-            }
+        onClicked: function (elem, ctrlKey) {
+            _cloSelectionManager.ToggleCLOSelection(elem.GetCLO(), ctrlKey);
         },
         onFeatureDragStarted: function (featureElem) {
             if (featureElem.IsSelected() === true) {
-
                 // Start move for all the selected featureElems
-                for (var i = 0; i < _selectedElements.length; i++) {
-                    if (_selectedElements[i].GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
-                        _selectedElements[i].StartMove();
-                    }
+                var selectedFeatureCLOs = _cloSelectionManager.GetAllSelectedCLOs(CLOTypes.Feature);
+                for (var i = 0; i < selectedFeatureCLOs.length; i++) {
+                    _visualUIElems[selectedFeatureCLOs[i].GetClientID()].StartMove();
                 }
             }
         },
         onFeatureDragging: function (featureElem, dx, dy) {
             if (featureElem.IsSelected() === true) {
                 // Move all the selected featureElems
-                for (var i = 0; i < _selectedElements.length; i++) {
-                    if (_selectedElements[i].GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
-                        _selectedElements[i].MoveXYBy(dx, dy);
-                    }
+                var selectedFeatureCLOs = _cloSelectionManager.GetAllSelectedCLOs(CLOTypes.Feature);
+                for (var i = 0; i < selectedFeatureCLOs.length; i++) {
+                    _visualUIElems[selectedFeatureCLOs[i].GetClientID()].MoveXYBy(dx, dy);
                 }
             }
         }
     }
-    var standardOnElemClicked = function (elem, ctrlKey) {
-        // If control key isnt used, clear out any currently selected elements
-        if (ctrlKey !== true) {
-            clearSelection();
-        }
-
-        // Select or deselect the uiElem
-        if (elem.IsSelected() === true) {
-            deselectElement(elem, true);
-        } else {
-            selectElement(elem, true);
-        }
+    var onElemClicked = function (elem, ctrlKey) {
+        _cloSelectionManager.ToggleCLOSelection(elem.GetCLO(), ctrlKey);
     }
 
     // Inner modes
@@ -1664,7 +1650,7 @@ UIControls.VisualView = function (container, dataModel) {
 
                     // Select elements lying within the selectionRectangle
                     if (e.ctrlKey !== true)
-                        clearSelection(); // clear selection ONLY if ctrl is not pressed
+                        _cloSelectionManager.ClearCLOSelection(); // clear selection ONLY if ctrl is not pressed
                     selectElementsInArea(selectionRectangle.getBBox());
 
                     // Clear variables and remove selection rectangle
@@ -1683,7 +1669,7 @@ UIControls.VisualView = function (container, dataModel) {
     UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewFeature] = {
         Name: "CreatingNewFeature",
         EnterState: function () {
-            clearSelection();
+            _cloSelectionManager.ClearCLOSelection();
             _innerElems.infoMsgOverlay.html("Click to add a new Feature...").show();
 
             // Create a wireframe
@@ -1726,7 +1712,7 @@ UIControls.VisualView = function (container, dataModel) {
     UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewRelation] = {
         Name: "CreatingNewRelation",
         EnterState: function () {
-            clearSelection();
+            _cloSelectionManager.ClearCLOSelection();
             _innerElems.infoMsgOverlay.html("Select the parent feature for the Relation...").show();
 
             // Variables
@@ -1737,7 +1723,7 @@ UIControls.VisualView = function (container, dataModel) {
             featureElemHandlers.onClicked = firstStepClickHandler;
             function firstStepClickHandler(featureElem) {
                 parentFeatureElem = featureElem;
-                selectElement(parentFeatureElem, true);
+                _cloSelectionManager.ForceCLOSelection(parentFeatureElem.GetCLO());
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
@@ -1750,7 +1736,7 @@ UIControls.VisualView = function (container, dataModel) {
                     _innerElems.infoMsgOverlay.html("Select a different child feature...");
                 } else {
                     childFeatureElem = featureElem;
-                    selectElement(featureElem, true);
+                    _cloSelectionManager.ForceCLOSelection(childFeatureElem.GetCLO());
 
                     // Create a new CLO
                     var newRelationCLO = _dataModel.CreateNewCLO(CLOTypes.Relation);
@@ -1776,7 +1762,7 @@ UIControls.VisualView = function (container, dataModel) {
     UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewGroupRelation] = {
         Name: "CreatingNewGroupRelation",
         EnterState: function () {
-            clearSelection();
+            _cloSelectionManager.ClearCLOSelection();
             _innerElems.infoMsgOverlay.html("Select the parent feature for the Group Relation...").show();
 
             // Variables
@@ -1787,7 +1773,7 @@ UIControls.VisualView = function (container, dataModel) {
             featureElemHandlers.onClicked = firstStepClickHandler;
             function firstStepClickHandler(featureElem) {
                 parentFeatureElem = featureElem;
-                selectElement(parentFeatureElem, true);
+                _cloSelectionManager.ForceCLOSelection(parentFeatureElem.GetCLO());
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
@@ -1801,7 +1787,7 @@ UIControls.VisualView = function (container, dataModel) {
                 } else {
 
                     childFeatureElems.push(featureElem);
-                    selectElement(featureElem, true);
+                    _cloSelectionManager.ForceCLOSelection(featureElem.GetCLO());
                 }
             }
 
@@ -1845,7 +1831,7 @@ UIControls.VisualView = function (container, dataModel) {
     UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewCompositionRule] = {
         Name: "CreatingNewCompositionRule",
         EnterState: function () {
-            clearSelection();
+            _cloSelectionManager.ClearCLOSelection();
             _innerElems.infoMsgOverlay.html("Select the first feature for the Composition Rule...").show();
 
             // Variables
@@ -1856,7 +1842,7 @@ UIControls.VisualView = function (container, dataModel) {
             featureElemHandlers.onClicked = firstStepClickHandler;
             function firstStepClickHandler(featureElem) {
                 firstFeatureElem = featureElem;
-                selectElement(firstFeatureElem, true);
+                _cloSelectionManager.ForceCLOSelection(firstFeatureElem.GetCLO());
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
@@ -1869,7 +1855,7 @@ UIControls.VisualView = function (container, dataModel) {
                     _innerElems.infoMsgOverlay.html("Select a different Feature...");
                 } else {
                     secondFeatureElem = featureElem;
-                    selectElement(secondFeatureElem, true);
+                    _cloSelectionManager.ForceCLOSelection(secondFeatureElem.GetCLO());
 
                     // Create a new CLO
                     var newCompositionRuleCLO = _dataModel.CreateNewCLO(CLOTypes.CompositionRule);
@@ -1950,6 +1936,11 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
                 _dontTriggerClickOnMouseUp = false;
             }
         });
+
+        // Bind to CLO
+        _featureCLO.Selected.Changed.AddHandler(new EventHandler(function (val) {
+            _this.SetSelectedState(val === true ? Enums.UIElementStates.Selected : Enums.UIElementStates.Unselected);
+        }));
     }
     function makeDraggable() {
 
@@ -2089,6 +2080,11 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
             }
         }
         _innerElements.connection.MakeSelectable(handlers);
+
+        // Bind to CLO
+        _relationCLO.Selected.Changed.AddHandler(new EventHandler(function (val) {
+            _this.SetSelectedState(val === true ? Enums.UIElementStates.Selected : Enums.UIElementStates.Unselected);
+        }));
     }
     function refresh() {
         _innerElements.connection.RefreshGraphicalRepresentation();
@@ -2232,6 +2228,11 @@ UIControls.VisualView.GroupRelationElem = function (groupRelationCLO, parentFeat
         for (var i = 0; i < _innerElements.connections.length; i++) {
             _innerElements.connections[i].MakeSelectable(handlers);
         }
+
+        // Bind to CLO
+        _groupRelationCLO.Selected.Changed.AddHandler(new EventHandler(function (val) {
+            _this.SetSelectedState(val === true ? Enums.UIElementStates.Selected : Enums.UIElementStates.Unselected);
+        }));
     }
     function refresh() {
         for (var i = 0; i < _innerElements.connections.length; i++) {
@@ -2436,6 +2437,11 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
             }
         }
         _innerElements.connection.MakeSelectable(handlers);
+
+        // Bind to CLO
+        _compositionRuleCLO.Selected.Changed.AddHandler(new EventHandler(function (val) {
+            _this.SetSelectedState(val === true ? Enums.UIElementStates.Selected : Enums.UIElementStates.Unselected);
+        }));
     }
     function refresh() {
         _innerElements.connection.RefreshGraphicalRepresentation();
@@ -2510,7 +2516,7 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
 
     // Private methods
     function getPath(objA, objB) {
-        
+
         // Variables
         var bb1 = objA.getBBox();
         var bb2 = objB.getBBox();
