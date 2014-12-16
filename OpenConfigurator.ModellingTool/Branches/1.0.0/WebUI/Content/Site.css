@@ -132,7 +132,7 @@ body
 .infoMsgWrapperDiv
 {
     float:left;
-    top:0;
+    top:-99%;
     position:relative;
     left:50%;
 }
@@ -145,6 +145,7 @@ body
     margin-right: -20px;
     text-align: center;
     font-size: 12px;
+    font-weight:bold;
     font-family: Arial;
     color: #89B700;
     border-radius: 1px; 
