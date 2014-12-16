@@ -1,6 +1,57 @@
 ﻿// Settings and defaults
+var Enums = {
+    CLODataStates: {
+        Unchanged: "Unchanged",
+        Modified: "Modified",
+        Deleted: "Deleted",
+        New: "New"
+    },
+    UIElementStates: {
+        Selected: "Selected",
+        Unselected: "Unselected",
+        Wireframe: "Wireframe"
+    },
+    VisualView: {
+        ElemTypes: {
+            FeatureElem: "FeatureElem",
+            RelationElem: "RelationElem",
+            GroupRelationElem: "GroupRelationElem",
+            CompositionRuleElem: "CompositionRuleElem"
+        },
+        StateNames: {
+            Default: "Default",
+            CreatingNewFeature: "CreatingNewFeature",
+            CreatingNewRelation: "CreatingNewRelation",
+            CreatingNewGroupRelation: "CreatingNewGroupRelation",
+            CreatingNewCompositionRule: "CreatingNewCompositionRule"
+        }
+    },
+    RelationTypes: {
+        Mandatory: 0,
+        Optional: 1,
+        Cloneable: 2
+    },
+    GroupRelationTypes: {
+        OR: 0,
+        XOR: 1,
+        Cardinal: 2
+    },
+    CompositionRuleTypes: {
+        Dependency: 0,
+        MutualDependency: 1,
+        MutualExclusion: 2
+    },
+    ConnectorPositionTypes: {
+        EndPoint: "EndPoint",
+        StartPoint: "StartPoint"
+    },
+    UIOrientationTypes: {
+        Vertical: "Vertical",
+        Horizontal: "Horizontal"
+    }
+}
 var Settings = {
-    UIOrientation: "Vertical", //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
+    UIOrientation:Enums.UIOrientationTypes.Vertical, //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
     DrawCurves: true,
     ScaleModifier: 1,
     DisplayCardinalities: "Full" //determines how many cardinalities to display - options : "None" (no cardinalities) / "Partial" (only cloneable and cardinal groups) / "All" (all relations and groupRelations)
@@ -382,53 +433,6 @@ var UIStyles = {
                 }
             }
         }
-    }
-}
-var Enums = {
-    CLODataStates: {
-        Unchanged: "Unchanged",
-        Modified: "Modified",
-        Deleted: "Deleted",
-        New: "New"
-    },
-    UIElementStates: {
-        Selected: "Selected",
-        Unselected: "Unselected",
-        Wireframe: "Wireframe"
-    },
-    VisualView: {
-        ElemTypes: {
-            FeatureElem: "FeatureElem",
-            RelationElem: "RelationElem",
-            GroupRelationElem: "GroupRelationElem",
-            CompositionRuleElem: "CompositionRuleElem"
-        },
-        StateNames: {
-            Default: "Default",
-            CreatingNewFeature: "CreatingNewFeature",
-            CreatingNewRelation: "CreatingNewRelation",
-            CreatingNewGroupRelation: "CreatingNewGroupRelation",
-            CreatingNewCompositionRule: "CreatingNewCompositionRule"
-        }
-    },
-    RelationTypes: {
-        Mandatory: 0,
-        Optional: 1,
-        Cloneable: 2
-    },
-    GroupRelationTypes: {
-        OR: 0,
-        XOR: 1,
-        Cardinal: 2
-    },
-    CompositionRuleTypes: {
-        Dependency: 0,
-        MutualDependency: 1,
-        MutualExclusion: 2
-    },
-    ConnectorPositionType: {
-        EndPoint: "EndPoint",
-        StartPoint: "StartPoint"
     }
 }
 var SystemDefaults = {
@@ -818,6 +822,9 @@ var Controller = function () {
     this.ZoomOut = function () {
         _visualView.ZoomOut();
     }
+    this.ToggleOrientation = function () {
+        _visualView.ToggleOrientation();
+    }
 
     // Event handlers
     var onViewFocused = function (viewInFocus) {
@@ -1185,6 +1192,7 @@ UIControls.CommandToolbar = function (container, controller) {
         _innerElems.modelManipulationItems.newCustomFunctionItem = $(_container).find("#newCustomFunctionItem");
         _innerElems.visualOptionsItems.zoomInItem = $(_container).find("#zoomInItem");
         _innerElems.visualOptionsItems.zoomOutItem = $(_container).find("#zoomOutItem");
+        _innerElems.visualOptionsItems.toggleOrientationItem = $(_container).find("#toggleOrientationItem");
 
         // Set event handlers
         $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
@@ -1195,6 +1203,7 @@ UIControls.CommandToolbar = function (container, controller) {
         $(_innerElems.modelManipulationItems.newCustomFunctionItem).bind("click", toolbarItemHandlers.newCustomFunctionItemTriggered);
         $(_innerElems.visualOptionsItems.zoomInItem).bind("click", toolbarItemHandlers.zoomInItemTriggered);
         $(_innerElems.visualOptionsItems.zoomOutItem).bind("click", toolbarItemHandlers.zoomOutItemTriggered);
+        $(_innerElems.visualOptionsItems.toggleOrientationItem).bind("click", toolbarItemHandlers.toggleOrientationItemTriggered);
 
         // Key shortcut handlers
         $(document).keydown(function (e) {
@@ -1249,6 +1258,9 @@ UIControls.CommandToolbar = function (container, controller) {
         },
         zoomOutItemTriggered: function () {
             _controller.ZoomOut();
+        },
+        toggleOrientationItemTriggered: function () {
+            _controller.ToggleOrientation();
         }
 
     };
@@ -1541,6 +1553,28 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
         // Redraw all internal ui elems
         refreshGraphicalReprOfAllUIElems();
+    }
+    this.ToggleOrientation = function () {
+
+        // Change orientation setting
+        if (Settings.UIOrientation === Enums.UIOrientationTypes.Vertical) {
+            Settings.UIOrientation = Enums.UIOrientationTypes.Horizontal;
+        } else {
+            Settings.UIOrientation = Enums.UIOrientationTypes.Vertical;
+        }
+
+        // Reverse coordinates for all Features
+        for (var clientID in _visualUIElems) {
+            var elem = _visualUIElems[clientID];
+            if (elem !== undefined) {
+
+                if (elem.GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
+                    elem.ReverseCoordinates();
+                }
+                elem.RefreshGraphicalRepresentation();
+
+            }
+        }
     }
 
     // Events
@@ -2041,8 +2075,21 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
             innerElem.attr({ x: innerElem.originalx + dx, y: innerElem.originaly + dy });
         }
 
+        // Update CLO
+        _featureCLO.XPos(_outerElement.originalx + dx);
+        _featureCLO.YPos(_outerElement.originaly + dy);
+
         // Raise events
         _this.Moving.RaiseEvent(dx, dy);
+    }
+    this.ReverseCoordinates = function () {
+
+        // Reverse absolute position
+        var x = _featureCLO.XPos();
+        var y = _featureCLO.YPos();
+        _featureCLO.XPos(y);
+        _featureCLO.YPos(x);
+
     }
     this.RefreshGraphicalRepresentation = function () {
 
@@ -2189,6 +2236,9 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
     }
 
     // Public methods
+    this.RefreshGraphicalRepresentation = function () {
+        refresh();
+    }
     this.SetSelectedState = function (state) {
         _currentState = state;
         _innerElements.connection.SetSelectedState(state);
@@ -2383,6 +2433,10 @@ UIControls.VisualView.GroupRelationElem = function (groupRelationCLO, parentFeat
     }
 
     // Public methods
+    this.RefreshGraphicalRepresentation = function () {
+        refresh();
+        refreshArc();
+    }
     this.SetSelectedState = function (state) {
         _currentState = state;
         for (var i = 0; i < _innerElements.connections.length; i++) {
@@ -2500,6 +2554,9 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
     }
 
     // Public methods
+    this.RefreshGraphicalRepresentation = function () {
+        refresh();
+    }
     this.SetSelectedState = function (state) {
         _currentState = state;
         _innerElements.connection.SetSelectedState(state);
@@ -2710,13 +2767,13 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
 
         // Create startConnector
         if (currentStyle.Connectors.StartConnector !== undefined) {
-            _innerElements.connectors.startConnector = new UIControls.VisualView.ConnectorElem(_this, currentStyle.Connectors.StartConnector, currentStyle.Connectors.StartConnector.attr, Enums.ConnectorPositionType.StartPoint, _canvasInstance);
+            _innerElements.connectors.startConnector = new UIControls.VisualView.ConnectorElem(_this, currentStyle.Connectors.StartConnector, currentStyle.Connectors.StartConnector.attr, Enums.ConnectorPositionTypes.StartPoint, _canvasInstance);
             _innerElements.connectors.startConnector.Initialize();
         }
 
         // Create endConnector
         if (currentStyle.Connectors.EndConnector !== undefined) {
-            _innerElements.connectors.endConnector = new UIControls.VisualView.ConnectorElem(_this, currentStyle.Connectors.EndConnector, currentStyle.Connectors.EndConnector.attr, Enums.ConnectorPositionType.EndPoint, _canvasInstance);
+            _innerElements.connectors.endConnector = new UIControls.VisualView.ConnectorElem(_this, currentStyle.Connectors.EndConnector, currentStyle.Connectors.EndConnector.attr, Enums.ConnectorPositionTypes.EndPoint, _canvasInstance);
             _innerElements.connectors.endConnector.Initialize();
         }
 
