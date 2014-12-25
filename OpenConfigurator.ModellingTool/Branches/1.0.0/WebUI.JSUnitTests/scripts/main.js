@@ -51,7 +51,7 @@ var Enums = {
     }
 }
 var Settings = {
-    UIOrientation:Enums.UIOrientationTypes.Vertical, //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
+    UIOrientation: Enums.UIOrientationTypes.Vertical, //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
     DrawCurves: true,
     ScaleModifier: 1,
     DisplayCardinalities: "Full" //determines how many cardinalities to display - options : "None" (no cardinalities) / "Partial" (only cloneable and cardinal groups) / "All" (all relations and groupRelations)
@@ -748,46 +748,46 @@ var Controller = function () {
 
     // Init
     this.Initialize = function () {
+        UIComponentProvider.CreateInstance("test");
+        //// Init children
+        //_dataModel = new DataModel();
+        //_dataModel.Initialize();
+        //_cloSelectionManager = new CLOSelectionManager();
+        //_cloSelectionManager.Initialize();
+        //_visualView = new UIComponents.VisualView($("#modelDiagramBox"), _dataModel, _cloSelectionManager);
+        //_visualView.Initialize();
+        //_modelExplorer = new UIComponents.ModelExplorer($("#modelExplorerTree"), _dataModel, _cloSelectionManager);
+        //_modelExplorer.Initialize();
+        //_commandToolbar = new UIComponents.CommandToolbar($("#toolBar"), _this);
+        //_commandToolbar.Initialize();
 
-        // Init children
-        _dataModel = new DataModel();
-        _dataModel.Initialize();
-        _cloSelectionManager = new CLOSelectionManager();
-        _cloSelectionManager.Initialize();
-        _visualView = new UIControls.VisualView($("#modelDiagramBox"), _dataModel, _cloSelectionManager);
-        _visualView.Initialize();
-        _modelExplorer = new UIControls.ModelExplorer($("#modelExplorerTree"), _dataModel, _cloSelectionManager);
-        _modelExplorer.Initialize();
-        _commandToolbar = new UIControls.CommandToolbar($("#toolBar"), _this);
-        _commandToolbar.Initialize();
+        //// Setup events and handlers
+        //_dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
+        //_dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
+        //_visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
+        //_dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
 
-        // Setup events and handlers
-        _dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
-        _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
-        _visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
-        _dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
+        //// Global key handlers
+        //$(document).keydown(function (e) {
+        //    if (e.which == 46) { //del key
+        //        _this.Delete();
+        //    }
 
-        // Global key handlers
-        $(document).keydown(function (e) {
-            if (e.which == 46) { //del key
-                _this.Delete();
-            }
+        //});
 
-        });
+        //// Focus handlers
+        //_visualView.Focus.AddHandler(new EventHandler(function () {
+        //    onViewFocused(_visualView);
 
-        // Focus handlers
-        _visualView.Focus.AddHandler(new EventHandler(function () {
-            onViewFocused(_visualView);
-
-        }));
-        _modelExplorer.Focus.AddHandler(new EventHandler(function () {
-            onViewFocused(_modelExplorer);
-        }));
+        //}));
+        //_modelExplorer.Focus.AddHandler(new EventHandler(function () {
+        //    onViewFocused(_modelExplorer);
+        //}));
     }
 
     // Public methods
     this.NewModel = function () {
-        _dataModel.LoadNewModel();
+        //_dataModel.LoadNewModel();
     }
     this.AddNewFeature = function () {
         _visualView.StartCreateFeature();
@@ -1140,132 +1140,49 @@ DataModel.BLOService = function () {
     }
 }
 
-// UIControls
-var UIControls = {};
-UIControls.CommandToolbar = function (container, controller) {
+// UIComponents
+var UIComponentProvider = (function () { // "static" class
 
     // Fields
-    var _container = container, _controller = controller;
-    var _innerElems = {
-        fileCommandItems: {
-            newModelItem: null,
-            openModelItem: null,
-            saveModelItem: null
-        },
-        modelManipulationItems: {
-            newFeatureItem: null,
-            newRelationItem: null,
-            newGroupRelationItem: null,
-            newCompositionRuleItem: null,
-            newCustomRuleItem: null,
-            newCustomFunctionItem: null
-        },
-        visualOptionsItems: {
-            toggleOrientationItem: null,
-            zoomInItem: null,
-            zoomOutItem: null
-        }
-    };
-    var _this = this;
+    var registeredUIComponents = {};
 
-    // Private methods
-    function removeAllToggleEffects() {
-        for (var itemKey in _innerElems.modelManipulationItems) {
-            var item = _innerElems.modelManipulationItems[itemKey];
-            $(item).removeClass("toolBar-item-active");
-        }
+    // Methods
+    function registerUIComponent(componentFullName) {
+
     }
-    function addToggleEffect(item) {
-        $(item).addClass("toolBar-item-active");
-    }
+    function createInstance(componentFullName) {
 
-    // Init
-    this.Initialize = function () {
-
-        // Get references to html elems
-        _container = container;
-        _innerElems.modelManipulationItems.newFeatureItem = $(_container).find("#newFeatureItem");
-        _innerElems.modelManipulationItems.newRelationItem = $(_container).find("#newRelationItem");
-        _innerElems.modelManipulationItems.newGroupRelationItem = $(_container).find("#newGroupRelationItem");
-        _innerElems.modelManipulationItems.newCompositionRuleItem = $(_container).find("#newCompositionRuleItem");
-        _innerElems.modelManipulationItems.newCustomRuleItem = $(_container).find("#newCustomRuleItem");
-        _innerElems.modelManipulationItems.newCustomFunctionItem = $(_container).find("#newCustomFunctionItem");
-        _innerElems.visualOptionsItems.zoomInItem = $(_container).find("#zoomInItem");
-        _innerElems.visualOptionsItems.zoomOutItem = $(_container).find("#zoomOutItem");
-        _innerElems.visualOptionsItems.toggleOrientationItem = $(_container).find("#toggleOrientationItem");
-
-        // Set event handlers
-        $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
-        $(_innerElems.modelManipulationItems.newRelationItem).bind("click", toolbarItemHandlers.newRelationItemTriggered);
-        $(_innerElems.modelManipulationItems.newGroupRelationItem).bind("click", toolbarItemHandlers.newGroupRelationItemTriggered);
-        $(_innerElems.modelManipulationItems.newCompositionRuleItem).bind("click", toolbarItemHandlers.newCompositionRuleItemTriggered);
-        $(_innerElems.modelManipulationItems.newCustomRuleItem).bind("click", toolbarItemHandlers.newCustomRuleItemTriggered);
-        $(_innerElems.modelManipulationItems.newCustomFunctionItem).bind("click", toolbarItemHandlers.newCustomFunctionItemTriggered);
-        $(_innerElems.visualOptionsItems.zoomInItem).bind("click", toolbarItemHandlers.zoomInItemTriggered);
-        $(_innerElems.visualOptionsItems.zoomOutItem).bind("click", toolbarItemHandlers.zoomOutItemTriggered);
-        $(_innerElems.visualOptionsItems.toggleOrientationItem).bind("click", toolbarItemHandlers.toggleOrientationItemTriggered);
-
-        // Key shortcut handlers
-        $(document).keydown(function (e) {
-            $.ctrl('F', toolbarItemHandlers.newFeatureItemTriggered);
-            $.ctrl('R', toolbarItemHandlers.newRelationItemTriggered);
-            $.ctrl('G', toolbarItemHandlers.newGroupRelationItemTriggered);
-            $.ctrl('M', toolbarItemHandlers.newCompositionRuleItemTriggered);
-            $.ctrl('U', toolbarItemHandlers.newCustomRuleItemTriggered);
-            $.ctrl('N', toolbarItemHandlers.newCustomFunctionItemTriggered);
+        $.ajax({
+            type: "POST",
+            url: "Main/GetUIComponent",
+            data: JSON.stringify({ UIComponentFullName: componentFullName }),
+            async: false,
+            success: function (response) {
+       
+            }
         });
 
+        //var dfd = $.Deferred();
+
+
+        //require(moduleIDs, function () {
+        //    dfd.resolveWith(null, arguments);
+        //}, function () {
+        //    dfd.reject();
+        //});
+
+
+        //return dfd.promise();
     }
 
-    // Event handlers
-    this.OnVisualViewStateChanged = function (oldStateName, newStateName) {
-
-        // Mappings from VisualView states to item buttons in command bar
-        var itemToVisualViewStateMappings = {};
-        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewFeature] = _innerElems.modelManipulationItems.newFeatureItem;
-        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewRelation] = _innerElems.modelManipulationItems.newRelationItem;
-        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewGroupRelation] = _innerElems.modelManipulationItems.newGroupRelationItem;
-        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewCompositionRule] = _innerElems.modelManipulationItems.newCompositionRuleItem;
-
-        // Handle the states
-        if (newStateName === Enums.VisualView.StateNames.Default) {
-            removeAllToggleEffects();
-        } else {
-            addToggleEffect(itemToVisualViewStateMappings[newStateName]);
-        }
-    }
-    var toolbarItemHandlers = {
-        newFeatureItemTriggered: function () {
-            _controller.AddNewFeature();
-        },
-        newRelationItemTriggered: function () {
-            _controller.AddNewRelation();
-        },
-        newGroupRelationItemTriggered: function () {
-            _controller.AddNewGroupRelation();
-        },
-        newCompositionRuleItemTriggered: function () {
-            _controller.AddNewCompositionRule();
-        },
-        newCustomRuleItemTriggered: function () {
-            _controller.AddNewCustomRule();
-        },
-        newCustomFunctionItemTriggered: function () {
-            _controller.AddNewCustomFunction();
-        },
-        zoomInItemTriggered: function () {
-            _controller.ZoomIn();
-        },
-        zoomOutItemTriggered: function () {
-            _controller.ZoomOut();
-        },
-        toggleOrientationItemTriggered: function () {
-            _controller.ToggleOrientation();
-        }
-
+    // Public methods
+    return {
+        CreateInstance: createInstance
     };
-}
-UIControls.ModelExplorer = function (container, dataModel, cloSelectionManager) {
+})();
+var UIComponents = {};
+UIComponents.CommandToolbar = {};
+UIComponents.ModelExplorer = function (container, dataModel, cloSelectionManager) {
 
     // Fields
     var _container = container, _dataModel = dataModel, _cloSelectionManager = cloSelectionManager;
@@ -1400,7 +1317,7 @@ UIControls.ModelExplorer = function (container, dataModel, cloSelectionManager) 
         }
     }
 }
-UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
+UIComponents.VisualView = function (container, dataModel, cloSelectionManager) {
 
     // Fields
     var _container = container, _dataModel = dataModel, _cloSelectionManager = cloSelectionManager;
@@ -1420,7 +1337,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
     function addFeatureElem(featureCLO) {
 
         // Create a new feature
-        var newFeatureElem = new UIControls.VisualView.FeatureElem(featureCLO, _canvas);
+        var newFeatureElem = new UIComponents.VisualView.FeatureElem(featureCLO, _canvas);
         newFeatureElem.Initialize();
         _visualUIElems[featureCLO.GetClientID()] = newFeatureElem;
 
@@ -1438,7 +1355,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
     function addRelationElem(relationCLO) {
 
         // Create a new relation
-        var newRelationElem = new UIControls.VisualView.RelationElem(relationCLO, _visualUIElems[relationCLO.ParentFeature.GetClientID()], _visualUIElems[relationCLO.ChildFeature.GetClientID()], _canvas);
+        var newRelationElem = new UIComponents.VisualView.RelationElem(relationCLO, _visualUIElems[relationCLO.ParentFeature.GetClientID()], _visualUIElems[relationCLO.ChildFeature.GetClientID()], _canvas);
         newRelationElem.Initialize();
         _visualUIElems[relationCLO.GetClientID()] = newRelationElem;
 
@@ -1456,7 +1373,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         }
 
         // Create a new group relation
-        var newGroupRelationElem = new UIControls.VisualView.GroupRelationElem(groupRelationCLO, _visualUIElems[groupRelationCLO.ParentFeature.GetClientID()], childFeatureElems, _canvas);
+        var newGroupRelationElem = new UIComponents.VisualView.GroupRelationElem(groupRelationCLO, _visualUIElems[groupRelationCLO.ParentFeature.GetClientID()], childFeatureElems, _canvas);
         newGroupRelationElem.Initialize();
         _visualUIElems[groupRelationCLO.GetClientID()] = newGroupRelationElem;
 
@@ -1468,7 +1385,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
     function addCompositionRuleElem(compositionRuleCLO) {
 
         // Create a new composition rule
-        var newCompositionRuleElem = new UIControls.VisualView.CompositionRuleElem(compositionRuleCLO, _visualUIElems[compositionRuleCLO.FirstFeature.GetClientID()],
+        var newCompositionRuleElem = new UIComponents.VisualView.CompositionRuleElem(compositionRuleCLO, _visualUIElems[compositionRuleCLO.FirstFeature.GetClientID()],
             _visualUIElems[compositionRuleCLO.SecondFeature.GetClientID()], _canvas);
         newCompositionRuleElem.Initialize();
         _visualUIElems[compositionRuleCLO.GetClientID()] = newCompositionRuleElem;
@@ -1505,7 +1422,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
         _innerElems.headerLabel = $(_container).find(".headerLabel");
         _innerElems.infoMsgOverlay = $(_container).find(".infoMsgOverlay");
         _canvas = Raphael($(_canvasContainer).children("#SVGCanvas")[0], "100%", "100%");
-        _innerStateManager = new InnerStateManager(UIControls.VisualView.InnerStates, UIControls.VisualView.InnerStates.Default.Name, _this.StateChanged);
+        _innerStateManager = new InnerStateManager(UIComponents.VisualView.InnerStates, UIComponents.VisualView.InnerStates.Default.Name, _this.StateChanged);
         _innerStateManager.Initialize(); // setup mode manager and enter initial mode
 
         // Handler for onFocus
@@ -1523,16 +1440,16 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
     // Public methods
     this.StartCreateFeature = function () {
-        _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewFeature.Name);
+        _innerStateManager.SwitchToState(UIComponents.VisualView.InnerStates.CreatingNewFeature.Name);
     }
     this.StartCreateRelation = function () {
-        _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewRelation.Name);
+        _innerStateManager.SwitchToState(UIComponents.VisualView.InnerStates.CreatingNewRelation.Name);
     }
     this.StartCreateGroupRelation = function () {
-        _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewGroupRelation.Name);
+        _innerStateManager.SwitchToState(UIComponents.VisualView.InnerStates.CreatingNewGroupRelation.Name);
     }
     this.StartCreateCompositionRule = function () {
-        _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.CreatingNewCompositionRule.Name);
+        _innerStateManager.SwitchToState(UIComponents.VisualView.InnerStates.CreatingNewCompositionRule.Name);
     }
     this.ZoomIn = function () {
 
@@ -1646,8 +1563,8 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
     }
 
     // Inner modes
-    UIControls.VisualView.InnerStates = {};
-    UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.Default] = {
+    UIComponents.VisualView.InnerStates = {};
+    UIComponents.VisualView.InnerStates[Enums.VisualView.StateNames.Default] = {
         Name: "Default",
         EnterState: function () {
             // Variables
@@ -1697,7 +1614,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
             $(_canvasContainer).unbind("mousemove.canvas");
         }
     };
-    UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewFeature] = {
+    UIComponents.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewFeature] = {
         Name: "CreatingNewFeature",
         EnterState: function () {
             _cloSelectionManager.ClearCLOSelection();
@@ -1727,7 +1644,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
                 _dataModel.GetCurrentFeatureModelCLO().Features.Add(newFeatureCLO);
 
                 // Go back to default state
-                _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+                _innerStateManager.SwitchToState(UIComponents.VisualView.InnerStates.Default.Name);
             });
 
         },
@@ -1740,7 +1657,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
             _wireframes.featureWireframe.remove();
         }
     };
-    UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewRelation] = {
+    UIComponents.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewRelation] = {
         Name: "CreatingNewRelation",
         EnterState: function () {
             _cloSelectionManager.ClearCLOSelection();
@@ -1778,7 +1695,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
                     // Add it to the FeatureModel and then switch to default state
                     _dataModel.GetCurrentFeatureModelCLO().Relations.Add(newRelationCLO);
-                    _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+                    _innerStateManager.SwitchToState(UIComponents.VisualView.InnerStates.Default.Name);
                 }
             }
         },
@@ -1790,7 +1707,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
             delete this.normalFeatureElemOnclick;
         }
     }
-    UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewGroupRelation] = {
+    UIComponents.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewGroupRelation] = {
         Name: "CreatingNewGroupRelation",
         EnterState: function () {
             _cloSelectionManager.ClearCLOSelection();
@@ -1838,7 +1755,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
                     // Add it to the FeatureModel and then switch to default state
                     _dataModel.GetCurrentFeatureModelCLO().GroupRelations.Add(newGroupRelationCLO);
-                    _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+                    _innerStateManager.SwitchToState(UIComponents.VisualView.InnerStates.Default.Name);
 
                     document.getSelection().removeAllRanges();
                 } else {
@@ -1859,7 +1776,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
             $(_container).unbind("dblclick.groupRelation");
         }
     }
-    UIControls.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewCompositionRule] = {
+    UIComponents.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewCompositionRule] = {
         Name: "CreatingNewCompositionRule",
         EnterState: function () {
             _cloSelectionManager.ClearCLOSelection();
@@ -1897,7 +1814,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
 
                     // Add it to the FeatureModel and then switch to default state
                     _dataModel.GetCurrentFeatureModelCLO().CompositionRules.Add(newCompositionRuleCLO);
-                    _innerStateManager.SwitchToState(UIControls.VisualView.InnerStates.Default.Name);
+                    _innerStateManager.SwitchToState(UIComponents.VisualView.InnerStates.Default.Name);
                 }
             }
         },
@@ -1911,7 +1828,7 @@ UIControls.VisualView = function (container, dataModel, cloSelectionManager) {
     }
 
 }
-UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) {
+UIComponents.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) {
 
     // Fields
     var _featureCLO = featureCLO, _canvasInstance = parentCanvasInstance;
@@ -2122,7 +2039,7 @@ UIControls.VisualView.FeatureElem = function (featureCLO, parentCanvasInstance) 
     this.Dragging = new Event();
     this.Moving = new Event();
 }
-UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, childFeatureElem, parentCanvasInstance) {
+UIComponents.VisualView.RelationElem = function (relationCLO, parentFeatureElem, childFeatureElem, parentCanvasInstance) {
 
     // Fields
     var _relationCLO = relationCLO, _canvasInstance = parentCanvasInstance;
@@ -2186,7 +2103,7 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
             // Full
             case "Full": // show for everything
                 if (_innerElements.cardinalityElement === null) {
-                    _innerElements.cardinalityElement = new UIControls.VisualView.CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
+                    _innerElements.cardinalityElement = new UIComponents.VisualView.CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                     _innerElements.cardinalityElement.Initialize();
                 }
                 _innerElements.cardinalityElement.Update(_relationCLO.LowerBound(), _relationCLO.UpperBound());
@@ -2196,7 +2113,7 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
             case "Partial": // only show for cloneable Relations
                 if (_relationCLO.RelationType() === Enums.RelationTypes.Cloneable) {
                     if (_innerElements.cardinalityElement == null) {
-                        _innerElements.cardinalityElement = new UIControls.VisualView.CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
+                        _innerElements.cardinalityElement = new UIComponents.VisualView.CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                         _innerElements.cardinalityElement.Initialize();
                     }
                     _innerElements.cardinalityElement.Update(_relationCLO.LowerBound(), _relationCLO.UpperBound());
@@ -2223,7 +2140,7 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
 
         // Create a new UIConnection
         var relationType = getEnumEntryNameByID(Enums.RelationTypes, _relationCLO.RelationType());
-        _innerElements.connection = new UIControls.VisualView.ConnectionElem(parentFeatureElem.GetBox(), childFeatureElem.GetBox(), _relationCLO.GetType(), relationType, _canvasInstance);
+        _innerElements.connection = new UIComponents.VisualView.ConnectionElem(parentFeatureElem.GetBox(), childFeatureElem.GetBox(), _relationCLO.GetType(), relationType, _canvasInstance);
         _innerElements.connection.Initialize();
 
         // Add handlers when parent/child feature elems are moving
@@ -2266,7 +2183,7 @@ UIControls.VisualView.RelationElem = function (relationCLO, parentFeatureElem, c
         refresh();
     }
 }
-UIControls.VisualView.GroupRelationElem = function (groupRelationCLO, parentFeatureElem, childFeatureElems, parentCanvasInstance) {
+UIComponents.VisualView.GroupRelationElem = function (groupRelationCLO, parentFeatureElem, childFeatureElems, parentCanvasInstance) {
 
     // Fields
     var _groupRelationCLO = groupRelationCLO, _canvasInstance = parentCanvasInstance;
@@ -2373,7 +2290,7 @@ UIControls.VisualView.GroupRelationElem = function (groupRelationCLO, parentFeat
             // Full
             case "Full": // show for everything
                 if (_innerElements.cardinalityElement === null) {
-                    _innerElements.cardinalityElement = new UIControls.VisualView.CardinalityLabel(_groupRelationCLO.LowerBound(), _groupRelationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
+                    _innerElements.cardinalityElement = new UIComponents.VisualView.CardinalityLabel(_groupRelationCLO.LowerBound(), _groupRelationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                     _innerElements.cardinalityElement.Initialize();
                 }
                 _innerElements.cardinalityElement.Update(_groupRelationCLO.LowerBound(), _groupRelationCLO.UpperBound());
@@ -2383,7 +2300,7 @@ UIControls.VisualView.GroupRelationElem = function (groupRelationCLO, parentFeat
             case "Partial": // only show for cardinal groups
                 if (_groupRelationCLO.GroupRelationType() === Enums.GroupRelationTypes.Cardinal) {
                     if (_innerElements.cardinalityElement == null) {
-                        _innerElements.cardinalityElement = new UIControls.VisualView.CardinalityLabel(_groupRelationCLO.LowerBound(), _groupRelationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
+                        _innerElements.cardinalityElement = new UIComponents.VisualView.CardinalityLabel(_groupRelationCLO.LowerBound(), _groupRelationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                         _innerElements.cardinalityElement.Initialize();
                     }
                     _innerElements.cardinalityElement.Update(_groupRelationCLO.LowerBound(), _groupRelationCLO.UpperBound());
@@ -2411,7 +2328,7 @@ UIControls.VisualView.GroupRelationElem = function (groupRelationCLO, parentFeat
         // Create UIConnections for each child Feature
         var groupRelationType = getEnumEntryNameByID(Enums.GroupRelationTypes, _groupRelationCLO.GroupRelationType());
         for (var i = 0; i < childFeatureElems.length; i++) {
-            var newConnection = new UIControls.VisualView.ConnectionElem(parentFeatureElem.GetBox(), childFeatureElems[i].GetBox(), _groupRelationCLO.GetType(), groupRelationType, _canvasInstance);
+            var newConnection = new UIComponents.VisualView.ConnectionElem(parentFeatureElem.GetBox(), childFeatureElems[i].GetBox(), _groupRelationCLO.GetType(), groupRelationType, _canvasInstance);
             newConnection.Initialize();
             _innerElements.connections.push(newConnection);
         }
@@ -2487,7 +2404,7 @@ UIControls.VisualView.GroupRelationElem = function (groupRelationCLO, parentFeat
         refreshArc();
     }
 }
-UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstFeatureElem, secondFeatureElem, parentCanvasInstance) {
+UIComponents.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstFeatureElem, secondFeatureElem, parentCanvasInstance) {
 
     // Fields
     var _compositionRuleCLO = compositionRuleCLO, _canvasInstance = parentCanvasInstance;
@@ -2541,7 +2458,7 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
 
         // Create a new UIConnection
         var compositionRuleType = getEnumEntryNameByID(Enums.CompositionRuleTypes, _compositionRuleCLO.CompositionRuleType());
-        _innerElements.connection = new UIControls.VisualView.ConnectionElem(firstFeatureElem.GetBox(), secondFeatureElem.GetBox(), _compositionRuleCLO.GetType(), compositionRuleType,
+        _innerElements.connection = new UIComponents.VisualView.ConnectionElem(firstFeatureElem.GetBox(), secondFeatureElem.GetBox(), _compositionRuleCLO.GetType(), compositionRuleType,
             _canvasInstance, true);
         _innerElements.connection.Initialize();
 
@@ -2582,7 +2499,7 @@ UIControls.VisualView.CompositionRuleElem = function (compositionRuleCLO, firstF
         refresh();
     }
 }
-UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElemType, parentElemSubType, parentCanvasInstance, invertOrientation) {
+UIComponents.VisualView.ConnectionElem = function (parentBox, childBox, parentElemType, parentElemSubType, parentCanvasInstance, invertOrientation) {
 
     // Fields
     var _canvasInstance = parentCanvasInstance;
@@ -2767,13 +2684,13 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
 
         // Create startConnector
         if (currentStyle.Connectors.StartConnector !== undefined) {
-            _innerElements.connectors.startConnector = new UIControls.VisualView.ConnectorElem(_this, currentStyle.Connectors.StartConnector, currentStyle.Connectors.StartConnector.attr, Enums.ConnectorPositionTypes.StartPoint, _canvasInstance);
+            _innerElements.connectors.startConnector = new UIComponents.VisualView.ConnectorElem(_this, currentStyle.Connectors.StartConnector, currentStyle.Connectors.StartConnector.attr, Enums.ConnectorPositionTypes.StartPoint, _canvasInstance);
             _innerElements.connectors.startConnector.Initialize();
         }
 
         // Create endConnector
         if (currentStyle.Connectors.EndConnector !== undefined) {
-            _innerElements.connectors.endConnector = new UIControls.VisualView.ConnectorElem(_this, currentStyle.Connectors.EndConnector, currentStyle.Connectors.EndConnector.attr, Enums.ConnectorPositionTypes.EndPoint, _canvasInstance);
+            _innerElements.connectors.endConnector = new UIComponents.VisualView.ConnectorElem(_this, currentStyle.Connectors.EndConnector, currentStyle.Connectors.EndConnector.attr, Enums.ConnectorPositionTypes.EndPoint, _canvasInstance);
             _innerElements.connectors.endConnector.Initialize();
         }
 
@@ -2854,7 +2771,7 @@ UIControls.VisualView.ConnectionElem = function (parentBox, childBox, parentElem
         }
     }
 }
-UIControls.VisualView.ConnectorElem = function (parentConnection, raphaelConnectorType, connectorStyle, positionType, parentCanvasInstance) {
+UIComponents.VisualView.ConnectorElem = function (parentConnection, raphaelConnectorType, connectorStyle, positionType, parentCanvasInstance) {
 
     // Fields
     var _canvasInstance = parentCanvasInstance;
@@ -2916,7 +2833,7 @@ UIControls.VisualView.ConnectorElem = function (parentConnection, raphaelConnect
         _innerElements.raphaelElem = null;
     }
 }
-UIControls.VisualView.CardinalityLabel = function (firstNumber, secondNumber, calculatePositionFunction, parentCanvasInstance) {
+UIComponents.VisualView.CardinalityLabel = function (firstNumber, secondNumber, calculatePositionFunction, parentCanvasInstance) {
 
     // Fields
     var _canvasInstance = parentCanvasInstance;

@@ -134,8 +134,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Code\Common.cs" />
-    <Compile Include="Controllers\GlobalAPIController.cs" />
-    <Compile Include="Controllers\ModelEditorController.cs" />
+    <Compile Include="Controllers\API\GlobalAPIController.cs" />
+    <Compile Include="Controllers\MVC\MainController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -171,14 +171,14 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\Application\common.js" />
     <Content Include="Scripts\Application\coreFramework.js" />
-    <Content Include="Scripts\Application\modeleditor.js" />
-    <Content Include="Scripts\Frameworks\knockout-3.0.0.debug.js" />
+    <Content Include="Scripts\Application\main.js" />
+    <Content Include="Scripts\Frameworks\jquery-2.1.3.js" />
+    <Content Include="Scripts\Frameworks\knockout-3.2.0.js" />
     <Content Include="Scripts\Frameworks\raphael.2.1.2.js" />
     <Content Include="Scripts\Frameworks\underscore-min.js" />
     <Content Include="Scripts\old_modeleditor.js" />
     <Content Include="Scripts\CustomPlugins\jquery.simpleMenu.js" />
     <Content Include="Scripts\CustomPlugins\jquery.simpleTree.js" />
-    <Content Include="Scripts\Frameworks\jquery-1.9.1.js" />
     <Content Include="Scripts\Plugins\jquery.autogrowtextarea.js" />
     <Content Include="Scripts\Plugins\jquery.blockUI.js" />
     <Content Include="Scripts\Plugins\jquery.guid.js" />
@@ -186,6 +186,7 @@
     <Content Include="Scripts\Plugins\jquery.timer.js" />
     <Content Include="Scripts\Plugins\jquery.tipTip.js" />
     <Content Include="Scripts\Plugins\json2.js" />
+    <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -197,7 +198,7 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\ModelEditor\Index.cshtml" />
+    <Content Include="Views\Main\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -209,11 +210,13 @@
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
+    <Folder Include="UIComponents\VisualView\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Images\Layout\logo2.xcf" />
     <None Include="Content\Images\Layout\logo3.xcf" />
     <Content Include="Scripts\Plugins\jquery.withinBox.js" />
+    <Content Include="UIComponents\CommandToolbar\CommandToolbar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

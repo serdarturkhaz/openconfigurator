@@ -5,6 +5,7 @@ using System.Web;
 using System.Text;
 using Newtonsoft.Json;
 using System.Web.Mvc;
+using System.IO;
 
 namespace ModellingTool.Common
 {
@@ -40,5 +41,41 @@ namespace ModellingTool.Common
             }
         }
 
+    }
+
+    public static class Helpers
+    {
+        public static string RenderViewToString(string viewPathAndName, ControllerContext controllerContext)
+        {
+            // Render the view to a string
+            string viewAsString;
+            using (var sw = new StringWriter())
+            {
+                var viewResult = ViewEngines.Engines.FindView(controllerContext, viewPathAndName, null);
+                var viewContext = new ViewContext(controllerContext, viewResult.View, new ViewDataDictionary(), new TempDataDictionary(), sw);
+                viewResult.View.Render(viewContext, sw);
+                viewResult.ViewEngine.ReleaseView(controllerContext, viewResult.View);
+                viewAsString = sw.GetStringBuilder().ToString();
+            }
+            return viewAsString;
+        }
+
+        public static string GetJSFileAsString(string filePathAndName)
+        {
+            StringBuilder sb = new StringBuilder();
+            using (StreamReader sr = new StreamReader(filePathAndName))
+            {
+                String line;
+                // Read and display lines from the file until the end of 
+                // the file is reached.
+                while ((line = sr.ReadLine()) != null)
+                {
+                    sb.AppendLine(line);
+                }
+            }
+            string allines = sb.ToString();
+
+            return allines;
+        }
     }
 }

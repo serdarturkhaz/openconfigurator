@@ -51,7 +51,7 @@ var Enums = {
     }
 }
 var Settings = {
-    UIOrientation:Enums.UIOrientationTypes.Vertical, //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
+    UIOrientation: Enums.UIOrientationTypes.Vertical, //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
     DrawCurves: true,
     ScaleModifier: 1,
     DisplayCardinalities: "Full" //determines how many cardinalities to display - options : "None" (no cardinalities) / "Partial" (only cloneable and cardinal groups) / "All" (all relations and groupRelations)
@@ -748,7 +748,7 @@ var Controller = function () {
 
     // Init
     this.Initialize = function () {
-
+        UIComponentProvider.CreateInstance("test");
         //// Init children
         //_dataModel = new DataModel();
         //_dataModel.Initialize();
@@ -1141,130 +1141,47 @@ DataModel.BLOService = function () {
 }
 
 // UIComponents
-var UIComponents = {};
-UIComponents.CommandToolbar = function (container, controller) {
+var UIComponentProvider = (function () { // "static" class
 
     // Fields
-    var _container = container, _controller = controller;
-    var _innerElems = {
-        fileCommandItems: {
-            newModelItem: null,
-            openModelItem: null,
-            saveModelItem: null
-        },
-        modelManipulationItems: {
-            newFeatureItem: null,
-            newRelationItem: null,
-            newGroupRelationItem: null,
-            newCompositionRuleItem: null,
-            newCustomRuleItem: null,
-            newCustomFunctionItem: null
-        },
-        visualOptionsItems: {
-            toggleOrientationItem: null,
-            zoomInItem: null,
-            zoomOutItem: null
-        }
-    };
-    var _this = this;
+    var registeredUIComponents = {};
 
-    // Private methods
-    function removeAllToggleEffects() {
-        for (var itemKey in _innerElems.modelManipulationItems) {
-            var item = _innerElems.modelManipulationItems[itemKey];
-            $(item).removeClass("toolBar-item-active");
-        }
+    // Methods
+    function registerUIComponent(componentFullName) {
+
     }
-    function addToggleEffect(item) {
-        $(item).addClass("toolBar-item-active");
-    }
+    function createInstance(componentFullName) {
 
-    // Init
-    this.Initialize = function () {
-
-        // Get references to html elems
-        _container = container;
-        _innerElems.modelManipulationItems.newFeatureItem = $(_container).find("#newFeatureItem");
-        _innerElems.modelManipulationItems.newRelationItem = $(_container).find("#newRelationItem");
-        _innerElems.modelManipulationItems.newGroupRelationItem = $(_container).find("#newGroupRelationItem");
-        _innerElems.modelManipulationItems.newCompositionRuleItem = $(_container).find("#newCompositionRuleItem");
-        _innerElems.modelManipulationItems.newCustomRuleItem = $(_container).find("#newCustomRuleItem");
-        _innerElems.modelManipulationItems.newCustomFunctionItem = $(_container).find("#newCustomFunctionItem");
-        _innerElems.visualOptionsItems.zoomInItem = $(_container).find("#zoomInItem");
-        _innerElems.visualOptionsItems.zoomOutItem = $(_container).find("#zoomOutItem");
-        _innerElems.visualOptionsItems.toggleOrientationItem = $(_container).find("#toggleOrientationItem");
-
-        // Set event handlers
-        $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
-        $(_innerElems.modelManipulationItems.newRelationItem).bind("click", toolbarItemHandlers.newRelationItemTriggered);
-        $(_innerElems.modelManipulationItems.newGroupRelationItem).bind("click", toolbarItemHandlers.newGroupRelationItemTriggered);
-        $(_innerElems.modelManipulationItems.newCompositionRuleItem).bind("click", toolbarItemHandlers.newCompositionRuleItemTriggered);
-        $(_innerElems.modelManipulationItems.newCustomRuleItem).bind("click", toolbarItemHandlers.newCustomRuleItemTriggered);
-        $(_innerElems.modelManipulationItems.newCustomFunctionItem).bind("click", toolbarItemHandlers.newCustomFunctionItemTriggered);
-        $(_innerElems.visualOptionsItems.zoomInItem).bind("click", toolbarItemHandlers.zoomInItemTriggered);
-        $(_innerElems.visualOptionsItems.zoomOutItem).bind("click", toolbarItemHandlers.zoomOutItemTriggered);
-        $(_innerElems.visualOptionsItems.toggleOrientationItem).bind("click", toolbarItemHandlers.toggleOrientationItemTriggered);
-
-        // Key shortcut handlers
-        $(document).keydown(function (e) {
-            $.ctrl('F', toolbarItemHandlers.newFeatureItemTriggered);
-            $.ctrl('R', toolbarItemHandlers.newRelationItemTriggered);
-            $.ctrl('G', toolbarItemHandlers.newGroupRelationItemTriggered);
-            $.ctrl('M', toolbarItemHandlers.newCompositionRuleItemTriggered);
-            $.ctrl('U', toolbarItemHandlers.newCustomRuleItemTriggered);
-            $.ctrl('N', toolbarItemHandlers.newCustomFunctionItemTriggered);
+        $.ajax({
+            type: "POST",
+            url: "Main/GetUIComponent",
+            data: JSON.stringify({ UIComponentFullName: componentFullName }),
+            async: false,
+            success: function (response) {
+       
+            }
         });
 
+        //var dfd = $.Deferred();
+
+
+        //require(moduleIDs, function () {
+        //    dfd.resolveWith(null, arguments);
+        //}, function () {
+        //    dfd.reject();
+        //});
+
+
+        //return dfd.promise();
     }
 
-    // Event handlers
-    this.OnVisualViewStateChanged = function (oldStateName, newStateName) {
-
-        // Mappings from VisualView states to item buttons in command bar
-        var itemToVisualViewStateMappings = {};
-        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewFeature] = _innerElems.modelManipulationItems.newFeatureItem;
-        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewRelation] = _innerElems.modelManipulationItems.newRelationItem;
-        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewGroupRelation] = _innerElems.modelManipulationItems.newGroupRelationItem;
-        itemToVisualViewStateMappings[Enums.VisualView.StateNames.CreatingNewCompositionRule] = _innerElems.modelManipulationItems.newCompositionRuleItem;
-
-        // Handle the states
-        if (newStateName === Enums.VisualView.StateNames.Default) {
-            removeAllToggleEffects();
-        } else {
-            addToggleEffect(itemToVisualViewStateMappings[newStateName]);
-        }
-    }
-    var toolbarItemHandlers = {
-        newFeatureItemTriggered: function () {
-            _controller.AddNewFeature();
-        },
-        newRelationItemTriggered: function () {
-            _controller.AddNewRelation();
-        },
-        newGroupRelationItemTriggered: function () {
-            _controller.AddNewGroupRelation();
-        },
-        newCompositionRuleItemTriggered: function () {
-            _controller.AddNewCompositionRule();
-        },
-        newCustomRuleItemTriggered: function () {
-            _controller.AddNewCustomRule();
-        },
-        newCustomFunctionItemTriggered: function () {
-            _controller.AddNewCustomFunction();
-        },
-        zoomInItemTriggered: function () {
-            _controller.ZoomIn();
-        },
-        zoomOutItemTriggered: function () {
-            _controller.ZoomOut();
-        },
-        toggleOrientationItemTriggered: function () {
-            _controller.ToggleOrientation();
-        }
-
+    // Public methods
+    return {
+        CreateInstance: createInstance
     };
-}
+})();
+var UIComponents = {};
+UIComponents.CommandToolbar = {};
 UIComponents.ModelExplorer = function (container, dataModel, cloSelectionManager) {
 
     // Fields

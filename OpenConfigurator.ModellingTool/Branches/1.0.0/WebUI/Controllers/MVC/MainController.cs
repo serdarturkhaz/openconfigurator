@@ -13,11 +13,28 @@ using BLL.BLOs;
 
 namespace ModellingTool.Controllers
 {
-    public class ModelEditorController : Controller
+    public class MainController : Controller
     {
         public ActionResult Index()
         {
             return View();
+        }
+
+
+        [HttpPost]
+        public string GetUIComponent(string UIComponentFullName)
+        {
+            // Get the view path "~/Views/Home/myview.cshtml"
+            string uiComponentNameAndPath = "~/UIComponents/CommandToolbar/CommandToolbar";
+
+            // Render the view to a string
+            string viewAsString = Helpers.RenderViewToString(uiComponentNameAndPath + ".cshtml", this.ControllerContext);
+
+            // Get the .js file and inject 
+            string jsString = Helpers.GetJSFileAsString(uiComponentNameAndPath + ".js");
+
+
+            return jsString;
         }
 
         //[HttpPost]
