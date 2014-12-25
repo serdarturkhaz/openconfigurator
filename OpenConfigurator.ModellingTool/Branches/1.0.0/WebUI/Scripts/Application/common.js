@@ -5,7 +5,7 @@ $(document).ready(function () {
     $.ajaxSetup({
         type: "GET",
         contentType: "application/json; charset=utf-8",
-        dataType: "json",
+        //dataType: "json",
         async: false,
         cache: false,
         error: function (response) {

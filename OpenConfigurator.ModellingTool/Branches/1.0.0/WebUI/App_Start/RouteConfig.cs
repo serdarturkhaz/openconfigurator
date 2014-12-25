@@ -16,7 +16,7 @@ namespace ModellingTool
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}",
-                defaults: new { controller = "ModelEditor", action = "Index" }
+                defaults: new { controller = "Main", action = "Index" }
             );
         }
     }
