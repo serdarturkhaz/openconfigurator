@@ -10,6 +10,7 @@ using System.Xml;
 using BLL;
 using System.Reflection;
 using BLL.BLOs;
+using System.Net;
 
 namespace ModellingTool.Controllers
 {
@@ -25,16 +26,19 @@ namespace ModellingTool.Controllers
         public string GetUIComponent(string UIComponentFullName)
         {
             // Get the view path "~/Views/Home/myview.cshtml"
-            string uiComponentNameAndPath = "~/UIComponents/CommandToolbar/CommandToolbar";
+            var parsedUIComponentFullName = UIComponentFullName.Replace(".", "/");
+            var shortName = parsedUIComponentFullName.Split('/').Last();
+            string uiComponentNameAndPath = "~/" + parsedUIComponentFullName + "/" + shortName;
 
-            // Render the view to a string
-            string viewAsString = Helpers.RenderViewToString(uiComponentNameAndPath + ".cshtml", this.ControllerContext);
+            // Setup js
+            string htmlContent = Helpers.RenderViewToString(uiComponentNameAndPath + ".cshtml", this.ControllerContext).Replace('\"', '\'');
+            string jsScript = Helpers.GetJSFileAsString(Server.MapPath(uiComponentNameAndPath + ".js"));
+            jsScript = jsScript.Replace("#HTMLCONTENT#", HttpUtility.JavaScriptStringEncode(htmlContent, false));
 
-            // Get the .js file and inject 
-            string jsString = Helpers.GetJSFileAsString(uiComponentNameAndPath + ".js");
-
-
-            return jsString;
+            
+            
+            //
+            return jsScript;
         }
 
         //[HttpPost]
