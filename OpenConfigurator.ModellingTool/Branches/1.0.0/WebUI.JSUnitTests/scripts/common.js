@@ -5,7 +5,6 @@ $(document).ready(function () {
     $.ajaxSetup({
         type: "GET",
         contentType: "application/json; charset=utf-8",
-        //dataType: "json",
         async: false,
         cache: false,
         error: function (response) {
@@ -114,5 +113,13 @@ function isArray(a) {
     };
 
 })(jQuery);
+
+function isFunction(functionToCheck) {
+    var getType = {};
+    return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+}
+function htmlDecode(str) {
+    return $("<div/>").html(str).text();
+}
 //****************************************************************************************************************
 

@@ -748,7 +748,7 @@ var Controller = function () {
 
     // Init
     this.Initialize = function () {
-        UIComponentProvider.CreateInstance("test");
+
         //// Init children
         //_dataModel = new DataModel();
         //_dataModel.Initialize();
@@ -758,7 +758,7 @@ var Controller = function () {
         //_visualView.Initialize();
         //_modelExplorer = new UIComponents.ModelExplorer($("#modelExplorerTree"), _dataModel, _cloSelectionManager);
         //_modelExplorer.Initialize();
-        //_commandToolbar = new UIComponents.CommandToolbar($("#toolBar"), _this);
+        _commandToolbar = UIComponentProvider.CreateInstance("UIComponents.CommandToolbar", [$("#toolBarContainer"), _this]);
         //_commandToolbar.Initialize();
 
         //// Setup events and handlers
@@ -1143,36 +1143,35 @@ DataModel.BLOService = function () {
 // UIComponents
 var UIComponentProvider = (function () { // "static" class
 
-    // Fields
-    var registeredUIComponents = {};
-
     // Methods
-    function registerUIComponent(componentFullName) {
-
+    function construct(constructor, args) {
+        function F() {
+            return constructor.apply(this, args);
+        }
+        F.prototype = constructor.prototype;
+        return new F();
     }
-    function createInstance(componentFullName) {
+    function isRegistered(componentFullName) {
+        return isFunction(eval(componentFullName));
+    }
+    function registerUIComponent(componentFullName) {
 
         $.ajax({
             type: "POST",
             url: "Main/GetUIComponent",
             data: JSON.stringify({ UIComponentFullName: componentFullName }),
-            async: false,
             success: function (response) {
-       
+                jQuery.globalEval(response)
             }
         });
+    }
+    function createInstance(componentFullName, args) {
+        if (!isRegistered(componentFullName)) {
+            registerUIComponent(componentFullName)
+        }
 
-        //var dfd = $.Deferred();
-
-
-        //require(moduleIDs, function () {
-        //    dfd.resolveWith(null, arguments);
-        //}, function () {
-        //    dfd.reject();
-        //});
-
-
-        //return dfd.promise();
+        var classReference = eval(componentFullName);
+        return construct(classReference, args);
     }
 
     // Public methods

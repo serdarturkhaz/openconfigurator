@@ -1,5 +1,5 @@
 ﻿UIComponents.CommandToolbar = function (container, controller) {
-    
+
     // Fields
     var _container = container, _controller = controller;
     var _innerHtmlElem;
@@ -40,7 +40,8 @@
     this.Initialize = function () {
 
         // Parse html markup
-        _innerHtmlElem = $($.parseHTML("#HTMLCONTENT#"));
+        var markup = "#HTMLCONTENT#";
+        _innerHtmlElem = $($.parseHTML(markup));
         _innerHtmlElem.appendTo(_container);
 
         // Get references to html elems
@@ -76,6 +77,8 @@
             $.ctrl('N', toolbarItemHandlers.newCustomFunctionItemTriggered);
         });
 
+        // Setup tooltips
+        $(_innerHtmlElem).find(".toolBar-item").tipTip();
     }
 
     // Event handlers
