@@ -1,4 +1,7 @@
-﻿/// <reference path="/Scripts/Plugins/json2.js" />
+﻿/// <reference path="/UIComponents/VisualView/VisualView.js" />
+/// <reference path="/UIComponents/ModelExplorer/ModelExplorer.js" />
+/// <reference path="/UIComponents/CommandToolbar/CommandToolbar.js" />
+/// <reference path="/Scripts/Plugins/json2.js" />
 /// <reference path="/Scripts/Plugins/jquery.withinBox.js" />
 /// <reference path="/Scripts/Plugins/jquery.tipTip.js" />
 /// <reference path="/Scripts/Plugins/jquery.timer.js" />
@@ -9,14 +12,13 @@
 /// <reference path="/Scripts/old_modeleditor.js" />
 /// <reference path="/Scripts/Frameworks/underscore-min.js" />
 /// <reference path="/Scripts/Frameworks/raphael.2.1.2.js" />
-/// <reference path="/Scripts/Frameworks/knockout-3.0.0.debug.js" />
-/// <reference path="/Scripts/Frameworks/jquery-1.9.1.js" />
+/// <reference path="/Scripts/Frameworks/knockout-3.2.0.js" />
+/// <reference path="/Scripts/Frameworks/jquery-2.1.3.js" />
 /// <reference path="/Scripts/CustomPlugins/jquery.simpleTree.js" />
 /// <reference path="/Scripts/CustomPlugins/jquery.simpleMenu.js" />
-/// <reference path="/Scripts/Application/modeleditor.js" />
+/// <reference path="/Scripts/Application/main.js" />
 /// <reference path="/Scripts/Application/coreFramework.js" />
 /// <reference path="/Scripts/Application/common.js" />
-/// <reference path="/Scripts/_references.js" />
 
 
 /// JSense excludes minified JavaScript, Web Services and Web Forms by default.

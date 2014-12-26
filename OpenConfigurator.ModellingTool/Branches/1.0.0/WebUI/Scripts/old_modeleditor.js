@@ -1530,7 +1530,7 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
     //Fields and variables
     var _diagramDataModel = diagramDataModelInstance;
     var _diagramContext, _propertiesComponent, _modelExplorer;
-    var _modelNameTextbox = $("#modelDiagramBox .headerLabel");
+    var _modelNameTextbox = $("#visualView .headerLabel");
     var _scaleModifierIndicator = $("#zoomIndicator"), _zoomInButton = $("#zoomInItem"), _zoomOutButton = $("#zoomOutItem"), _toggleOrientationButton = $("#toggleOrientationItem");
     var _saveButton = $("#saveButton");
     var _toolboxButtons = {
@@ -1680,25 +1680,25 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
 
     //Public methods
     this.LoadData = function () {
-        $("#modelDiagramBox").block({ message: "Loading ...", fadeIn: 500 });
+        $("#visualView").block({ message: "Loading ...", fadeIn: 500 });
         $.timer(500, function () {
             _diagramDataModel.LoadData(function (model) {
                 $(_modelNameTextbox).text(model.Name);
-                $("#modelDiagramBox").unblock();
+                $("#visualView").unblock();
             });
         });
     }
     //this.SaveData = function () {
     //    var newName = $(_modelNameTextbox).val();
     //    _diagramDataModel.SaveData(newName, function () {
-    //        $("#modelDiagramBox").block({ message: "Saving diagram...", fadeIn: 300 });
+    //        $("#visualView").block({ message: "Saving diagram...", fadeIn: 300 });
     //    }, function () {
     //        $.pnotify({
     //            pnotify_title: "Data saved",
     //            pnotify_text: "Model '" + newName + "' saved successfully !",
     //            pnotify_type: "notice"
     //        });
-    //        $("#modelDiagramBox").unblock();
+    //        $("#visualView").unblock();
 
     //    }, function () {
     //        $.pnotify({
@@ -1706,7 +1706,7 @@ var ClientController = function (diagramContainer, propertiesContainer, explorer
     //            pnotify_text: "Data could not be saved",
     //            pnotify_type: "error"
     //        });
-    //        $("#modelDiagramBox").unblock();
+    //        $("#visualView").unblock();
     //    });
     //}
     //this.CreateNewFeature = function () {

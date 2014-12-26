@@ -25,7 +25,7 @@ namespace ModellingTool.Controllers
         [HttpPost]
         public string GetUIComponent(string UIComponentFullName)
         {
-            // Get the view path "~/Views/Home/myview.cshtml"
+            // Get the view path
             var parsedUIComponentFullName = UIComponentFullName.Replace(".", "/");
             var shortName = parsedUIComponentFullName.Split('/').Last();
             string uiComponentNameAndPath = "~/" + parsedUIComponentFullName + "/" + shortName;

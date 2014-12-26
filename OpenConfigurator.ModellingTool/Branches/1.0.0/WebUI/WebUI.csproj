@@ -188,6 +188,8 @@
     <Content Include="Scripts\Plugins\json2.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
     <Content Include="UIComponents\ModelExplorer\ModelExplorer.js" />
+    <Content Include="UIComponents\VisualView\FeatureElem\FeatureElem.js" />
+    <Content Include="UIComponents\VisualView\VisualView.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -211,13 +213,13 @@
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
-    <Folder Include="UIComponents\VisualView\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Images\Layout\logo2.xcf" />
     <None Include="Content\Images\Layout\logo3.xcf" />
     <Content Include="Scripts\Plugins\jquery.withinBox.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.cshtml" />
+    <Content Include="UIComponents\VisualView\VisualView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
