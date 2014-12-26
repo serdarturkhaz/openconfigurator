@@ -768,7 +768,7 @@ var Controller = function () {
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
         _visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
         _dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
-        _cloSelectionManager.CLOSelectionToggled.AddHandler(new EventHandler(_propertyEditor.OnCLOSelectionToggled));
+        _cloSelectionManager.CLOSelectionChanged.AddHandler(new EventHandler(onCLOSelectionChanged));
 
         // Global key handlers
         $(document).keydown(function (e) {
@@ -834,6 +834,38 @@ var Controller = function () {
             _currentControlFocus = viewInFocus;
         }
     }
+    var onCLOSelectionChanged = function () {
+
+        // Open/hide PropertyEditor if VisualView is in default mode
+        if (_visualView.GetCurrentState() === Enums.VisualView.StateNames.Default) {
+            var selectedCLOArray = _cloSelectionManager.GetAllSelectedCLOs();
+
+            // Nothing selected
+            if (selectedCLOArray.length === 0) {
+                _propertyEditor.Close();
+            }
+                // Single selected
+            else if (selectedCLOArray.length === 1) {
+                _propertyEditor.OpenAndEdit(selectedCLOArray);
+            }
+                // Multiple selected 
+            else if (selectedCLOArray.length > 1) {
+                var allCLOsAreSameType = true; // assumption
+                for (var i = 1; i < selectedCLOArray.length; i++) {
+                    if (selectedCLOArray[i].GetType() !== selectedCLOArray[0].GetType()) {
+                        allCLOsAreSameType = false;
+                        break;
+                    }
+                }
+
+                //
+                if (allCLOsAreSameType)
+                    _propertyEditor.OpenAndEdit(selectedCLOArray);
+                else
+                    _propertyEditor.Close();
+            }
+        }
+    }
 }
 var CLOSelectionManager = function () {
 
@@ -845,14 +877,10 @@ var CLOSelectionManager = function () {
     function selectCLO(clo) {
         _selectedCLOs[clo.GetClientID()] = clo;
         clo.Selected(true);
-        
-        _this.CLOSelectionToggled.RaiseEvent();
     }
     function deselectCLO(clo) {
         delete _selectedCLOs[clo.GetClientID()];
         clo.Selected(false);
-
-        _this.CLOSelectionToggled.RaiseEvent();
     }
     function clearSelection() {
         for (var clientID in _selectedCLOs) {
@@ -877,7 +905,7 @@ var CLOSelectionManager = function () {
         }
         return selectedCLOArray;
     }
-    this.ToggleCLOSelection = function (clo, ctrlKey) {
+    this.ToggleSingleCLO = function (clo, ctrlKey) {
         if (ctrlKey === true) {
             // Control key down
             if (clo.Selected())
@@ -890,16 +918,29 @@ var CLOSelectionManager = function () {
             clearSelection();
             selectCLO(clo); // add to selection
         }
+
+        _this.CLOSelectionChanged.RaiseEvent();
     }
-    this.ClearCLOSelection = function () {
+    this.DeselectAllCLOs = function () {
         clearSelection();
+
+        _this.CLOSelectionChanged.RaiseEvent();
     }
-    this.ForceCLOSelection = function (clo) {
+    this.ForceSelectSingleCLO = function (clo) {
         selectCLO(clo);
+
+        _this.CLOSelectionChanged.RaiseEvent();
+    }
+    this.ForceSelectMultipleCLOs = function (cloArray) {
+        for (var i = 0; i < cloArray.length; i++) {
+            selectCLO(cloArray[i]);
+        }
+
+        _this.CLOSelectionChanged.RaiseEvent();
     }
 
     // Events 
-    this.CLOSelectionToggled = new Event();
+    this.CLOSelectionChanged = new Event();
 
     // Event handlers
     this.OnCLODeleted = function (clo) {

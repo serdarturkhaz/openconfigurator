@@ -125,7 +125,7 @@
     }
     function onNodeClicked(node, ctrlKey) {
         var clo = _dataModel.GetByClientID(node.getNodeDataID());
-        _cloSelectionManager.ToggleCLOSelection(clo, ctrlKey);
+        _cloSelectionManager.ToggleSingleCLO(clo, ctrlKey);
     };
     var modelHandlers = {
         onCLOAdded: function (clo) {

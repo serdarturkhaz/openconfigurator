@@ -768,6 +768,7 @@ var Controller = function () {
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
         _visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
         _dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
+        _cloSelectionManager.CLOSelectionToggled.AddHandler(new EventHandler(onCLOSelectionToggled));
 
         // Global key handlers
         $(document).keydown(function (e) {
@@ -833,7 +834,38 @@ var Controller = function () {
             _currentControlFocus = viewInFocus;
         }
     }
+    var onCLOSelectionToggled = function () {
 
+        // Open/hide PropertyEditor if VisualView is in default mode
+        if (_visualView.GetCurrentState() === Enums.VisualView.StateNames.Default) {
+            var selectedCLOArray = _cloSelectionManager.GetAllSelectedCLOs();
+
+            // Nothing selected
+            if (selectedCLOArray.length === 0) {
+                _propertyEditor.Close();
+            }
+                // Single selected
+            else if (selectedCLOArray.length === 1) {
+                _propertyEditor.OpenAndEdit(selectedCLOArray);
+            }
+                // Multiple selected 
+            else if (selectedCLOArray.length > 1) {
+                var allCLOsAreSameType = true; // assumption
+                for (var i = 1; i < selectedCLOArray.length - 1; i++) {
+                    if (selectedCLOArray[i].GetType() !== selectedCLOArray[0].GetType()) {
+                        allCLOsAreSameType = false;
+                        break;
+                    }
+                }
+
+                //
+                if (allCLOsAreSameType)
+                    _propertyEditor.OpenAndEdit(selectedCLOArray);
+                else
+                    _propertyEditor.Close();
+            }
+        }
+    }
 }
 var CLOSelectionManager = function () {
 
@@ -845,10 +877,14 @@ var CLOSelectionManager = function () {
     function selectCLO(clo) {
         _selectedCLOs[clo.GetClientID()] = clo;
         clo.Selected(true);
+
+        _this.CLOSelectionToggled.RaiseEvent();
     }
     function deselectCLO(clo) {
         delete _selectedCLOs[clo.GetClientID()];
         clo.Selected(false);
+
+        _this.CLOSelectionToggled.RaiseEvent();
     }
     function clearSelection() {
         for (var clientID in _selectedCLOs) {
@@ -893,6 +929,9 @@ var CLOSelectionManager = function () {
     this.ForceCLOSelection = function (clo) {
         selectCLO(clo);
     }
+
+    // Events 
+    this.CLOSelectionToggled = new Event();
 
     // Event handlers
     this.OnCLODeleted = function (clo) {

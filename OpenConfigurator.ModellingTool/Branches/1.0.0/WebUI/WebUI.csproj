@@ -220,6 +220,7 @@
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
+    <Folder Include="UIComponents\PropertyEditor\FeatureEditor\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Images\Layout\logo2.xcf" />

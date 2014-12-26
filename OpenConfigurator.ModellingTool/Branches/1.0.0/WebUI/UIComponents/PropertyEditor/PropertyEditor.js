@@ -4,12 +4,11 @@
     var _container = container, _dataModel = dataModel, _cloSelectionManager = cloSelectionManager;
     var _innerHtmlElem;
     var _innerElems = {
-        
+        headerLabel: null,
+        innerContainer: null
     };
     var _this = this;
 
-    // Private methods
-    
 
     // Init
     this.Initialize = function () {
@@ -20,8 +19,9 @@
         _innerHtmlElem.appendTo(_container);
 
         // Get references to html elems
-        //_innerElems.modelManipulationItems.newFeatureItem = $(_innerHtmlElem).find("#newFeatureItem");
-       
+        _innerElems.headerLabel = $(_innerHtmlElem).find(".headerLabel");
+        _innerElems.innerContainer = $(_innerHtmlElem).find(".boxContent");
+
         // Make draggable
         $(_innerHtmlElem).draggable({
             handle: ".boxHeader",
@@ -29,17 +29,15 @@
         });
 
         // Hide initially
-        //_innerHtmlElem.hide();
+        _innerHtmlElem.hide();
     }
 
-    // Event handlers
-    this.OnCLOSelectionToggled = function () {
-        var selectedCLOArray = _cloSelectionManager.GetAllSelectedCLOs();
-        if (selectedCLOArray.length === 0 || selectedCLOArray.length > 1) {
-            _innerHtmlElem.hide();
-        } else if (selectedCLOArray.length === 1) {
-            _innerHtmlElem.show();
-        }
+    // Public methods
+    this.Close = function () {
+        _innerHtmlElem.hide();
     }
-   
+    this.OpenAndEdit = function (CLOArray) {
+        _innerHtmlElem.show();
+        _innerElems.headerLabel.text(CLOArray[0].GetType());
+    }
 }
