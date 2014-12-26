@@ -9,7 +9,7 @@
             // Set widths for mainPanel and visualView
             var mainPanelWidth = $("#bodyArea").outerWidth(true) - $("#sidePanel").outerWidth(true);
             $("#mainPanel").css("width", mainPanelWidth + "px");
-            var diagramBoxWidth = mainPanelWidth - $("#propertiesBox").outerWidth(true) - 30; // -30 is the distance to the propertiesbox
+            var diagramBoxWidth = mainPanelWidth - 60; // -30 is the distance to the propertiesbox
             $("#visualViewContainer").css("width", diagramBoxWidth + "px");
             $("#toolBarContainer").css("width", diagramBoxWidth + "px");
 
@@ -17,7 +17,7 @@
             var bodyAreaHeight = $(window).height() - $("#headerArea").outerHeight(true);
             $("#bodyArea").css("height", bodyAreaHeight + "px");
             var diagramBoxHeight = bodyAreaHeight - $("#toolBarContainer").outerHeight(true);
-            $("#visualViewContainer").css("height", diagramBoxHeight - 40 + "px");
+            $("#visualViewContainer").css("height", diagramBoxHeight - 20 + "px");
         }
 
         // Load
@@ -29,36 +29,28 @@
             $(window).resize(function () {
                 adjustLayout();
             });
-            
+
             // Initialize components and load data
             $.timer(300, function () {
                 var controller = new Controller();
                 controller.Initialize();
                 controller.NewModel();
             });
+
+           
         });
     </script>
 }
+
 <div id="sidePanel">
     <div id="modelExplorerContainer">
-        
     </div>
 </div>
 <div id="mainPanel">
     <div id="toolBarContainer">
     </div>
     <div id="visualViewContainer">
-        
     </div>
-    <div id="propertiesBox" class="roundedBox">
-        <div class="boxHeader">
-            <span class="headerLabel">Properties - <span id="SetTypeLabel"></span></span>
-        </div>
-        <div class="boxContent">
-            <div id="mainContainer">
-            </div>
-        </div>
-        <div class="boxFooter">
-        </div>
+    <div id="propertyEditorContainer">
     </div>
 </div>

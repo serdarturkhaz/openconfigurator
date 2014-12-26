@@ -186,7 +186,6 @@
     // Events
     this.Focus = new Event();
     this.StateChanged = new Event();
-    this.CLOElementSelectionTriggered = new Event();
 
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {

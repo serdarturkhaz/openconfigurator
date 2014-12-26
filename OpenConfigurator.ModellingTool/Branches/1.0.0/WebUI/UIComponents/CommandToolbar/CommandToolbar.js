@@ -45,7 +45,6 @@
         _innerHtmlElem.appendTo(_container);
 
         // Get references to html elems
-        _container = container;
         _innerElems.modelManipulationItems.newFeatureItem = $(_innerHtmlElem).find("#newFeatureItem");
         _innerElems.modelManipulationItems.newRelationItem = $(_innerHtmlElem).find("#newRelationItem");
         _innerElems.modelManipulationItems.newGroupRelationItem = $(_innerHtmlElem).find("#newGroupRelationItem");
