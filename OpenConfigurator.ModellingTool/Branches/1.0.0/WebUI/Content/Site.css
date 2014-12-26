@@ -81,6 +81,12 @@ body
     margin-top: 15px;
     margin-left:20px;
 }
+#frame #visualViewContainer
+{
+    height: 830px;
+    float: left;
+    margin-left: 20px;
+}
 /***********************************************************************************************/
 /*UIComponents *********************************************************************************/
 
@@ -125,13 +131,12 @@ body
 }
 
 /*Diagram box*/
-#modelDiagramBox
+#visualView
 {
-    height: 830px;
-    float: left;
-    margin-left: 20px;
+    width:100%;
+    height:100%;
 }
-#modelDiagramBox .boxHeader .wrapper
+#visualView .boxHeader .wrapper
 {
     position: relative;
     right: 50%;
@@ -165,19 +170,18 @@ body
     white-space: nowrap;
     display: inline;
 }
-#modelDiagramBox .boxContent
+#visualView .boxContent
 {
-    
     overflow: scroll;
     padding:0;
     border: solid 1px #F3F3F3 !important;
 }
-#modelDiagramBox #SVGCanvasWrapper
+#visualView #SVGCanvasWrapper
 {
     width: 100%;
     height: 100%;
 }
-#modelDiagramBox #SVGCanvasWrapper #SVGCanvas
+#visualView #SVGCanvasWrapper #SVGCanvas
 {
     width: 2500px;
     height: 2500px;
