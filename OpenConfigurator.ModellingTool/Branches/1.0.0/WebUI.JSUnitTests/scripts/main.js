@@ -750,16 +750,16 @@ var Controller = function () {
     this.Initialize = function () {
 
         //// Init children
-        //_dataModel = new DataModel();
-        //_dataModel.Initialize();
-        //_cloSelectionManager = new CLOSelectionManager();
-        //_cloSelectionManager.Initialize();
+        _dataModel = new DataModel();
+        _dataModel.Initialize();
+        _cloSelectionManager = new CLOSelectionManager();
+        _cloSelectionManager.Initialize();
         //_visualView = new UIComponents.VisualView($("#modelDiagramBox"), _dataModel, _cloSelectionManager);
         //_visualView.Initialize();
-        //_modelExplorer = new UIComponents.ModelExplorer($("#modelExplorerTree"), _dataModel, _cloSelectionManager);
-        //_modelExplorer.Initialize();
+        _modelExplorer = new UIComponentProvider.CreateInstance("UIComponents.ModelExplorer", [$("#modelExplorerContainer"), _dataModel, _cloSelectionManager]);
+        _modelExplorer.Initialize();
         _commandToolbar = UIComponentProvider.CreateInstance("UIComponents.CommandToolbar", [$("#toolBarContainer"), _this]);
-        //_commandToolbar.Initialize();
+        _commandToolbar.Initialize();
 
         //// Setup events and handlers
         //_dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
@@ -1181,141 +1181,7 @@ var UIComponentProvider = (function () { // "static" class
 })();
 var UIComponents = {};
 UIComponents.CommandToolbar = {};
-UIComponents.ModelExplorer = function (container, dataModel, cloSelectionManager) {
-
-    // Fields
-    var _container = container, _dataModel = dataModel, _cloSelectionManager = cloSelectionManager;
-    var _tree = null, _treeOptions = {
-        data: [
-                {
-                    ID: "CompositionRulesNode",
-                    Name: "Composition Rules",
-                    typeName: "Folder"
-                },
-                {
-                    ID: "CustomRulesNode",
-                    Name: "Custom Rules",
-                    typeName: "Folder"
-                },
-                {
-                    ID: "CustomFunctionsNode",
-                    Name: "Custom Functions",
-                    typeName: "Folder"
-                },
-                {
-                    ID: "FeaturesNode",
-                    Name: "Features",
-                    typeName: "Folder"
-                }
-        ],
-        types: {
-            Folder: {
-                idField: "ID",
-                labelField: "Name",
-                selectable: false
-            },
-            Feature: {
-                idField: "ID",
-                labelField: "Name",
-                selectable: true
-            },
-            CompositionRule: {
-                idField: "ID",
-                labelField: "Name",
-                selectable: true
-            },
-            CustomRule: {
-                idField: "ID",
-                labelField: "Name",
-                selectable: true
-            },
-            CustomFunction: {
-                idField: "ID",
-                labelField: "Name",
-                selectable: true
-            }
-        },
-        onNodeClicked: onNodeClicked
-    };
-    var _this = this;
-
-    // Private methods
-    function addElement(clo, nodeType) {
-
-        // Create a new element 
-        var name = clo.Name();
-        var newDataRow = {
-            ID: clo.GetClientID(),
-            Name: name,
-            typeName: nodeType
-        };
-
-        // Add it to its parent node
-        var parentNode = $(_tree).getNode(nodeType + "sNode");
-        var newNode = $(parentNode).addNewChildNode(newDataRow);
-
-        // Bind it to the CLO
-        clo.Name.Changed.AddHandler(new EventHandler(function (newValue) {
-            $(newNode).updateNodeName(newValue);
-        }));
-        clo.Selected.Changed.AddHandler(new EventHandler(function (newValue) {
-            if (newValue) {
-                $(newNode).setNodeSelected();
-            } else {
-                $(newNode).setNodeUnselected();
-            }
-        }));
-
-        //
-        return newNode;
-    }
-    function removeElement(node) {
-        $(node).deleteNode();
-    }
-
-    // Init
-    this.Initialize = function () {
-
-        // Create simpleTree
-        _tree = $(_container).simpleTree(_treeOptions);
-
-        // Handler for onFocus
-        $(_container).bind("click", function (e) {
-            _this.Focus.RaiseEvent();
-        });
-    }
-
-    // Events
-    this.Focus = new Event();
-
-    // Event handlers
-    this.OnModelLoaded = function (modelCLO) {
-
-        // Bind to it
-        modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
-        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-        modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
-        modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-        modelCLO.CustomRules.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
-        modelCLO.CustomRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-        modelCLO.CustomFunctions.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
-        modelCLO.CustomFunctions.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-
-    }
-    function onNodeClicked(node, ctrlKey) {
-        var clo = _dataModel.GetByClientID(node.getNodeDataID());
-        _cloSelectionManager.ToggleCLOSelection(clo, ctrlKey);
-    };
-    var modelHandlers = {
-        onCLOAdded: function (clo) {
-            addElement(clo, clo.GetType());
-        },
-        onCLORemoved: function (clo) {
-            var nodeElem = $(_tree).getNode(clo.GetClientID());
-            removeElement(nodeElem);
-        }
-    }
-}
+UIComponents.ModelExplorer = {};
 UIComponents.VisualView = function (container, dataModel, cloSelectionManager) {
 
     // Fields

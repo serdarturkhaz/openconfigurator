@@ -68,6 +68,9 @@ body
     float: right;
 }
 
+#frame #modelExplorerContainer
+{
+}
 #frame #toolBarContainer
 {
     height: 28px;
