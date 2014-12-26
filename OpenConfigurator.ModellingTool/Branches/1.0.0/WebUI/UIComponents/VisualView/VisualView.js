@@ -81,14 +81,17 @@
     }
     function selectElementsInArea(targetBbox) {
 
-        // Loop through all selected UI elements and select them if they are within the targetBox bounds
+        // Loop through all selected UI elements and store them to be selected, if they are within the targetBox bounds
+        var CLOsToBeSelected = [];
         for (var clientid in _visualUIElems) {
             var elem = _visualUIElems[clientid];
-
             if (elem.IsWithinBounds(targetBbox)) {
-                _cloSelectionManager.ForceCLOSelection(elem.GetCLO());
+                CLOsToBeSelected.push(elem.GetCLO());
             }
         }
+
+        // Call selection method
+        _cloSelectionManager.ForceSelectMultipleCLOs(CLOsToBeSelected);
     }
     function refreshGraphicalReprOfAllUIElems() {
         for (var clientID in _visualUIElems) {
@@ -182,6 +185,9 @@
             }
         }
     }
+    this.GetCurrentState = function () {
+        return _innerStateManager.GetCurrentStateName();
+    }
 
     // Events
     this.Focus = new Event();
@@ -225,7 +231,7 @@
     }
     var featureElemHandlers = {
         onClicked: function (elem, ctrlKey) {
-            _cloSelectionManager.ToggleCLOSelection(elem.GetCLO(), ctrlKey);
+            _cloSelectionManager.ToggleSingleCLO(elem.GetCLO(), ctrlKey);
         },
         onFeatureDragStarted: function (featureElem) {
             if (featureElem.IsSelected() === true) {
@@ -247,7 +253,7 @@
         }
     }
     var onElemClicked = function (elem, ctrlKey) {
-        _cloSelectionManager.ToggleCLOSelection(elem.GetCLO(), ctrlKey);
+        _cloSelectionManager.ToggleSingleCLO(elem.GetCLO(), ctrlKey);
     }
 
     // Inner modes
@@ -286,7 +292,7 @@
 
                     // Select elements lying within the selectionRectangle
                     if (e.ctrlKey !== true)
-                        _cloSelectionManager.ClearCLOSelection(); // clear selection ONLY if ctrl is not pressed
+                        _cloSelectionManager.DeselectAllCLOs(); // clear selection ONLY if ctrl is not pressed
                     selectElementsInArea(selectionRectangle.getBBox());
 
                     // Clear variables and remove selection rectangle
@@ -300,12 +306,12 @@
             $(_canvasContainer).unbind("mousedown.canvas");
             $(_canvasContainer).unbind("mouseup.canvas");
             $(_canvasContainer).unbind("mousemove.canvas");
+            _cloSelectionManager.DeselectAllCLOs();
         }
     };
     UIComponents.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewFeature] = {
         Name: "CreatingNewFeature",
         EnterState: function () {
-            _cloSelectionManager.ClearCLOSelection();
             _innerElems.infoMsgOverlay.html("Click to add a new Feature...").visible();
 
             // Create a wireframe
@@ -348,7 +354,6 @@
     UIComponents.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewRelation] = {
         Name: "CreatingNewRelation",
         EnterState: function () {
-            _cloSelectionManager.ClearCLOSelection();
             _innerElems.infoMsgOverlay.html("Select the parent feature for the Relation...").visible();
 
             // Variables
@@ -359,7 +364,7 @@
             featureElemHandlers.onClicked = firstStepClickHandler;
             function firstStepClickHandler(featureElem) {
                 parentFeatureElem = featureElem;
-                _cloSelectionManager.ForceCLOSelection(parentFeatureElem.GetCLO());
+                _cloSelectionManager.ForceSelectSingleCLO(parentFeatureElem.GetCLO());
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
@@ -372,7 +377,7 @@
                     _innerElems.infoMsgOverlay.html("Select a different child feature...");
                 } else {
                     childFeatureElem = featureElem;
-                    _cloSelectionManager.ForceCLOSelection(childFeatureElem.GetCLO());
+                    _cloSelectionManager.ForceSelectSingleCLO(childFeatureElem.GetCLO());
 
                     // Create a new CLO
                     var newRelationCLO = _dataModel.CreateNewCLO(CLOTypes.Relation);
@@ -398,7 +403,6 @@
     UIComponents.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewGroupRelation] = {
         Name: "CreatingNewGroupRelation",
         EnterState: function () {
-            _cloSelectionManager.ClearCLOSelection();
             _innerElems.infoMsgOverlay.html("Select the parent feature for the Group Relation...").visible();
 
             // Variables
@@ -409,7 +413,7 @@
             featureElemHandlers.onClicked = firstStepClickHandler;
             function firstStepClickHandler(featureElem) {
                 parentFeatureElem = featureElem;
-                _cloSelectionManager.ForceCLOSelection(parentFeatureElem.GetCLO());
+                _cloSelectionManager.ForceSelectSingleCLO(parentFeatureElem.GetCLO());
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
@@ -423,7 +427,7 @@
                 } else {
 
                     childFeatureElems.push(featureElem);
-                    _cloSelectionManager.ForceCLOSelection(featureElem.GetCLO());
+                    _cloSelectionManager.ForceSelectSingleCLO(featureElem.GetCLO());
                 }
             }
 
@@ -467,7 +471,6 @@
     UIComponents.VisualView.InnerStates[Enums.VisualView.StateNames.CreatingNewCompositionRule] = {
         Name: "CreatingNewCompositionRule",
         EnterState: function () {
-            _cloSelectionManager.ClearCLOSelection();
             _innerElems.infoMsgOverlay.html("Select the first feature for the Composition Rule...").visible();
 
             // Variables
@@ -478,7 +481,7 @@
             featureElemHandlers.onClicked = firstStepClickHandler;
             function firstStepClickHandler(featureElem) {
                 firstFeatureElem = featureElem;
-                _cloSelectionManager.ForceCLOSelection(firstFeatureElem.GetCLO());
+                _cloSelectionManager.ForceSelectSingleCLO(firstFeatureElem.GetCLO());
 
                 // Prepare for the second step
                 featureElemHandlers.onClicked = secondStepClickHandler;
@@ -491,7 +494,7 @@
                     _innerElems.infoMsgOverlay.html("Select a different Feature...");
                 } else {
                     secondFeatureElem = featureElem;
-                    _cloSelectionManager.ForceCLOSelection(secondFeatureElem.GetCLO());
+                    _cloSelectionManager.ForceSelectSingleCLO(secondFeatureElem.GetCLO());
 
                     // Create a new CLO
                     var newCompositionRuleCLO = _dataModel.CreateNewCLO(CLOTypes.CompositionRule);
