@@ -742,7 +742,7 @@ var Controller = function () {
 
     // Fields
     var _dataModel = null;
-    var _visualView = null, _commandToolbar = null, _modelExplorer = null, _cloSelectionManager = null;
+    var _visualView = null, _commandToolbar = null, _modelExplorer = null, _propertyEditor = null, _cloSelectionManager = null;
     var _currentControlFocus = null; // variable to keep track of where the user executed the last action (clicking)
     var _this = this;
 
@@ -756,16 +756,19 @@ var Controller = function () {
         _cloSelectionManager.Initialize();
         _visualView = UIComponentProvider.CreateInstance("UIComponents.VisualView", [$("#visualViewContainer"), _dataModel, _cloSelectionManager]);
         _visualView.Initialize();
-        _modelExplorer = new UIComponentProvider.CreateInstance("UIComponents.ModelExplorer", [$("#modelExplorerContainer"), _dataModel, _cloSelectionManager]);
+        _modelExplorer = UIComponentProvider.CreateInstance("UIComponents.ModelExplorer", [$("#modelExplorerContainer"), _dataModel, _cloSelectionManager]);
         _modelExplorer.Initialize();
         _commandToolbar = UIComponentProvider.CreateInstance("UIComponents.CommandToolbar", [$("#toolBarContainer"), _this]);
         _commandToolbar.Initialize();
+        _propertyEditor = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor", [$("#propertyEditorContainer"), _dataModel, _cloSelectionManager]);
+        _propertyEditor.Initialize();
 
         // Setup events and handlers
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
         _visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
         _dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
+        _cloSelectionManager.CLOSelectionToggled.AddHandler(new EventHandler(_propertyEditor.OnCLOSelectionToggled));
 
         // Global key handlers
         $(document).keydown(function (e) {
@@ -831,7 +834,6 @@ var Controller = function () {
             _currentControlFocus = viewInFocus;
         }
     }
-
 }
 var CLOSelectionManager = function () {
 
@@ -843,10 +845,14 @@ var CLOSelectionManager = function () {
     function selectCLO(clo) {
         _selectedCLOs[clo.GetClientID()] = clo;
         clo.Selected(true);
+        
+        _this.CLOSelectionToggled.RaiseEvent();
     }
     function deselectCLO(clo) {
         delete _selectedCLOs[clo.GetClientID()];
         clo.Selected(false);
+
+        _this.CLOSelectionToggled.RaiseEvent();
     }
     function clearSelection() {
         for (var clientID in _selectedCLOs) {
@@ -891,6 +897,9 @@ var CLOSelectionManager = function () {
     this.ForceCLOSelection = function (clo) {
         selectCLO(clo);
     }
+
+    // Events 
+    this.CLOSelectionToggled = new Event();
 
     // Event handlers
     this.OnCLODeleted = function (clo) {
@@ -1181,6 +1190,7 @@ var UIComponentProvider = (function () { // "static" class
 var UIComponents = {};
 UIComponents.CommandToolbar = {};
 UIComponents.ModelExplorer = {};
+UIComponents.PropertyEditor = {};
 UIComponents.VisualView = {};
 UIComponents.VisualView.FeatureElem = {};
 UIComponents.VisualView.RelationElem = {};

@@ -173,9 +173,9 @@
     <Content Include="Scripts\Application\coreFramework.js" />
     <Content Include="Scripts\Application\main.js" />
     <Content Include="Scripts\Frameworks\jquery-2.1.3.js" />
+    <Content Include="Scripts\Frameworks\jquery-ui.js" />
     <Content Include="Scripts\Frameworks\knockout-3.2.0.js" />
     <Content Include="Scripts\Frameworks\raphael.2.1.2.js" />
-    <Content Include="Scripts\Frameworks\underscore-min.js" />
     <Content Include="Scripts\old_modeleditor.js" />
     <Content Include="Scripts\CustomPlugins\jquery.simpleMenu.js" />
     <Content Include="Scripts\CustomPlugins\jquery.simpleTree.js" />
@@ -187,7 +187,14 @@
     <Content Include="Scripts\Plugins\jquery.tipTip.js" />
     <Content Include="Scripts\Plugins\json2.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
+    <Content Include="UIComponents\PropertyEditor\PropertyEditor.js" />
     <Content Include="UIComponents\ModelExplorer\ModelExplorer.js" />
+    <Content Include="UIComponents\VisualView\ConnectionElem\ConnectionElem.js" />
+    <Content Include="UIComponents\VisualView\RelationElem\RelationElem.js" />
+    <Content Include="UIComponents\VisualView\ConnectorElem\ConnectorElem.js" />
+    <Content Include="UIComponents\VisualView\CardinalityLabel\CardinalityLabel.js" />
+    <Content Include="UIComponents\VisualView\CompositionRuleElem\CompositionRuleElem.js" />
+    <Content Include="UIComponents\VisualView\GroupRelationElem\GroupRelationElem.js" />
     <Content Include="UIComponents\VisualView\FeatureElem\FeatureElem.js" />
     <Content Include="UIComponents\VisualView\VisualView.js" />
     <Content Include="Web.config">
@@ -220,6 +227,7 @@
     <Content Include="Scripts\Plugins\jquery.withinBox.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.cshtml" />
     <Content Include="UIComponents\VisualView\VisualView.cshtml" />
+    <Content Include="UIComponents\PropertyEditor\PropertyEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
