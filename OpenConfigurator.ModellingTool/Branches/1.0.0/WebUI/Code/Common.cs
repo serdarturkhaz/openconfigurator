@@ -48,14 +48,17 @@ namespace ModellingTool.Common
         public static string RenderViewToString(string viewPathAndName, ControllerContext controllerContext)
         {
             // Render the view to a string
-            string viewAsString;
+            string viewAsString = null;
             using (var sw = new StringWriter())
             {
                 var viewResult = ViewEngines.Engines.FindView(controllerContext, viewPathAndName, null);
-                var viewContext = new ViewContext(controllerContext, viewResult.View, new ViewDataDictionary(), new TempDataDictionary(), sw);
-                viewResult.View.Render(viewContext, sw);
-                viewResult.ViewEngine.ReleaseView(controllerContext, viewResult.View);
-                viewAsString = sw.GetStringBuilder().ToString();
+                if (viewResult.View != null)
+                {
+                    var viewContext = new ViewContext(controllerContext, viewResult.View, new ViewDataDictionary(), new TempDataDictionary(), sw);
+                    viewResult.View.Render(viewContext, sw);
+                    viewResult.ViewEngine.ReleaseView(controllerContext, viewResult.View);
+                    viewAsString = sw.GetStringBuilder().ToString();
+                }
             }
             return viewAsString;
         }

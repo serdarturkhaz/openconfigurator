@@ -30,13 +30,14 @@ namespace ModellingTool.Controllers
             var shortName = parsedUIComponentFullName.Split('/').Last();
             string uiComponentNameAndPath = "~/" + parsedUIComponentFullName + "/" + shortName;
 
-            // Setup js
-            string htmlContent = Helpers.RenderViewToString(uiComponentNameAndPath + ".cshtml", this.ControllerContext).Replace('\"', '\'');
+            // Parse js
+            string htmlContent = Helpers.RenderViewToString(uiComponentNameAndPath + ".cshtml", this.ControllerContext);
             string jsScript = Helpers.GetJSFileAsString(Server.MapPath(uiComponentNameAndPath + ".js"));
-            jsScript = jsScript.Replace("#HTMLCONTENT#", HttpUtility.JavaScriptStringEncode(htmlContent, false));
+            if (htmlContent != null)
+            {
+                jsScript = jsScript.Replace("#HTMLCONTENT#", HttpUtility.JavaScriptStringEncode(htmlContent, false));
+            }
 
-            
-            
             //
             return jsScript;
         }

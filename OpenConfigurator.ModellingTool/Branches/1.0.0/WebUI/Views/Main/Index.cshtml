@@ -23,12 +23,6 @@
         // Load
         $(document).ready(function () {
 
-            //// Configure module loader
-            //require.config({
-            //    baseUrl: "./",
-            //    waitSeconds: 60
-            //});
-
             // Setup page layout and simple controls
             $("#topMenu").simpleMenu();
             adjustLayout(); adjustLayout();
@@ -36,7 +30,6 @@
                 adjustLayout();
             });
             
-
             // Initialize components and load data
             $.timer(300, function () {
                 var controller = new Controller();
@@ -47,9 +40,8 @@
     </script>
 }
 <div id="sidePanel">
-    <div class="treeArea">
-        <div id="modelExplorerTree">
-        </div>
+    <div id="modelExplorerContainer">
+        
     </div>
 </div>
 <div id="mainPanel">

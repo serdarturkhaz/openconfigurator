@@ -187,6 +187,7 @@
     <Content Include="Scripts\Plugins\jquery.tipTip.js" />
     <Content Include="Scripts\Plugins\json2.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
+    <Content Include="UIComponents\ModelExplorer\ModelExplorer.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
