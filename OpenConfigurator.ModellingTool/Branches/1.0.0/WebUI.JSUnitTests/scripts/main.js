@@ -50,6 +50,22 @@ var Enums = {
         Horizontal: "Horizontal"
     }
 }
+var EnumExtraInfo = {
+    "RelationTypes_Info": {}
+}
+EnumExtraInfo.RelationTypes_Info[Enums.RelationTypes.Mandatory] = {
+    FixedLowerBound: 1,
+    FixedUpperBound: 1
+}
+EnumExtraInfo.RelationTypes_Info[Enums.RelationTypes.Optional] = {
+    FixedLowerBound: 0,
+    FixedUpperBound: 1
+}
+EnumExtraInfo.RelationTypes_Info[Enums.RelationTypes.Cloneable] = {
+    FixedLowerBound: null,
+    FixedUpperBound: null
+}
+
 var Settings = {
     UIOrientation: Enums.UIOrientationTypes.Vertical, //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
     DrawCurves: true,
@@ -500,6 +516,7 @@ var SystemDefaults = {
     }
 }
 
+
 // CLOs
 var CLOTypes = {
     FeatureModel: "FeatureModel",
@@ -568,13 +585,6 @@ var FeatureModelCLO = function (clientID, blo) {
             if (clo.Name !== undefined)
                 clo.Name(identity.name);
         }
-
-
-        // Knockout test///////////////////////////
-        if (_this.Features.GetLength() > 0) {
-            _this.Features.GetAt(0).Name("Newname");
-        }
-        ////////////////////////////////////////////
     }
 }
 var FeatureCLO = function (clientID, blo) {
@@ -604,6 +614,28 @@ var FeatureCLO = function (clientID, blo) {
 
     }
 }
+var AttributeCLO = function (clientID, blo) {
+
+    // Fields
+    var _clientID = clientID, _innerBLO = blo;
+    var _this = this;
+
+    // Properties
+    this.DataState = null;
+    this.GetClientID = function () {
+        return _clientID;
+    };
+    this.GetType = function () {
+        return CLOTypes.Feature;
+    }
+    this.Identifier = new ObservableField(_innerBLO, "Identifier");
+    this.Name = new ObservableField(_innerBLO, "Name");
+
+    // Init
+    this.Initialize = function () {
+
+    }
+}
 var RelationCLO = function (clientID, blo) {
 
     // Fields
@@ -623,12 +655,22 @@ var RelationCLO = function (clientID, blo) {
     this.ParentFeature = null;
     this.ChildFeature = null;
     this.RelationType = new ObservableField(_innerBLO, "RelationType");
+
+    this.FixedUpperBound = new ObservableField(_innerBLO, "FixedUpperBound");
+    this.FixedLowerBound = new ObservableField(_innerBLO, "FixedLowerBound");
     this.UpperBound = new ObservableField(_innerBLO, "UpperBound");
     this.LowerBound = new ObservableField(_innerBLO, "LowerBound");
 
     // Init
     this.Initialize = function () {
+        _this.RelationType.Changed.AddHandler(new EventHandler(function (newValue) {
+            _this.FixedUpperBound(EnumExtraInfo.RelationTypes_Info[newValue].FixedUpperBound);
+            _this.FixedLowerBound(EnumExtraInfo.RelationTypes_Info[newValue].FixedLowerBound);
 
+            // Set default initial bounds
+            _this.LowerBound((_this.FixedLowerBound() == null) ? 1 : _this.FixedLowerBound());
+            _this.UpperBound((_this.FixedUpperBound() == null) ? 2 : _this.FixedUpperBound());
+        }));
     }
 }
 var GroupRelationCLO = function (clientID, blo) {
@@ -906,20 +948,29 @@ var CLOSelectionManager = function () {
         return selectedCLOArray;
     }
     this.ToggleSingleCLO = function (clo, ctrlKey) {
+        var raiseEvent = false;
+
         if (ctrlKey === true) {
             // Control key down
-            if (clo.Selected())
+            if (clo.Selected()) {
                 deselectCLO(clo); // deselect
-            else
+                raiseEvent = true;
+            }
+            else {
                 selectCLO(clo); // add to selection
+                raiseEvent = true;
+            }
         }
         else {
             // No control key
-            clearSelection();
-            selectCLO(clo); // add to selection
+            if (!clo.Selected()) {
+                clearSelection();
+                selectCLO(clo); // add to selection
+                raiseEvent = true;
+            }
         }
-
-        _this.CLOSelectionChanged.RaiseEvent();
+        if (raiseEvent)
+            _this.CLOSelectionChanged.RaiseEvent();
     }
     this.DeselectAllCLOs = function () {
         clearSelection();
@@ -927,9 +978,10 @@ var CLOSelectionManager = function () {
         _this.CLOSelectionChanged.RaiseEvent();
     }
     this.ForceSelectSingleCLO = function (clo) {
-        selectCLO(clo);
-
-        _this.CLOSelectionChanged.RaiseEvent();
+        if (!clo.Selected()) {
+            selectCLO(clo);
+            _this.CLOSelectionChanged.RaiseEvent();
+        }
     }
     this.ForceSelectMultipleCLOs = function (cloArray) {
         for (var i = 0; i < cloArray.length; i++) {
@@ -944,8 +996,10 @@ var CLOSelectionManager = function () {
 
     // Event handlers
     this.OnCLODeleted = function (clo) {
-        if (_selectedCLOs[clo.GetClientID()] !== undefined)
+        if (_selectedCLOs[clo.GetClientID()] !== undefined) {
             deselectCLO(clo);
+            _this.CLOSelectionChanged.RaiseEvent();
+        }
     }
 }
 var DataModel = function (bloService, cloFactory) {
@@ -1233,6 +1287,7 @@ UIComponents.CommandToolbar = {};
 UIComponents.ModelExplorer = {};
 UIComponents.PropertyEditor = {};
 UIComponents.PropertyEditor.FeatureInnerEditor = {};
+UIComponents.PropertyEditor.RelationInnerEditor = {};
 UIComponents.VisualView = {};
 UIComponents.VisualView.FeatureElem = {};
 UIComponents.VisualView.RelationElem = {};

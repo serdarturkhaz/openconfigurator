@@ -13,11 +13,12 @@
     // Private methods
     function loadInnerEditor(clo) {
 
-        if (_currentInnerEditorInstance)
+        if (_currentInnerEditorInstance) {
             _currentInnerEditorInstance.RemoveSelf();
+            _currentInnerEditorInstance = null;
+        }
 
         if (clo.GetType() === CLOTypes.Feature || clo.GetType() === CLOTypes.Relation) {
-            //_innerElems.headerLabel.text("Properties - (" + clo.GetType() + ")");
             _currentInnerEditorInstance = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor." + clo.GetType() + "InnerEditor", [_innerElems.innerContainer, clo]);
             _currentInnerEditorInstance.Initialize();
         }
@@ -47,8 +48,10 @@
 
     // Public methods
     this.Close = function () {
-        if (_currentInnerEditorInstance)
+        if (_currentInnerEditorInstance) {
             _currentInnerEditorInstance.RemoveSelf();
+            _currentInnerEditorInstance = null;
+        }
         _innerHtmlElem.hide();
     }
     this.OpenAndEdit = function (CLOArray) {

@@ -115,6 +115,7 @@
         // Bind to the featureCLO
         _featureCLO.Name.Changed.AddHandler(new EventHandler(function (newName) {
             _innerElements.text.attr({ text: newName });
+            
         }));
     }
 

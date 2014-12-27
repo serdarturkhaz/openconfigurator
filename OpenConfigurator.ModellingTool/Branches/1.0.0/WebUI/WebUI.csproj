@@ -186,6 +186,7 @@
     <Content Include="Scripts\Plugins\jquery.timer.js" />
     <Content Include="Scripts\Plugins\jquery.tipTip.js" />
     <Content Include="Scripts\Plugins\json2.js" />
+    <Content Include="Scripts\Plugins\knockout.validation.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
     <Content Include="UIComponents\PropertyEditor\RelationInnerEditor\RelationInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\FeatureInnerEditor.js" />

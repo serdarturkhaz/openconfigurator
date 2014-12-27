@@ -50,6 +50,22 @@ var Enums = {
         Horizontal: "Horizontal"
     }
 }
+var EnumExtraInfo = {
+    "RelationTypes_Info": {}
+}
+EnumExtraInfo.RelationTypes_Info[Enums.RelationTypes.Mandatory] = {
+    FixedLowerBound: 1,
+    FixedUpperBound: 1
+}
+EnumExtraInfo.RelationTypes_Info[Enums.RelationTypes.Optional] = {
+    FixedLowerBound: 0,
+    FixedUpperBound: 1
+}
+EnumExtraInfo.RelationTypes_Info[Enums.RelationTypes.Cloneable] = {
+    FixedLowerBound: null,
+    FixedUpperBound: null
+}
+
 var Settings = {
     UIOrientation: Enums.UIOrientationTypes.Vertical, //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
     DrawCurves: true,
@@ -500,6 +516,7 @@ var SystemDefaults = {
     }
 }
 
+
 // CLOs
 var CLOTypes = {
     FeatureModel: "FeatureModel",
@@ -638,12 +655,22 @@ var RelationCLO = function (clientID, blo) {
     this.ParentFeature = null;
     this.ChildFeature = null;
     this.RelationType = new ObservableField(_innerBLO, "RelationType");
+
+    this.FixedUpperBound = new ObservableField(_innerBLO, "FixedUpperBound");
+    this.FixedLowerBound = new ObservableField(_innerBLO, "FixedLowerBound");
     this.UpperBound = new ObservableField(_innerBLO, "UpperBound");
     this.LowerBound = new ObservableField(_innerBLO, "LowerBound");
 
     // Init
     this.Initialize = function () {
+        _this.RelationType.Changed.AddHandler(new EventHandler(function (newValue) {
+            _this.FixedUpperBound(EnumExtraInfo.RelationTypes_Info[newValue].FixedUpperBound);
+            _this.FixedLowerBound(EnumExtraInfo.RelationTypes_Info[newValue].FixedLowerBound);
 
+            // Set default initial bounds
+            _this.LowerBound((_this.FixedLowerBound() == null) ? 1 : _this.FixedLowerBound());
+            _this.UpperBound((_this.FixedUpperBound() == null) ? 2 : _this.FixedUpperBound());
+        }));
     }
 }
 var GroupRelationCLO = function (clientID, blo) {
@@ -936,7 +963,7 @@ var CLOSelectionManager = function () {
         }
         else {
             // No control key
-            if (!clo.Selected()) {
+            if (!clo.Selected() || Object.size(_selectedCLOs) > 1) {
                 clearSelection();
                 selectCLO(clo); // add to selection
                 raiseEvent = true;

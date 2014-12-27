@@ -31,18 +31,18 @@ namespace BLL.BLOs
     {
         public static class Mandatory
         {
-            public static readonly int? FixedUpperBound = 1;
             public static readonly int? FixedLowerBound = 1;
+            public static readonly int? FixedUpperBound = 1;
         }
         public static class Optional
         {
-            public static readonly int? FixedUpperBound = 1;
             public static readonly int? FixedLowerBound = 0;
+            public static readonly int? FixedUpperBound = 1;
         }
         public static class Cloneable
         {
+            public static readonly int? FixedLowerBound = null;
             public static readonly int? FixedUpperBound = null;
-            public static readonly int? FixedLowerBound = 0;
         }
     }
     public static class GroupRelationTypes_Info
@@ -204,17 +204,6 @@ namespace BLL.BLOs
             get;
             set;
         }
-        public int? UpperBound
-        {
-            get
-            {
-                return innerDTO.UpperBound;
-            }
-            set
-            {
-                innerDTO.UpperBound = value;
-            }
-        }
         public int? LowerBound
         {
             get
@@ -226,6 +215,28 @@ namespace BLL.BLOs
                 innerDTO.LowerBound = value;
             }
         }
+        public int? UpperBound
+        {
+            get
+            {
+                return innerDTO.UpperBound;
+            }
+            set
+            {
+                innerDTO.UpperBound = value;
+            }
+        }
+        public int? FixedLowerBound
+        {
+            get;
+            set;
+        }
+        public int? FixedUpperBound
+        {
+            get;
+            set;
+        }
+
 
         // Constructors
         public Relation()
@@ -248,8 +259,13 @@ namespace BLL.BLOs
             {
                 RelationType = RelationTypes.Mandatory
             };
-            newBLO.UpperBound = (int?)typeof(RelationTypes_Info).GetNestedType(newBLO.RelationType.ToString()).GetField("FixedUpperBound").GetValue(null);
-            newBLO.LowerBound = (int?)typeof(RelationTypes_Info).GetNestedType(newBLO.RelationType.ToString()).GetField("FixedLowerBound").GetValue(null);
+            newBLO.FixedLowerBound = (int?)typeof(RelationTypes_Info).GetNestedType(newBLO.RelationType.ToString()).GetField("FixedLowerBound").GetValue(null);
+            newBLO.FixedUpperBound = (int?)typeof(RelationTypes_Info).GetNestedType(newBLO.RelationType.ToString()).GetField("FixedUpperBound").GetValue(null);
+
+            // Set default initial bounds
+            newBLO.LowerBound = (newBLO.FixedLowerBound == null) ? 1 : newBLO.FixedLowerBound;
+            newBLO.UpperBound = (newBLO.FixedUpperBound == null) ? 2 : newBLO.FixedUpperBound;
+
             return newBLO;
         }
     }
@@ -474,7 +490,7 @@ namespace BLL.BLOs
             // Create new BLO
             CustomRule newBLO = new CustomRule(newDTO)
             {
-                
+
             };
             return newBLO;
         }

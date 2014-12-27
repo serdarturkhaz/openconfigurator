@@ -56,13 +56,11 @@
         return labelPoint;
     }
     function toggleCardinalityElement() {
-
-        //
         switch (Settings.DisplayCardinalities) {
             // Full
             case "Full": // show for everything
                 if (_innerElements.cardinalityElement === null) {
-                    _innerElements.cardinalityElement = UIComponentProvider.CreateInstance("UIComponents.VisualView.CardinalityLabel", [_relationCLO.LowerBound(), 
+                    _innerElements.cardinalityElement = UIComponentProvider.CreateInstance("UIComponents.VisualView.CardinalityLabel", [_relationCLO.LowerBound(),
                         _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance]);
                     _innerElements.cardinalityElement.Initialize();
                 }
@@ -73,7 +71,7 @@
             case "Partial": // only show for cloneable Relations
                 if (_relationCLO.RelationType() === Enums.RelationTypes.Cloneable) {
                     if (_innerElements.cardinalityElement == null) {
-                        _innerElements.cardinalityElement = UIComponentProvider.CreateInstance("UIComponents.VisualView.CardinalityLabel", [_relationCLO.LowerBound(), 
+                        _innerElements.cardinalityElement = UIComponentProvider.CreateInstance("UIComponents.VisualView.CardinalityLabel", [_relationCLO.LowerBound(),
                             _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance]);
                         _innerElements.cardinalityElement.Initialize();
                     }
@@ -114,9 +112,13 @@
         makeSelectable();
 
         // Bind to the clo
-        //_relationCLO.RelationType.Changed.AddHandler(new EventHandler(function (newRelationType) {
-        //    _innerElements.text.attr({ text: newName });
-        //}));
+        _relationCLO.RelationType.Changed.AddHandler(new EventHandler(onCLORelationTypeChanged));
+        _relationCLO.UpperBound.Changed.AddHandler(new EventHandler(function (newValue) {
+            toggleCardinalityElement();
+        }));
+        _relationCLO.LowerBound.Changed.AddHandler(new EventHandler(function (newValue) {
+            toggleCardinalityElement();
+        }));
     }
 
     // Public methods
@@ -148,5 +150,10 @@
     // Event handlers
     var onRelatedFeatureMoving = function () {
         refresh();
+    }
+    var onCLORelationTypeChanged = function (newValue) {
+        var newRelationType = getEnumEntryNameByID(Enums.RelationTypes, _relationCLO.RelationType());
+        _innerElements.connection.Update(newRelationType);
+        toggleCardinalityElement();
     }
 }
