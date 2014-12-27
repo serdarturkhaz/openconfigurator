@@ -3,12 +3,25 @@
     // Fields
     var _container = container, _dataModel = dataModel, _cloSelectionManager = cloSelectionManager;
     var _innerHtmlElem;
+    var _currentInnerEditorInstance = null, _currentCLO = null;
     var _innerElems = {
         headerLabel: null,
         innerContainer: null
     };
     var _this = this;
 
+    // Private methods
+    function loadInnerEditor(clo) {
+
+        if (_currentInnerEditorInstance)
+            _currentInnerEditorInstance.RemoveSelf();
+
+        if (clo.GetType() === CLOTypes.Feature || clo.GetType() === CLOTypes.Relation) {
+            //_innerElems.headerLabel.text("Properties - (" + clo.GetType() + ")");
+            _currentInnerEditorInstance = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor." + clo.GetType() + "InnerEditor", [_innerElems.innerContainer, clo]);
+            _currentInnerEditorInstance.Initialize();
+        }
+    }
 
     // Init
     this.Initialize = function () {
@@ -34,10 +47,14 @@
 
     // Public methods
     this.Close = function () {
+        if (_currentInnerEditorInstance)
+            _currentInnerEditorInstance.RemoveSelf();
         _innerHtmlElem.hide();
     }
     this.OpenAndEdit = function (CLOArray) {
+
+        // Load the CLO 
+        loadInnerEditor(CLOArray[0]);
         _innerHtmlElem.show();
-        _innerElems.headerLabel.text(CLOArray[0].GetType());
     }
 }

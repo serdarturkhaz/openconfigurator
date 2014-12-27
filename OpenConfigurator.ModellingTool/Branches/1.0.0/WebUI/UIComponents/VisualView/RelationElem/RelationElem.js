@@ -112,6 +112,11 @@
         // Setup other characteristics and elements
         toggleCardinalityElement();
         makeSelectable();
+
+        // Bind to the clo
+        //_relationCLO.RelationType.Changed.AddHandler(new EventHandler(function (newRelationType) {
+        //    _innerElements.text.attr({ text: newName });
+        //}));
     }
 
     // Public methods
