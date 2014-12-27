@@ -344,6 +344,11 @@ body
     font-size: 12px;
     height: 28px;
 }
+.validationElement
+{
+    border:solid 1px red !important;
+}
+
 .Button-Thin
 {
     background-color: #EEEEEE;

@@ -254,7 +254,7 @@
         }
     }
     this.Update = function (newParentElementSubType) {
-        _parentElementSubType = newParentElementSubType;
+        _parentElemSubType = newParentElementSubType;
 
         // Get the current style
         var currentStyle = getCurrentStyle();
@@ -263,11 +263,11 @@
         _innerElements.line.attr(currentStyle.Line.attr);
 
         // Update Connectors
-        if (_innerElements.startConnector != null) {
-            _innerElements.startConnector.Update(currentStyle.Connectors.StartConnector.attr);
+        if (_innerElements.connectors.startConnector != null) {
+            _innerElements.connectors.startConnector.Update(currentStyle.Connectors.StartConnector.attr);
         }
-        if (_innerElements.endConnector != null) {
-            _innerElements.endConnector.Update(currentStyle.Connectors.EndConnector.attr);
+        if (_innerElements.connectors.endConnector != null) {
+            _innerElements.connectors.endConnector.Update(currentStyle.Connectors.EndConnector.attr);
 
         }
     }

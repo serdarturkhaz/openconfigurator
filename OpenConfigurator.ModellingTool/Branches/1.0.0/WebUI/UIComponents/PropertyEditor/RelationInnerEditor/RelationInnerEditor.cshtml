@@ -2,15 +2,23 @@
 <div>
     <div class="PropertyDiv">
         <span class="label-Small">Type:</span>
-        <select class="Dropdown" data-bind="value: RelationType">
-            <option value="0">Mandatory</option>
-            <option value="1">Optional</option>
-            <option value="2">Cloneable</option>
+        <select class="Dropdown" data-bind="options: RelationTypes,
+                                            value: RelationType,
+                                            optionsText: 'name',
+                                            optionsValue: 'value'">
         </select>
     </div>
     <div class="PropertyDiv">
         <span class="label-Small">Identifier:</span>
-        <input class="Textbox" type="text" data-bind="value: Identifier, valueUpdate: 'afterkeydown'"/>
+        <input class="Textbox" type="text" data-bind="value: Identifier, valueUpdate: 'afterkeydown'" />
     </div>
-    <div style="clear:both"></div>
+    <div class="PropertyDiv">
+        <span class="label-Small">Lower bound:</span>
+        <input class="Textbox" type="text" data-bind="value: LowerBound, valueUpdate: 'afterkeydown', enable: LowerBoundEnabled " />
+    </div>
+    <div class="PropertyDiv">
+        <span class="label-Small">Upper bound:</span>
+        <input class="Textbox" type="text" data-bind="value: UpperBound, valueUpdate: 'afterkeydown', enable:UpperBoundEnabled" />
+    </div>
+    <div style="clear: both"></div>
 </div>

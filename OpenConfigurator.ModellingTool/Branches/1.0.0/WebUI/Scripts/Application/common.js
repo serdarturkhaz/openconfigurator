@@ -30,17 +30,15 @@ $.pnotify.defaults.pnotify_opacity = 1;
 //****************************************************************************************************************
 
 //Helper methods/small plugins************************************************************************************
-
 // Jquery extensions
 jQuery.fn.visible = function () {
     return this.css('visibility', 'visible');
 };
-
 jQuery.fn.hidden = function () {
     return this.css('visibility', 'hidden');
 };
 
-//Key press plugin method
+// Key press plugin method
 var readyToPress = true;
 $.ctrl = function (key, callback, args) {
     $(document).keydown(function (e) {
@@ -60,9 +58,27 @@ $.ctrl = function (key, callback, args) {
     });
 };
 
-//
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+// Helper methods
+function getEnumEntryNameByID(enumeration, id) {
+    for (var key in enumeration) {
+
+        if (enumeration[key] === id) {
+            return key;
+        }
+    }
+}
+function createKOObservableArrayFromEnum(enumeration) {
+    var koEntry = function (name, value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    var koArray = ko.observableArray();
+    for (var key in enumeration) {
+        var enumValue = enumeration[key];
+        koArray.push(new koEntry(key, enumValue));
+    }
+    return koArray;
 }
 function getEnumEntryNameByID(enumeration, id) {
     for (var key in enumeration) {
@@ -85,7 +101,6 @@ function sortUnique(array) {
         return index == $.inArray(el, array);
     });
 }
-
 Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
@@ -113,13 +128,9 @@ function isArray(a) {
     };
 
 })(jQuery);
-
 function isFunction(functionToCheck) {
     var getType = {};
     return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
-}
-function htmlDecode(str) {
-    return $("<div/>").html(str).text();
 }
 //****************************************************************************************************************
 
