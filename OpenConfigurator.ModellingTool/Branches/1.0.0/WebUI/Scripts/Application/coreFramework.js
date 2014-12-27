@@ -203,12 +203,12 @@ var InnerStateManager = function (targetStatesReference, initialStateName, targe
 
             // Remember the old UI state and set the new
             var oldStateName = _currentStateName;
-            _currentStateName = newStateName;
 
             // Leave the old state and enter the new one
             var oldState = _targetStatesReference[oldStateName];
             var newState = _targetStatesReference[newStateName];
             oldState.LeaveState();
+            _currentStateName = newStateName;
             newState.EnterState();
 
             // Raise target "changed" event, if one is provided

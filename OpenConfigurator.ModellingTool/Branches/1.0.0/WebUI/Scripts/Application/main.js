@@ -568,13 +568,6 @@ var FeatureModelCLO = function (clientID, blo) {
             if (clo.Name !== undefined)
                 clo.Name(identity.name);
         }
-
-
-        // Knockout test///////////////////////////
-        if (_this.Features.GetLength() > 0) {
-            _this.Features.GetAt(0).Name("Newname");
-        }
-        ////////////////////////////////////////////
     }
 }
 var FeatureCLO = function (clientID, blo) {
@@ -598,6 +591,28 @@ var FeatureCLO = function (clientID, blo) {
     this.XPos = new ObservableField(_innerBLO, "XPos");
     this.YPos = new ObservableField(_innerBLO, "YPos");
     this.RelatedCLOS = new ObservableCollection();
+
+    // Init
+    this.Initialize = function () {
+
+    }
+}
+var AttributeCLO = function (clientID, blo) {
+
+    // Fields
+    var _clientID = clientID, _innerBLO = blo;
+    var _this = this;
+
+    // Properties
+    this.DataState = null;
+    this.GetClientID = function () {
+        return _clientID;
+    };
+    this.GetType = function () {
+        return CLOTypes.Feature;
+    }
+    this.Identifier = new ObservableField(_innerBLO, "Identifier");
+    this.Name = new ObservableField(_innerBLO, "Name");
 
     // Init
     this.Initialize = function () {
@@ -850,19 +865,19 @@ var Controller = function () {
             }
                 // Multiple selected 
             else if (selectedCLOArray.length > 1) {
-                var allCLOsAreSameType = true; // assumption
-                for (var i = 1; i < selectedCLOArray.length; i++) {
-                    if (selectedCLOArray[i].GetType() !== selectedCLOArray[0].GetType()) {
-                        allCLOsAreSameType = false;
-                        break;
-                    }
-                }
+                //var allCLOsAreSameType = true; // assumption
+                //for (var i = 1; i < selectedCLOArray.length; i++) {
+                //    if (selectedCLOArray[i].GetType() !== selectedCLOArray[0].GetType()) {
+                //        allCLOsAreSameType = false;
+                //        break;
+                //    }
+                //}
 
-                //
-                if (allCLOsAreSameType)
-                    _propertyEditor.OpenAndEdit(selectedCLOArray);
-                else
-                    _propertyEditor.Close();
+                ////
+                //if (allCLOsAreSameType)
+                //    _propertyEditor.OpenAndEdit(selectedCLOArray);
+                //else
+                _propertyEditor.Close();
             }
         }
     }
@@ -906,20 +921,29 @@ var CLOSelectionManager = function () {
         return selectedCLOArray;
     }
     this.ToggleSingleCLO = function (clo, ctrlKey) {
+        var raiseEvent = false;
+
         if (ctrlKey === true) {
             // Control key down
-            if (clo.Selected())
+            if (clo.Selected()) {
                 deselectCLO(clo); // deselect
-            else
+                raiseEvent = true;
+            }
+            else {
                 selectCLO(clo); // add to selection
+                raiseEvent = true;
+            }
         }
         else {
             // No control key
-            clearSelection();
-            selectCLO(clo); // add to selection
+            if (!clo.Selected()) {
+                clearSelection();
+                selectCLO(clo); // add to selection
+                raiseEvent = true;
+            }
         }
-
-        _this.CLOSelectionChanged.RaiseEvent();
+        if (raiseEvent)
+            _this.CLOSelectionChanged.RaiseEvent();
     }
     this.DeselectAllCLOs = function () {
         clearSelection();
@@ -927,9 +951,10 @@ var CLOSelectionManager = function () {
         _this.CLOSelectionChanged.RaiseEvent();
     }
     this.ForceSelectSingleCLO = function (clo) {
-        selectCLO(clo);
-
-        _this.CLOSelectionChanged.RaiseEvent();
+        if (!clo.Selected()) {
+            selectCLO(clo);
+            _this.CLOSelectionChanged.RaiseEvent();
+        }
     }
     this.ForceSelectMultipleCLOs = function (cloArray) {
         for (var i = 0; i < cloArray.length; i++) {
@@ -944,8 +969,10 @@ var CLOSelectionManager = function () {
 
     // Event handlers
     this.OnCLODeleted = function (clo) {
-        if (_selectedCLOs[clo.GetClientID()] !== undefined)
+        if (_selectedCLOs[clo.GetClientID()] !== undefined) {
             deselectCLO(clo);
+            _this.CLOSelectionChanged.RaiseEvent();
+        }
     }
 }
 var DataModel = function (bloService, cloFactory) {
@@ -1232,6 +1259,8 @@ var UIComponents = {};
 UIComponents.CommandToolbar = {};
 UIComponents.ModelExplorer = {};
 UIComponents.PropertyEditor = {};
+UIComponents.PropertyEditor.FeatureInnerEditor = {};
+UIComponents.PropertyEditor.RelationInnerEditor = {};
 UIComponents.VisualView = {};
 UIComponents.VisualView.FeatureElem = {};
 UIComponents.VisualView.RelationElem = {};

@@ -195,15 +195,14 @@ body
 #propertyEditor
 {
    position:absolute;
-   width:200px;
-   height:200px;
+   
    top:100px;
    left:220px;
 }
 #propertyEditor .boxHeader
 {
     background: #F7F7F7;
-    border: solid 1px #DDDDDD;
+    border: solid 1px gray;
     border-bottom: none;
     cursor:move;
     
@@ -214,117 +213,34 @@ body
 }
 #propertyEditor .boxContent
 {
-    border: solid 1px #DDDDDD;
+    border: solid 1px gray;
     border-top: none;
     background: #FDFDFD;
+    padding-top: 7px;
+    padding-bottom: 10px;
+}
+#propertyEditor .PropertyDiv
+{
+    float:left;
+    margin-bottom:10px;
+    clear:both;
+}
+#propertyEditor .PropertyDiv span,
+#propertyEditor .PropertyDiv .Textbox,
+#propertyEditor .PropertyDiv .Dropdown
+{
+    float:left;
+    clear:both;
+}
+#propertyEditor .Textbox
+{
+    width:180px;
+}
+#propertyEditor .Dropdown
+{
+    width:188px;
 }
 
-#propertiesBox table
-{
-    width: 100%;
-}
-#propertiesBox table tbody td
-{
-    vertical-align: top;
-    padding-bottom: 8px;
-}
-#propertiesBox table tbody td .label-Small
-{
-    display: block;
-    float: left;
-    white-space: nowrap;
-}
-#propertiesBox .Textbox, #propertiesBox .Dropdown, #propertiesBox .Textarea
-{
-    width: 200px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-#propertiesBox .Textarea
-{
-    height: auto;
-    overflow: hidden;
-    min-height: 100px;
-}
-#propertiesBox .AreaDiv
-{
-}
-#propertiesBox .AreaDiv .InnerContainer
-{
-    padding: 5px;
-}
-#propertiesBox .AreaDiv .InnerContainer .ListDiv
-{
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    float: left;
-    width: 100%;
-    padding: 5px;
-    padding-bottom: 5px;
-}
-#propertiesBox .AreaDiv .InnerContainer .ListDiv .ListActionsDiv
-{
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    float: left;
-    margin-bottom: 10px;
-}
-#propertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement
-{
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    float: left;
-    width: 100%;
-    border: 1px solid #e1e9ff;
-    background-color: #EAEFFF;
-    text-align: left;
-    padding: 3px 8px 3px 8px;
-    margin-top: 2px;
-    cursor: default;
-}
-#propertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement:hover
-{
-    background-color: #ffeda6;
-    border: 1px solid #B1B1B1;
-}
-#propertiesBox .AreaDiv .InnerContainer .ListDiv .Selected
-{
-    background-color: #ffeda6;
-    border: 1px solid #B1B1B1;
-}
-#propertiesBox .AreaDiv .InnerContainer .ListDiv .ListElement .iconButton-Simple
-{
-    float: right;
-}
-#propertiesBox .AreaDiv .InnerContainer .DetailsDiv
-{
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    width: 100%;
-    clear: both;
-    float: left;
-    padding: 5px;
-    overflow: auto;
-    background-color: #FFF9DD;
-    border-top: solid 1px #B1B1B1;
-    margin-top: 10px;
-}
-#propertiesBox .DetailsDiv .Textbox, #propertiesBox .DetailsDiv .Dropdown, #propertiesBox .DetailsDiv .Textarea
-{
-    width: 185px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-#propertiesBox .AreaDiv .InnerContainer .DetailsDiv .CompositeList
-{
-    width: 100%;
-}
 
 /*RoundedBox*/
 .roundedBox
@@ -406,7 +322,7 @@ body
 }
 .Textbox
 {
-    height: 25px;
+    height: 20px;
 }
 .Textbox[disabled]
 {
@@ -414,19 +330,19 @@ body
 }
 .Textbox, .Textarea
 {
-    border: 1px solid #E0E0E0;
+    border: 1px solid #F7F7F7;
     padding: 3px;
     font-size: 12px;
 }
 .Textbox:focus, .Textarea:focus
 {
-    border: 1px solid #9B9B9B;
+    border: 1px solid #E9E9E9;
 }
 .Dropdown
 {
-    border: 1px solid #E0E0E0;
+    border: 1px solid #F7F7F7;
     font-size: 12px;
-    height: 25px;
+    height: 28px;
 }
 .Button-Thin
 {

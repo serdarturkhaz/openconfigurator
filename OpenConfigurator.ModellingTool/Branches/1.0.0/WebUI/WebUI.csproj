@@ -187,6 +187,8 @@
     <Content Include="Scripts\Plugins\jquery.tipTip.js" />
     <Content Include="Scripts\Plugins\json2.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
+    <Content Include="UIComponents\PropertyEditor\RelationInnerEditor\RelationInnerEditor.js" />
+    <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\FeatureInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\PropertyEditor.js" />
     <Content Include="UIComponents\ModelExplorer\ModelExplorer.js" />
     <Content Include="UIComponents\VisualView\ConnectionElem\ConnectionElem.js" />
@@ -220,7 +222,6 @@
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
-    <Folder Include="UIComponents\PropertyEditor\FeatureEditor\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Images\Layout\logo2.xcf" />
@@ -229,6 +230,8 @@
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.cshtml" />
     <Content Include="UIComponents\VisualView\VisualView.cshtml" />
     <Content Include="UIComponents\PropertyEditor\PropertyEditor.cshtml" />
+    <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\FeatureInnerEditor.cshtml" />
+    <Content Include="UIComponents\PropertyEditor\RelationInnerEditor\RelationInnerEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
