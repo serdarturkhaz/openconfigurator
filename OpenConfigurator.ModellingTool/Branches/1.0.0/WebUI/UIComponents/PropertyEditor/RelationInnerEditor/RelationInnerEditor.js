@@ -3,9 +3,6 @@
     // Fields
     var _container = container, _relationCLO = relationCLO;
     var _innerHtmlElem;
-    var _innerElems = {
-
-    };
     var _this = this;
     var _koRelationTypes = createKOObservableArrayFromEnum(Enums.RelationTypes);
     var _vm = {
@@ -50,10 +47,10 @@
     this.RemoveSelf = function () {
 
         // Revert if invalid
-        if (!_relationCLO.LowerBound.isValid())
+        if (!_relationCLO.LowerBound.isValid() || !_relationCLO.UpperBound.isValid()) {
             _relationCLO.LowerBound(_vm.LowerBound.OriginalValue);
-        if (!_relationCLO.UpperBound.isValid())
             _relationCLO.UpperBound(_vm.UpperBound.OriginalValue);
+        }
 
         // Clean up CLO from validation
         _relationCLO.LowerBound.extend({ validatable: false });

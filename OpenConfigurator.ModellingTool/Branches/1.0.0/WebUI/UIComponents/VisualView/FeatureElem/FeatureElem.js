@@ -115,7 +115,7 @@
         // Bind to the featureCLO
         _featureCLO.Name.Changed.AddHandler(new EventHandler(function (newName) {
             _innerElements.text.attr({ text: newName });
-            
+
         }));
     }
 
@@ -164,8 +164,8 @@
         }
 
         // Update CLO
-        _featureCLO.XPos(_outerElement.originalx + dx);
-        _featureCLO.YPos(_outerElement.originaly + dy);
+        _featureCLO.XPos((_outerElement.originalx + dx) / Settings.ScaleModifier);
+        _featureCLO.YPos((_outerElement.originaly + dy) / Settings.ScaleModifier);
 
         // Raise events
         _this.Moving.RaiseEvent(dx, dy);

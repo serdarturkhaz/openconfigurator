@@ -188,6 +188,8 @@
     <Content Include="Scripts\Plugins\json2.js" />
     <Content Include="Scripts\Plugins\knockout.validation.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
+    <Content Include="UIComponents\PropertyEditor\CompositionRuleInnerEditor\CompositionRuleInnerEditor.js" />
+    <Content Include="UIComponents\PropertyEditor\GroupRelationInnerEditor\GroupRelationInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\RelationInnerEditor\RelationInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\FeatureInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\PropertyEditor.js" />
@@ -233,6 +235,8 @@
     <Content Include="UIComponents\PropertyEditor\PropertyEditor.cshtml" />
     <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\FeatureInnerEditor.cshtml" />
     <Content Include="UIComponents\PropertyEditor\RelationInnerEditor\RelationInnerEditor.cshtml" />
+    <Content Include="UIComponents\PropertyEditor\GroupRelationInnerEditor\GroupRelationInnerEditor.cshtml" />
+    <Content Include="UIComponents\PropertyEditor\CompositionRuleInnerEditor\CompositionRuleInnerEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

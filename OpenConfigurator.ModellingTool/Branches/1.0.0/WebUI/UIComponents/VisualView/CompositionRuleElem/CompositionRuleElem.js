@@ -62,6 +62,9 @@
 
         // Setup other characteristics and elements
         makeSelectable();
+
+        // Bind to the clo
+        _compositionRuleCLO.CompositionRuleType.Changed.AddHandler(new EventHandler(onCLOCompositionRuleTypeChanged));
     }
 
     // Public methods
@@ -91,5 +94,9 @@
     // Event handlers
     var onRelatedFeatureMoving = function () {
         refresh();
+    }
+    var onCLOCompositionRuleTypeChanged = function (newValue) {
+        var newCompositionRuleType = getEnumEntryNameByID(Enums.CompositionRuleTypes, _compositionRuleCLO.CompositionRuleType());
+        _innerElements.connection.Update(newCompositionRuleType);
     }
 }

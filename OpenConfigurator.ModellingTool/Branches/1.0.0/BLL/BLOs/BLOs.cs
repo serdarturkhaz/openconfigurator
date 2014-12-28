@@ -50,17 +50,17 @@ namespace BLL.BLOs
         public static class OR
         {
             public static readonly int? FixedLowerBound = 1;
-            public static readonly int? FixedUpperBound = null;
+            public static readonly int? FixedUpperBound = -1; // not editable & set to nr of child features
         }
         public static class XOR
         {
             public static readonly int? FixedLowerBound = 1;
-            public static readonly int? FixedUpperBound = 1;
+            public static readonly int? FixedUpperBound = 1; 
         }
         public static class CustomOR
         {
             public static readonly int? FixedLowerBound = null;
-            public static readonly int? FixedUpperBound = null;
+            public static readonly int? FixedUpperBound = null; // editable and set to nr of child features
         }
     }
 
@@ -237,7 +237,6 @@ namespace BLL.BLOs
             set;
         }
 
-
         // Constructors
         public Relation()
         {
@@ -329,6 +328,16 @@ namespace BLL.BLOs
                 innerDTO.LowerBound = value;
             }
         }
+        public int? FixedLowerBound
+        {
+            get;
+            set;
+        }
+        public int? FixedUpperBound
+        {
+            get;
+            set;
+        }
 
         // Constructors
         public GroupRelation()
@@ -352,8 +361,13 @@ namespace BLL.BLOs
             {
                 GroupRelationType = GroupRelationTypes.XOR
             };
-            newBLO.UpperBound = (int?)typeof(GroupRelationTypes_Info).GetNestedType(newBLO.GroupRelationType.ToString()).GetField("FixedUpperBound").GetValue(null);
-            newBLO.LowerBound = (int?)typeof(GroupRelationTypes_Info).GetNestedType(newBLO.GroupRelationType.ToString()).GetField("FixedLowerBound").GetValue(null);
+            newBLO.FixedLowerBound = (int?)typeof(GroupRelationTypes_Info).GetNestedType(newBLO.GroupRelationType.ToString()).GetField("FixedLowerBound").GetValue(null);
+            newBLO.FixedUpperBound = (int?)typeof(GroupRelationTypes_Info).GetNestedType(newBLO.GroupRelationType.ToString()).GetField("FixedUpperBound").GetValue(null);
+
+            // Set default initial bounds
+            newBLO.LowerBound = (newBLO.FixedLowerBound == null) ? 0 : newBLO.FixedLowerBound;
+            newBLO.UpperBound = (newBLO.FixedUpperBound == null) ? 1 : newBLO.FixedUpperBound;
+
             return newBLO;
         }
 

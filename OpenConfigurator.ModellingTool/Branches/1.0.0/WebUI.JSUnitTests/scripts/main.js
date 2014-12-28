@@ -51,7 +51,8 @@ var Enums = {
     }
 }
 var EnumExtraInfo = {
-    "RelationTypes_Info": {}
+    RelationTypes_Info: {},
+    GroupRelationTypes_Info: {}
 }
 EnumExtraInfo.RelationTypes_Info[Enums.RelationTypes.Mandatory] = {
     FixedLowerBound: 1,
@@ -65,7 +66,18 @@ EnumExtraInfo.RelationTypes_Info[Enums.RelationTypes.Cloneable] = {
     FixedLowerBound: null,
     FixedUpperBound: null
 }
-
+EnumExtraInfo.GroupRelationTypes_Info[Enums.GroupRelationTypes.OR] = {
+    FixedLowerBound: 1,
+    FixedUpperBound: -1
+}
+EnumExtraInfo.GroupRelationTypes_Info[Enums.GroupRelationTypes.XOR] = {
+    FixedLowerBound: 1,
+    FixedUpperBound: 1
+}
+EnumExtraInfo.GroupRelationTypes_Info[Enums.GroupRelationTypes.Cardinal] = {
+    FixedLowerBound: null,
+    FixedUpperBound: null
+}
 var Settings = {
     UIOrientation: Enums.UIOrientationTypes.Vertical, //determines orientation of diagram - options: Horizontal / Vertical / false (automatic - needs bug fixing to work properly),
     DrawCurves: true,
@@ -356,22 +368,6 @@ var UIStyles = {
                         "stroke-dasharray": ["- "],
                         opacity: 0.5
                     }
-                },
-                Connectors: {
-                    EndConnector: {
-                        RaphaelType: "circle",
-                        DimensionModifier: 0,
-                        Dimensions: {
-                            r: 4 //radius
-                        }
-                    },
-                    StartConnector: {
-                        RaphaelType: "circle",
-                        DimensionModifier: 0,
-                        Dimensions: {
-                            r: 4 //radius
-                        }
-                    }
                 }
             }
         },
@@ -380,22 +376,8 @@ var UIStyles = {
                 Connection: {
                     Line: {
                         attr: {
-                            stroke: "green"
-                        }
-                    },
-                    Connectors: {
-                        StartConnector: {
-                            attr: {
-                                fill: "red",
-                                stroke: "red",
-                                opacity: 0
-                            }
-                        },
-                        EndConnector: {
-                            attr: {
-                                fill: "green",
-                                stroke: "green"
-                            }
+                            stroke: "green",
+                            'arrow-end': 'classic-wide-long'
                         }
                     }
                 }
@@ -404,22 +386,9 @@ var UIStyles = {
                 Connection: {
                     Line: {
                         attr: {
-                            stroke: "green"
-                        }
-                    },
-                    Connectors: {
-                        StartConnector: {
-                            attr: {
-                                fill: "green",
-                                stroke: "green",
-                                opacity: 1
-                            }
-                        },
-                        EndConnector: {
-                            attr: {
-                                fill: "green",
-                                stroke: "green"
-                            }
+                            stroke: "green",
+                            'arrow-end': 'classic-wide-long',
+                            'arrow-start': 'classic-wide-long'
                         }
                     }
                 }
@@ -428,22 +397,9 @@ var UIStyles = {
                 Connection: {
                     Line: {
                         attr: {
-                            stroke: "red"
-                        }
-                    },
-                    Connectors: {
-                        StartConnector: {
-                            attr: {
-                                fill: "red",
-                                stroke: "red",
-                                opacity: 1
-                            }
-                        },
-                        EndConnector: {
-                            attr: {
-                                fill: "red",
-                                stroke: "red"
-                            }
+                            stroke: "red",
+                            'arrow-end': 'classic-wide-long',
+                            'arrow-start': 'classic-wide-long'
                         }
                     }
                 }
@@ -515,7 +471,6 @@ var SystemDefaults = {
         }
     }
 }
-
 
 // CLOs
 var CLOTypes = {
@@ -655,7 +610,6 @@ var RelationCLO = function (clientID, blo) {
     this.ParentFeature = null;
     this.ChildFeature = null;
     this.RelationType = new ObservableField(_innerBLO, "RelationType");
-
     this.FixedUpperBound = new ObservableField(_innerBLO, "FixedUpperBound");
     this.FixedLowerBound = new ObservableField(_innerBLO, "FixedLowerBound");
     this.UpperBound = new ObservableField(_innerBLO, "UpperBound");
@@ -692,11 +646,21 @@ var GroupRelationCLO = function (clientID, blo) {
     this.ParentFeature = null;
     this.ChildFeatures = new ObservableCollection();
     this.GroupRelationType = new ObservableField(_innerBLO, "GroupRelationType");
+    this.FixedUpperBound = new ObservableField(_innerBLO, "FixedUpperBound");
+    this.FixedLowerBound = new ObservableField(_innerBLO, "FixedLowerBound");
     this.UpperBound = new ObservableField(_innerBLO, "UpperBound");
     this.LowerBound = new ObservableField(_innerBLO, "LowerBound");
 
     // Init
     this.Initialize = function () {
+        _this.GroupRelationType.Changed.AddHandler(new EventHandler(function (newValue) {
+            _this.FixedLowerBound(EnumExtraInfo.GroupRelationTypes_Info[newValue].FixedLowerBound);
+            _this.FixedUpperBound(EnumExtraInfo.GroupRelationTypes_Info[newValue].FixedUpperBound);
+
+            // Set default initial bounds
+            _this.LowerBound((_this.FixedLowerBound() == null) ? 0 : _this.FixedLowerBound());
+            _this.UpperBound((_this.FixedUpperBound() == null || _this.FixedUpperBound() == -1) ? _this.ChildFeatures.GetLength() : _this.FixedUpperBound());
+        }));
     }
 }
 var CompositionRuleCLO = function (clientID, blo) {
@@ -963,7 +927,7 @@ var CLOSelectionManager = function () {
         }
         else {
             // No control key
-            if (!clo.Selected()) {
+            if (!clo.Selected() || Object.size(_selectedCLOs) > 1) {
                 clearSelection();
                 selectCLO(clo); // add to selection
                 raiseEvent = true;
@@ -1288,6 +1252,10 @@ UIComponents.ModelExplorer = {};
 UIComponents.PropertyEditor = {};
 UIComponents.PropertyEditor.FeatureInnerEditor = {};
 UIComponents.PropertyEditor.RelationInnerEditor = {};
+UIComponents.PropertyEditor.GroupRelationInnerEditor = {};
+UIComponents.PropertyEditor.CompositionRuleInnerEditor = {};
+UIComponents.PropertyEditor.CustomRuleInnerEditor = {};
+UIComponents.PropertyEditor.CustomFunctionInnerEditor = {};
 UIComponents.VisualView = {};
 UIComponents.VisualView.FeatureElem = {};
 UIComponents.VisualView.RelationElem = {};

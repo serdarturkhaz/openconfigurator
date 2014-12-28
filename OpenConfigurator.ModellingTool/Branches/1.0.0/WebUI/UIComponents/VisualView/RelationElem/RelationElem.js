@@ -154,6 +154,5 @@
     var onCLORelationTypeChanged = function (newValue) {
         var newRelationType = getEnumEntryNameByID(Enums.RelationTypes, _relationCLO.RelationType());
         _innerElements.connection.Update(newRelationType);
-        toggleCardinalityElement();
     }
 }

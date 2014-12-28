@@ -165,6 +165,15 @@
         // Setup other characteristics and elements
         toggleCardinalityElement();
         makeSelectable();
+
+        // Bind to the clo
+        _groupRelationCLO.GroupRelationType.Changed.AddHandler(new EventHandler(onCLOGroupRelationTypeChanged));
+        _groupRelationCLO.UpperBound.Changed.AddHandler(new EventHandler(function (newValue) {
+            toggleCardinalityElement();
+        }));
+        _groupRelationCLO.LowerBound.Changed.AddHandler(new EventHandler(function (newValue) {
+            toggleCardinalityElement();
+        }));
     }
 
     // Public methods
@@ -221,4 +230,14 @@
         refresh();
         refreshArc();
     }
+    var onCLOGroupRelationTypeChanged = function (newValue) {
+        var newGroupRelationType = getEnumEntryNameByID(Enums.GroupRelationTypes, _groupRelationCLO.GroupRelationType());
+
+        // Update
+        for (var i = 0; i < _innerElements.connections.length; i++) {
+            _innerElements.connections[i].Update(newGroupRelationType); //endConnector
+        }
+        _innerElements.rootArc.attr(UIStyles.GroupRelation.SubTypes[newGroupRelationType].RootArc.attr);
+    }
+
 }
