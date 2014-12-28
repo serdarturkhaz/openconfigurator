@@ -151,9 +151,8 @@
         _currentPath = getPath(parentBox, childBox);
 
         // Refresh line 
-        var line = _innerElements.line;
         _outerElement.attr({ path: _currentPath.path });
-        line.attr({ path: _currentPath.path });
+        _innerElements.line.attr({ path: _currentPath.path });
 
         // Refresh position of connectors
         if (_innerElements.connectors.startConnector !== null) {
@@ -181,18 +180,18 @@
         var currentStyle = getCurrentStyle();
         _innerElements.line.attr(currentStyle.Line.attr);
 
-        // Create startConnector
-        if (currentStyle.Connectors.StartConnector !== undefined) {
-            _innerElements.connectors.startConnector = UIComponentProvider.CreateInstance("UIComponents.VisualView.ConnectorElem", [_this, 
-                currentStyle.Connectors.StartConnector, currentStyle.Connectors.StartConnector.attr, Enums.ConnectorPositionTypes.StartPoint, _canvasInstance]);
-            _innerElements.connectors.startConnector.Initialize();
-        }
-
-        // Create endConnector
-        if (currentStyle.Connectors.EndConnector !== undefined) {
-            _innerElements.connectors.endConnector = UIComponentProvider.CreateInstance("UIComponents.VisualView.ConnectorElem", [_this, currentStyle.Connectors.EndConnector, 
-                currentStyle.Connectors.EndConnector.attr, Enums.ConnectorPositionTypes.EndPoint, _canvasInstance]);
-            _innerElements.connectors.endConnector.Initialize();
+        // Create connectors
+        if (currentStyle.Connectors !== undefined) {
+            if (currentStyle.Connectors.StartConnector !== undefined) {
+                _innerElements.connectors.startConnector = UIComponentProvider.CreateInstance("UIComponents.VisualView.ConnectorElem", [_this,
+                    currentStyle.Connectors.StartConnector, currentStyle.Connectors.StartConnector.attr, Enums.ConnectorPositionTypes.StartPoint, _canvasInstance]);
+                _innerElements.connectors.startConnector.Initialize();
+            }
+            if (currentStyle.Connectors.EndConnector !== undefined) {
+                _innerElements.connectors.endConnector = UIComponentProvider.CreateInstance("UIComponents.VisualView.ConnectorElem", [_this, currentStyle.Connectors.EndConnector,
+                    currentStyle.Connectors.EndConnector.attr, Enums.ConnectorPositionTypes.EndPoint, _canvasInstance]);
+                _innerElements.connectors.endConnector.Initialize();
+            }
         }
 
         // Create the main outer element

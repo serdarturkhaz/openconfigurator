@@ -232,9 +232,20 @@ body
     float:left;
     clear:both;
 }
+#propertyEditor .PropertyDiv .Textarea
+{
+    float:left;
+    clear:both;
+}
 #propertyEditor .Textbox
 {
     width:180px;
+}
+#propertyEditor .Textarea
+{
+    width:180px;
+    height:150px;
+    font-size:10px;
 }
 #propertyEditor .Dropdown
 {
@@ -332,7 +343,7 @@ body
 {
     border: 1px solid #F7F7F7;
     padding: 3px;
-    font-size: 12px;
+    font-size: 10px;
 }
 .Textbox:focus, .Textarea:focus
 {
@@ -341,7 +352,7 @@ body
 .Dropdown
 {
     border: 1px solid #F7F7F7;
-    font-size: 12px;
+    font-size: 10px;
     height: 28px;
 }
 .validationElement

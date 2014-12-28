@@ -1,7 +1,7 @@
-﻿UIComponents.PropertyEditor.FeatureInnerEditor = function (container, featureCLO) {
+﻿UIComponents.PropertyEditor.CustomRuleInnerEditor = function (container, customRuleCLO) {
 
     // Fields
-    var _container = container, _featureCLO = featureCLO;
+    var _container = container, _customRuleCLO = customRuleCLO;
     var _innerHtmlElem;
     var _innerElems = {
         attributesContainer: null,
@@ -9,15 +9,16 @@
     };
     var _this = this;
     var _vm = {
-        Name: _featureCLO.Name.extend({
+        Name: _customRuleCLO.Name.extend({
             required: true
         }),
-        Identifier: _featureCLO.Identifier.extend({
+        Identifier: _customRuleCLO.Identifier.extend({
             required: true
-        })
+        }),
+        Expression: _customRuleCLO.Expression
     }
-    _vm.Name.OriginalValue = _featureCLO.Name();
-    _vm.Identifier.OriginalValue = _featureCLO.Identifier();
+    _vm.Name.OriginalValue = _customRuleCLO.Name();
+    _vm.Identifier.OriginalValue = _customRuleCLO.Identifier();
 
     // Init
     this.Initialize = function () {
@@ -42,14 +43,14 @@
     // Public methods
     this.RemoveSelf = function () {
         // Revert if invalid
-        if (!_featureCLO.Name.isValid() || !_featureCLO.Identifier.isValid()) {
-            _featureCLO.Name(_vm.Name.OriginalValue);
-            _featureCLO.Identifier(_vm.Identifier.OriginalValue);
+        if (!_customRuleCLO.Name.isValid() || !_customRuleCLO.Identifier.isValid()) {
+            _customRuleCLO.Name(_vm.Name.OriginalValue);
+            _customRuleCLO.Identifier(_vm.Identifier.OriginalValue);
         }
 
         // Clean up CLO from validation
-        _featureCLO.Name.extend({ validatable: false });
-        _featureCLO.Identifier.extend({ validatable: false });
+        _customRuleCLO.Name.extend({ validatable: false });
+        _customRuleCLO.Identifier.extend({ validatable: false });
 
         // Clean up bindings
         ko.cleanNode(_innerHtmlElem[0]);

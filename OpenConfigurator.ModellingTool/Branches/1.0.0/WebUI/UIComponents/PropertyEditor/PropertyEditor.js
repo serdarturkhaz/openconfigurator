@@ -18,10 +18,8 @@
             _currentInnerEditorInstance = null;
         }
 
-        if (clo.GetType() === CLOTypes.Feature || clo.GetType() === CLOTypes.Relation) {
-            _currentInnerEditorInstance = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor." + clo.GetType() + "InnerEditor", [_innerElems.innerContainer, clo]);
-            _currentInnerEditorInstance.Initialize();
-        }
+        _currentInnerEditorInstance = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor." + clo.GetType() + "InnerEditor", [_innerElems.innerContainer, clo]);
+        _currentInnerEditorInstance.Initialize();
     }
 
     // Init
