@@ -123,6 +123,9 @@
         modelCLO.CustomFunctions.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
 
     }
+    this.OnModelUnloaded = function (modelCLO) {
+
+    }
     function onNodeClicked(node, ctrlKey) {
         var clo = _dataModel.GetByClientID(node.getNodeDataID());
         _cloSelectionManager.ToggleSingleCLO(clo, ctrlKey);

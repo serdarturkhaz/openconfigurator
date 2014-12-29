@@ -108,7 +108,7 @@ namespace BLL.BLOs
         {
             DAL.DTOs.FeatureModel newDTO = new DAL.DTOs.FeatureModel()
             {
-                Name = "New model"
+                Name = "Unnamed Model"
             };
 
             FeatureModel newBLO = new FeatureModel(newDTO);

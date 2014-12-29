@@ -2,6 +2,7 @@
 
 <div id="toolBar">
     <div id="leftItemsArea">
+
         <div class="toolBar-item" id="newModelItem" title="New model">
             <img src="../../Content/Images/Icons/toolbar/new-document.png" />
         </div>
@@ -11,6 +12,7 @@
         <div class="toolBar-item" id="saveModelItem" title="Save changes">
             <img src="../../Content/Images/Icons/toolbar/save.png" />
         </div>
+        <input id="modelNameTextbox" type="text" class="Textbox" title="Name of the current Feature Model" data-bind="value: Name, valueUpdate: 'afterkeydown'" />
     </div>
     <div id="centerItemsArea">
         <div class="toolBar-item" id="newFeatureItem" title="Add a new Feature">
