@@ -764,7 +764,7 @@ var Controller = function () {
         _visualView.Initialize();
         _modelExplorer = UIComponentProvider.CreateInstance("UIComponents.ModelExplorer", [$("#modelExplorerContainer"), _dataModel, _cloSelectionManager]);
         _modelExplorer.Initialize();
-        _commandToolbar = UIComponentProvider.CreateInstance("UIComponents.CommandToolbar", [$("#toolBarContainer"), _this]);
+        _commandToolbar = UIComponentProvider.CreateInstance("UIComponents.CommandToolbar", [$("#toolBarContainer"),_dataModel, _this]);
         _commandToolbar.Initialize();
         _propertyEditor = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor", [$("#propertyEditorContainer"), _dataModel, _cloSelectionManager]);
         _propertyEditor.Initialize();
@@ -772,6 +772,10 @@ var Controller = function () {
         // Setup events and handlers
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
+        _dataModel.ModelLoaded.AddHandler(new EventHandler(_commandToolbar.OnModelLoaded));
+        _dataModel.ModelUnloaded.AddHandler(new EventHandler(_modelExplorer.OnModelUnloaded));
+        _dataModel.ModelUnloaded.AddHandler(new EventHandler(_commandToolbar.OnModelUnloaded));
+
         _visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
         _dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
         _cloSelectionManager.CLOSelectionChanged.AddHandler(new EventHandler(onCLOSelectionChanged));
@@ -795,7 +799,7 @@ var Controller = function () {
 
     // Public methods
     this.NewModel = function () {
-        _dataModel.LoadNewModel();
+        _dataModel.CreateAndLoadNewModel();
     }
     this.AddNewFeature = function () {
         _visualView.StartCreateFeature();
@@ -971,7 +975,7 @@ var DataModel = function (bloService, cloFactory) {
     // Fields
     var _bloService = bloService, _cloFactory = cloFactory;
     var _currentFeatureModelCLO = null;
-    var _dirtyCLOs = {};
+    var _deletedCLOs = {};
     var _this = this;
 
     // Properties
@@ -1008,7 +1012,7 @@ var DataModel = function (bloService, cloFactory) {
         // If it is not already deleted
         if (clo.DataState !== Enums.CLODataStates.Deleted) {
             clo.DataState = Enums.CLODataStates.Deleted; // mark it as deleted
-            _dirtyCLOs[clientID] = clo; // add it to the dirty clo collection
+            _deletedCLOs[clientID] = clo; // add it to the deleted clo collection
 
             // Handle clo type specific delete operation
             switch (clo.GetType()) {
@@ -1052,7 +1056,15 @@ var DataModel = function (bloService, cloFactory) {
             _this.CLODeleted.RaiseEvent(clo);
         }
     }
-    this.LoadNewModel = function () {
+    this.CreateAndLoadNewModel = function () {
+        
+        // Clean up current FeatureModel (if one is present)
+        if (_currentFeatureModelCLO !== null) {
+            _currentFeatureModelCLO = null;
+            _deletedCLOs = {};
+            _cloFactory.Reset();
+            _this.ModelUnloaded.RaiseEvent(_currentFeatureModelCLO);
+        }
 
         // Init a new FeatureModelCLO
         _currentFeatureModelCLO = _cloFactory.CreateNewCLO(CLOTypes.FeatureModel);
@@ -1061,6 +1073,7 @@ var DataModel = function (bloService, cloFactory) {
 
     // Events
     this.ModelLoaded = new Event();
+    this.ModelUnloaded = new Event();
     this.CLODeleted = new Event();
 }
 DataModel.CLOFactory = function (bloService) {
@@ -1177,6 +1190,10 @@ DataModel.CLOFactory = function (bloService) {
         // Register and return it
         _factoryCLORegister[newCLO.GetClientID()] = newCLO;
         return newCLO;
+    }
+    this.Reset = function () {
+        _clientIDCounter = 0;
+        _factoryCLORegister = {};
     }
 }
 DataModel.BLOService = function () {

@@ -189,6 +189,8 @@
     <Content Include="Scripts\Plugins\knockout.validation.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
     <Content Include="UIComponents\PropertyEditor\CompositionRuleInnerEditor\CompositionRuleInnerEditor.js" />
+    <Content Include="UIComponents\PropertyEditor\CustomFunctionInnerEditor\CustomFunctionInnerEditor.js" />
+    <Content Include="UIComponents\PropertyEditor\CustomRuleInnerEditor\CustomRuleInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\GroupRelationInnerEditor\GroupRelationInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\RelationInnerEditor\RelationInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\FeatureInnerEditor.js" />
@@ -237,6 +239,8 @@
     <Content Include="UIComponents\PropertyEditor\RelationInnerEditor\RelationInnerEditor.cshtml" />
     <Content Include="UIComponents\PropertyEditor\GroupRelationInnerEditor\GroupRelationInnerEditor.cshtml" />
     <Content Include="UIComponents\PropertyEditor\CompositionRuleInnerEditor\CompositionRuleInnerEditor.cshtml" />
+    <Content Include="UIComponents\PropertyEditor\CustomRuleInnerEditor\CustomRuleInnerEditor.cshtml" />
+    <Content Include="UIComponents\PropertyEditor\CustomFunctionInnerEditor\CustomFunctionInnerEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

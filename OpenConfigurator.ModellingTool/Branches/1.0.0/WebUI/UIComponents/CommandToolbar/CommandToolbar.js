@@ -1,9 +1,10 @@
-﻿UIComponents.CommandToolbar = function (container, controller) {
+﻿UIComponents.CommandToolbar = function (container, dataModel, controller) {
 
     // Fields
-    var _container = container, _controller = controller;
+    var _container = container, _dataModel = dataModel, _controller = controller;
     var _innerHtmlElem;
     var _innerElems = {
+        modelNameTextbox: null,
         fileCommandItems: {
             newModelItem: null,
             openModelItem: null,
@@ -24,7 +25,7 @@
         }
     };
     var _this = this;
-
+    
     // Private methods
     function removeAllToggleEffects() {
         for (var itemKey in _innerElems.modelManipulationItems) {
@@ -45,6 +46,10 @@
         _innerHtmlElem.appendTo(_container);
 
         // Get references to html elems
+        _innerElems.modelNameTextbox = $(_innerHtmlElem).find("#modelNameTextbox");
+        _innerElems.fileCommandItems.newModelItem = $(_innerHtmlElem).find("#newModelItem");
+        _innerElems.fileCommandItems.openModelItem = $(_innerHtmlElem).find("#openModelItem");
+        _innerElems.fileCommandItems.saveModelItem = $(_innerHtmlElem).find("#saveModelItem");
         _innerElems.modelManipulationItems.newFeatureItem = $(_innerHtmlElem).find("#newFeatureItem");
         _innerElems.modelManipulationItems.newRelationItem = $(_innerHtmlElem).find("#newRelationItem");
         _innerElems.modelManipulationItems.newGroupRelationItem = $(_innerHtmlElem).find("#newGroupRelationItem");
@@ -56,6 +61,9 @@
         _innerElems.visualOptionsItems.toggleOrientationItem = $(_innerHtmlElem).find("#toggleOrientationItem");
 
         // Set event handlers
+        $(_innerElems.fileCommandItems.newModelItem).bind("click", toolbarItemHandlers.newModelItemTriggered);
+        $(_innerElems.fileCommandItems.openModelItem).bind("click", toolbarItemHandlers.openModelItemTriggered);
+        $(_innerElems.fileCommandItems.saveModelItem).bind("click", toolbarItemHandlers.saveModelItemTriggered);
         $(_innerElems.modelManipulationItems.newFeatureItem).bind("click", toolbarItemHandlers.newFeatureItemTriggered);
         $(_innerElems.modelManipulationItems.newRelationItem).bind("click", toolbarItemHandlers.newRelationItemTriggered);
         $(_innerElems.modelManipulationItems.newGroupRelationItem).bind("click", toolbarItemHandlers.newGroupRelationItemTriggered);
@@ -77,6 +85,7 @@
         });
 
         // Setup tooltips
+        $(_innerHtmlElem).find(".Textbox").tipTip();
         $(_innerHtmlElem).find(".toolBar-item").tipTip();
     }
 
@@ -97,7 +106,31 @@
             addToggleEffect(itemToVisualViewStateMappings[newStateName]);
         }
     }
+    this.OnModelLoaded = function (modelCLO) {
+        // Bind to it
+        var vm = {
+            Name: modelCLO.Name.extend({
+                required: true
+            })
+        }
+        ko.applyBindings(vm, _innerElems.modelNameTextbox[0]);
+
+    }
+    this.OnModelUnloaded = function (modelCLO) {
+        // Clean up bindings and html
+        ko.cleanNode(_innerElems.modelNameTextbox[0]);
+        _innerElems.modelNameTextbox.val("");
+    }
     var toolbarItemHandlers = {
+        newModelItemTriggered: function () {
+            _controller.NewModel();
+        },
+        openModelItemTriggered: function () {
+            alert("Open existing model!");
+        },
+        saveModelItemTriggered: function () {
+            alert("Save changes please!");
+        },
         newFeatureItemTriggered: function () {
             _controller.AddNewFeature();
         },
