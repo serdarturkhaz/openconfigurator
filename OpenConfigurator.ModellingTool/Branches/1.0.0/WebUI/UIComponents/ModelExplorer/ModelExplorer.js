@@ -124,7 +124,9 @@
 
     }
     this.OnModelUnloaded = function (modelCLO) {
-
+        // Create new tree
+        $(_innerHtmlElem).html("");
+        _tree = $(_innerHtmlElem).simpleTree(_treeOptions);
     }
     function onNodeClicked(node, ctrlKey) {
         var clo = _dataModel.GetByClientID(node.getNodeDataID());

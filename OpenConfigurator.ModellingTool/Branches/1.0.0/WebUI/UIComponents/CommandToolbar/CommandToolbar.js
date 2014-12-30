@@ -114,7 +114,6 @@
             })
         }
         ko.applyBindings(vm, _innerElems.modelNameTextbox[0]);
-
     }
     this.OnModelUnloaded = function (modelCLO) {
         // Clean up bindings and html
