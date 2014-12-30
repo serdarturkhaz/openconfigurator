@@ -208,6 +208,13 @@
         modelCLO.GroupRelations.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
         modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
     }
+    this.OnModelUnloaded = function (modelCLO) {
+        for (var clientID in _visualUIElems) {
+            var UIElem = _visualUIElems[clientID];
+            UIElem.RemoveSelf();
+            delete _visualUIElems[clientID];
+        }
+    }
     var modelHandlers = {
         onFeatureAdded: function (featureCLO) {
             addFeatureElem(featureCLO);

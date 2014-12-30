@@ -773,8 +773,9 @@ var Controller = function () {
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_commandToolbar.OnModelLoaded));
+        _dataModel.ModelUnloaded.AddHandler(new EventHandler(_visualView.OnModelUnloaded));
+        _dataModel.ModelUnloaded.AddHandler(new EventHandler(_modelExplorer.OnModelUnloaded));
         _dataModel.ModelUnloaded.AddHandler(new EventHandler(_commandToolbar.OnModelUnloaded));
-        
 
         _visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
         _dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
@@ -788,7 +789,7 @@ var Controller = function () {
 
         });
 
-        // Focus handlers
+        // Other handlers
         _visualView.Focus.AddHandler(new EventHandler(function () {
             onViewFocused(_visualView);
         }));
@@ -799,6 +800,7 @@ var Controller = function () {
 
     // Public methods
     this.NewModel = function () {
+        _cloSelectionManager.DeselectAllCLOs();
         _dataModel.CreateAndLoadNewModel();
     }
     this.AddNewFeature = function () {
@@ -1059,7 +1061,7 @@ var DataModel = function (bloService, cloFactory) {
     this.CreateAndLoadNewModel = function () {
         
         // Clean up current FeatureModel (if one is present)
-        if (_currentFeatureModelCLO === null) {
+        if (_currentFeatureModelCLO !== null) {
             _currentFeatureModelCLO = null;
             _deletedCLOs = {};
             _cloFactory.Reset();

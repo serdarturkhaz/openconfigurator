@@ -773,6 +773,7 @@ var Controller = function () {
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_commandToolbar.OnModelLoaded));
+        _dataModel.ModelUnloaded.AddHandler(new EventHandler(_visualView.OnModelUnloaded));
         _dataModel.ModelUnloaded.AddHandler(new EventHandler(_modelExplorer.OnModelUnloaded));
         _dataModel.ModelUnloaded.AddHandler(new EventHandler(_commandToolbar.OnModelUnloaded));
 
@@ -788,7 +789,7 @@ var Controller = function () {
 
         });
 
-        // Focus handlers
+        // Other handlers
         _visualView.Focus.AddHandler(new EventHandler(function () {
             onViewFocused(_visualView);
         }));
@@ -799,6 +800,7 @@ var Controller = function () {
 
     // Public methods
     this.NewModel = function () {
+        _cloSelectionManager.DeselectAllCLOs();
         _dataModel.CreateAndLoadNewModel();
     }
     this.AddNewFeature = function () {
@@ -1174,7 +1176,7 @@ DataModel.CLOFactory = function (bloService) {
 
         // Create the CLO
         var convertedCLO = FromBLO[cloType](blo);
-        convertedCLO.DataState = Enums.CLODataStates.Unchanged;
+        //convertedCLO.DataState = Enums.CLODataStates.Unchanged;
 
         // Register and return it
         _factoryCLORegister[convertedCLO.GetClientID()] = convertedCLO;
@@ -1185,7 +1187,7 @@ DataModel.CLOFactory = function (bloService) {
         // Create the CLO
         var newBLO = _bloService.GetDefaultBLO(cloType);
         var newCLO = FromBLO[cloType](newBLO);
-        newCLO.DataState = Enums.CLODataStates.New;
+        //newCLO.DataState = Enums.CLODataStates.New;
 
         // Register and return it
         _factoryCLORegister[newCLO.GetClientID()] = newCLO;
