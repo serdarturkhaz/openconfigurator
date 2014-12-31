@@ -30,11 +30,11 @@
     function removeAllToggleEffects() {
         for (var itemKey in _innerElems.modelManipulationItems) {
             var item = _innerElems.modelManipulationItems[itemKey];
-            $(item).removeClass("toolBar-item-active");
+            $(item).removeClass("iconButton-active");
         }
     }
     function addToggleEffect(item) {
-        $(item).addClass("toolBar-item-active");
+        $(item).addClass("iconButton-active");
     }
 
     // Init
@@ -86,7 +86,7 @@
 
         // Setup tooltips
         $(_innerHtmlElem).find(".Textbox").tipTip();
-        $(_innerHtmlElem).find(".toolBar-item").tipTip();
+        $(_innerHtmlElem).find(".iconButton").tipTip();
     }
 
     // Event handlers

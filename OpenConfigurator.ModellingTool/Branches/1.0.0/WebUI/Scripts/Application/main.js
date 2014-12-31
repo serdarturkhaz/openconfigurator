@@ -26,6 +26,16 @@ var Enums = {
             CreatingNewCompositionRule: "CreatingNewCompositionRule"
         }
     },
+    AttributeTypes: {
+        Constant: 0,
+        Dynamic: 1,
+        UserDefined: 2
+    },
+    AttributeDataTypes: {
+        Integer : 0,
+        Boolean : 1,
+        String : 2
+    },
     RelationTypes: {
         Mandatory: 0,
         Optional: 1,
@@ -540,6 +550,8 @@ var FeatureModelCLO = function (clientID, blo) {
             if (clo.Name !== undefined)
                 clo.Name(identity.name);
         }
+
+
     }
 }
 var FeatureCLO = function (clientID, blo) {
@@ -557,9 +569,9 @@ var FeatureCLO = function (clientID, blo) {
         return CLOTypes.Feature;
     }
     this.Selected = new ObservableField();
+    this.Attributes = new ObservableCollection();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
-    this.Attributes = new ObservableCollection();
     this.XPos = new ObservableField(_innerBLO, "XPos");
     this.YPos = new ObservableField(_innerBLO, "YPos");
     this.RelatedCLOS = new ObservableCollection();
@@ -585,6 +597,10 @@ var AttributeCLO = function (clientID, blo) {
     }
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
+    this.Description = new ObservableField(_innerBLO, "Description");
+    this.AttributeType = new ObservableField(_innerBLO, "AttributeType");
+    this.AttributeDataType = new ObservableField(_innerBLO, "AttributeDataType");
+    this.ParentFeature = null;
 
     // Init
     this.Initialize = function () {
@@ -764,7 +780,7 @@ var Controller = function () {
         _visualView.Initialize();
         _modelExplorer = UIComponentProvider.CreateInstance("UIComponents.ModelExplorer", [$("#modelExplorerContainer"), _dataModel, _cloSelectionManager]);
         _modelExplorer.Initialize();
-        _commandToolbar = UIComponentProvider.CreateInstance("UIComponents.CommandToolbar", [$("#toolBarContainer"),_dataModel, _this]);
+        _commandToolbar = UIComponentProvider.CreateInstance("UIComponents.CommandToolbar", [$("#toolBarContainer"), _dataModel, _this]);
         _commandToolbar.Initialize();
         _propertyEditor = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor", [$("#propertyEditorContainer"), _dataModel, _cloSelectionManager]);
         _propertyEditor.Initialize();
@@ -1059,7 +1075,7 @@ var DataModel = function (bloService, cloFactory) {
         }
     }
     this.CreateAndLoadNewModel = function () {
-        
+
         // Clean up current FeatureModel (if one is present)
         if (_currentFeatureModelCLO !== null) {
             _currentFeatureModelCLO = null;

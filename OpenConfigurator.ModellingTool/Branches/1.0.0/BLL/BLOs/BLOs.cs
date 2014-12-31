@@ -25,6 +25,18 @@ namespace BLL.BLOs
         MutualDependency = 1,
         MutualExclusion = 2
     };
+    public enum AttributeTypes
+    {
+        Constant = 0,
+        Dynamic = 1,
+        UserDefined = 2
+    }
+    public enum AttributeDataTypes
+    {
+        Integer = 0,
+        Boolean = 1,
+        String = 2
+    }
 
     // Extra information for enums (was previously stored in the SQL db)
     public static class RelationTypes_Info
@@ -166,6 +178,85 @@ namespace BLL.BLOs
             return newBLO;
         }
     }
+    public class Attribute : iBLO
+    {
+        // Fields
+        protected DAL.DTOs.Attribute innerDTO;
+
+        // Properties
+        public string Identifier
+        {
+            get
+            {
+                return innerDTO.Identifier;
+            }
+            set
+            {
+                innerDTO.Identifier = value;
+            }
+        }
+        public AttributeTypes AttributeType
+        {
+            get
+            {
+                return (AttributeTypes)Enum.Parse(typeof(AttributeTypes), ((DAL.DTOs.Attribute)innerDTO).AttributeTypeID.ToString());
+            }
+            set
+            {
+                innerDTO.AttributeTypeID = (int)value;
+            }
+        }
+        public AttributeDataTypes AttributeDataType
+        {
+            get
+            {
+                return (AttributeDataTypes)Enum.Parse(typeof(AttributeDataTypes), ((DAL.DTOs.AttributeDataTypes)innerDTO).AttributeDataTypeID.ToString());
+            }
+            set
+            {
+                innerDTO.AttributeDataTypeID = (int)value;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return innerDTO.Name;
+            }
+            set
+            {
+                innerDTO.Name = value;
+            }
+        }
+        public Feature ParentFeature
+        {
+            get;
+            set;
+        }
+
+        // Constructors
+        public Attribute()
+        {
+
+        }
+        public Attribute(DAL.DTOs.Attribute dataObj)
+        {
+            this.innerDTO = dataObj;
+        }
+
+        // Static instance creator
+        internal static Attribute CreateDefault()
+        {
+            DAL.DTOs.Attribute newDTO = new DAL.DTOs.Attribute()
+            {
+                Name = "Default attribute"
+            };
+
+            Attribute newBLO = new Attribute(newDTO);
+            return newBLO;
+        }
+    }
+
     public class Relation : iBLO
     {
         // Fields

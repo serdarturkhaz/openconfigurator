@@ -62,6 +62,17 @@ namespace DAL.DTOs
             get;
             set;
         }
+        public virtual int AttributeTypeID
+        {
+            get;
+            set;
+        }
+        public virtual int AttributeDataTypeID
+        {
+            get;
+            set;
+        }
+
     }
     public class Relation : iDTO
     {
