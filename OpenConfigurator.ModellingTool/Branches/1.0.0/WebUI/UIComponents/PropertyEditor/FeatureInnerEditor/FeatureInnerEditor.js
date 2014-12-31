@@ -14,7 +14,12 @@
         }),
         Identifier: _featureCLO.Identifier.extend({
             required: true
-        })
+        }),
+        people: [
+            { firstName: 'Bert', lastName: 'Bertington' },
+            { firstName: 'Charles', lastName: 'Charlesforth' },
+            { firstName: 'Denise', lastName: 'Dentiste' }
+        ]
     }
     _vm.Name.OriginalValue = _featureCLO.Name();
     _vm.Identifier.OriginalValue = _featureCLO.Identifier();
@@ -29,6 +34,8 @@
 
         // Get references to html elems
         _innerElems.focusElem = $(_innerHtmlElem).find("#NameTextbox");
+        _innerElems.attributesContainer = $(_innerHtmlElem).find("#AttributeListContainer");
+
 
         // Apply bindings
         ko.applyBindings(_vm, _innerHtmlElem[0]);
@@ -37,6 +44,9 @@
         setTimeout(function () {
             _innerElems.focusElem.select();
         }, 0);
+
+        //
+        $(_innerHtmlElem).find(".iconButton-small").tipTip();
     }
 
     // Public methods

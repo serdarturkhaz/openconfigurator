@@ -1,5 +1,5 @@
 ﻿@inherits System.Web.Mvc.WebViewPage
-<div>
+<div id="FeatureInnerEditorDiv">
     <div class="PropertyDiv">
         <span class="label-Small">Name:</span>
         <input id="NameTextbox" class="Textbox" type="text" data-bind="value: Name, valueUpdate: 'afterkeydown'" />
@@ -8,6 +8,19 @@
         <span class="label-Small">Identifier:</span>
         <input class="Textbox" type="text" data-bind="value: Identifier, valueUpdate: 'afterkeydown'" />
     </div>
-    <div style="clear:both"></div>
 
+    <div id="AttributesSection">
+        <span class="headerLabel">Attributes:</span>
+        <div class="iconButton-small" id="newAttributeButton" title="Add a new Attribute">
+            <img src="../../Content/Images/Icons/add.png" />
+        </div>
+        <div id="AttributeListContainer"  data-bind="foreach: people">
+            <div class="attributeElem">
+                <span data-bind="text: firstName"></span>
+                <img src="../../Content/Images/Icons/delete.png" />
+            </div>
+
+        </div>
+    </div>
+    <div style="clear: both"></div>
 </div>

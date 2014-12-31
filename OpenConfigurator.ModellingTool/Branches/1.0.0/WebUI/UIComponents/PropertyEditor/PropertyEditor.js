@@ -18,6 +18,7 @@
             _currentInnerEditorInstance = null;
         }
 
+        _innerElems.headerLabel.text(clo.GetType() + " properties");
         _currentInnerEditorInstance = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor." + clo.GetType() + "InnerEditor", [_innerElems.innerContainer, clo]);
         _currentInnerEditorInstance.Initialize();
     }
