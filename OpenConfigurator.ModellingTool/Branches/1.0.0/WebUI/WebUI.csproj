@@ -191,6 +191,7 @@
     <Content Include="UIComponents\PropertyEditor\CompositionRuleInnerEditor\CompositionRuleInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\CustomFunctionInnerEditor\CustomFunctionInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\CustomRuleInnerEditor\CustomRuleInnerEditor.js" />
+    <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\AttributeInnerEditor\AttributeInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\GroupRelationInnerEditor\GroupRelationInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\RelationInnerEditor\RelationInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\FeatureInnerEditor.js" />
@@ -227,7 +228,6 @@
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
-    <Folder Include="UIComponents\PropertyEditor\FeatureInnerEditor\AttributeInnerEditor\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Images\Layout\logo2.xcf" />
@@ -242,6 +242,7 @@
     <Content Include="UIComponents\PropertyEditor\CompositionRuleInnerEditor\CompositionRuleInnerEditor.cshtml" />
     <Content Include="UIComponents\PropertyEditor\CustomRuleInnerEditor\CustomRuleInnerEditor.cshtml" />
     <Content Include="UIComponents\PropertyEditor\CustomFunctionInnerEditor\CustomFunctionInnerEditor.cshtml" />
+    <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\AttributeInnerEditor\AttributeInnerEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

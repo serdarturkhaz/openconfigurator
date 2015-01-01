@@ -72,6 +72,11 @@ namespace DAL.DTOs
             get;
             set;
         }
+        public string ConstantValue
+        {
+            get;
+            set;
+        }
 
     }
     public class Relation : iDTO

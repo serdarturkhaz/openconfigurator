@@ -29,7 +29,7 @@ namespace BLL.BLOs
     {
         Constant = 0,
         Dynamic = 1,
-        UserDefined = 2
+        UserInput = 2
     }
     public enum AttributeDataTypes
     {
@@ -230,6 +230,17 @@ namespace BLL.BLOs
                 innerDTO.AttributeDataTypeID = (int)value;
             }
         }
+        public string ConstantValue
+        {
+            get
+            {
+                return innerDTO.ConstantValue;
+            }
+            set
+            {
+                innerDTO.ConstantValue = value;
+            }
+        }
         public string Name
         {
             get
@@ -266,6 +277,8 @@ namespace BLL.BLOs
             };
 
             Attribute newBLO = new Attribute(newDTO);
+            newBLO.AttributeType = AttributeTypes.UserInput;
+            newBLO.AttributeDataType = AttributeDataTypes.Integer;
             return newBLO;
         }
     }

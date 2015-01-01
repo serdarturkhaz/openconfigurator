@@ -29,7 +29,7 @@ var Enums = {
     AttributeTypes: {
         Constant: 0,
         Dynamic: 1,
-        UserDefined: 2
+        UserInput: 2
     },
     AttributeDataTypes: {
         Integer: 0,
@@ -516,7 +516,7 @@ var FeatureModelCLO = function (clientID, blo) {
     this.CustomFunctions = new ObservableCollection();
 
     // Private methods
-    function getNewIdentifier(cloType, collection) {
+    function getNewCLOIdentifier(cloType, collection) {
         var identifier = cloType + "_" + collection.GetLength();
         var name = cloType + " " + collection.GetLength();
 
@@ -544,7 +544,7 @@ var FeatureModelCLO = function (clientID, blo) {
         // If the clo to be added doesnt have an identifier (it is new), provide it with one
         if (clo.Identifier !== undefined && clo.Identifier() === null) {
             var collection = _this[clo.GetType() + "s"]; // get the collection corresponding to the type of the given CLO 
-            var identity = getNewIdentifier(clo.GetType(), collection);
+            var identity = getNewCLOIdentifier(clo.GetType(), collection);
 
             clo.Identifier(identity.identifier);
             if (clo.Name !== undefined)
@@ -576,9 +576,40 @@ var FeatureCLO = function (clientID, blo) {
     this.YPos = new ObservableField(_innerBLO, "YPos");
     this.RelatedCLOS = new ObservableCollection();
 
+    // Private methods
+    function getNewAttributeIdentifier() {
+        var identifier = CLOTypes.Attribute + _this.Attributes.GetLength();
+        var name = CLOTypes.Attribute + _this.Attributes.GetLength();
+
+        return {
+            identifier: identifier,
+            name: name
+        };
+    }
+
     // Init
     this.Initialize = function () {
 
+
+
+        // Bind to attributes collection
+        _this.Attributes.Added.AddHandler(new EventHandler(onAttributeCLOAdded));
+
+
+    }
+
+    // Event handlers
+    var onAttributeCLOAdded = function (clo) {
+        clo.ParentFeature = _this;
+
+        // If the AttributeCLO to be added doesnt have an identifier (it is new), provide it with one
+        if (clo.Identifier !== undefined && clo.Identifier() === null) {
+            var identity = getNewAttributeIdentifier();
+
+            clo.Identifier(identity.identifier);
+            if (clo.Name !== undefined)
+                clo.Name(identity.name);
+        }
     }
 }
 var AttributeCLO = function (clientID, blo) {
@@ -1116,7 +1147,7 @@ DataModel.CLOFactory = function (bloService) {
             return newCLO;
         },
         Feature: function (blo) {
-            
+
             // Create it
             var newClientID = getNewClientID();
             var newCLO = new FeatureCLO(newClientID, blo);
@@ -1125,7 +1156,6 @@ DataModel.CLOFactory = function (bloService) {
             // Child Attributes
             for (var i = 0; i < blo.Attributes.length; i++) {
                 var newAttribute = FromBLO.Attribute(blo.Attributes[i]);
-                newAttribute.ParentFeature = newCLO;
                 newAttribute.Initialize();
                 newCLO.Attributes.Add(newAttribute);
             }
