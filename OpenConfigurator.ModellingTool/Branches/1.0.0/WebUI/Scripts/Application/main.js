@@ -507,6 +507,9 @@ var FeatureModelCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.FeatureModel;
     }
+    this.GetBLO = function () {
+        return _innerBLO;
+    }
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Features = new ObservableCollection();
     this.Relations = new ObservableCollection();
@@ -887,6 +890,9 @@ var Controller = function () {
     this.ToggleOrientation = function () {
         _visualView.ToggleOrientation();
     }
+    this.SaveChanges = function () {
+        _dataModel.SaveChanges();
+    }
 
     // Event handlers
     var onViewFocused = function (viewInFocus) {
@@ -1128,6 +1134,10 @@ var DataModel = function (bloService, cloFactory) {
         _currentFeatureModelCLO = _cloFactory.CreateNewCLO(CLOTypes.FeatureModel);
         _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
     }
+    this.SaveChanges = function () {
+        var featureModelBLO = _cloFactory.ToBLO(_currentFeatureModelCLO);
+        _bloService.SaveChanges(featureModelBLO);
+    }
 
     // Events
     this.ModelLoaded = new Event();
@@ -1232,6 +1242,16 @@ DataModel.CLOFactory = function (bloService) {
             return newCLO;
         }
     }
+    var ToBLO = {
+        FeatureModel: function (clo) {
+
+            //
+            var blo = clo.GetBLO();
+
+            //
+            return blo;
+        }
+    }
 
     // Fields
     var _bloService = bloService;
@@ -1252,11 +1272,11 @@ DataModel.CLOFactory = function (bloService) {
     this.GetByClientID = function (clientID) {
         return _factoryCLORegister[clientID];
     }
-    this.ConvertToCLOFromBLO = function (cloType, blo) {
+    this.ToBLO = function (clo) {
 
-        // Create the CLO
-        var convertedCLO = FromBLO[cloType](blo);
-        return convertedCLO;
+        // Get the BLO
+        var blo = ToBLO[clo.GetType()](clo);
+        return blo;
     }
     this.CreateNewCLO = function (cloType) {
 
@@ -1274,7 +1294,7 @@ DataModel.BLOService = function () {
 
     // Fields
     var _this = this;
-
+    
     // Init
     this.Initialize = function () {
 
@@ -1287,7 +1307,28 @@ DataModel.BLOService = function () {
         $.ajax({
             type: "Get",
             url: "api/GlobalAPI/CreateDefaultBLO",
-            data: { bloName: bloTypeName },
+            data: { bloType: bloTypeName },
+            async: false,
+            success: function (response) {
+                newDefaultBLO = response;
+            }
+        });
+
+        return newDefaultBLO;
+    }
+    this.SaveChanges = function (featureModelBLO) {
+
+        var newDefaultBLO = null;
+        $.ajax({
+            // For string
+            //contentType: "application/x-www-form-urlencoded",
+            //data: "=" + encodeURIComponent("hello"),
+            //data: "=" + encodeURIComponent(JSON.stringify(featureModelBLO)),
+
+            dataType: "json",
+            type: "POST",
+            url: "api/GlobalAPI/SaveChanges",
+            data: JSON.stringify(featureModelBLO),
             async: false,
             success: function (response) {
                 newDefaultBLO = response;
