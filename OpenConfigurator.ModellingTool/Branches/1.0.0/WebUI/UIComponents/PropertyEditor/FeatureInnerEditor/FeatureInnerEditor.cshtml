@@ -11,15 +11,17 @@
 
     <div id="AttributesSection">
         <span class="headerLabel">Attributes:</span>
-        <div class="iconButton-small" id="newAttributeButton" title="Add a new Attribute">
+        <div class="iconButton-small" id="newAttributeButton" title="Add a new Attribute" data-bind="click: AddAttribute">
             <img src="../../Content/Images/Icons/add.png" />
         </div>
-        <div id="AttributeListContainer"  data-bind="foreach: people">
-            <div class="attributeElem">
-                <span data-bind="text: firstName"></span>
-                <img src="../../Content/Images/Icons/delete.png" />
+        <div id="AttributeListContainer">
+            <span id="noDataLabel" data-bind="visible: Attributes().length == 0">There are no Attributes</span>
+            <div data-bind="foreach: Attributes">
+                <div class="attributeElem">
+                    <span data-bind="text: Name"></span>
+                    <img data-bind="click: $root.RemoveAttribute" src="../../Content/Images/Icons/delete.png" />
+                </div>
             </div>
-
         </div>
     </div>
     <div style="clear: both"></div>

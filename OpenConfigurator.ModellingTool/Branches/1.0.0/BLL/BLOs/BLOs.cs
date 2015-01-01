@@ -83,7 +83,11 @@ namespace BLL.BLOs
         protected DAL.DTOs.FeatureModel innerDTO;
         protected List<Feature> features = new List<Feature>();
         protected List<Relation> relations = new List<Relation>();
+        protected List<GroupRelation> groupRelations = new List<GroupRelation>();
         protected List<CompositionRule> compositionRules = new List<CompositionRule>();
+        protected List<CustomRule> customRules = new List<CustomRule>();
+        protected List<CustomFunction> customFunctions = new List<CustomFunction>();
+
 
         // Properties
         public string Name
@@ -131,6 +135,8 @@ namespace BLL.BLOs
     {
         // Fields
         protected DAL.DTOs.Feature innerDTO;
+        protected List<Attribute> attributes = new List<Attribute>();
+
 
         // Properties
         public string Identifier
@@ -155,6 +161,13 @@ namespace BLL.BLOs
                 innerDTO.Name = value;
             }
         }
+        public List<Attribute> Attributes
+        {
+            get
+            {
+                return attributes;
+            }
+        }
 
         // Constructors
         public Feature()
@@ -173,8 +186,8 @@ namespace BLL.BLOs
             {
                 Name = "Test name"
             };
-
             Feature newBLO = new Feature(newDTO);
+
             return newBLO;
         }
     }
@@ -210,7 +223,7 @@ namespace BLL.BLOs
         {
             get
             {
-                return (AttributeDataTypes)Enum.Parse(typeof(AttributeDataTypes), ((DAL.DTOs.AttributeDataTypes)innerDTO).AttributeDataTypeID.ToString());
+                return (AttributeDataTypes)Enum.Parse(typeof(AttributeDataTypes), ((DAL.DTOs.Attribute)innerDTO).AttributeDataTypeID.ToString());
             }
             set
             {

@@ -207,7 +207,6 @@ body
     padding-top: 7px;
     padding-bottom: 10px;
 }
-
 #propertyEditor .PropertyDiv
 {
     float:left;
@@ -254,7 +253,6 @@ body
 {
     background: #F5F5F5;
 }
-
 #propertyEditor #FeatureInnerEditorDiv #AttributesSection
 {
     float: left;
@@ -281,23 +279,49 @@ body
     width:100%;
     overflow-y:scroll;
     height:150px;
-    margin-top:3px;
+    margin-top:4px;
 }
+#propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer #noDataLabel
+{
+    color:gray;
+    font-size:10px;
+    font-family:Arial;
+}
+
 #propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer .attributeElem
 {
     float: left;
     clear: both;
     width: 100%;
     background: #F9F9F9;
-    border: 1px solid #E6E6E6;
+    border: 1px solid #F2F2F2;
     box-sizing: border-box;
     padding: 3px 3px 3px 6px;
-    margin-bottom:2px;
+    margin-bottom: 3px;
+    border-radius: 3px;
+}
+#propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer .attributeElem:hover
+{
+    background: #F0F0F0;
+    border: 1px solid #E2E2E2;
 }
 #propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer .attributeElem span
 {   
     font-size:11px;
+    cursor:default;
 }
+#propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer .attributeElem img
+{   
+    visibility:hidden;
+    float:right;
+    margin-top:2px;
+    cursor:pointer;
+}
+#propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer .attributeElem:hover img
+{
+    visibility:visible;
+}
+
 
 /*RoundedBox*/
 .roundedBox

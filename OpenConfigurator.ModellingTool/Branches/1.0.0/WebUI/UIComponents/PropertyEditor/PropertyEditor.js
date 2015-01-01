@@ -9,17 +9,23 @@
         innerContainer: null
     };
     var _this = this;
+    var _specializedDataModel = {
+        CreateNewCLO: _dataModel.CreateNewCLO,
+        DeleteByClientID: _dataModel.DeleteByClientID
+    }
 
     // Private methods
     function loadInnerEditor(clo) {
 
+        // Clear current editor instance (if one exists)
         if (_currentInnerEditorInstance) {
             _currentInnerEditorInstance.RemoveSelf();
             _currentInnerEditorInstance = null;
         }
 
+        // 
         _innerElems.headerLabel.text(clo.GetType() + " properties");
-        _currentInnerEditorInstance = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor." + clo.GetType() + "InnerEditor", [_innerElems.innerContainer, clo]);
+        _currentInnerEditorInstance = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor." + clo.GetType() + "InnerEditor", [_innerElems.innerContainer, clo, _specializedDataModel]);
         _currentInnerEditorInstance.Initialize();
     }
 
