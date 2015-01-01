@@ -88,7 +88,6 @@ namespace BLL.BLOs
         protected List<CustomRule> customRules = new List<CustomRule>();
         protected List<CustomFunction> customFunctions = new List<CustomFunction>();
 
-
         // Properties
         public string Name
         {
@@ -108,11 +107,46 @@ namespace BLL.BLOs
                 return features;
             }
         }
+        public List<Relation> Relations
+        {
+            get
+            {
+                return relations;
+            }
+        }
+        public List<GroupRelation> GroupRelations
+        {
+            get
+            {
+                return groupRelations;
+            }
+        }
+        public List<CompositionRule> CompositionRules
+        {
+            get
+            {
+                return compositionRules;
+            }
+        }
+        public List<CustomRule> CustomRules
+        {
+            get
+            {
+                return customRules;
+            }
+        }
+        public List<CustomFunction> CustomFunctions
+        {
+            get
+            {
+                return customFunctions;
+            }
+        }
 
         // Constructors
         public FeatureModel()
         {
-
+            innerDTO = new DAL.DTOs.FeatureModel();
         }
         public FeatureModel(DAL.DTOs.FeatureModel dataObj)
         {
@@ -136,7 +170,6 @@ namespace BLL.BLOs
         // Fields
         protected DAL.DTOs.Feature innerDTO;
         protected List<Attribute> attributes = new List<Attribute>();
-
 
         // Properties
         public string Identifier

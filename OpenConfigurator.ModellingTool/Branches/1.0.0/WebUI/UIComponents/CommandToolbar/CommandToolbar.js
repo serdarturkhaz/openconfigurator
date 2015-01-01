@@ -128,7 +128,7 @@
             alert("Open existing model!");
         },
         saveModelItemTriggered: function () {
-            alert("Save changes please!");
+            _controller.SaveChanges();
         },
         newFeatureItemTriggered: function () {
             _controller.AddNewFeature();
