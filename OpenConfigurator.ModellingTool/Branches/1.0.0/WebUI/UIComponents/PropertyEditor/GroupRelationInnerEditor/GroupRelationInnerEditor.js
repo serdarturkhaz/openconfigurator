@@ -4,10 +4,9 @@
     var _container = container, _groupRelationCLO = groupRelationCLO;
     var _innerHtmlElem;
     var _this = this;
-    var _koGroupRelationTypes = createKOObservableArrayFromEnum(Enums.GroupRelationTypes);
     var _vm = {
         GroupRelationType: _groupRelationCLO.GroupRelationType,
-        GroupRelationTypes: _koGroupRelationTypes,
+        GroupRelationTypes: createKOObservableArrayFromEnum(Enums.GroupRelationTypes),
         Identifier: _groupRelationCLO.Identifier.extend({
             required: true,
         }),

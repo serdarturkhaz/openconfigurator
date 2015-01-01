@@ -278,7 +278,7 @@ body
     clear:both;
     width:100%;
     overflow-y:scroll;
-    height:150px;
+    height:110px;
     margin-top:4px;
 }
 #propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer #noDataLabel
@@ -287,7 +287,6 @@ body
     font-size:10px;
     font-family:Arial;
 }
-
 #propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer .attributeElem
 {
     float: left;
@@ -305,6 +304,11 @@ body
     background: #F0F0F0;
     border: 1px solid #E2E2E2;
 }
+#propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer .attributeElem[selected]
+{
+    background: #E9E9E9;
+    border: 1px solid #DBDBDB;
+}
 #propertyEditor #FeatureInnerEditorDiv #AttributesSection #AttributeListContainer .attributeElem span
 {   
     font-size:11px;
@@ -321,7 +325,24 @@ body
 {
     visibility:visible;
 }
+#propertyEditor #FeatureInnerEditorDiv #AttributesSection #attributeEditorContainer
+{
+    float:left;
+    clear:both;
+    width:auto;
+}
 
+#propertyEditor #FeatureInnerEditorDiv #AttributesSection #attributeEditorContainer #AttributeInnerEditorDiv
+{
+    margin-top:10px;
+    border-top:solid 1px gray;
+    padding-top:10px;
+    float:left;
+}
+#propertyEditor #FeatureInnerEditorDiv #AttributesSection #attributeEditorContainer #AttributeInnerEditorDiv .headerLabel
+{
+    margin-bottom:6px;
+}
 
 /*RoundedBox*/
 .roundedBox

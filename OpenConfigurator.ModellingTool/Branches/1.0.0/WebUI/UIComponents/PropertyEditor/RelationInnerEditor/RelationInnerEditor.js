@@ -4,10 +4,9 @@
     var _container = container, _relationCLO = relationCLO;
     var _innerHtmlElem;
     var _this = this;
-    var _koRelationTypes = createKOObservableArrayFromEnum(Enums.RelationTypes);
     var _vm = {
         RelationType: _relationCLO.RelationType,
-        RelationTypes: _koRelationTypes,
+        RelationTypes: createKOObservableArrayFromEnum(Enums.RelationTypes),
         Identifier: _relationCLO.Identifier,
         LowerBoundEnabled: ko.computed(function () {
             return _relationCLO.FixedLowerBound() === null;
