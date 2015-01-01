@@ -1,7 +1,7 @@
-﻿UIComponents.PropertyEditor.FeatureInnerEditor = function (container, featureCLO) {
+﻿UIComponents.PropertyEditor.FeatureInnerEditor = function (container, featureCLO, specializedDataModel) {
 
     // Fields
-    var _container = container, _featureCLO = featureCLO;
+    var _container = container, _featureCLO = featureCLO, _specializedDataModel = specializedDataModel;
     var _innerHtmlElem;
     var _innerElems = {
         attributesContainer: null,
@@ -15,11 +15,14 @@
         Identifier: _featureCLO.Identifier.extend({
             required: true
         }),
-        people: [
-            { firstName: 'Bert', lastName: 'Bertington' },
-            { firstName: 'Charles', lastName: 'Charlesforth' },
-            { firstName: 'Denise', lastName: 'Dentiste' }
-        ]
+        Attributes: _featureCLO.Attributes,
+        AddAttribute: function () {
+            var newAttributeCLO = _specializedDataModel.CreateNewCLO(CLOTypes.Attribute);
+            _featureCLO.Attributes.Add(newAttributeCLO);
+        },
+        RemoveAttribute: function (attributeCLO) {
+            _specializedDataModel.DeleteByClientID(attributeCLO.GetClientID());
+        }
     }
     _vm.Name.OriginalValue = _featureCLO.Name();
     _vm.Identifier.OriginalValue = _featureCLO.Identifier();
@@ -35,7 +38,6 @@
         // Get references to html elems
         _innerElems.focusElem = $(_innerHtmlElem).find("#NameTextbox");
         _innerElems.attributesContainer = $(_innerHtmlElem).find("#AttributeListContainer");
-
 
         // Apply bindings
         ko.applyBindings(_vm, _innerHtmlElem[0]);

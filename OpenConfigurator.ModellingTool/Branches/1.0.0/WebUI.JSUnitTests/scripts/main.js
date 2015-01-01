@@ -26,6 +26,16 @@ var Enums = {
             CreatingNewCompositionRule: "CreatingNewCompositionRule"
         }
     },
+    AttributeTypes: {
+        Constant: 0,
+        Dynamic: 1,
+        UserDefined: 2
+    },
+    AttributeDataTypes: {
+        Integer: 0,
+        Boolean: 1,
+        String: 2
+    },
     RelationTypes: {
         Mandatory: 0,
         Optional: 1,
@@ -540,6 +550,8 @@ var FeatureModelCLO = function (clientID, blo) {
             if (clo.Name !== undefined)
                 clo.Name(identity.name);
         }
+
+
     }
 }
 var FeatureCLO = function (clientID, blo) {
@@ -557,9 +569,9 @@ var FeatureCLO = function (clientID, blo) {
         return CLOTypes.Feature;
     }
     this.Selected = new ObservableField();
+    this.Attributes = new ObservableCollection();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
-    this.Attributes = new ObservableCollection();
     this.XPos = new ObservableField(_innerBLO, "XPos");
     this.YPos = new ObservableField(_innerBLO, "YPos");
     this.RelatedCLOS = new ObservableCollection();
@@ -581,10 +593,14 @@ var AttributeCLO = function (clientID, blo) {
         return _clientID;
     };
     this.GetType = function () {
-        return CLOTypes.Feature;
+        return CLOTypes.Attribute;
     }
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
+    this.Description = new ObservableField(_innerBLO, "Description");
+    this.AttributeType = new ObservableField(_innerBLO, "AttributeType");
+    this.AttributeDataType = new ObservableField(_innerBLO, "AttributeDataType");
+    this.ParentFeature = null;
 
     // Init
     this.Initialize = function () {
@@ -764,7 +780,7 @@ var Controller = function () {
         _visualView.Initialize();
         _modelExplorer = UIComponentProvider.CreateInstance("UIComponents.ModelExplorer", [$("#modelExplorerContainer"), _dataModel, _cloSelectionManager]);
         _modelExplorer.Initialize();
-        _commandToolbar = UIComponentProvider.CreateInstance("UIComponents.CommandToolbar", [$("#toolBarContainer"),_dataModel, _this]);
+        _commandToolbar = UIComponentProvider.CreateInstance("UIComponents.CommandToolbar", [$("#toolBarContainer"), _dataModel, _this]);
         _commandToolbar.Initialize();
         _propertyEditor = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor", [$("#propertyEditorContainer"), _dataModel, _cloSelectionManager]);
         _propertyEditor.Initialize();
@@ -1020,9 +1036,17 @@ var DataModel = function (bloService, cloFactory) {
             switch (clo.GetType()) {
                 case CLOTypes.Feature:
                     _currentFeatureModelCLO.Features.Remove(clo);
-                    for (var i = clo.RelatedCLOS.GetLength() ; i > 0; i--) {
+                    for (var i = clo.Attributes.GetLength() ; i > 0; i--) {// delete attributes
+                        _this.DeleteByClientID(clo.Attributes.GetAt(i - 1).GetClientID());
+                    }
+                    for (var i = clo.RelatedCLOS.GetLength() ; i > 0; i--) { // delete adjacent relations
                         _this.DeleteByClientID(clo.RelatedCLOS.GetAt(i - 1).GetClientID());
                     }
+
+                    break;
+
+                case CLOTypes.Attribute:
+                    clo.ParentFeature.Attributes.Remove(clo);
                     break;
 
                 case CLOTypes.Relation:
@@ -1059,7 +1083,7 @@ var DataModel = function (bloService, cloFactory) {
         }
     }
     this.CreateAndLoadNewModel = function () {
-        
+
         // Clean up current FeatureModel (if one is present)
         if (_currentFeatureModelCLO !== null) {
             _currentFeatureModelCLO = null;
@@ -1092,13 +1116,33 @@ DataModel.CLOFactory = function (bloService) {
             return newCLO;
         },
         Feature: function (blo) {
-
-            //
+            
+            // Create it
             var newClientID = getNewClientID();
             var newCLO = new FeatureCLO(newClientID, blo);
             newCLO.Initialize();
 
+            // Child Attributes
+            for (var i = 0; i < blo.Attributes.length; i++) {
+                var newAttribute = FromBLO.Attribute(blo.Attributes[i]);
+                newAttribute.ParentFeature = newCLO;
+                newAttribute.Initialize();
+                newCLO.Attributes.Add(newAttribute);
+            }
+
+            // Register and return it
+            _factoryCLORegister[newCLO.GetClientID()] = newCLO;
+            return newCLO;
+        },
+        Attribute: function (blo) {
+
             //
+            var newClientID = getNewClientID();
+            var newCLO = new AttributeCLO(newClientID, blo);
+            newCLO.Initialize();
+
+            // Register and return it
+            _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
         Relation: function (blo) {
@@ -1108,7 +1152,8 @@ DataModel.CLOFactory = function (bloService) {
             var newCLO = new RelationCLO(newClientID, blo);
             newCLO.Initialize();
 
-            //
+            // Register and return it
+            _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
         GroupRelation: function (blo) {
@@ -1118,7 +1163,8 @@ DataModel.CLOFactory = function (bloService) {
             var newCLO = new GroupRelationCLO(newClientID, blo);
             newCLO.Initialize();
 
-            //
+            // Register and return it
+            _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
         CompositionRule: function (blo) {
@@ -1128,7 +1174,8 @@ DataModel.CLOFactory = function (bloService) {
             var newCLO = new CompositionRuleCLO(newClientID, blo);
             newCLO.Initialize();
 
-            //
+            // Register and return it
+            _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
         CustomRule: function (blo) {
@@ -1138,7 +1185,8 @@ DataModel.CLOFactory = function (bloService) {
             var newCLO = new CustomRuleCLO(newClientID, blo);
             newCLO.Initialize();
 
-            //
+            // Register and return it
+            _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
         CustomFunction: function (blo) {
@@ -1148,7 +1196,8 @@ DataModel.CLOFactory = function (bloService) {
             var newCLO = new CustomFunctionCLO(newClientID, blo);
             newCLO.Initialize();
 
-            //
+            // Register and return it
+            _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         }
     }
@@ -1176,10 +1225,6 @@ DataModel.CLOFactory = function (bloService) {
 
         // Create the CLO
         var convertedCLO = FromBLO[cloType](blo);
-        convertedCLO.DataState = Enums.CLODataStates.Unchanged;
-
-        // Register and return it
-        _factoryCLORegister[convertedCLO.GetClientID()] = convertedCLO;
         return convertedCLO;
     }
     this.CreateNewCLO = function (cloType) {
@@ -1187,13 +1232,9 @@ DataModel.CLOFactory = function (bloService) {
         // Create the CLO
         var newBLO = _bloService.GetDefaultBLO(cloType);
         var newCLO = FromBLO[cloType](newBLO);
-        newCLO.DataState = Enums.CLODataStates.New;
-
-        // Register and return it
-        _factoryCLORegister[newCLO.GetClientID()] = newCLO;
         return newCLO;
     }
-    this.Reset = function () {
+    this.Reset = function () { // used when loading a new FeatureModel
         _clientIDCounter = 0;
         _factoryCLORegister = {};
     }

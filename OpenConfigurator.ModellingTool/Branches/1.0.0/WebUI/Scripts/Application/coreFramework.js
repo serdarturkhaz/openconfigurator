@@ -1,63 +1,55 @@
 ﻿/*#region Observables*/
 var ObservableCollection = function () {
 
-    // Fields
-    var _innerArray = [];
-    var _this = this;
+    // Variables
+    var koObservableArray = ko.observableArray([]);
 
     // Properties
-    this.GetLength = function () {
-        return _innerArray.length;
+    koObservableArray.GetLength = function () {
+        return koObservableArray().length;
     }
 
     // Public methods
-    this.Add = function (object) {
-
+    koObservableArray.Add = function (object) {
+        
         // Raise pre-event
-        var eventRaiseDetails = _this.Adding.RaiseEvent(object);
+        var eventRaiseDetails = koObservableArray.Adding.RaiseEvent(object);
 
         // If no handlers cancelled the pre-event
         if (eventRaiseDetails.CancelTriggered() === false) {
-            _innerArray.push(object)
+            koObservableArray.push(object);
 
             // Raise post-event
-            _this.Added.RaiseEvent(object);
+            koObservableArray.Added.RaiseEvent(object);
         }
     }
-    this.RemoveAt = function (index) {
-        var removedObject = _innerArray[index];
-        _innerArray.splice(index, 1);
-        _this.Removed.RaiseEvent(removedObject);
+    koObservableArray.RemoveAt = function (index) {
+        var removedObject = koObservableArray()[index];
+        koObservableArray.splice(index, 1);
+        koObservableArray.Removed.RaiseEvent(removedObject);
     }
-    this.Remove = function (obj) {
-        for (var index = 0; index < _innerArray.length; index++) {
-            if (_innerArray[index] === obj) {
+    koObservableArray.Remove = function (obj) {
+        for (var index = 0; index < koObservableArray().length; index++) {
+            if (koObservableArray()[index] === obj) {
                 break;
             }
         }
 
-        _this.RemoveAt(index);
+        koObservableArray.RemoveAt(index);
     }
-    this.GetAt = function (index) {
-        return _innerArray[index];
-    }
-    this.GetByCustomField = function (fieldName, fieldValue) {
-        var object = null;
-        for (var i = 0; i < _innerArray; i++) {
-
-        }
-        return object;
-    }
-    this.ToArray = function () {
-        return _innerArray.splice();
+    koObservableArray.GetAt = function (index) {
+        return koObservableArray()[index];
     }
 
     // Events
-    this.Adding = new Event();
-    this.Added = new Event();
-    this.Removed = new Event();
+    koObservableArray.Adding = new Event();
+    koObservableArray.Added = new Event();
+    koObservableArray.Removed = new Event();
+
+    //
+    return koObservableArray;
 }
-var ObservableField = function (sourceFieldParent, sourceFieldName) { // can also be called without parameters, then it just creates a simple koObservable
+var ObservableField = function (sourceFieldParent, sourceFieldName) { // can also be called without parameters, in which case it just creates a simple koObservable
 
     // Variables
     var koObservable;
@@ -68,13 +60,13 @@ var ObservableField = function (sourceFieldParent, sourceFieldName) { // can als
         koObservable.subscribe(function (newVal) { // bind the koObs so it updates the value of the source field whenever it is changed itself
             sourceFieldParent[sourceFieldName] = newVal;
         });
-    } else { 
+    } else {
         koObservable = ko.observable();
     }
 
     // Setup extra stuff
     koObservable.Changed = new Event();
-    koObservable.subscribe(function (newVal) { 
+    koObservable.subscribe(function (newVal) {
         koObservable.Changed.RaiseEvent(newVal);
     });
 
