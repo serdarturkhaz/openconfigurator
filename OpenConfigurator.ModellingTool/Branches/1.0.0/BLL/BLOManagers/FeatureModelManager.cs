@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
+using AutoMapper;
+using BLL.BLOs;
 
 namespace BLL.BLOManagers
 {
@@ -23,10 +25,14 @@ namespace BLL.BLOManagers
         // Public methods
         public bool SaveChanges(BLOs.FeatureModel model)
         {
-            using (FileStream writer = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/test.xml"), FileMode.Create, FileAccess.Write))
+            // Get the DataEntity
+            DAL.DataEntities.FeatureModel dataEntity = Mapper.Map<DAL.DataEntities.FeatureModel>(model);
+
+            // Write the file
+            using (FileStream writer = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/" + dataEntity.Name + ".xml"), FileMode.Create, FileAccess.Write))
             {
-                DataContractSerializer ser = new DataContractSerializer(typeof(BLOs.FeatureModel));
-                ser.WriteObject(writer, model);
+                DataContractSerializer ser = new DataContractSerializer(typeof(DAL.DataEntities.FeatureModel));
+                ser.WriteObject(writer, dataEntity);
             }
 
 

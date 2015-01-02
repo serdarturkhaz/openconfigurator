@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace BLL.BLOs
 {
@@ -67,7 +68,7 @@ namespace BLL.BLOs
         public static class XOR
         {
             public static readonly int? FixedLowerBound = 1;
-            public static readonly int? FixedUpperBound = 1; 
+            public static readonly int? FixedUpperBound = 1;
         }
         public static class CustomOR
         {
@@ -80,7 +81,6 @@ namespace BLL.BLOs
     public class FeatureModel : iBLO
     {
         // Fields
-        protected DAL.DTOs.FeatureModel innerDTO;
         protected List<Feature> features = new List<Feature>();
         protected List<Relation> relations = new List<Relation>();
         protected List<GroupRelation> groupRelations = new List<GroupRelation>();
@@ -91,14 +91,8 @@ namespace BLL.BLOs
         // Properties
         public string Name
         {
-            get
-            {
-                return innerDTO.Name;
-            }
-            set
-            {
-                innerDTO.Name = value;
-            }
+            get;
+            set;
         }
         public List<Feature> Features
         {
@@ -146,53 +140,34 @@ namespace BLL.BLOs
         // Constructors
         public FeatureModel()
         {
-            innerDTO = new DAL.DTOs.FeatureModel();
-        }
-        public FeatureModel(DAL.DTOs.FeatureModel dataObj)
-        {
-            this.innerDTO = dataObj;
         }
 
-        // Static instance creator
+        // Special static methods
         internal static FeatureModel CreateDefault()
         {
-            DAL.DTOs.FeatureModel newDTO = new DAL.DTOs.FeatureModel()
+            FeatureModel newBLO = new FeatureModel()
             {
                 Name = "Unnamed Model"
             };
-
-            FeatureModel newBLO = new FeatureModel(newDTO);
             return newBLO;
         }
+
     }
     public class Feature : iBLO
     {
         // Fields
-        protected DAL.DTOs.Feature innerDTO;
         protected List<Attribute> attributes = new List<Attribute>();
 
         // Properties
         public string Identifier
         {
-            get
-            {
-                return innerDTO.Identifier;
-            }
-            set
-            {
-                innerDTO.Identifier = value;
-            }
+            get;
+            set;
         }
         public string Name
         {
-            get
-            {
-                return innerDTO.Name;
-            }
-            set
-            {
-                innerDTO.Name = value;
-            }
+            get;
+            set;
         }
         public List<Attribute> Attributes
         {
@@ -201,89 +176,60 @@ namespace BLL.BLOs
                 return attributes;
             }
         }
+        public virtual Nullable<double> XPos
+        {
+            get;
+            set;
+        }
+        public virtual Nullable<double> YPos
+        {
+            get;
+            set;
+        }
 
         // Constructors
         public Feature()
         {
-            innerDTO = new DAL.DTOs.Feature();
-        }
-        public Feature(DAL.DTOs.Feature dataObj)
-        {
-            this.innerDTO = dataObj;
         }
 
         // Static instance creator
         internal static Feature CreateDefault()
         {
-            DAL.DTOs.Feature newDTO = new DAL.DTOs.Feature()
+            Feature newBLO = new Feature()
             {
                 Name = "Test name"
             };
-            Feature newBLO = new Feature(newDTO);
 
             return newBLO;
         }
     }
     public class Attribute : iBLO
     {
-        // Fields
-        protected DAL.DTOs.Attribute innerDTO;
-
         // Properties
         public string Identifier
         {
-            get
-            {
-                return innerDTO.Identifier;
-            }
-            set
-            {
-                innerDTO.Identifier = value;
-            }
+            get;
+            set;
         }
         public AttributeTypes AttributeType
         {
-            get
-            {
-                return (AttributeTypes)Enum.Parse(typeof(AttributeTypes), ((DAL.DTOs.Attribute)innerDTO).AttributeTypeID.ToString());
-            }
-            set
-            {
-                innerDTO.AttributeTypeID = (int)value;
-            }
+            get;
+            set;
         }
         public AttributeDataTypes AttributeDataType
         {
-            get
-            {
-                return (AttributeDataTypes)Enum.Parse(typeof(AttributeDataTypes), ((DAL.DTOs.Attribute)innerDTO).AttributeDataTypeID.ToString());
-            }
-            set
-            {
-                innerDTO.AttributeDataTypeID = (int)value;
-            }
+            get;
+            set;
         }
         public string ConstantValue
         {
-            get
-            {
-                return innerDTO.ConstantValue;
-            }
-            set
-            {
-                innerDTO.ConstantValue = value;
-            }
+            get;
+            set;
         }
         public string Name
         {
-            get
-            {
-                return innerDTO.Name;
-            }
-            set
-            {
-                innerDTO.Name = value;
-            }
+            get;
+            set;
         }
         public Feature ParentFeature
         {
@@ -294,22 +240,15 @@ namespace BLL.BLOs
         // Constructors
         public Attribute()
         {
-            innerDTO = new DAL.DTOs.Attribute();
-        }
-        public Attribute(DAL.DTOs.Attribute dataObj)
-        {
-            this.innerDTO = dataObj;
         }
 
         // Static instance creator
         internal static Attribute CreateDefault()
         {
-            DAL.DTOs.Attribute newDTO = new DAL.DTOs.Attribute()
+            Attribute newBLO = new Attribute()
             {
                 Name = "Default attribute"
             };
-
-            Attribute newBLO = new Attribute(newDTO);
             newBLO.AttributeType = AttributeTypes.UserInput;
             newBLO.AttributeDataType = AttributeDataTypes.Integer;
             return newBLO;
@@ -317,31 +256,16 @@ namespace BLL.BLOs
     }
     public class Relation : iBLO
     {
-        // Fields
-        protected DAL.DTOs.Relation innerDTO;
-
         // Properties
         public string Identifier
         {
-            get
-            {
-                return innerDTO.Identifier;
-            }
-            set
-            {
-                innerDTO.Identifier = value;
-            }
+            get;
+            set;
         }
         public RelationTypes RelationType
         {
-            get
-            {
-                return (RelationTypes)Enum.Parse(typeof(RelationTypes), ((DAL.DTOs.Relation)innerDTO).RelationTypeID.ToString());
-            }
-            set
-            {
-                innerDTO.RelationTypeID = (int)value;
-            }
+            get;
+            set;
         }
         public Feature ParentFeature
         {
@@ -355,25 +279,13 @@ namespace BLL.BLOs
         }
         public int? LowerBound
         {
-            get
-            {
-                return innerDTO.LowerBound;
-            }
-            set
-            {
-                innerDTO.LowerBound = value;
-            }
+            get;
+            set;
         }
         public int? UpperBound
         {
-            get
-            {
-                return innerDTO.UpperBound;
-            }
-            set
-            {
-                innerDTO.UpperBound = value;
-            }
+            get;
+            set;
         }
         public int? FixedLowerBound
         {
@@ -389,21 +301,13 @@ namespace BLL.BLOs
         // Constructors
         public Relation()
         {
-            innerDTO = new DAL.DTOs.Relation();
-        }
-        public Relation(DAL.DTOs.Relation dataObj)
-        {
-            this.innerDTO = dataObj;
         }
 
         // Static instance creator
         internal static Relation CreateDefault()
         {
-            // Create underlying DTO
-            DAL.DTOs.Relation newDTO = new DAL.DTOs.Relation();
-
             // Create new BLO
-            Relation newBLO = new Relation(newDTO)
+            Relation newBLO = new Relation()
             {
                 RelationType = RelationTypes.Mandatory
             };
@@ -420,38 +324,25 @@ namespace BLL.BLOs
     public class GroupRelation : iBLO
     {
         // Fields
-        protected DAL.DTOs.GroupRelation innerDTO;
         protected List<Feature> childFeatures = new List<Feature>();
 
         // Properties
         public string Identifier
         {
-            get
-            {
-                return innerDTO.Identifier;
-            }
-            set
-            {
-                innerDTO.Identifier = value;
-            }
+            get;
+            set;
         }
-        public virtual GroupRelationTypes GroupRelationType
-        {
-            get
-            {
-                return (GroupRelationTypes)Enum.Parse(typeof(GroupRelationTypes), ((DAL.DTOs.GroupRelation)innerDTO).GroupRelationTypeID.ToString());
-            }
-            set
-            {
-                innerDTO.GroupRelationTypeID = (int)value;
-            }
-        }
-        public virtual Feature ParentFeature
+        public  GroupRelationTypes GroupRelationType
         {
             get;
             set;
         }
-        public virtual List<Feature> ChildFeatures
+        public  Feature ParentFeature
+        {
+            get;
+            set;
+        }
+        public  List<Feature> ChildFeatures
         {
             get
             {
@@ -460,25 +351,13 @@ namespace BLL.BLOs
         }
         public int? UpperBound
         {
-            get
-            {
-                return innerDTO.UpperBound;
-            }
-            set
-            {
-                innerDTO.UpperBound = value;
-            }
+            get;
+            set;
         }
         public int? LowerBound
         {
-            get
-            {
-                return innerDTO.LowerBound;
-            }
-            set
-            {
-                innerDTO.LowerBound = value;
-            }
+            get;
+            set;
         }
         public int? FixedLowerBound
         {
@@ -494,22 +373,14 @@ namespace BLL.BLOs
         // Constructors
         public GroupRelation()
         {
-            innerDTO = new DAL.DTOs.GroupRelation();
         }
-        public GroupRelation(DAL.DTOs.GroupRelation dataObj)
-            : this()
-        {
-            this.innerDTO = dataObj;
-        }
-
+    
         // Static instance creator
         internal static GroupRelation CreateDefault()
         {
-            // Create underlying DTO
-            DAL.DTOs.GroupRelation newDTO = new DAL.DTOs.GroupRelation();
 
             // Create new BLO
-            GroupRelation newBLO = new GroupRelation(newDTO)
+            GroupRelation newBLO = new GroupRelation()
             {
                 GroupRelationType = GroupRelationTypes.XOR
             };
@@ -526,31 +397,16 @@ namespace BLL.BLOs
     }
     public class CompositionRule : iBLO
     {
-        // Fields
-        protected DAL.DTOs.CompositionRule innerDTO;
-
         // Properties
         public string Identifier
         {
-            get
-            {
-                return innerDTO.Identifier;
-            }
-            set
-            {
-                innerDTO.Identifier = value;
-            }
+            get;
+            set;
         }
         public CompositionRuleTypes CompositionRuleType
         {
-            get
-            {
-                return (CompositionRuleTypes)Enum.Parse(typeof(CompositionRuleTypes), ((DAL.DTOs.CompositionRule)innerDTO).CompositionRuleTypeID.ToString());
-            }
-            set
-            {
-                innerDTO.CompositionRuleTypeID = (int)value;
-            }
+            get;
+            set;
         }
         public virtual Feature FirstFeature
         {
@@ -576,21 +432,13 @@ namespace BLL.BLOs
         // Constructors
         public CompositionRule()
         {
-            innerDTO = new DAL.DTOs.CompositionRule();
-        }
-        public CompositionRule(DAL.DTOs.CompositionRule dataObj)
-        {
-            this.innerDTO = dataObj;
         }
 
         // Static instance creator
         internal static CompositionRule CreateDefault()
         {
-            // Create underlying DTO
-            DAL.DTOs.CompositionRule newDTO = new DAL.DTOs.CompositionRule();
-
             // Create new BLO
-            CompositionRule newBLO = new CompositionRule(newDTO)
+            CompositionRule newBLO = new CompositionRule()
             {
                 CompositionRuleType = CompositionRuleTypes.Dependency
             };
@@ -600,31 +448,16 @@ namespace BLL.BLOs
     }
     public class CustomRule : iBLO
     {
-        // Fields
-        protected DAL.DTOs.CustomRule innerDTO;
-
         // Properties
         public virtual string Identifier
         {
-            get
-            {
-                return innerDTO.Identifier;
-            }
-            set
-            {
-                innerDTO.Identifier = value;
-            }
+            get;
+            set;
         }
         public virtual string Name
         {
-            get
-            {
-                return innerDTO.Name;
-            }
-            set
-            {
-                innerDTO.Name = value;
-            }
+            get;
+            set;
         }
         public virtual string Expression
         {
@@ -640,23 +473,15 @@ namespace BLL.BLOs
         // Constructors
         public CustomRule()
         {
-            innerDTO = new DAL.DTOs.CustomRule();
-        }
-        public CustomRule(DAL.DTOs.CustomRule dataObj)
-        {
-            this.innerDTO = dataObj;
         }
 
         // Static instance creator
         internal static CustomRule CreateDefault()
         {
-            // Create underlying DTO
-            DAL.DTOs.CustomRule newDTO = new DAL.DTOs.CustomRule();
-
             // Create new BLO
-            CustomRule newBLO = new CustomRule(newDTO)
+            CustomRule newBLO = new CustomRule()
             {
-
+                Name = "Default Custom rule"
             };
             return newBLO;
         }
@@ -664,31 +489,16 @@ namespace BLL.BLOs
     }
     public class CustomFunction : iBLO
     {
-        // Fields
-        protected DAL.DTOs.CustomFunction innerDTO;
-
         // Properties
         public virtual string Identifier
         {
-            get
-            {
-                return innerDTO.Identifier;
-            }
-            set
-            {
-                innerDTO.Identifier = value;
-            }
+            get;
+            set;
         }
         public virtual string Name
         {
-            get
-            {
-                return innerDTO.Name;
-            }
-            set
-            {
-                innerDTO.Name = value;
-            }
+            get;
+            set;
         }
         public virtual string Expression
         {
@@ -704,24 +514,15 @@ namespace BLL.BLOs
         // Constructors
         public CustomFunction()
         {
-            innerDTO = new DAL.DTOs.CustomFunction();
-
-        }
-        public CustomFunction(DAL.DTOs.CustomFunction dataObj)
-        {
-            this.innerDTO = dataObj;
         }
 
         // Static instance creator
         internal static CustomFunction CreateDefault()
         {
-            // Create underlying DTO
-            DAL.DTOs.CustomFunction newDTO = new DAL.DTOs.CustomFunction();
-
             // Create new BLO
-            CustomFunction newBLO = new CustomFunction(newDTO)
+            CustomFunction newBLO = new CustomFunction()
             {
-
+                Name= "New CustomFunction"
             };
             return newBLO;
         }
