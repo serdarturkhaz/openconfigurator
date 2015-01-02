@@ -507,8 +507,8 @@ var FeatureModelCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.FeatureModel;
     }
-    this.GetBLO = function () {
-        return _innerBLO;
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
     }
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Features = new ObservableCollection();
@@ -571,8 +571,8 @@ var FeatureCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Feature;
     }
-    this.GetBLO = function () {
-        return _innerBLO;
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
     }
     this.Selected = new ObservableField();
     this.Attributes = new ObservableCollection();
@@ -632,8 +632,8 @@ var AttributeCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Attribute;
     }
-    this.GetBLO = function () {
-        return _innerBLO;
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
     }
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
@@ -662,8 +662,8 @@ var RelationCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Relation;
     };
-    this.GetBLO = function () {
-        return _innerBLO;
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
     }
     this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
@@ -701,8 +701,8 @@ var GroupRelationCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.GroupRelation;
     };
-    this.GetBLO = function () {
-        return _innerBLO;
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
     }
     this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
@@ -741,8 +741,8 @@ var CompositionRuleCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CompositionRule;
     }
-    this.GetBLO = function () {
-        return _innerBLO;
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
     }
     this.Selected = new ObservableField();
     this.Name = new ObservableField(_innerBLO, "Identifier");
@@ -771,8 +771,8 @@ var CustomRuleCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CustomRule;
     }
-    this.GetBLO = function () {
-        return _innerBLO;
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
     }
     this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
@@ -800,8 +800,8 @@ var CustomFunctionCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CustomFunction;
     }
-    this.GetBLO = function () {
-        return _innerBLO;
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
     }
     this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
@@ -1267,7 +1267,7 @@ DataModel.CLOFactory = function (bloService) {
         FeatureModel: function (clo) {
 
             // Get its BLO
-            var blo = clo.GetBLO();
+            var blo = clo.GetBLOCopy();
 
             // Child collections
             var collectionNames = {
@@ -1293,7 +1293,7 @@ DataModel.CLOFactory = function (bloService) {
         Feature: function (clo) {
 
             // Get its BLO
-            var blo = clo.GetBLO();
+            var blo = clo.GetBLOCopy();
 
             // Child Attributes
             for (var i = 0; i < clo.Attributes.GetLength() ; i++) {
@@ -1308,7 +1308,7 @@ DataModel.CLOFactory = function (bloService) {
         Attribute: function (clo) {
 
             // Get its BLO
-            var blo = clo.GetBLO();
+            var blo = clo.GetBLOCopy();
 
             //
             return blo;
@@ -1316,7 +1316,7 @@ DataModel.CLOFactory = function (bloService) {
         Relation: function (clo) {
 
             // Get its BLO
-            var blo = clo.GetBLO();
+            var blo = clo.GetBLOCopy();
 
             // Get Parent/Child Features
             blo.ParentFeature = ToBLO[CLOTypes.Feature](clo.ParentFeature);
@@ -1328,7 +1328,7 @@ DataModel.CLOFactory = function (bloService) {
         GroupRelation: function (clo) {
 
             // Get its BLO
-            var blo = clo.GetBLO();
+            var blo = clo.GetBLOCopy();
 
             // Get Parent/Child Features
             blo.ParentFeature = ToBLO[CLOTypes.Feature](clo.ParentFeature);
@@ -1344,11 +1344,11 @@ DataModel.CLOFactory = function (bloService) {
         CompositionRule: function (clo) {
 
             // Get its BLO
-            var blo = clo.GetBLO();
+            var blo = clo.GetBLOCopy();
 
-            // Get Parent/Child Features
-            blo.ParentFeature = ToBLO[CLOTypes.Feature](clo.ParentFeature);
-            blo.ChildFeature = ToBLO[CLOTypes.Feature](clo.ChildFeature);
+            // Get First/Second Features
+            blo.FirstFeature = ToBLO[CLOTypes.Feature](clo.FirstFeature);
+            blo.SecondFeature = ToBLO[CLOTypes.Feature](clo.SecondFeature);
 
             //
             return blo;
@@ -1356,7 +1356,7 @@ DataModel.CLOFactory = function (bloService) {
         CustomRule: function (clo) {
 
             //
-            var blo = clo.GetBLO();
+            var blo = clo.GetBLOCopy();
 
             //
             return blo;
@@ -1364,7 +1364,7 @@ DataModel.CLOFactory = function (bloService) {
         CustomFunction: function (clo) {
 
             //
-            var blo = clo.GetBLO();
+            var blo = clo.GetBLOCopy();
 
             //
             return blo;

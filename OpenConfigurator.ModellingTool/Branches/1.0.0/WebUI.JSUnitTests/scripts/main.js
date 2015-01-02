@@ -1346,9 +1346,9 @@ DataModel.CLOFactory = function (bloService) {
             // Get its BLO
             var blo = clo.GetBLO();
 
-            // Get Parent/Child Features
-            blo.ParentFeature = ToBLO[CLOTypes.Feature](clo.ParentFeature);
-            blo.ChildFeature = ToBLO[CLOTypes.Feature](clo.ChildFeature);
+            // Get First/Second Features
+            blo.FirstFeature = ToBLO[CLOTypes.Feature](clo.FirstFeature);
+            blo.SecondFeature = ToBLO[CLOTypes.Feature](clo.SecondFeature);
 
             //
             return blo;
