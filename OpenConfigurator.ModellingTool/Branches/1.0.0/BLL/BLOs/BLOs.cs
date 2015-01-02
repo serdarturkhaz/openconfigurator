@@ -205,7 +205,7 @@ namespace BLL.BLOs
         // Constructors
         public Feature()
         {
-
+            innerDTO = new DAL.DTOs.Feature();
         }
         public Feature(DAL.DTOs.Feature dataObj)
         {
@@ -294,7 +294,7 @@ namespace BLL.BLOs
         // Constructors
         public Attribute()
         {
-
+            innerDTO = new DAL.DTOs.Attribute();
         }
         public Attribute(DAL.DTOs.Attribute dataObj)
         {
@@ -315,7 +315,6 @@ namespace BLL.BLOs
             return newBLO;
         }
     }
-
     public class Relation : iBLO
     {
         // Fields
@@ -390,7 +389,7 @@ namespace BLL.BLOs
         // Constructors
         public Relation()
         {
-
+            innerDTO = new DAL.DTOs.Relation();
         }
         public Relation(DAL.DTOs.Relation dataObj)
         {
@@ -422,6 +421,7 @@ namespace BLL.BLOs
     {
         // Fields
         protected DAL.DTOs.GroupRelation innerDTO;
+        protected List<Feature> childFeatures = new List<Feature>();
 
         // Properties
         public string Identifier
@@ -453,8 +453,10 @@ namespace BLL.BLOs
         }
         public virtual List<Feature> ChildFeatures
         {
-            get;
-            set;
+            get
+            {
+                return childFeatures;
+            }
         }
         public int? UpperBound
         {
@@ -492,7 +494,7 @@ namespace BLL.BLOs
         // Constructors
         public GroupRelation()
         {
-            ChildFeatures = new List<Feature>();
+            innerDTO = new DAL.DTOs.GroupRelation();
         }
         public GroupRelation(DAL.DTOs.GroupRelation dataObj)
             : this()
@@ -574,7 +576,7 @@ namespace BLL.BLOs
         // Constructors
         public CompositionRule()
         {
-
+            innerDTO = new DAL.DTOs.CompositionRule();
         }
         public CompositionRule(DAL.DTOs.CompositionRule dataObj)
         {
@@ -638,7 +640,7 @@ namespace BLL.BLOs
         // Constructors
         public CustomRule()
         {
-
+            innerDTO = new DAL.DTOs.CustomRule();
         }
         public CustomRule(DAL.DTOs.CustomRule dataObj)
         {
@@ -702,6 +704,7 @@ namespace BLL.BLOs
         // Constructors
         public CustomFunction()
         {
+            innerDTO = new DAL.DTOs.CustomFunction();
 
         }
         public CustomFunction(DAL.DTOs.CustomFunction dataObj)

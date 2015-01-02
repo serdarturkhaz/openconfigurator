@@ -571,6 +571,9 @@ var FeatureCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Feature;
     }
+    this.GetBLO = function () {
+        return _innerBLO;
+    }
     this.Selected = new ObservableField();
     this.Attributes = new ObservableCollection();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
@@ -629,6 +632,9 @@ var AttributeCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Attribute;
     }
+    this.GetBLO = function () {
+        return _innerBLO;
+    }
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
     this.Description = new ObservableField(_innerBLO, "Description");
@@ -656,6 +662,9 @@ var RelationCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.Relation;
     };
+    this.GetBLO = function () {
+        return _innerBLO;
+    }
     this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.ParentFeature = null;
@@ -692,6 +701,9 @@ var GroupRelationCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.GroupRelation;
     };
+    this.GetBLO = function () {
+        return _innerBLO;
+    }
     this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.ParentFeature = null;
@@ -729,6 +741,9 @@ var CompositionRuleCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CompositionRule;
     }
+    this.GetBLO = function () {
+        return _innerBLO;
+    }
     this.Selected = new ObservableField();
     this.Name = new ObservableField(_innerBLO, "Identifier");
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
@@ -756,6 +771,9 @@ var CustomRuleCLO = function (clientID, blo) {
     this.GetType = function () {
         return CLOTypes.CustomRule;
     }
+    this.GetBLO = function () {
+        return _innerBLO;
+    }
     this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
     this.Name = new ObservableField(_innerBLO, "Name");
@@ -781,6 +799,9 @@ var CustomFunctionCLO = function (clientID, blo) {
     };
     this.GetType = function () {
         return CLOTypes.CustomFunction;
+    }
+    this.GetBLO = function () {
+        return _innerBLO;
     }
     this.Selected = new ObservableField();
     this.Identifier = new ObservableField(_innerBLO, "Identifier");
@@ -1166,9 +1187,9 @@ DataModel.CLOFactory = function (bloService) {
 
             // Child Attributes
             for (var i = 0; i < blo.Attributes.length; i++) {
-                var newAttribute = FromBLO.Attribute(blo.Attributes[i]);
-                newAttribute.Initialize();
-                newCLO.Attributes.Add(newAttribute);
+                var attributeCLO = FromBLO.Attribute(blo.Attributes[i]);
+                attributeCLO.Initialize();
+                newCLO.Attributes.Add(attributeCLO);
             }
 
             // Register and return it
@@ -1245,6 +1266,103 @@ DataModel.CLOFactory = function (bloService) {
     var ToBLO = {
         FeatureModel: function (clo) {
 
+            // Get its BLO
+            var blo = clo.GetBLO();
+
+            // Child collections
+            var collectionNames = {
+                Features: "Features",
+                Relations: "Relations",
+                GroupRelations: "GroupRelations",
+                CompositionRules: "CompositionRules",
+                CustomRules: "CustomRules",
+                CustomFunctions: "CustomFunctions"
+            }
+            for (var key in collectionNames) {
+
+                for (var i = 0; i < clo[key].GetLength() ; i++) {
+                    var childCLO = clo[key].GetAt(i);
+                    var childBLO = ToBLO[childCLO.GetType()](childCLO);
+                    blo[key].push(childBLO);
+                }
+            }
+
+            //
+            return blo;
+        },
+        Feature: function (clo) {
+
+            // Get its BLO
+            var blo = clo.GetBLO();
+
+            // Child Attributes
+            for (var i = 0; i < clo.Attributes.GetLength() ; i++) {
+                var attributeCLO = clo.Attributes.GetAt(i);
+                var attributeBLO = ToBLO[CLOTypes.Attribute](attributeCLO);
+                blo.Attributes.push(attributeBLO);
+            }
+
+            //
+            return blo;
+        },
+        Attribute: function (clo) {
+
+            // Get its BLO
+            var blo = clo.GetBLO();
+
+            //
+            return blo;
+        },
+        Relation: function (clo) {
+
+            // Get its BLO
+            var blo = clo.GetBLO();
+
+            // Get Parent/Child Features
+            blo.ParentFeature = ToBLO[CLOTypes.Feature](clo.ParentFeature);
+            blo.ChildFeature = ToBLO[CLOTypes.Feature](clo.ChildFeature);
+
+            //
+            return blo;
+        },
+        GroupRelation: function (clo) {
+
+            // Get its BLO
+            var blo = clo.GetBLO();
+
+            // Get Parent/Child Features
+            blo.ParentFeature = ToBLO[CLOTypes.Feature](clo.ParentFeature);
+            for (var i = 0; i < clo.ChildFeatures.GetLength() ; i++) {
+                var childFeatureCLO = clo.ChildFeatures.GetAt(i);
+                var childFeatureBLO = ToBLO[CLOTypes.Feature](childFeatureCLO);
+                blo.ChildFeatures.push(childFeatureBLO);
+            }
+
+            //
+            return blo;
+        },
+        CompositionRule: function (clo) {
+
+            // Get its BLO
+            var blo = clo.GetBLO();
+
+            // Get Parent/Child Features
+            blo.ParentFeature = ToBLO[CLOTypes.Feature](clo.ParentFeature);
+            blo.ChildFeature = ToBLO[CLOTypes.Feature](clo.ChildFeature);
+
+            //
+            return blo;
+        },
+        CustomRule: function (clo) {
+
+            //
+            var blo = clo.GetBLO();
+
+            //
+            return blo;
+        },
+        CustomFunction: function (clo) {
+
             //
             var blo = clo.GetBLO();
 
@@ -1294,7 +1412,7 @@ DataModel.BLOService = function () {
 
     // Fields
     var _this = this;
-    
+
     // Init
     this.Initialize = function () {
 
@@ -1320,11 +1438,6 @@ DataModel.BLOService = function () {
 
         var newDefaultBLO = null;
         $.ajax({
-            // For string
-            //contentType: "application/x-www-form-urlencoded",
-            //data: "=" + encodeURIComponent("hello"),
-            //data: "=" + encodeURIComponent(JSON.stringify(featureModelBLO)),
-
             dataType: "json",
             type: "POST",
             url: "api/GlobalAPI/SaveChanges",

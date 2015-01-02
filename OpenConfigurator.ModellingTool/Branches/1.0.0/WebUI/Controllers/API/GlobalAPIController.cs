@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.Http;
 using BLL;
+using BLL.BLOManagers;
 using BLL.BLOs;
 using ModellingTool.Common;
 
@@ -22,11 +23,11 @@ namespace ModellingTool.Controllers
             return GenericBLOFactory.GetInstance().CreateBLOInstance(bloType);
         }
 
-
         [HttpPost]
-        public FeatureModel SaveChanges( FeatureModel featureModel)
+        public FeatureModel SaveChanges(FeatureModel featureModel)
         {
-            string x = "";
+            FeatureModelManager manager = new FeatureModelManager();
+            manager.SaveChanges(featureModel);
             return null;
         }
     }
