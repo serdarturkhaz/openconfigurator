@@ -27,7 +27,7 @@ namespace BLL.BLOManagers
             DAL.DataEntities.FeatureModel dataEntity = Mapper.Map<DAL.DataEntities.FeatureModel>(model);
 
             // Write the file
-            using (FileStream writer = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/" + dataEntity.Name + ".xml"), FileMode.Create, FileAccess.Write))
+            using (FileStream writer = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/test.xml"), FileMode.Create, FileAccess.Write)) // " + dataEntity.Name + "
             {
                 DataContractSerializer ser = new DataContractSerializer(typeof(DAL.DataEntities.FeatureModel));
                 ser.WriteObject(writer, dataEntity);
@@ -37,7 +37,7 @@ namespace BLL.BLOManagers
         {
             // Read file
             DAL.DataEntities.FeatureModel dataEntity;
-            using (FileStream reader = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/" + featureModelName + ".xml"), FileMode.Open, FileAccess.Read))
+            using (FileStream reader = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/test.xml"), FileMode.Open, FileAccess.Read)) // " + featureModelName + "
             {
                 DataContractSerializer ser = new DataContractSerializer(typeof(DAL.DataEntities.FeatureModel));
                 dataEntity = (DAL.DataEntities.FeatureModel)ser.ReadObject(reader);

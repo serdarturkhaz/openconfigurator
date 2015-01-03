@@ -37,7 +37,7 @@
     function addRelationElem(relationCLO) {
 
         // Create a new relation
-        var newRelationElem = UIComponentProvider.CreateInstance("UIComponents.VisualView.RelationElem", [relationCLO, 
+        var newRelationElem = UIComponentProvider.CreateInstance("UIComponents.VisualView.RelationElem", [relationCLO,
             _visualUIElems[relationCLO.ParentFeature.GetClientID()], _visualUIElems[relationCLO.ChildFeature.GetClientID()], _canvas]);
         newRelationElem.Initialize();
         _visualUIElems[relationCLO.GetClientID()] = newRelationElem;
@@ -196,17 +196,28 @@
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
 
-        // On Added handlers
-        modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onFeatureAdded));
-        modelCLO.Relations.Added.AddHandler(new EventHandler(modelHandlers.onRelationAdded));
-        modelCLO.GroupRelations.Added.AddHandler(new EventHandler(modelHandlers.onGroupRelationAdded));
-        modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCompositionRuleAdded));
+        // References to all relevant featureModel child collections
+        var bindableCollections = [
+            modelCLO.Features,
+            modelCLO.Relations,
+            modelCLO.GroupRelations,
+            modelCLO.CompositionRules
+        ];
 
-        // On Removed handlers
-        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-        modelCLO.Relations.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-        modelCLO.GroupRelations.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-        modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+        // Go through each of the collections
+        for (var i = 0; i < bindableCollections.length; i++) {
+            var collection = bindableCollections[i];
+
+            // Create elements for any existing CLOs that are already in the collection
+            for (var j = 0; j < collection.GetLength() ; j++) {
+                var clo = collection.GetAt(j);
+                modelHandlers.onCLOAdded(clo );
+            }
+
+            // Bind to it
+            collection.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
+            collection.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+        }
     }
     this.OnModelUnloaded = function (modelCLO) {
         for (var clientID in _visualUIElems) {
@@ -216,17 +227,21 @@
         }
     }
     var modelHandlers = {
-        onFeatureAdded: function (featureCLO) {
-            addFeatureElem(featureCLO);
-        },
-        onRelationAdded: function (relationCLO) {
-            addRelationElem(relationCLO);
-        },
-        onGroupRelationAdded: function (groupRelationCLO) {
-            addGroupRelationElem(groupRelationCLO);
-        },
-        onCompositionRuleAdded: function (compositionRuleCLO) {
-            addCompositionRuleElem(compositionRuleCLO);
+        onCLOAdded: function (clo) {
+            switch (clo.GetType()) {
+                case CLOTypes.Feature:
+                    addFeatureElem(clo);
+                    break;
+                case CLOTypes.Relation:
+                    addRelationElem(clo);
+                    break;
+                case CLOTypes.GroupRelation:
+                    addGroupRelationElem(clo);
+                    break;
+                case CLOTypes.CompositionRule:
+                    addCompositionRuleElem(clo);
+                    break;
+            }
         },
         onCLORemoved: function (clo) {
             var elem = _visualUIElems[clo.GetClientID()];

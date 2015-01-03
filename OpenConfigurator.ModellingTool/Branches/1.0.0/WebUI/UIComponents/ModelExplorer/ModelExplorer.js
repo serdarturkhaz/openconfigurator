@@ -112,16 +112,28 @@
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
 
-        // Bind to it
-        modelCLO.Features.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
-        modelCLO.Features.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-        modelCLO.CompositionRules.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
-        modelCLO.CompositionRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-        modelCLO.CustomRules.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
-        modelCLO.CustomRules.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
-        modelCLO.CustomFunctions.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
-        modelCLO.CustomFunctions.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+        // References to all relevant featureModel child collections
+        var bindableCollections = [
+            modelCLO.Features,
+            modelCLO.CompositionRules,
+            modelCLO.CustomRules,
+            modelCLO.CustomFunctions
+        ];
 
+        // Go through each of the collections
+        for (var i = 0; i < bindableCollections.length; i++) {
+            var collection = bindableCollections[i];
+
+            // Create elements for any existing CLOs that are already in the collection
+            for (var j = 0; j < collection.GetLength() ; j++) {
+                var clo = collection.GetAt(j);
+                modelHandlers.onCLOAdded(clo);
+            }
+
+            // Bind to it
+            collection.Added.AddHandler(new EventHandler(modelHandlers.onCLOAdded));
+            collection.Removed.AddHandler(new EventHandler(modelHandlers.onCLORemoved));
+        }
     }
     this.OnModelUnloaded = function (modelCLO) {
         // Create new tree
