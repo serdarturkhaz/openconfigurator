@@ -332,17 +332,17 @@ namespace BLL.BLOs
             get;
             set;
         }
-        public  GroupRelationTypes GroupRelationType
+        public GroupRelationTypes GroupRelationType
         {
             get;
             set;
         }
-        public  Feature ParentFeature
+        public Feature ParentFeature
         {
             get;
             set;
         }
-        public  List<Feature> ChildFeatures
+        public List<Feature> ChildFeatures
         {
             get
             {
@@ -374,7 +374,7 @@ namespace BLL.BLOs
         public GroupRelation()
         {
         }
-    
+
         // Static instance creator
         internal static GroupRelation CreateDefault()
         {
@@ -522,7 +522,7 @@ namespace BLL.BLOs
             // Create new BLO
             CustomFunction newBLO = new CustomFunction()
             {
-                Name= "New CustomFunction"
+                Name = "New CustomFunction"
             };
             return newBLO;
         }
