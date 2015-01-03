@@ -3,6 +3,7 @@ var ObservableCollection = function () {
 
     // Variables
     var koObservableArray = ko.observableArray([]);
+    var absoluteItemCounter = 0; // special variable which keeps track of all items that have been part of the collection (this is used for auto-generating identifiers)
 
     // Properties
     koObservableArray.GetLength = function () {
@@ -11,7 +12,7 @@ var ObservableCollection = function () {
 
     // Public methods
     koObservableArray.Add = function (object) {
-        
+
         // Raise pre-event
         var eventRaiseDetails = koObservableArray.Adding.RaiseEvent(object);
 
@@ -21,6 +22,9 @@ var ObservableCollection = function () {
 
             // Raise post-event
             koObservableArray.Added.RaiseEvent(object);
+
+            // Increment special variable
+            absoluteItemCounter++;
         }
     }
     koObservableArray.RemoveAt = function (index) {
@@ -39,6 +43,23 @@ var ObservableCollection = function () {
     }
     koObservableArray.GetAt = function (index) {
         return koObservableArray()[index];
+    }
+    koObservableArray.ContainsItemWith = function (fieldName, value) {
+        if (koObservableArray.GetLength() > 0) {
+            var match = ko.utils.arrayFirst(koObservableArray(), function (item) {
+                if (item[fieldName] !== undefined)
+                    return item[fieldName]() === value;
+                else
+                    return false;
+            });
+            return match;
+        }
+        else {
+            return false;
+        }
+    }
+    koObservableArray.GetAbsoluteItemCounter = function () {
+        return absoluteItemCounter;
     }
 
     // Events

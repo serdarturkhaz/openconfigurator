@@ -30,5 +30,13 @@ namespace ModellingTool.Controllers
             manager.SaveChanges(featureModel);
             return null;
         }
+
+        [HttpGet]
+        public FeatureModel GetFeatureModel(string featureModelName)
+        {
+            FeatureModelManager manager = new FeatureModelManager();
+            manager.GetFeatureModel(featureModelName);
+            return null;
+        }
     }
 }

@@ -125,7 +125,7 @@
             _controller.NewModel();
         },
         openModelItemTriggered: function () {
-            alert("Open existing model!");
+            _controller.LoadModel();
         },
         saveModelItemTriggered: function () {
             _controller.SaveChanges();

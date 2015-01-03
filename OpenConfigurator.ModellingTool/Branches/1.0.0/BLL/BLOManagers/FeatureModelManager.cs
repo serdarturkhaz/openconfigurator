@@ -15,15 +15,13 @@ namespace BLL.BLOManagers
 {
     public class FeatureModelManager
     {
-        // Fields
-
-        // Constructors
+        // Constructor
         public FeatureModelManager()
         {
         }
 
         // Public methods
-        public bool SaveChanges(BLOs.FeatureModel model)
+        public void SaveChanges(BLOs.FeatureModel model)
         {
             // Get the DataEntity
             DAL.DataEntities.FeatureModel dataEntity = Mapper.Map<DAL.DataEntities.FeatureModel>(model);
@@ -34,12 +32,28 @@ namespace BLL.BLOManagers
                 DataContractSerializer ser = new DataContractSerializer(typeof(DAL.DataEntities.FeatureModel));
                 ser.WriteObject(writer, dataEntity);
             }
-
-
-
-            return false;
         }
+        public void GetFeatureModel(string featureModelName)
+        {
+            // Read file
+            //string fileName = Path.Combine(this.path, "Document.xml");
+            //DataContractSerializer dcs = new DataContractSerializer(typeof(Games));
+            //FileStream fs = new FileStream(fileName, FileMode.Open);
+            //XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
 
+            //Games games = (Games)dcs.ReadObject(reader);
+            //reader.Close();
+            //fs.Close();
+            DAL.DataEntities.FeatureModel dataEntity;
+            using (FileStream reader = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/" + featureModelName + ".xml"), FileMode.Open, FileAccess.Read))
+            {
+                DataContractSerializer ser = new DataContractSerializer(typeof(DAL.DataEntities.FeatureModel));
+                dataEntity = (DAL.DataEntities.FeatureModel)ser.ReadObject(reader);
+            } 
+
+            // Convert to BLO
+            //DAL.DataEntities.FeatureModel dataEntity = Mapper.Map<DAL.DataEntities.FeatureModel>(model);
+        }
 
     }
 
