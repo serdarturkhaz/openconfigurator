@@ -1181,7 +1181,9 @@ var DataModel = function (bloService, cloFactory) {
             _this.ModelUnloaded.RaiseEvent(_currentFeatureModelCLO);
         }
 
-        _bloService.GetFeatureModel(featureModelName);
+        // Load the new FeatureModel
+        var featureModelBLO = _bloService.GetFeatureModel(featureModelName);
+        var featureModelCLO = _cloFactory.FromBLO(featureModelBLO, CLOTypes.FeatureModel);
     }
     this.SaveChanges = function () {
         var featureModelBLO = _cloFactory.ToBLO(_currentFeatureModelCLO);
@@ -1197,11 +1199,21 @@ DataModel.CLOFactory = function (bloService) {
 
     var FromBLO = {
         FeatureModel: function (blo) {
+            debugger;
+            // Strip off all child collections from the blo
+            var strippedOffArrays = stripOffChildArrays(blo);
 
-            //
+            // Create it
             var newClientID = getNewClientID();
             var newCLO = new FeatureModelCLO(newClientID, blo);
             newCLO.Initialize();
+
+            // Features
+            for (var i = 0; i < strippedOffArrays.Features.length; i++) {
+                var featureBLO = strippedOffArrays.Features[i];
+                var featureCLO = ToCLO[CLOTypes.Feature](featureBLO);
+                newCLO.Features.Add(featureCLO);
+            }
 
             //
             return newCLO;
@@ -1311,6 +1323,7 @@ DataModel.CLOFactory = function (bloService) {
                 for (var i = 0; i < clo[key].GetLength() ; i++) {
                     var childCLO = clo[key].GetAt(i);
                     var childBLO = ToBLO[childCLO.GetType()](childCLO);
+                    blo[key] = [];
                     blo[key].push(childBLO);
                 }
             }
@@ -1327,6 +1340,7 @@ DataModel.CLOFactory = function (bloService) {
             for (var i = 0; i < clo.Attributes.GetLength() ; i++) {
                 var attributeCLO = clo.Attributes.GetAt(i);
                 var attributeBLO = ToBLO[CLOTypes.Attribute](attributeCLO);
+                blo.Attributes = [];
                 blo.Attributes.push(attributeBLO);
             }
 
@@ -1409,6 +1423,21 @@ DataModel.CLOFactory = function (bloService) {
         _clientIDCounter += 1;
         return _clientIDCounter;
     }
+    function stripOffChildArrays(blo) {
+
+        // Variables
+        var strippedOffArrays = {};
+
+        // Go through all properties on the given blo object and remove them if they are of the Array type
+        for (var propertyName in blo) {
+            if($.isArray(blo[propertyName])) {
+                strippedOffArrays[propertyName] = blo[propertyName];
+                delete blo[propertyName]; 
+            }
+        }
+
+        return strippedOffArrays;
+    }
 
     // Init
     this.Initialize = function () {
@@ -1423,6 +1452,12 @@ DataModel.CLOFactory = function (bloService) {
         // Get the BLO
         var blo = ToBLO[clo.GetType()](clo);
         return blo;
+    }
+    this.FromBLO = function (blo, type) {
+
+        // Create the CLO
+        var clo = FromBLO[type](blo);
+        return clo;
     }
     this.CreateNewCLO = function (cloType) {
 
