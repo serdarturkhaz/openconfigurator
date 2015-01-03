@@ -32,7 +32,7 @@ namespace DAL.DataEntities
         {
             get
             {
-                return features;
+                return features ?? (features = new List<Feature>());
             }
         }
         [DataMember(Order = 2)]
@@ -40,7 +40,7 @@ namespace DAL.DataEntities
         {
             get
             {
-                return relations;
+                return relations ?? (relations = new List<Relation>());
             }
         }
         [DataMember(Order = 3)]
@@ -48,7 +48,7 @@ namespace DAL.DataEntities
         {
             get
             {
-                return groupRelations;
+                return groupRelations ?? (groupRelations = new List<GroupRelation>());
             }
         }
         [DataMember(Order = 4)]
@@ -56,7 +56,7 @@ namespace DAL.DataEntities
         {
             get
             {
-                return compositionRules;
+                return compositionRules ?? (compositionRules = new List<CompositionRule>());
             }
         }
         [DataMember(Order = 5)]
@@ -64,7 +64,7 @@ namespace DAL.DataEntities
         {
             get
             {
-                return customRules;
+                return customRules ?? (customRules = new List<CustomRule>());
             }
         }
         [DataMember(Order = 6)]
@@ -72,7 +72,7 @@ namespace DAL.DataEntities
         {
             get
             {
-                return customFunctions;
+                return customFunctions ?? (customFunctions = new List<CustomFunction>());
             }
         }
     }
@@ -80,7 +80,7 @@ namespace DAL.DataEntities
     public class Feature : iDataEntity
     {
         // Fields
-        protected List<Attribute> attributes = new List<Attribute>();
+        List<Attribute> attributes = new List<Attribute>();
 
         // Properties
         [DataMember(Order = 0)]
@@ -100,7 +100,7 @@ namespace DAL.DataEntities
         {
             get
             {
-                return attributes;
+                return attributes ?? (attributes = new List<Attribute>());
             }
         }
         [DataMember(Order = 3)]
@@ -192,7 +192,7 @@ namespace DAL.DataEntities
     public class GroupRelation : iDataEntity
     {
         // Fields
-        protected List<string> childFeatureIdentifiers = new List<string>();
+        List<string> childFeatureIdentifiers = new List<string>();
 
         // Properties
         public string Identifier
@@ -214,7 +214,7 @@ namespace DAL.DataEntities
         {
             get
             {
-                return childFeatureIdentifiers;
+                return childFeatureIdentifiers ?? (childFeatureIdentifiers = new List<string>());
             }
         }
         public int? LowerBound
