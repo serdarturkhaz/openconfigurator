@@ -205,7 +205,7 @@ namespace DAL.DataEntities
             get;
             set;
         }
-        public Feature ParentFeature
+        public string ParentFeatureIdentifier
         {
             get;
             set;

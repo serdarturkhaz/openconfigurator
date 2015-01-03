@@ -35,8 +35,7 @@ namespace ModellingTool.Controllers
         public FeatureModel GetFeatureModel(string featureModelName)
         {
             FeatureModelManager manager = new FeatureModelManager();
-            manager.GetFeatureModel(featureModelName);
-            return null;
+            return manager.GetFeatureModel(featureModelName);
         }
     }
 }

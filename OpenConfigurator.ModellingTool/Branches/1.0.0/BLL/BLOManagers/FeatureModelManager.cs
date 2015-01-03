@@ -33,17 +33,9 @@ namespace BLL.BLOManagers
                 ser.WriteObject(writer, dataEntity);
             }
         }
-        public void GetFeatureModel(string featureModelName)
+        public BLL.BLOs.FeatureModel GetFeatureModel(string featureModelName)
         {
             // Read file
-            //string fileName = Path.Combine(this.path, "Document.xml");
-            //DataContractSerializer dcs = new DataContractSerializer(typeof(Games));
-            //FileStream fs = new FileStream(fileName, FileMode.Open);
-            //XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
-
-            //Games games = (Games)dcs.ReadObject(reader);
-            //reader.Close();
-            //fs.Close();
             DAL.DataEntities.FeatureModel dataEntity;
             using (FileStream reader = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/" + featureModelName + ".xml"), FileMode.Open, FileAccess.Read))
             {
@@ -52,7 +44,8 @@ namespace BLL.BLOManagers
             } 
 
             // Convert to BLO
-            //DAL.DataEntities.FeatureModel dataEntity = Mapper.Map<DAL.DataEntities.FeatureModel>(model);
+            BLL.BLOs.FeatureModel featureModelBLO = Mapper.Map<BLL.BLOs.FeatureModel>(dataEntity);
+            return featureModelBLO;
         }
 
     }
