@@ -852,6 +852,7 @@ var Controller = function () {
         _dataModel.CreateAndLoadNewModel();
     }
     this.LoadModel = function () {
+        _cloSelectionManager.DeselectAllCLOs();
         featureModelName = "Test";
         _dataModel.LoadExistingModel(featureModelName);
     }
@@ -1071,7 +1072,7 @@ DataModel.CLOFactory = function (bloService) {
 
     var FromBLO = {
         FeatureModel: function (blo) {
-            
+
             // Strip off all child collections from the blo
             var strippedOffBLOArrays = stripOffChildArrays(blo); // it is assumed all arrays on BLOs are part of BLO Lists
 
@@ -1079,7 +1080,7 @@ DataModel.CLOFactory = function (bloService) {
             var newClientID = getNewClientID();
             var newCLO = new FeatureModelCLO(newClientID, blo);
             newCLO.Initialize();
-            
+
             // Child Features
             for (var i = 0; i < strippedOffBLOArrays.Features.length; i++) {
                 var featureCLO = FromBLO.Feature(strippedOffBLOArrays.Features[i]);
@@ -1089,7 +1090,7 @@ DataModel.CLOFactory = function (bloService) {
             for (var i = 0; i < strippedOffBLOArrays.Relations.length; i++) {
                 var relationBLO = strippedOffBLOArrays.Relations[i];
                 var relationCLO = FromBLO.Relation(strippedOffBLOArrays.Relations[i]);
-                
+
                 // Get references to the CLOs corresponding to the ParentFeature & ChildFeature
                 relationCLO.ParentFeature = newCLO.Features.GetItemWithFieldValue("Identifier", relationBLO.ParentFeature.Identifier);
                 relationCLO.ChildFeature = newCLO.Features.GetItemWithFieldValue("Identifier", relationBLO.ChildFeature.Identifier);
@@ -1097,8 +1098,46 @@ DataModel.CLOFactory = function (bloService) {
 
                 newCLO.Relations.Add(relationCLO);
             }
+            // Child GroupRelations
+            for (var i = 0; i < strippedOffBLOArrays.GroupRelations.length; i++) {
+                var groupRelationBLO = strippedOffBLOArrays.GroupRelations[i];
+                var groupRelationCLO = FromBLO.GroupRelation(strippedOffBLOArrays.GroupRelations[i]);
 
-            //// Create CLOs for each of the child collections 
+                // Get references to the CLOs corresponding to the ParentFeature & ChildFeature
+                groupRelationCLO.ParentFeature = newCLO.Features.GetItemWithFieldValue("Identifier", groupRelationBLO.ParentFeature.Identifier);
+                for (var j = 0; j < groupRelationBLO.ChildFeatures.length; j++) {
+                    var childFeatureIdentifier = groupRelationBLO.ChildFeatures[j].Identifier;
+                    groupRelationCLO.ChildFeatures.Add(newCLO.Features.GetItemWithFieldValue("Identifier", childFeatureIdentifier));
+                }
+                delete groupRelationBLO.ParentFeature; delete groupRelationBLO.ChildFeatures; // delete them off the BLO afterwards
+
+
+                newCLO.GroupRelations.Add(groupRelationCLO);
+            }
+            // Child CompositionRules
+            for (var i = 0; i < strippedOffBLOArrays.CompositionRules.length; i++) {
+                var compositionRuleBLO = strippedOffBLOArrays.CompositionRules[i];
+                var compositionRuleCLO = FromBLO.CompositionRule(strippedOffBLOArrays.CompositionRules[i]);
+
+                // Get references to the CLOs corresponding to the ParentFeature & ChildFeature
+                compositionRuleCLO.FirstFeature = newCLO.Features.GetItemWithFieldValue("Identifier", compositionRuleBLO.FirstFeature.Identifier);
+                compositionRuleCLO.SecondFeature = newCLO.Features.GetItemWithFieldValue("Identifier", compositionRuleBLO.SecondFeature.Identifier);
+                delete compositionRuleBLO.FirstFeature; delete compositionRuleBLO.SecondFeature; // delete them off the BLO afterwards
+
+                newCLO.CompositionRules.Add(compositionRuleCLO);
+            }
+            // Child CustomRules
+            for (var i = 0; i < strippedOffBLOArrays.CustomRules.length; i++) {
+                var customRuleCLO = FromBLO.CustomRule(strippedOffBLOArrays.CustomRules[i]);
+                newCLO.CustomRules.Add(customRuleCLO);
+            }
+            // Child CustomFunctions
+            for (var i = 0; i < strippedOffBLOArrays.CustomFunctions.length; i++) {
+                var customFunctionCLO = FromBLO.CustomFunction(strippedOffBLOArrays.CustomFunctions[i]);
+                newCLO.CustomFunctions.Add(customFunctionCLO);
+            }
+
+            //// Create CLOs for each of the child collections - special GENERIC code. Commented out because it doesnt work for references
             //for (var arrayName in strippedOffArrays) {
             //    var array = strippedOffArrays[arrayName];
             //    for (var i = 0; i < array.length; i++) {
@@ -1144,7 +1183,7 @@ DataModel.CLOFactory = function (bloService) {
             return newCLO;
         },
         Relation: function (blo) {
-            
+
             //
             var newClientID = getNewClientID();
             var newCLO = new RelationCLO(newClientID, blo);
@@ -1228,7 +1267,7 @@ DataModel.CLOFactory = function (bloService) {
             return blo;
         },
         Feature: function (clo) {
-
+            
             // Get its BLO
             var blo = clo.GetBLOCopy();
 
@@ -1236,7 +1275,8 @@ DataModel.CLOFactory = function (bloService) {
             for (var i = 0; i < clo.Attributes.GetLength() ; i++) {
                 var attributeCLO = clo.Attributes.GetAt(i);
                 var attributeBLO = ToBLO[CLOTypes.Attribute](attributeCLO);
-                blo.Attributes = [];
+                if (blo.Attributes === undefined)
+                    blo.Attributes = [];
                 blo.Attributes.push(attributeBLO);
             }
 
@@ -1273,6 +1313,9 @@ DataModel.CLOFactory = function (bloService) {
             for (var i = 0; i < clo.ChildFeatures.GetLength() ; i++) {
                 var childFeatureCLO = clo.ChildFeatures.GetAt(i);
                 var childFeatureBLO = ToBLO[CLOTypes.Feature](childFeatureCLO);
+
+                if (blo.ChildFeatures === undefined)
+                    blo.ChildFeatures = [];
                 blo.ChildFeatures.push(childFeatureBLO);
             }
 
@@ -1326,9 +1369,9 @@ DataModel.CLOFactory = function (bloService) {
 
         // Go through all properties on the given blo object and remove them if they are of the Array type
         for (var propertyName in blo) {
-            if($.isArray(blo[propertyName])) {
+            if ($.isArray(blo[propertyName])) {
                 strippedOffArrays[propertyName] = blo[propertyName];
-                delete blo[propertyName]; 
+                delete blo[propertyName];
             }
         }
 

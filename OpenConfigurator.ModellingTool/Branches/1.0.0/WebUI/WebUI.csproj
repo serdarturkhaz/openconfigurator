@@ -151,6 +151,7 @@
     <Content Include="Content\Images\Controls\simpleTree\minus.png" />
     <Content Include="Content\Images\Controls\simpleTree\plus.png" />
     <Content Include="Content\Images\Icons\add.png" />
+    <Content Include="Content\Images\Icons\checkmark.png" />
     <Content Include="Content\Images\Icons\delete.png" />
     <Content Include="Content\Images\Icons\Toolbar\compositionRule.png" />
     <Content Include="Content\Images\Icons\Toolbar\customRule.png" />
@@ -182,11 +183,11 @@
     <Content Include="Scripts\Plugins\jquery.autogrowtextarea.js" />
     <Content Include="Scripts\Plugins\jquery.blockUI.js" />
     <Content Include="Scripts\Plugins\jquery.guid.js" />
-    <Content Include="Scripts\Plugins\jquery.pnotify.js" />
     <Content Include="Scripts\Plugins\jquery.timer.js" />
     <Content Include="Scripts\Plugins\jquery.tipTip.js" />
     <Content Include="Scripts\Plugins\json2.js" />
     <Content Include="Scripts\Plugins\knockout.validation.js" />
+    <Content Include="Scripts\Plugins\toastr.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
     <Content Include="UIComponents\PropertyEditor\CompositionRuleInnerEditor\CompositionRuleInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\CustomFunctionInnerEditor\CustomFunctionInnerEditor.js" />
@@ -228,6 +229,7 @@
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
+    <Folder Include="UIComponents\FileExplorer\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Images\Layout\logo2.xcf" />
