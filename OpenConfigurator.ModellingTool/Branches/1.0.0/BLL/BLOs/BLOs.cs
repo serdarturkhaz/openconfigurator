@@ -89,6 +89,13 @@ namespace BLL.BLOs
         protected List<CustomFunction> customFunctions = new List<CustomFunction>();
 
         // Properties
+        public string Type
+        {
+            get
+            {
+                return "FeatureModel";
+            }
+        }
         public string Name
         {
             get;
@@ -159,6 +166,13 @@ namespace BLL.BLOs
         protected List<Attribute> attributes = new List<Attribute>();
 
         // Properties
+        public string Type
+        {
+            get
+            {
+                return "Feature";
+            }
+        }
         public string Identifier
         {
             get;
@@ -206,6 +220,13 @@ namespace BLL.BLOs
     public class Attribute : iBLO
     {
         // Properties
+        public string Type
+        {
+            get
+            {
+                return "Attribute";
+            }
+        }
         public string Identifier
         {
             get;
@@ -257,6 +278,13 @@ namespace BLL.BLOs
     public class Relation : iBLO
     {
         // Properties
+        public string Type
+        {
+            get
+            {
+                return "Relation";
+            }
+        }
         public string Identifier
         {
             get;
@@ -327,6 +355,13 @@ namespace BLL.BLOs
         protected List<Feature> childFeatures = new List<Feature>();
 
         // Properties
+        public string Type
+        {
+            get
+            {
+                return "GroupRelation";
+            }
+        }
         public string Identifier
         {
             get;
@@ -398,6 +433,13 @@ namespace BLL.BLOs
     public class CompositionRule : iBLO
     {
         // Properties
+        public string Type
+        {
+            get
+            {
+                return "CompositionRule";
+            }
+        }
         public string Identifier
         {
             get;
@@ -449,6 +491,13 @@ namespace BLL.BLOs
     public class CustomRule : iBLO
     {
         // Properties
+        public string Type
+        {
+            get
+            {
+                return "CustomRule";
+            }
+        }
         public virtual string Identifier
         {
             get;
@@ -490,6 +539,13 @@ namespace BLL.BLOs
     public class CustomFunction : iBLO
     {
         // Properties
+        public string Type
+        {
+            get
+            {
+                return "CustomFunction";
+            }
+        }
         public virtual string Identifier
         {
             get;

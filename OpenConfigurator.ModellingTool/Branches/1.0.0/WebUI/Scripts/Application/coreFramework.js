@@ -5,12 +5,10 @@ var ObservableCollection = function () {
     var koObservableArray = ko.observableArray([]);
     var absoluteItemCounter = 0; // special variable which keeps track of all items that have been part of the collection (this is used for auto-generating identifiers)
 
-    // Properties
+    // Public methods
     koObservableArray.GetLength = function () {
         return koObservableArray().length;
     }
-
-    // Public methods
     koObservableArray.Add = function (object) {
 
         // Raise pre-event
@@ -52,7 +50,22 @@ var ObservableCollection = function () {
                 else
                     return false;
             });
-            return match;
+            return (match !== null);
+        }
+        else {
+            return false;
+        }
+    }
+    koObservableArray.GetItemWithFieldValue = function (fieldName, value) {
+        if (koObservableArray.GetLength() > 0) {
+            var item = ko.utils.arrayFirst(koObservableArray(), function (item) {
+                if (item[fieldName] !== undefined)
+                    return item[fieldName]() === value;
+                else
+                    return false;
+            });
+
+            return item;
         }
         else {
             return false;
