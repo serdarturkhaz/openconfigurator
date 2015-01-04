@@ -129,6 +129,7 @@
         },
         saveModelItemTriggered: function () {
             _controller.SaveChanges();
+            toastr.success("Feature Model saved successfully!");
         },
         newFeatureItemTriggered: function () {
             _controller.AddNewFeature();

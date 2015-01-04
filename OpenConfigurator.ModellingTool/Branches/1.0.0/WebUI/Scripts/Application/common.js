@@ -14,19 +14,22 @@ $(document).ready(function () {
     });
 });
 
-//Pines notify defaults
-$.pnotify.defaults.pnotify_mouse_reset = true;
-$.pnotify.defaults.pnotify_width = "220px";
-$.pnotify.defaults.pnotify_animate_speed = 800;
-$.pnotify.defaults.pnotify_hide = true;
-$.pnotify.defaults.pnotify_hide = true;
-$.pnotify.defaults.pnotify_animation = "fade";
-$.pnotify.defaults.pnotify_delay = 2000;
-$.pnotify.defaults.pnotify_closer = true;
-$.pnotify.defaults.pnotify_notice_icon = "pnotifyNoticeIcon";
-$.pnotify.defaults.pnotify_error_icon = "pnotifyErrorIcon";
-$.pnotify.defaults.pnotify_history = false;
-$.pnotify.defaults.pnotify_opacity = 1;
+// Settings for ToastR notifications
+toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "progressBar": false,
+    "positionClass": "toast-top-center",
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "2000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+}
 //****************************************************************************************************************
 
 //Helper methods/small plugins************************************************************************************
