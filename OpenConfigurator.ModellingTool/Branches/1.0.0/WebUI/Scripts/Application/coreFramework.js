@@ -83,20 +83,30 @@ var ObservableCollection = function () {
     //
     return koObservableArray;
 }
-var ObservableField = function (sourceFieldParent, sourceFieldName) { // can also be called without parameters, in which case it just creates a simple koObservable
+var ObservableField = function () {
+    // Can be called in the following ways
+    // - with 2 parameters (sourceFieldParent, sourceFieldName) -> will create an observable and bind it (1 way) to the source field
+    // - with 1 parameter (initial default value) -> will create an observable with the given initial default value
+    // - without any parameters -> 
 
     // Variables
     var koObservable;
 
     // Implicit constructor logic
-    if (sourceFieldParent !== undefined && sourceFieldName !== undefined) {
+    if (arguments.length===2) {
+        var sourceFieldParent = arguments[0], sourceFieldName = arguments[1];
         var koObservable = ko.observable(sourceFieldParent[sourceFieldName]); // set the initial value for the koObservable to be that of the source field
         koObservable.subscribe(function (newVal) { // bind the koObs so it updates the value of the source field whenever it is changed itself
             sourceFieldParent[sourceFieldName] = newVal;
         });
-    } else {
+    } else if (arguments.length===1) {
+        var defaultValue = arguments[0];
+        koObservable = ko.observable(defaultValue);
+
+    } else if (arguments.length === 0) {
         koObservable = ko.observable();
     }
+
 
     // Setup extra stuff
     koObservable.Changed = new Event();

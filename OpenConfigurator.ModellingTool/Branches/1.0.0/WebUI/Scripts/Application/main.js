@@ -501,6 +501,7 @@ var FeatureModelCLO = function (clientID, blo) {
 
     // Properties
     this.DataState = null;
+    this.HasChanges = new ObservableField(false);
     this.GetClientID = function () {
         return _clientID;
     };
@@ -528,6 +529,8 @@ var FeatureModelCLO = function (clientID, blo) {
         _this.CompositionRules.Adding.AddHandler(new EventHandler(onCLOAdding));
         _this.CustomRules.Adding.AddHandler(new EventHandler(onCLOAdding));
         _this.CustomFunctions.Adding.AddHandler(new EventHandler(onCLOAdding));
+
+        // Subscribe to all children to track changes
     }
 
     // Event handlers
@@ -1137,15 +1140,7 @@ DataModel.CLOFactory = function (bloService) {
                 newCLO.CustomFunctions.Add(customFunctionCLO);
             }
 
-            //// Create CLOs for each of the child collections - special GENERIC code. Commented out because it doesnt work for references
-            //for (var arrayName in strippedOffArrays) {
-            //    var array = strippedOffArrays[arrayName];
-            //    for (var i = 0; i < array.length; i++) {
-            //        var childBLO = array[i];
-            //        var childCLO = FromBLO[childBLO.Type](childBLO);
-            //        newCLO[arrayName].Add(childCLO);
-            //    }
-            //}
+            
 
             //
             return newCLO;
