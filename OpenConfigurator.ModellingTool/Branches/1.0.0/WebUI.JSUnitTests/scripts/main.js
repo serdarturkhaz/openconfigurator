@@ -528,6 +528,8 @@ var FeatureModelCLO = function (clientID, blo) {
         _this.CompositionRules.Adding.AddHandler(new EventHandler(onCLOAdding));
         _this.CustomRules.Adding.AddHandler(new EventHandler(onCLOAdding));
         _this.CustomFunctions.Adding.AddHandler(new EventHandler(onCLOAdding));
+
+        // Subscribe to all children to track changes
     }
 
     // Event handlers
