@@ -497,11 +497,10 @@ var FeatureModelCLO = function (clientID, blo) {
 
     // Fields
     var _clientID = clientID, _innerBLO = blo;
+    var _changeTrackingManager = new InnerChangeTrackingManager(this);
     var _this = this;
 
     // Properties
-    this.DataState = null;
-    this.HasChanges = new ObservableField(false);
     this.GetClientID = function () {
         return _clientID;
     };
@@ -530,7 +529,8 @@ var FeatureModelCLO = function (clientID, blo) {
         _this.CustomRules.Adding.AddHandler(new EventHandler(onCLOAdding));
         _this.CustomFunctions.Adding.AddHandler(new EventHandler(onCLOAdding));
 
-        // Subscribe to all children to track changes
+        // Setup change tracking
+        _changeTrackingManager.Initialize();
     }
 
     // Event handlers
@@ -545,7 +545,6 @@ var FeatureCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -604,7 +603,6 @@ var AttributeCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -634,7 +632,6 @@ var RelationCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -673,7 +670,6 @@ var GroupRelationCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -713,7 +709,6 @@ var CompositionRuleCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -743,7 +738,6 @@ var CustomRuleCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -772,7 +766,6 @@ var CustomFunctionCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -966,8 +959,8 @@ var DataModel = function (bloService, cloFactory) {
     }
 
     // Public methods
-    this.CreateNewCLO = function (cloType) {
-        return _cloFactory.CreateNewCLO(cloType);
+    this.CreateNewCLO = function (cloType, extraParams) {
+        return _cloFactory.CreateNewCLO(cloType, extraParams);
     }
     this.GetByClientID = function (clientID) {
         return _cloFactory.GetByClientID(clientID);
@@ -1050,10 +1043,11 @@ var DataModel = function (bloService, cloFactory) {
 
         // Clean up current FeatureModel (if one is present)
         if (_currentFeatureModelCLO !== null) {
+            var modelCLO = _currentFeatureModelCLO;
             _currentFeatureModelCLO = null;
             _deletedCLOs = {};
             _cloFactory.Reset();
-            _this.ModelUnloaded.RaiseEvent(_currentFeatureModelCLO);
+            _this.ModelUnloaded.RaiseEvent(modelCLO);
         }
 
         // Load the new FeatureModel
@@ -1062,8 +1056,13 @@ var DataModel = function (bloService, cloFactory) {
         _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
     }
     this.SaveChanges = function () {
+
+        //
         var featureModelBLO = _cloFactory.ToBLO(_currentFeatureModelCLO);
         _bloService.SaveChanges(featureModelBLO);
+
+        // 
+        _currentFeatureModelCLO.HasChanges(false);
     }
 
     // Events
@@ -1082,8 +1081,7 @@ DataModel.CLOFactory = function (bloService) {
             // Create it
             var newClientID = getNewClientID();
             var newCLO = new FeatureModelCLO(newClientID, blo);
-            newCLO.Initialize();
-
+            
             // Child Features
             for (var i = 0; i < strippedOffBLOArrays.Features.length; i++) {
                 var featureCLO = FromBLO.Feature(strippedOffBLOArrays.Features[i]);
@@ -1140,9 +1138,8 @@ DataModel.CLOFactory = function (bloService) {
                 newCLO.CustomFunctions.Add(customFunctionCLO);
             }
 
-            
-
-            //
+            // Initialize and return
+            newCLO.Initialize();
             return newCLO;
         },
         Feature: function (blo) {
@@ -1153,8 +1150,7 @@ DataModel.CLOFactory = function (bloService) {
             // Create it
             var newClientID = getNewClientID();
             var newCLO = new FeatureCLO(newClientID, blo);
-            newCLO.Initialize();
-
+            
             // Child Attributes
             for (var i = 0; i < strippedOffArrays.Attributes.length; i++) {
                 var attributeCLO = FromBLO.Attribute(strippedOffArrays.Attributes[i]);
@@ -1163,72 +1159,103 @@ DataModel.CLOFactory = function (bloService) {
             }
 
             // Register and return it
+            newCLO.Initialize();
             _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
         Attribute: function (blo) {
 
-            //
+            // Create the clo
             var newClientID = getNewClientID();
             var newCLO = new AttributeCLO(newClientID, blo);
-            newCLO.Initialize();
 
             // Register and return it
+            newCLO.Initialize();
             _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
-        Relation: function (blo) {
+        Relation: function (blo, parentFeatureCLO, childFeatureCLO) {
 
-            //
+            // Create the clo
             var newClientID = getNewClientID();
             var newCLO = new RelationCLO(newClientID, blo);
-            newCLO.Initialize();
+            
+            // Set parent/child feature CLOs if they are provided as parameters
+            if (parentFeatureCLO !== undefined && childFeatureCLO !== undefined) {
+                newCLO.ParentFeature = parentFeatureCLO;
+                newCLO.ChildFeature = childFeatureCLO;
+                parentFeatureCLO.RelatedCLOS.Add(newCLO);
+                childFeatureCLO.RelatedCLOS.Add(newCLO);
+            }
 
             // Register and return it
+            newCLO.Initialize();
             _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
-        GroupRelation: function (blo) {
+        GroupRelation: function (blo, parentFeatureCLO, childFeatureCLOs) {
 
-            //
+            // Create the clo
             var newClientID = getNewClientID();
             var newCLO = new GroupRelationCLO(newClientID, blo);
-            newCLO.Initialize();
 
+            // Set parent/child feature CLOs if they are provided as parameters
+            if (parentFeatureCLO !== undefined && childFeatureCLOs !== undefined) {
+                newCLO.ParentFeature = parentFeatureCLO;
+                parentFeatureCLO.RelatedCLOS.Add(newCLO);
+
+                // ChildFeatureCLOs
+                for (var i = 0; i < childFeatureCLOs.length; i++) {
+                    newCLO.ChildFeatures.Add(childFeatureCLOs[i]);
+                    childFeatureCLOs[i].RelatedCLOS.Add(newCLO);
+                }
+                
+            }
+           
             // Register and return it
+            newCLO.Initialize();
             _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
-        CompositionRule: function (blo) {
+        CompositionRule: function (blo, firstFeatureCLO, secondFeatureCLO) {
 
-            //
+            // Create the clo
             var newClientID = getNewClientID();
             var newCLO = new CompositionRuleCLO(newClientID, blo);
-            newCLO.Initialize();
+
+            // Set parent/child feature CLOs if they are provided as parameters
+            if (firstFeatureCLO !== undefined && secondFeatureCLO !== undefined) {
+                newCLO.FirstFeature = firstFeatureCLO;
+                newCLO.SecondFeature = secondFeatureCLO;
+                firstFeatureCLO.RelatedCLOS.Add(newCLO);
+                secondFeatureCLO.RelatedCLOS.Add(newCLO);
+            }
 
             // Register and return it
+            newCLO.Initialize();
             _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
         CustomRule: function (blo) {
 
-            //
+            // Create the clo
             var newClientID = getNewClientID();
             var newCLO = new CustomRuleCLO(newClientID, blo);
-            newCLO.Initialize();
 
             // Register and return it
+            newCLO.Initialize();
             _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         },
         CustomFunction: function (blo) {
 
-            //
+            // Create the clo
             var newClientID = getNewClientID();
             var newCLO = new CustomFunctionCLO(newClientID, blo);
-            newCLO.Initialize();
+            
 
             // Register and return it
+            newCLO.Initialize();
             _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
         }
@@ -1262,7 +1289,7 @@ DataModel.CLOFactory = function (bloService) {
             return blo;
         },
         Feature: function (clo) {
-            
+
             // Get its BLO
             var blo = clo.GetBLOCopy();
 
@@ -1393,11 +1420,17 @@ DataModel.CLOFactory = function (bloService) {
         var clo = FromBLO[type](blo);
         return clo;
     }
-    this.CreateNewCLO = function (cloType) {
+    this.CreateNewCLO = function (cloType, extraParamsArrays) {
+
+        // Get a new default BLO
+        var newBLO = _bloService.GetDefaultBLO(cloType);
+
+        // Setup parameters to include extra parameters, if any are provided
+        var params = (extraParamsArrays !== undefined) ? extraParamsArrays : [];
+        params.unshift(newBLO);
 
         // Create the CLO
-        var newBLO = _bloService.GetDefaultBLO(cloType);
-        var newCLO = FromBLO[cloType](newBLO);
+        var newCLO = FromBLO[cloType].apply(_this, params);
         return newCLO;
     }
     this.Reset = function () { // used when loading a new FeatureModel

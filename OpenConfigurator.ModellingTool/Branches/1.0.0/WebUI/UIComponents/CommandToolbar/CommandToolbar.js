@@ -36,6 +36,14 @@
     function addToggleEffect(item) {
         $(item).addClass("iconButton-active");
     }
+    function bindToModelHasChanges(modelCLO) {
+        modelCLO.HasChanges.Changed.AddHandler(new EventHandler(onModelHasChangesChanged, "toolbarSaveItem"));
+        onModelHasChangesChanged(modelCLO.HasChanges()); // trigger change to load initial value
+        
+    }
+    function unbindFromModelHasChanges(modelCLO) {
+        modelCLO.HasChanges.Changed.RemoveHandler("toolbarSaveItem");
+    }
 
     // Init
     this.Initialize = function () {
@@ -114,11 +122,20 @@
             })
         }
         ko.applyBindings(vm, _innerElems.modelNameTextbox[0]);
+
+        bindToModelHasChanges(modelCLO);
     }
     this.OnModelUnloaded = function (modelCLO) {
         // Clean up bindings and html
         ko.cleanNode(_innerElems.modelNameTextbox[0]);
         _innerElems.modelNameTextbox.val("");
+        unbindFromModelHasChanges(modelCLO);
+    }
+    var onModelHasChangesChanged = function (val) {
+        if (val === false)
+            _innerElems.fileCommandItems.saveModelItem.prop("disabled", "disabled");
+        else
+            _innerElems.fileCommandItems.saveModelItem.prop("disabled", false);
     }
     var toolbarItemHandlers = {
         newModelItemTriggered: function () {
@@ -160,4 +177,5 @@
         }
 
     };
+
 }
