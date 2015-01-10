@@ -6,6 +6,10 @@ var Enums = {
         Deleted: "Deleted",
         New: "New"
     },
+    UIOrientationTypes: {
+        Vertical: 0,
+        Horizontal: 1
+    },
     UIElementStates: {
         Selected: "Selected",
         Unselected: "Unselected",
@@ -55,10 +59,6 @@ var Enums = {
         EndPoint: "EndPoint",
         StartPoint: "StartPoint"
     },
-    UIOrientationTypes: {
-        Vertical: "Vertical",
-        Horizontal: "Horizontal"
-    }
 }
 var EnumExtraInfo = {
     RelationTypes_Info: {},
@@ -511,6 +511,8 @@ var FeatureModelCLO = function (clientID, blo) {
         return jQuery.extend(true, {}, _innerBLO);
     }
     this.Name = new ObservableField(_innerBLO, "Name");
+    this.UIOrientation = new ObservableField(_innerBLO, "UIOrientation");
+    this.ScaleModifier = new ObservableField(_innerBLO, "ScaleModifier");
     this.Features = new ObservableCollection();
     this.Relations = new ObservableCollection();
     this.GroupRelations = new ObservableCollection();
@@ -545,7 +547,6 @@ var FeatureCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -604,7 +605,6 @@ var AttributeCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -634,7 +634,6 @@ var RelationCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -673,7 +672,6 @@ var GroupRelationCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -713,7 +711,6 @@ var CompositionRuleCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -743,7 +740,6 @@ var CustomRuleCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
@@ -772,7 +768,6 @@ var CustomFunctionCLO = function (clientID, blo) {
     var _this = this;
 
     // Properties
-    this.DataState = null;
     this.GetClientID = function () {
         return _clientID;
     };
