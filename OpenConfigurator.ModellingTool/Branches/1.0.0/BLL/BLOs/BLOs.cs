@@ -38,6 +38,11 @@ namespace BLL.BLOs
         Boolean = 1,
         String = 2
     }
+    public enum UIOrientationTypes
+    {
+        Vertical = 0,
+        Horizontal = 1
+    }
 
     // Extra information for enums (was previously stored in the SQL db)
     public static class RelationTypes_Info
@@ -101,6 +106,16 @@ namespace BLL.BLOs
             get;
             set;
         }
+        public UIOrientationTypes UIOrientation
+        {
+            get;
+            set;
+        }
+        public decimal ScaleModifier
+        {
+            get;
+            set;
+        }
         public List<Feature> Features
         {
             get
@@ -154,7 +169,9 @@ namespace BLL.BLOs
         {
             FeatureModel newBLO = new FeatureModel()
             {
-                Name = "Unnamed Model"
+                Name = "Unnamed Model",
+                UIOrientation= UIOrientationTypes.Vertical,
+                ScaleModifier = 1
             };
             return newBLO;
         }

@@ -100,6 +100,21 @@
                 elem.RefreshGraphicalRepresentation();
         }
     }
+    function setOrientation(newOrientation) {
+        Settings.UIOrientation = newOrientation;
+
+        // Reverse coordinates for all Features
+        for (var clientID in _visualUIElems) {
+            var elem = _visualUIElems[clientID];
+            if (elem !== undefined) {
+
+                if (elem.GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
+                    elem.ReverseCoordinates();
+                }
+                elem.RefreshGraphicalRepresentation();
+            }
+        }
+    }
 
     // Init
     this.Initialize = function () {
@@ -166,24 +181,13 @@
     this.ToggleOrientation = function () {
 
         // Change orientation setting
+        var newOrientation;
         if (Settings.UIOrientation === Enums.UIOrientationTypes.Vertical) {
-            Settings.UIOrientation = Enums.UIOrientationTypes.Horizontal;
+            newOrientation = Enums.UIOrientationTypes.Horizontal;
         } else {
-            Settings.UIOrientation = Enums.UIOrientationTypes.Vertical;
+            newOrientation = Enums.UIOrientationTypes.Vertical;
         }
-
-        // Reverse coordinates for all Features
-        for (var clientID in _visualUIElems) {
-            var elem = _visualUIElems[clientID];
-            if (elem !== undefined) {
-
-                if (elem.GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
-                    elem.ReverseCoordinates();
-                }
-                elem.RefreshGraphicalRepresentation();
-
-            }
-        }
+        setOrientation(newOrientation);
     }
     this.GetCurrentState = function () {
         return _innerStateManager.GetCurrentStateName();
@@ -195,6 +199,9 @@
 
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
+
+        // Setup orientation and zoom
+        setOrientation(modelCLO.UIOrientation());
 
         // References to all relevant featureModel child collections
         var bindableCollections = [

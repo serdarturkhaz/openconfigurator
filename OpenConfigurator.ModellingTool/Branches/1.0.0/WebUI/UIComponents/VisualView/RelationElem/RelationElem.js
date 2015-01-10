@@ -50,7 +50,8 @@
             _innerElements.cardinalityElement.RefreshGraphicalRepresentation();
     }
     function getCardinalityElemPosition() {
-        var cardinalityDistance = SystemDefaults.Orientations[Settings.UIOrientation].CardinalityDistances.Relation;
+        var currentOrientationName = getEnumEntryNameByID(Enums.UIOrientationTypes, Settings.UIOrientation);
+        var cardinalityDistance = SystemDefaults.Orientations[currentOrientationName].CardinalityDistances.Relation;
         var line = _innerElements.connection.InnerElements.line;
         var labelPoint = line.getPointAtLength(line.getTotalLength() - cardinalityDistance);
         return labelPoint;

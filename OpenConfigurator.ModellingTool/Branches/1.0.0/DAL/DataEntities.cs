@@ -22,12 +22,24 @@ namespace DAL.DataEntities
 
         // Properties
         [DataMember(Order = 0)]
-        public virtual string Name
+        public string Name
         {
             get;
             set;
         }
         [DataMember(Order = 1)]
+        public int UIOrientation
+        {
+            get;
+            set;
+        }
+        [DataMember(Order = 2)]
+        public decimal ScaleModifier
+        {
+            get;
+            set;
+        }
+        [DataMember(Order = 3)]
         public List<Feature> Features
         {
             get
@@ -35,7 +47,7 @@ namespace DAL.DataEntities
                 return features ?? (features = new List<Feature>());
             }
         }
-        [DataMember(Order = 2)]
+        [DataMember(Order = 4)]
         public List<Relation> Relations
         {
             get
@@ -43,7 +55,7 @@ namespace DAL.DataEntities
                 return relations ?? (relations = new List<Relation>());
             }
         }
-        [DataMember(Order = 3)]
+        [DataMember(Order = 5)]
         public List<GroupRelation> GroupRelations
         {
             get
@@ -51,7 +63,7 @@ namespace DAL.DataEntities
                 return groupRelations ?? (groupRelations = new List<GroupRelation>());
             }
         }
-        [DataMember(Order = 4)]
+        [DataMember(Order = 6)]
         public List<CompositionRule> CompositionRules
         {
             get
@@ -59,7 +71,7 @@ namespace DAL.DataEntities
                 return compositionRules ?? (compositionRules = new List<CompositionRule>());
             }
         }
-        [DataMember(Order = 5)]
+        [DataMember(Order = 7)]
         public List<CustomRule> CustomRules
         {
             get
@@ -67,7 +79,7 @@ namespace DAL.DataEntities
                 return customRules ?? (customRules = new List<CustomRule>());
             }
         }
-        [DataMember(Order = 6)]
+        [DataMember(Order = 8)]
         public List<CustomFunction> CustomFunctions
         {
             get

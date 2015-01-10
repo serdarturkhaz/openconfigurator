@@ -61,18 +61,21 @@
     }
     function getArcPath(firstConnection, lastConnection) {
 
+        //
+        var currentOrientationName = getEnumEntryNameByID(Enums.UIOrientationTypes, Settings.UIOrientation);
+
         // Get points
         var rootPoint = firstConnection.InnerElements.line.getPointAtLength(0);
         var pointA = firstConnection.InnerElements.line.getPointAtLength(UIStyles.GroupRelation.General.RootArc.Dimensions.Length * Settings.ScaleModifier);
         var pointB = lastConnection.InnerElements.line.getPointAtLength(UIStyles.GroupRelation.General.RootArc.Dimensions.Length * Settings.ScaleModifier);
 
         // Get arc modifiers
-        var rx = SystemDefaults.Orientations[Settings.UIOrientation].ArcModifiers.rx;
-        var ry = SystemDefaults.Orientations[Settings.UIOrientation].ArcModifiers.ry;
+        var rx = SystemDefaults.Orientations[currentOrientationName].ArcModifiers.rx;
+        var ry = SystemDefaults.Orientations[currentOrientationName].ArcModifiers.ry;
         var arcSweep = null;
 
-        for (var key in SystemDefaults.Orientations[Settings.UIOrientation].ArcDirection) {
-            var arcDirection = SystemDefaults.Orientations[Settings.UIOrientation].ArcDirection[key];
+        for (var key in SystemDefaults.Orientations[currentOrientationName].ArcDirection) {
+            var arcDirection = SystemDefaults.Orientations[currentOrientationName].ArcDirection[key];
             if (arcDirection.Check(rootPoint, pointA) === true) {
                 arcSweep = arcDirection.ArcSweep;
                 break;
@@ -93,7 +96,10 @@
         _innerElements.rootArc.attr({ path: newPath });
     }
     function getCardinalityElemPosition() {
-        var cardinalityDistance = SystemDefaults.Orientations[Settings.UIOrientation].CardinalityDistances.GroupRelation;
+        //
+        var currentOrientationName = getEnumEntryNameByID(Enums.UIOrientationTypes, Settings.UIOrientation);
+
+        var cardinalityDistance = SystemDefaults.Orientations[currentOrientationName].CardinalityDistances.GroupRelation;
         var line = _innerElements.connections[0].InnerElements.line;
         var labelPoint = line.getPointAtLength(cardinalityDistance);
         return labelPoint;

@@ -129,31 +129,66 @@ var InnerChangeTrackingManager = function (rootObjectToTrack) {
 
     // Private methods
     function bindToChildProperties(targetObject) {
-        for (var propertyName in targetObject) {
-            var property = targetObject[propertyName];
-            if (propertyName !== "Selected" && property !== null) { // ignore Selected and null properties
+        if (!targetObject.ChildChangesTracked) {
 
-                // Bind to observable field
-                if (property.IsObservableField) {
-                    property.Changed.AddHandler(new EventHandler(onObservableChanged, "changeTracker"));
-                }
+            // Mark the object as having been binded to already 
+            targetObject.ChildChangesTracked = true;
 
-                // Bind to observable collection 
-                if (property.IsObservableCollection) {
-                    property.Added.AddHandler(new EventHandler(onCLOAdded, "changeTracker"));
-                    property.Removed.AddHandler(new EventHandler(onCLORemoved, "changeTracker"));
+            // Bind to its properties
+            for (var propertyName in targetObject) {
+                var property = targetObject[propertyName];
+                if (propertyName !== "Selected" && property !== null) { // ignore Selected and null properties
 
-                    // Bind to all CLOs it currently contains
-                    for (var i = 0; i < property.GetLength() ; i++) {
-                        var childCLO = property.GetAt(i);
-                        bindToChildProperties(childCLO);
+                    // Bind to observable field
+                    if (property.IsObservableField) {
+                        property.Changed.AddHandler(new EventHandler(onObservableChanged, "changeTracker"));
+                    }
+
+                    // Bind to observable collection 
+                    if (property.IsObservableCollection) {
+                        property.Added.AddHandler(new EventHandler(onCLOAdded, "changeTracker"));
+                        property.Removed.AddHandler(new EventHandler(onCLORemoved, "changeTracker"));
+
+                        // Bind to all CLOs it currently contains
+                        for (var i = 0; i < property.GetLength() ; i++) {
+                            var childCLO = property.GetAt(i);
+                            bindToChildProperties(childCLO);
+                        }
                     }
                 }
             }
         }
     }
     function unbindChildProperties(targetObject) {
+        if (targetObject.ChildChangesTracked) {
 
+            // Remove marking
+            delete targetObject.ChildChangesTracked;
+
+            //
+            for (var propertyName in targetObject) {
+                var property = targetObject[propertyName];
+                if (propertyName !== "Selected" && property !== null) { // ignore Selected and null properties
+
+                    // Unbind from observable field
+                    if (property.IsObservableField) {
+                        property.Changed.RemoveHandler("changeTracker");
+                    }
+
+                    // Unbind from observable collection 
+                    if (property.IsObservableCollection) {
+                        property.Added.RemoveHandler("changeTracker");
+                        property.Removed.RemoveHandler("changeTracker");
+
+                        // Unbind from all CLOs it currently contains
+                        for (var i = 0; i < property.GetLength() ; i++) {
+                            var childCLO = property.GetAt(i);
+                            unbindChildProperties(childCLO);
+                        }
+                    }
+                }
+            }
+        }
 
     }
 
@@ -175,14 +210,14 @@ var InnerChangeTrackingManager = function (rootObjectToTrack) {
         // Bind to the clo 
         bindToChildProperties(addedCLO);
 
-        // Manually raise changes
+        // Manually raise changes on the root
         _hasChanges(true);
     }
     var onCLORemoved = function (removedCLO) {
         // Unbind to the clo 
-        //bindToChildProperties(addedCLO);
+        unbindChildProperties(addedCLO);
 
-        // Manually raise changes
+        // // Manually raise changes on the root
         _hasChanges(true);
     }
 }
@@ -195,10 +230,24 @@ var Event = function () {
     var _suppressionEnabled = false;
     var _this = this;
 
-    // Methods
-    this.AddHandler = function (handler) {
+    // Private methods
+    function handlerWithNameExists(name) {
+        for (var i = 0; i < _handlers.length; i++) {
+            if (_handlers[i].GetName() === name) {
+                return true;
+            }
+        }
 
-        _handlers.push(handler);
+        return false;
+    }
+
+    // Public Methods
+    this.AddHandler = function (handler) {
+        if (handler.GetName() !== null && handlerWithNameExists(handler.GetName())) {
+            throw { message: "Handler with name '" + handler.GetName() + "' already exists" };
+        } else {
+            _handlers.push(handler);
+        }
     }
     this.RaiseEvent = function () { // can be called with any number of arbitrary arguments (both as an array: [arg1, arg2] or directly as: arg1,arg2)
 

@@ -54,7 +54,7 @@
         // Determine the orientation
         var currentOrientation = null;
         if (Settings.UIOrientation !== false) {
-            currentOrientation = Settings.UIOrientation; //use default fixed orientation without calculating angle
+            currentOrientation = getEnumEntryNameByID(Enums.UIOrientationTypes, Settings.UIOrientation); //use default fixed orientation without calculating angle
         }
         else {
             var centerdx = objBcenter.x - objAcenter.x, centerdy = objBcenter.y - objAcenter.y;

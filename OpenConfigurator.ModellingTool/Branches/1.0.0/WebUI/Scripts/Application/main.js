@@ -6,6 +6,10 @@ var Enums = {
         Deleted: "Deleted",
         New: "New"
     },
+    UIOrientationTypes: {
+        Vertical: 0,
+        Horizontal: 1
+    },
     UIElementStates: {
         Selected: "Selected",
         Unselected: "Unselected",
@@ -55,10 +59,6 @@ var Enums = {
         EndPoint: "EndPoint",
         StartPoint: "StartPoint"
     },
-    UIOrientationTypes: {
-        Vertical: "Vertical",
-        Horizontal: "Horizontal"
-    }
 }
 var EnumExtraInfo = {
     RelationTypes_Info: {},
@@ -511,6 +511,8 @@ var FeatureModelCLO = function (clientID, blo) {
         return jQuery.extend(true, {}, _innerBLO);
     }
     this.Name = new ObservableField(_innerBLO, "Name");
+    this.UIOrientation = new ObservableField(_innerBLO, "UIOrientation");
+    this.ScaleModifier = new ObservableField(_innerBLO, "ScaleModifier");
     this.Features = new ObservableCollection();
     this.Relations = new ObservableCollection();
     this.GroupRelations = new ObservableCollection();
@@ -1050,10 +1052,17 @@ var DataModel = function (bloService, cloFactory) {
             _this.ModelUnloaded.RaiseEvent(modelCLO);
         }
 
-        // Load the new FeatureModel
+        // Get the existing feature model
         var featureModelBLO = _bloService.GetFeatureModel(featureModelName);
-        _currentFeatureModelCLO = _cloFactory.FromBLO(featureModelBLO, CLOTypes.FeatureModel);
-        _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
+        var loadedModelCLO = _cloFactory.FromBLO(featureModelBLO, CLOTypes.FeatureModel);
+
+        // Attempt to load the model
+        var eventRaiseDetails = _this.ModelLoading.RaiseEvent(_currentFeatureModelCLO);
+        if (eventRaiseDetails.CancelTriggered() === false) {
+            _currentFeatureModelCLO = loadedModelCLO;
+            _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
+        }
+        
     }
     this.SaveChanges = function () {
 
@@ -1066,6 +1075,7 @@ var DataModel = function (bloService, cloFactory) {
     }
 
     // Events
+    this.ModelLoading = new Event();
     this.ModelLoaded = new Event();
     this.ModelUnloaded = new Event();
     this.CLODeleted = new Event();
