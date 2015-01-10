@@ -211,7 +211,7 @@
             // Create elements for any existing CLOs that are already in the collection
             for (var j = 0; j < collection.GetLength() ; j++) {
                 var clo = collection.GetAt(j);
-                modelHandlers.onCLOAdded(clo );
+                modelHandlers.onCLOAdded(clo);
             }
 
             // Bind to it
@@ -402,11 +402,8 @@
                     _cloSelectionManager.ForceSelectSingleCLO(childFeatureElem.GetCLO());
 
                     // Create a new CLO
-                    var newRelationCLO = _dataModel.CreateNewCLO(CLOTypes.Relation);
-                    newRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
-                    newRelationCLO.ChildFeature = childFeatureElem.GetCLO();
-                    parentFeatureElem.GetCLO().RelatedCLOS.Add(newRelationCLO);
-                    childFeatureElem.GetCLO().RelatedCLOS.Add(newRelationCLO);
+                    var newRelationCLO = _dataModel.CreateNewCLO(CLOTypes.Relation, [parentFeatureElem.GetCLO(), childFeatureElem.GetCLO()]);
+
 
                     // Add it to the FeatureModel and then switch to default state
                     _dataModel.GetCurrentFeatureModelCLO().Relations.Add(newRelationCLO);
@@ -458,13 +455,11 @@
                 if (parentFeatureElem && childFeatureElems.length > 1) { // there should be at least 2 child features
 
                     // Create a new CLO
-                    var newGroupRelationCLO = _dataModel.CreateNewCLO(CLOTypes.GroupRelation);
-                    newGroupRelationCLO.ParentFeature = parentFeatureElem.GetCLO();
+                    var childFeatureCLOs = [];
                     for (var i = 0; i < childFeatureElems.length; i++) {
-                        newGroupRelationCLO.ChildFeatures.Add(childFeatureElems[i].GetCLO());
-                        childFeatureElems[i].GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
+                        childFeatureCLOs.push(childFeatureElems[i].GetCLO());
                     }
-                    parentFeatureElem.GetCLO().RelatedCLOS.Add(newGroupRelationCLO);
+                    var newGroupRelationCLO = _dataModel.CreateNewCLO(CLOTypes.GroupRelation, [parentFeatureElem.GetCLO(), childFeatureCLOs]);
 
 
                     // Add it to the FeatureModel and then switch to default state
@@ -519,11 +514,7 @@
                     _cloSelectionManager.ForceSelectSingleCLO(secondFeatureElem.GetCLO());
 
                     // Create a new CLO
-                    var newCompositionRuleCLO = _dataModel.CreateNewCLO(CLOTypes.CompositionRule);
-                    newCompositionRuleCLO.FirstFeature = firstFeatureElem.GetCLO();
-                    newCompositionRuleCLO.SecondFeature = secondFeatureElem.GetCLO();
-                    firstFeatureElem.GetCLO().RelatedCLOS.Add(newCompositionRuleCLO);
-                    secondFeatureElem.GetCLO().RelatedCLOS.Add(newCompositionRuleCLO);
+                    var newCompositionRuleCLO = _dataModel.CreateNewCLO(CLOTypes.CompositionRule, [firstFeatureElem.GetCLO(), secondFeatureElem.GetCLO()]);
 
                     // Add it to the FeatureModel and then switch to default state
                     _dataModel.GetCurrentFeatureModelCLO().CompositionRules.Add(newCompositionRuleCLO);

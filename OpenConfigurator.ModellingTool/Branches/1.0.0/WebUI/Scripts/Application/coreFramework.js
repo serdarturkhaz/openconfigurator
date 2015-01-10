@@ -5,6 +5,9 @@ var ObservableCollection = function () {
     var koObservableArray = ko.observableArray([]);
     var absoluteItemCounter = 0; // special variable which keeps track of all items that have been part of the collection (this is used for auto-generating identifiers)
 
+    // Special public field
+    koObservableArray.IsObservableCollection = true;
+
     // Public methods
     koObservableArray.GetLength = function () {
         return koObservableArray().length;
@@ -93,13 +96,13 @@ var ObservableField = function () {
     var koObservable;
 
     // Implicit constructor logic
-    if (arguments.length===2) {
+    if (arguments.length === 2) {
         var sourceFieldParent = arguments[0], sourceFieldName = arguments[1];
         var koObservable = ko.observable(sourceFieldParent[sourceFieldName]); // set the initial value for the koObservable to be that of the source field
         koObservable.subscribe(function (newVal) { // bind the koObs so it updates the value of the source field whenever it is changed itself
             sourceFieldParent[sourceFieldName] = newVal;
         });
-    } else if (arguments.length===1) {
+    } else if (arguments.length === 1) {
         var defaultValue = arguments[0];
         koObservable = ko.observable(defaultValue);
 
@@ -113,9 +116,75 @@ var ObservableField = function () {
     koObservable.subscribe(function (newVal) {
         koObservable.Changed.RaiseEvent(newVal);
     });
-
+    koObservable.IsObservableField = true;
 
     return koObservable;
+}
+var InnerChangeTrackingManager = function (rootObjectToTrack) {
+
+    // Fields
+    var _rootObjectToTrack = rootObjectToTrack;
+    var _hasChanges = new ObservableField(false);
+    var _this = this;
+
+    // Private methods
+    function bindToChildProperties(targetObject) {
+        for (var propertyName in targetObject) {
+            var property = targetObject[propertyName];
+            if (propertyName !== "Selected" && property !== null) { // ignore Selected and null properties
+
+                // Bind to observable field
+                if (property.IsObservableField) {
+                    property.Changed.AddHandler(new EventHandler(onObservableChanged, "changeTracker"));
+                }
+
+                // Bind to observable collection 
+                if (property.IsObservableCollection) {
+                    property.Added.AddHandler(new EventHandler(onCLOAdded, "changeTracker"));
+                    property.Removed.AddHandler(new EventHandler(onCLORemoved, "changeTracker"));
+
+                    // Bind to all CLOs it currently contains
+                    for (var i = 0; i < property.GetLength() ; i++) {
+                        var childCLO = property.GetAt(i);
+                        bindToChildProperties(childCLO);
+                    }
+                }
+            }
+        }
+    }
+    function unbindChildProperties(targetObject) {
+
+
+    }
+
+    // Initialize
+    this.Initialize = function () {
+
+        // Loop through all the object properties and bind to changes in ObservableFields and ObservableCollections
+        bindToChildProperties(_rootObjectToTrack);
+
+        // Add special HasChanges field to the target object
+        _rootObjectToTrack.HasChanges = _hasChanges;
+    }
+
+    // Event handlers
+    var onObservableChanged = function () {
+        _hasChanges(true);
+    }
+    var onCLOAdded = function (addedCLO) {
+        // Bind to the clo 
+        bindToChildProperties(addedCLO);
+
+        // Manually raise changes
+        _hasChanges(true);
+    }
+    var onCLORemoved = function (removedCLO) {
+        // Unbind to the clo 
+        //bindToChildProperties(addedCLO);
+
+        // Manually raise changes
+        _hasChanges(true);
+    }
 }
 /*#endregion*/
 /*#region Events*/
@@ -218,6 +287,8 @@ var InnerStateManager = function (targetStatesReference, initialStateName, targe
     var _targetChangedEvent = targetChangedEvent;
     var _currentStateName = null;
     var _this = this;
+
+
 
     // Init
     this.Initialize = function () {
