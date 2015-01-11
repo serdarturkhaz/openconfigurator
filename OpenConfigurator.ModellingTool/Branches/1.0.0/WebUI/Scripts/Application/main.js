@@ -1030,11 +1030,12 @@ var DataModel = function (bloService, cloFactory) {
     this.CreateAndLoadNewModel = function () {
 
         // Clean up current FeatureModel (if one is present)
+        var currentModel = _currentFeatureModelCLO;
         if (_currentFeatureModelCLO !== null) {
             _currentFeatureModelCLO = null;
             _deletedCLOs = {};
             _cloFactory.Reset();
-            _this.ModelUnloaded.RaiseEvent(_currentFeatureModelCLO);
+            _this.ModelUnloaded.RaiseEvent(currentModel);
         }
 
         // Init a new FeatureModelCLO
