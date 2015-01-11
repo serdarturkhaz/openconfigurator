@@ -13,6 +13,9 @@
     };
     var _innerStateManager = null;
     var _visualUIElems = {};
+    var _settings = {
+
+    }
     var _this = this;
 
     // Private methods
@@ -100,20 +103,8 @@
                 elem.RefreshGraphicalRepresentation();
         }
     }
-    function setOrientation(newOrientation) {
-        Settings.UIOrientation = newOrientation;
-
-        // Reverse coordinates for all Features
-        for (var clientID in _visualUIElems) {
-            var elem = _visualUIElems[clientID];
-            if (elem !== undefined) {
-
-                if (elem.GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
-                    elem.ReverseCoordinates();
-                }
-                elem.RefreshGraphicalRepresentation();
-            }
-        }
+    function changeOrientation(newOrientation) {
+        
     }
 
     // Init
@@ -163,6 +154,7 @@
         // Modify scale
         if (Settings.ScaleModifier < 2) {
             Settings.ScaleModifier += 0.25;
+            _dataModel.GetCurrentFeatureModelCLO().ScaleModifier(Settings.ScaleModifier);
         }
 
         // Redraw all internal ui elems
@@ -173,6 +165,7 @@
         // Modify scale
         if (Settings.ScaleModifier >= 0.50) {
             Settings.ScaleModifier -= 0.25;
+            _dataModel.GetCurrentFeatureModelCLO().ScaleModifier(Settings.ScaleModifier);
         }
 
         // Redraw all internal ui elems
@@ -187,7 +180,21 @@
         } else {
             newOrientation = Enums.UIOrientationTypes.Vertical;
         }
-        setOrientation(newOrientation);
+        Settings.UIOrientation = newOrientation;
+        _dataModel.GetCurrentFeatureModelCLO().UIOrientation(newOrientation);
+
+
+        // Reverse coordinates for all Features
+        for (var clientID in _visualUIElems) {
+            var elem = _visualUIElems[clientID];
+            if (elem !== undefined) {
+
+                if (elem.GetType() === Enums.VisualView.ElemTypes.FeatureElem) {
+                    elem.ReverseCoordinates();
+                }
+                elem.RefreshGraphicalRepresentation();
+            }
+        }
     }
     this.GetCurrentState = function () {
         return _innerStateManager.GetCurrentStateName();
@@ -200,8 +207,9 @@
     // Event handlers
     this.OnModelLoaded = function (modelCLO) {
 
-        // Setup orientation and zoom
-        setOrientation(modelCLO.UIOrientation());
+        // Load Orientation and scaleModifier from featureModel
+        Settings.UIOrientation = modelCLO.UIOrientation();
+        Settings.ScaleModifier = modelCLO.ScaleModifier();
 
         // References to all relevant featureModel child collections
         var bindableCollections = [

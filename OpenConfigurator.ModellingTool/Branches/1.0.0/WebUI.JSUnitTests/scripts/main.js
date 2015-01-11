@@ -1052,10 +1052,17 @@ var DataModel = function (bloService, cloFactory) {
             _this.ModelUnloaded.RaiseEvent(modelCLO);
         }
 
-        // Load the new FeatureModel
+        // Get the existing feature model
         var featureModelBLO = _bloService.GetFeatureModel(featureModelName);
-        _currentFeatureModelCLO = _cloFactory.FromBLO(featureModelBLO, CLOTypes.FeatureModel);
-        _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
+        var loadedModelCLO = _cloFactory.FromBLO(featureModelBLO, CLOTypes.FeatureModel);
+
+        // Attempt to load the model
+        var eventRaiseDetails = _this.ModelLoading.RaiseEvent(_currentFeatureModelCLO);
+        if (eventRaiseDetails.CancelTriggered() === false) {
+            _currentFeatureModelCLO = loadedModelCLO;
+            _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
+        }
+        
     }
     this.SaveChanges = function () {
 
@@ -1068,6 +1075,7 @@ var DataModel = function (bloService, cloFactory) {
     }
 
     // Events
+    this.ModelLoading = new Event();
     this.ModelLoaded = new Event();
     this.ModelUnloaded = new Event();
     this.CLODeleted = new Event();
