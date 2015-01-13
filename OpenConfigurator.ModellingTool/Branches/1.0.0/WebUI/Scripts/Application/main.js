@@ -795,6 +795,7 @@ var Controller = function () {
     // Fields
     var _dataModel = null;
     var _visualView = null, _commandToolbar = null, _modelExplorer = null, _propertyEditor = null, _cloSelectionManager = null;
+    var _fileExplorer = null;
     var _currentControlFocus = null; // variable to keep track of where the user executed the last action (clicking)
     var _this = this;
 
@@ -892,6 +893,16 @@ var Controller = function () {
     }
     this.SaveChanges = function () {
         _dataModel.SaveChanges();
+    }
+    this.OpenFile = function () {
+
+        //
+        if (_fileExplorer === null) {
+            _fileExplorer = UIComponentProvider.CreateInstance("UIComponents.FileExplorer", [$("body"), _dataModel]);
+            _fileExplorer.Initialize();
+        }
+
+        _fileExplorer.Show();
     }
 
     // Event handlers

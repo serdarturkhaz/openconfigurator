@@ -142,7 +142,7 @@
             _controller.NewModel();
         },
         openModelItemTriggered: function () {
-            _controller.LoadModel();
+            _controller.OpenFile();
         },
         saveModelItemTriggered: function () {
             _controller.SaveChanges();
