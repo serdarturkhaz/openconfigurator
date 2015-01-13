@@ -183,12 +183,14 @@
     <Content Include="Scripts\Plugins\jquery.autogrowtextarea.js" />
     <Content Include="Scripts\Plugins\jquery.blockUI.js" />
     <Content Include="Scripts\Plugins\jquery.guid.js" />
+    <Content Include="Scripts\Plugins\jquery.simplemodal-1.4.4.js" />
     <Content Include="Scripts\Plugins\jquery.timer.js" />
     <Content Include="Scripts\Plugins\jquery.tipTip.js" />
     <Content Include="Scripts\Plugins\json2.js" />
     <Content Include="Scripts\Plugins\knockout.validation.js" />
     <Content Include="Scripts\Plugins\toastr.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
+    <Content Include="UIComponents\FileExplorer\FileExplorer.js" />
     <Content Include="UIComponents\PropertyEditor\CompositionRuleInnerEditor\CompositionRuleInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\CustomFunctionInnerEditor\CustomFunctionInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\CustomRuleInnerEditor\CustomRuleInnerEditor.js" />
@@ -229,7 +231,6 @@
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
-    <Folder Include="UIComponents\FileExplorer\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Images\Layout\logo2.xcf" />
@@ -245,6 +246,7 @@
     <Content Include="UIComponents\PropertyEditor\CustomRuleInnerEditor\CustomRuleInnerEditor.cshtml" />
     <Content Include="UIComponents\PropertyEditor\CustomFunctionInnerEditor\CustomFunctionInnerEditor.cshtml" />
     <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\AttributeInnerEditor\AttributeInnerEditor.cshtml" />
+    <Content Include="UIComponents\FileExplorer\FileExplorer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
