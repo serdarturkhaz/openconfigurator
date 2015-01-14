@@ -340,7 +340,6 @@ body
     clear:both;
     width:auto;
 }
-
 #propertyEditor #FeatureInnerEditorDiv #AttributesSection #attributeEditorContainer #AttributeInnerEditorDiv
 {
     margin-top:10px;
@@ -351,6 +350,34 @@ body
 #propertyEditor #FeatureInnerEditorDiv #AttributesSection #attributeEditorContainer #AttributeInnerEditorDiv .headerLabel
 {
     margin-bottom:6px;
+}
+
+
+/*FileExplorer*/
+#fileExplorer .boxHeader
+{
+    background: #62605E;
+    border: 1px solid #62605E;
+    cursor:move;
+}
+#fileExplorer .boxHeader .headerLabel
+{
+    color:white;
+}
+#fileExplorer .boxHeader img
+{
+    float:right;
+    cursor:pointer;
+}
+#fileExplorer .boxContent
+{
+    border: solid 1px #A6A6A6;
+    border-top: none;
+    background: #FDFDFD;
+    padding-top: 7px;
+    padding-bottom: 10px;
+    width:250px;
+    height:500px;
 }
 
 /*RoundedBox*/
@@ -743,15 +770,11 @@ body
 /*Popup*/
 .simplemodal-overlay
 {
-    display:none !important;
     background:gray;
     opacity:0.8;
 }
 .simplemodal-container
 {
-    display:none !important;
-    position:absolute !important;
-    border:solid 1px red;
 }
 .simplemodal-wrap
 {
