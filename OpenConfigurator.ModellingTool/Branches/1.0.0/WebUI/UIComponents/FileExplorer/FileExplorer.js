@@ -4,29 +4,35 @@
     var _container = container, _dataModel = dataModel;
     var _innerHtmlElem;
     var _innerElems = {
-        
+        closeIcon: null
     };
     var _this = this;
-    
+    var _modal = null;
     // Init
     this.Initialize = function () {
 
         // Parse html markup
         var markup = "#HTMLCONTENT#";
         _innerHtmlElem = $($.parseHTML(markup));
-        _innerHtmlElem.appendTo(_container);
-
-        // Get references to html elems
-        //_innerElems.modelNameTextbox = $(_innerHtmlElem).find("#modelNameTextbox");
         
+        // Get references to html elems
+        _innerElems.closeIcon = $(_innerHtmlElem).find("#closeIcon");
     }
 
     // Public methods
     this.Show = function () {
-        $.modal("<div><h1>SimpleModal</h1></div>");
-        //$(_innerHtmlElem).popup();
-        //var popup = new $.Popup();
-        //popup.open('<div>hi</div>');
+        _modal = $.modal(_innerHtmlElem);
+
+        // Handlers
+        _innerElems.closeIcon.bind("click", function () {
+            _modal.close();
+        });
+
+        // Make draggable
+        $(_innerHtmlElem).draggable({
+            handle: ".boxHeader",
+            containment: "window"
+        });
     }
 
     // Event handlers
