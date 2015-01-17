@@ -874,11 +874,6 @@ var Controller = function () {
         _cloSelectionManager.DeselectAllCLOs();
         _dataModel.CreateAndLoadNewModel();
     }
-    this.LoadModel = function () {
-        _cloSelectionManager.DeselectAllCLOs();
-        featureModelName = "Test";
-        _dataModel.LoadExistingModel(featureModelName);
-    }
     this.AddNewFeature = function () {
         _visualView.StartCreateFeature();
     }
@@ -927,6 +922,7 @@ var Controller = function () {
             var fileExplorerContainer = $("<div class='contentWrapper'></div>");
             _fileExplorer = UIComponentProvider.CreateInstance("UIComponents.FileExplorer", [fileExplorerContainer, _dataModel]);
             _fileExplorer.Initialize();
+            _fileExplorer.FileOpenTriggered.AddHandler(new EventHandler(onFileOpenTriggered));
 
             // Create dialog instance
             _fileExplorerDialog = UIComponentProvider.CreateInstance("UIComponents.Shared.Dialog", ["Open existing model", fileExplorerContainer], { modal: true });
@@ -974,6 +970,11 @@ var Controller = function () {
                 _propertyEditor.Close();
             }
         }
+    }
+    var onFileOpenTriggered = function (modelFileCLO) {
+        _cloSelectionManager.DeselectAllCLOs();
+        _dataModel.LoadExistingModel(modelFileCLO.Name());
+        _fileExplorerDialog.Close();
     }
 }
 var DataModel = function (bloService, cloFactory) {

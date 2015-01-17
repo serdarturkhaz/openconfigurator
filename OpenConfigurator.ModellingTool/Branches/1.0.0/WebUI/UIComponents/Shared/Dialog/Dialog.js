@@ -52,7 +52,8 @@
         _dialog = $(_innerHtmlElem).dialog(_widgetOptions);
         $(_dialog).dialog("option", "width", $(content).find(":first-child").outerWidth() + 20);
     }
-
-    // Event handlers
+    this.Close = function () {
+        _dialog.dialog("close");
+    }
 
 }

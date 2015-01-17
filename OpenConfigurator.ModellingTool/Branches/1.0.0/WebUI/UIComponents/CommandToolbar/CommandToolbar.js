@@ -84,6 +84,7 @@
 
         // Key shortcut handlers
         $(document).keydown(function (e) {
+            $.ctrl('S', toolbarItemHandlers.saveModelItemTriggered);
             $.ctrl('F', toolbarItemHandlers.newFeatureItemTriggered);
             $.ctrl('R', toolbarItemHandlers.newRelationItemTriggered);
             $.ctrl('G', toolbarItemHandlers.newGroupRelationItemTriggered);
