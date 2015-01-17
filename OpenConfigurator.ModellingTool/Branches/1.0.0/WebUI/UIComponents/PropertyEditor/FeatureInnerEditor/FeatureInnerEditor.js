@@ -68,7 +68,6 @@
         _innerElems.attributesContainer = $(_innerHtmlElem).find("#AttributeListContainer");
         _innerElems.attributeEditorContainer = $(_innerHtmlElem).find("#attributeEditorContainer");
         
-
         // Apply bindings
         ko.applyBindings(_vm, _innerHtmlElem[0]);
 

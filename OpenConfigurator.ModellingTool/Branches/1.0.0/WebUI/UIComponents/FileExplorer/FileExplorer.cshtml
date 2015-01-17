@@ -1,13 +1,11 @@
 ﻿@inherits System.Web.Mvc.WebViewPage
 
-<div id="fileExplorer" class="roundedBox">
-    <div class="boxHeader">
-        <span class="headerLabel">Open file</span>
-        <img id="closeIcon" src="~/Content/Images/Icons/close-white.png" />
+<div id="fileExplorer">
+    <div class="innerContent">
+        <span class="headerLabel">Choose a model to open:</span>
+        <div id="fileList"></div>
     </div>
-    <div class="boxContent">
-        
-    </div>
-    <div class="boxFooter">
+    <div class="button" disabled="disabled">
+        <span>Open model</span>
     </div>
 </div>

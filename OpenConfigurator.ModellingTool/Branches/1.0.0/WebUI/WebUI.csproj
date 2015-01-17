@@ -151,9 +151,12 @@
     <Content Include="Content\Images\Controls\simpleTree\minus.png" />
     <Content Include="Content\Images\Controls\simpleTree\plus.png" />
     <Content Include="Content\Images\Icons\add.png" />
-    <Content Include="Content\Images\Icons\checkmark.png" />
+    <Content Include="Content\Images\Icons\checkmark-green.png" />
+    <Content Include="Content\Images\Icons\close-white.png" />
+    <Content Include="Content\Images\Icons\close.png" />
     <Content Include="Content\Images\Icons\delete.png" />
     <Content Include="Content\Images\Icons\Toolbar\compositionRule.png" />
+    <Content Include="Content\Images\Icons\Toolbar\customFunction.png" />
     <Content Include="Content\Images\Icons\Toolbar\customRule.png" />
     <Content Include="Content\Images\Icons\Toolbar\feature.png" />
     <Content Include="Content\Images\Icons\Toolbar\groupRelation.png" />
@@ -200,6 +203,7 @@
     <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\FeatureInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\PropertyEditor.js" />
     <Content Include="UIComponents\ModelExplorer\ModelExplorer.js" />
+    <Content Include="UIComponents\Shared\Dialog\Dialog.js" />
     <Content Include="UIComponents\VisualView\ConnectionElem\ConnectionElem.js" />
     <Content Include="UIComponents\VisualView\RelationElem\RelationElem.js" />
     <Content Include="UIComponents\VisualView\ConnectorElem\ConnectorElem.js" />
@@ -233,8 +237,6 @@
     <Folder Include="FeatureModelFiles\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\Images\Layout\logo2.xcf" />
-    <None Include="Content\Images\Layout\logo3.xcf" />
     <Content Include="Scripts\Plugins\jquery.withinBox.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.cshtml" />
     <Content Include="UIComponents\VisualView\VisualView.cshtml" />
@@ -257,6 +259,13 @@
       <Project>{aba46652-56ef-480b-97f8-d0138b6495aa}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Images\Layout\logo2.xcf" />
+    <Content Include="Content\Images\Layout\logo3.xcf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="UIComponents\Shared\Dialog\Dialog.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

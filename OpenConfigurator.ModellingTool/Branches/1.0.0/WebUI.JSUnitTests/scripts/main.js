@@ -789,7 +789,7 @@ var CustomFunctionCLO = function (clientID, blo) {
     }
 }
 
-// Logical components
+// Main logical components
 var Controller = function () {
 
     // Fields
@@ -1076,6 +1076,15 @@ var DataModel = function (bloService, cloFactory) {
         }
         
     }
+    this.GetAllModelFileNames = function () {
+        var fileList = [
+            { name: "Model1" },
+            { name: "Model2" },
+            { name: "Model3" }
+        ];
+
+        return fileList;
+    }
     this.SaveChanges = function () {
 
         //
@@ -1085,6 +1094,7 @@ var DataModel = function (bloService, cloFactory) {
         // 
         _currentFeatureModelCLO.HasChanges(false);
     }
+    
 
     // Events
     this.ModelLoading = new Event();
@@ -1517,6 +1527,8 @@ DataModel.BLOService = function () {
         return newDefaultBLO;
     }
 }
+
+// Special components
 var IdentifierProvider = (function () { // "static" class
 
     // Methods
@@ -1704,3 +1716,4 @@ UIComponents.VisualView.CompositionRuleElem = {};
 UIComponents.VisualView.ConnectionElem = {};
 UIComponents.VisualView.ConnectorElem = {};
 UIComponents.VisualView.CardinalityLabel = {};
+UIComponents.Shared = {};
