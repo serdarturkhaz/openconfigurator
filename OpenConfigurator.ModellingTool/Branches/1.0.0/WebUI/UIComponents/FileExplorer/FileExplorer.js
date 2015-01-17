@@ -7,32 +7,28 @@
         closeIcon: null
     };
     var _this = this;
-    var _modal = null;
+    var _vm = {
+        ModelFilesCollection : null
+    };
+
     // Init
     this.Initialize = function () {
 
         // Parse html markup
         var markup = "#HTMLCONTENT#";
         _innerHtmlElem = $($.parseHTML(markup));
-        
+        _innerHtmlElem.appendTo(_container);
+
         // Get references to html elems
         _innerElems.closeIcon = $(_innerHtmlElem).find("#closeIcon");
     }
 
     // Public methods
     this.Show = function () {
-        _modal = $.modal(_innerHtmlElem);
 
-        // Handlers
-        _innerElems.closeIcon.bind("click", function () {
-            _modal.close();
-        });
+        // Load list of existing model files
+        var modelFiles = _dataModel.GetAllModelFileNames();
 
-        // Make draggable
-        $(_innerHtmlElem).draggable({
-            handle: ".boxHeader",
-            containment: "window"
-        });
     }
 
     // Event handlers

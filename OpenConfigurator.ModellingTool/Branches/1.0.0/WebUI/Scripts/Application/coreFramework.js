@@ -215,9 +215,9 @@ var InnerChangeTrackingManager = function (rootObjectToTrack) {
     }
     var onCLORemoved = function (removedCLO) {
         // Unbind to the clo 
-        unbindChildProperties(addedCLO);
+        unbindChildProperties(removedCLO);
 
-        // // Manually raise changes on the root
+        // Manually raise changes on the root
         _hasChanges(true);
     }
 }
