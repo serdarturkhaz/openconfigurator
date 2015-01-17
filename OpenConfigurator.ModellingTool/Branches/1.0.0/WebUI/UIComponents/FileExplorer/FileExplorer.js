@@ -4,11 +4,23 @@
     var _container = container, _dataModel = dataModel;
     var _innerHtmlElem;
     var _innerElems = {
-        closeIcon: null
+        openModelButton: null
     };
     var _this = this;
     var _vm = {
-        ModelFilesCollection : null
+        ModelFilesCollection: new ObservableCollection(),
+        CurrentlySelectedModelFile: new ObservableField(),
+        SelectModelFile: function (attributeCLO) {
+        //_vm.CurrentlySelectedAttribute(attributeCLO);
+        //loadAttributeEditor(attributeCLO);
+    },
+    RemoveModelFile: function (attributeCLO) {
+        if (attributeCLO === _vm.CurrentlySelectedAttribute()) {
+            _vm.SelectAttribute(null);
+        }
+
+        _specializedDataModel.DeleteByClientID(attributeCLO.GetClientID());
+    }
     };
 
     // Init
@@ -20,17 +32,22 @@
         _innerHtmlElem.appendTo(_container);
 
         // Get references to html elems
-        _innerElems.closeIcon = $(_innerHtmlElem).find("#closeIcon");
+        _innerElems.openModelButton = $(_innerHtmlElem).find("#openModelButton");
+
+        // Apply bindings
+        ko.applyBindings(_vm, _innerHtmlElem[0]);
     }
 
     // Public methods
-    this.Show = function () {
+    this.LoadModelFiles = function () {
+
+        // Clear current collection 
+        _vm.ModelFilesCollection.RemoveAll();
 
         // Load list of existing model files
-        var modelFiles = _dataModel.GetAllModelFileNames();
-
+        var modelFiles = _dataModel.GetAllModelFiles();
+        for (var i = 0; i < modelFiles.length; i++) {
+            _vm.ModelFilesCollection.Add(modelFiles[i]);
+        }
     }
-
-    // Event handlers
-    
 }

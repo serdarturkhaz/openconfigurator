@@ -3,9 +3,18 @@
 <div id="fileExplorer">
     <div class="innerContent">
         <span class="headerLabel">Choose a model to open:</span>
-        <div id="fileList"></div>
+        <div id="fileList">
+
+            <div data-bind="foreach: ModelFilesCollection">
+                <div class="attributeElem" data-bind="click: $root.SelectModelFile, attr: { selected: $data === $root.CurrentlySelectedModelFile() }">
+                    <span data-bind="text: Name"></span>
+                    <img data-bind="click: $root.RemoveModelFile" src="../../Content/Images/Icons/delete.png" />
+                </div>
+            </div>
+
+        </div>
     </div>
-    <div class="button" disabled="disabled">
+    <div id="openModelButton" class="button" disabled="disabled">
         <span>Open model</span>
     </div>
 </div>

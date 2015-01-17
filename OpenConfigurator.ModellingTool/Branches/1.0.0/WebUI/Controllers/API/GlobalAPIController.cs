@@ -37,5 +37,12 @@ namespace ModellingTool.Controllers
             FeatureModelManager manager = new FeatureModelManager();
             return manager.GetFeatureModel(featureModelName);
         }
+
+        [HttpGet]
+        public List<ModelFile> GetAllModelFiles()
+        {
+            FeatureModelManager manager = new FeatureModelManager();
+            return manager.GetAllModelFiles();
+        }
     }
 }

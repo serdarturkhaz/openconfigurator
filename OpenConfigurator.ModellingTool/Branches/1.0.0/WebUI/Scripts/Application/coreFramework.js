@@ -42,6 +42,12 @@ var ObservableCollection = function () {
 
         koObservableArray.RemoveAt(index);
     }
+    koObservableArray.RemoveAll = function () {
+        while (koObservableArray.GetLength() > 0) {
+            koObservableArray.RemoveAt(0);
+        }
+    }
+
     koObservableArray.GetAt = function (index) {
         return koObservableArray()[index];
     }

@@ -14,7 +14,8 @@
         showCloseIcon: true
     }
     var _widgetOptions = {
-        modal:true
+        modal: true,
+        width: $(content).find(":first-child" ).css("width")
     };
     var _this = this;
 
@@ -49,6 +50,7 @@
     // Public methods
     this.Show = function () {
         _dialog = $(_innerHtmlElem).dialog(_widgetOptions);
+        $(_dialog).dialog("option", "width", $(content).find(":first-child").outerWidth() + 20);
     }
 
     // Event handlers

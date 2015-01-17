@@ -353,20 +353,22 @@ body
 }
 
 /*FileExplorer*/
-#fileExplorer .boxInnerContent
+#fileExplorer
 {
-    padding:5px;
+    height:400px;
+    width:300px;
+}
+#fileExplorer .innerContent
+{
     box-sizing:border-box;
     width:100%;
     height:calc(100% - 36px);
 }
-#fileExplorer .boxInnerContent #fileList
+#fileExplorer .innerContent #fileList
 {
-    padding:5px;
     
     width:100%;
     height:calc(100% - 24px);
-    border:solid 1px gray;
     box-sizing:border-box;
 }
 #fileExplorer .button
@@ -820,8 +822,7 @@ body
     border: solid 1px #7C7C7C;
     border-top: none;
     background: #FDFDFD;
-    height:400px;
-    width:300px;
+    box-sizing:border-box;
 }
 .ui-dialog-titlebar-close { /*Hide jquery UI dialog close button*/
   visibility: hidden;
