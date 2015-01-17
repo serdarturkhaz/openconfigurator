@@ -927,6 +927,7 @@ var Controller = function () {
             var fileExplorerContainer = $("<div class='contentWrapper'></div>");
             _fileExplorer = UIComponentProvider.CreateInstance("UIComponents.FileExplorer", [fileExplorerContainer, _dataModel]);
             _fileExplorer.Initialize();
+            _fileExplorer.FileOpenTriggered.AddHandler(new EventHandler(onFileOpenTriggered));
 
             // Create dialog instance
             _fileExplorerDialog = UIComponentProvider.CreateInstance("UIComponents.Shared.Dialog", ["Open existing model", fileExplorerContainer], { modal: true });
@@ -974,6 +975,9 @@ var Controller = function () {
                 _propertyEditor.Close();
             }
         }
+    }
+    var onFileOpenTriggered = function (modelFileCLO) {
+        alert(modelFileCLO.Name());
     }
 }
 var DataModel = function (bloService, cloFactory) {

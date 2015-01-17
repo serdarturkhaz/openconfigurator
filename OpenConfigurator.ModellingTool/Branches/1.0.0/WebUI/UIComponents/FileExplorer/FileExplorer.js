@@ -9,18 +9,13 @@
     var _this = this;
     var _vm = {
         ModelFilesCollection: new ObservableCollection(),
-        CurrentlySelectedModelFile: new ObservableField(),
-        SelectModelFile: function (attributeCLO) {
-        //_vm.CurrentlySelectedAttribute(attributeCLO);
-        //loadAttributeEditor(attributeCLO);
-    },
-    RemoveModelFile: function (attributeCLO) {
-        if (attributeCLO === _vm.CurrentlySelectedAttribute()) {
-            _vm.SelectAttribute(null);
+        CurrentlySelectedModelFile: new ObservableField(null),
+        SelectModelFile: function (modelFileCLO) {
+            _vm.CurrentlySelectedModelFile(modelFileCLO);
+        },
+        OpenModelFile: function () {
+            _this.FileOpenTriggered.RaiseEvent(_vm.CurrentlySelectedModelFile());
         }
-
-        _specializedDataModel.DeleteByClientID(attributeCLO.GetClientID());
-    }
     };
 
     // Init
@@ -43,6 +38,7 @@
 
         // Clear current collection 
         _vm.ModelFilesCollection.RemoveAll();
+        _vm.CurrentlySelectedModelFile(null);
 
         // Load list of existing model files
         var modelFiles = _dataModel.GetAllModelFiles();
@@ -50,4 +46,7 @@
             _vm.ModelFilesCollection.Add(modelFiles[i]);
         }
     }
+
+    // Events
+    this.FileOpenTriggered = new Event();
 }
