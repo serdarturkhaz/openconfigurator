@@ -333,6 +333,7 @@ body
     width:100%;
     height:calc(100% - 24px);
     box-sizing:border-box;
+    overflow-y:scroll;
 }
 #fileExplorer .innerContent .headerLabel
 {
@@ -819,6 +820,8 @@ body
 .dialog .boxHeader .headerLabel
 {
     color:white;
+    margin-top:4px;
+    float:left;
 }
 .dialog  .boxHeader img
 {

@@ -103,9 +103,6 @@
                 elem.RefreshGraphicalRepresentation();
         }
     }
-    function changeOrientation(newOrientation) {
-        
-    }
 
     // Init
     this.Initialize = function () {

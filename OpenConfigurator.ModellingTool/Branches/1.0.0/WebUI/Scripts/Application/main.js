@@ -874,11 +874,6 @@ var Controller = function () {
         _cloSelectionManager.DeselectAllCLOs();
         _dataModel.CreateAndLoadNewModel();
     }
-    this.LoadModel = function () {
-        _cloSelectionManager.DeselectAllCLOs();
-        featureModelName = "Test";
-        _dataModel.LoadExistingModel(featureModelName);
-    }
     this.AddNewFeature = function () {
         _visualView.StartCreateFeature();
     }
@@ -977,7 +972,9 @@ var Controller = function () {
         }
     }
     var onFileOpenTriggered = function (modelFileCLO) {
-        alert(modelFileCLO.Name());
+        _cloSelectionManager.DeselectAllCLOs();
+        _dataModel.LoadExistingModel(modelFileCLO.Name());
+        _fileExplorerDialog.Close();
     }
 }
 var DataModel = function (bloService, cloFactory) {

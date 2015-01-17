@@ -3,32 +3,12 @@
 }
 @section bodyscripts{
     <script type="text/javascript">
-        // General functions
-        function adjustLayout() {
-
-            // Set widths for mainPanel and visualView
-            //var mainPanelWidth = $("#bodyArea").outerWidth(true) - $("#sidePanel").outerWidth(true);
-            //$("#mainPanel").css("width", mainPanelWidth -10 + "px");
-            //var diagramBoxWidth = mainPanelWidth - 65; //
-            //$("#visualViewContainer").css("width", diagramBoxWidth + "px");
-            //$("#toolBarContainer").css("width", diagramBoxWidth + "px");
-
-            // Set heights
-            //var bodyAreaHeight = $(window).height() - $("#headerArea").outerHeight(true);
-            //$("#bodyArea").css("height", bodyAreaHeight + "px");
-            //var diagramBoxHeight = bodyAreaHeight - $("#toolBarContainer").outerHeight(true);
-            //$("#visualViewContainer").css("height", diagramBoxHeight - 30 + "px");
-        }
 
         // Load
         $(document).ready(function () {
 
             // Setup page layout and simple controls
             $("#topMenu").simpleMenu();
-            adjustLayout(); adjustLayout();
-            $(window).resize(function () {
-                adjustLayout();
-            });
 
             // Initialize components and load data
             $.timer(300, function () {

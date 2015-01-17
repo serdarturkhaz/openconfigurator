@@ -11,7 +11,11 @@
         ModelFilesCollection: new ObservableCollection(),
         CurrentlySelectedModelFile: new ObservableField(null),
         SelectModelFile: function (modelFileCLO) {
-            _vm.CurrentlySelectedModelFile(modelFileCLO);
+            if (_vm.CurrentlySelectedModelFile() === modelFileCLO) {
+
+            } else {
+                _vm.CurrentlySelectedModelFile(modelFileCLO);
+            }
         },
         OpenModelFile: function () {
             _this.FileOpenTriggered.RaiseEvent(_vm.CurrentlySelectedModelFile());
