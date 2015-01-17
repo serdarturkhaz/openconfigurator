@@ -170,6 +170,7 @@
     <Content Include="Content\Images\Layout\logo.png" />
     <Content Include="Content\Images\Layout\logo2.png" />
     <Content Include="Content\Images\Layout\logo3.png" />
+    <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\Site.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -186,7 +187,6 @@
     <Content Include="Scripts\Plugins\jquery.autogrowtextarea.js" />
     <Content Include="Scripts\Plugins\jquery.blockUI.js" />
     <Content Include="Scripts\Plugins\jquery.guid.js" />
-    <Content Include="Scripts\Plugins\jquery.simplemodal-1.4.4.js" />
     <Content Include="Scripts\Plugins\jquery.timer.js" />
     <Content Include="Scripts\Plugins\jquery.tipTip.js" />
     <Content Include="Scripts\Plugins\json2.js" />

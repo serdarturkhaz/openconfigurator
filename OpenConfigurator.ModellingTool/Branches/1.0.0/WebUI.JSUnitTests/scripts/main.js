@@ -491,7 +491,8 @@ var CLOTypes = {
     GroupRelation: "GroupRelation",
     CompositionRule: "CompositionRule",
     CustomRule: "CustomRule",
-    CustomFunction: "CustomFunction"
+    CustomFunction: "CustomFunction",
+    ModelFile: "ModelFile"
 }
 var FeatureModelCLO = function (clientID, blo) {
 
@@ -788,6 +789,29 @@ var CustomFunctionCLO = function (clientID, blo) {
 
     }
 }
+var ModelFileCLO = function (clientID, blo) {
+
+    // Fields
+    var _clientID = clientID, _innerBLO = blo;
+    var _this = this;
+
+    // Properties
+    this.GetClientID = function () {
+        return _clientID;
+    };
+    this.GetType = function () {
+        return CLOTypes.ModelFile;
+    }
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
+    }
+    this.Name = new ObservableField(_innerBLO, "Name");
+
+    // Init
+    this.Initialize = function () {
+
+    }
+}
 
 // Main logical components
 var Controller = function () {
@@ -795,7 +819,7 @@ var Controller = function () {
     // Fields
     var _dataModel = null;
     var _visualView = null, _commandToolbar = null, _modelExplorer = null, _propertyEditor = null, _cloSelectionManager = null;
-    var _fileExplorer = null;
+    var _fileExplorer = null, _fileExplorerDialog = null;
     var _currentControlFocus = null; // variable to keep track of where the user executed the last action (clicking)
     var _this = this;
 
@@ -896,13 +920,21 @@ var Controller = function () {
     }
     this.OpenFile = function () {
 
-        //
-        if (_fileExplorer === null) {
-            _fileExplorer = UIComponentProvider.CreateInstance("UIComponents.FileExplorer", [$("body"), _dataModel]);
-            _fileExplorer.Initialize();
-        }
+        // Setup fileExplorer and dialog in which it is shown
+        if (_fileExplorer === null && _fileExplorerDialog === null) {
 
-        _fileExplorer.Show();
+            // Create fileExplorer instance
+            var fileExplorerContainer = $("<div class='contentWrapper'></div>");
+            _fileExplorer = UIComponentProvider.CreateInstance("UIComponents.FileExplorer", [fileExplorerContainer, _dataModel]);
+            _fileExplorer.Initialize();
+
+            // Create dialog instance
+            _fileExplorerDialog = UIComponentProvider.CreateInstance("UIComponents.Shared.Dialog", ["Open existing model", fileExplorerContainer], { modal: true });
+            _fileExplorerDialog.Initialize();
+        }
+        
+        _fileExplorer.LoadModelFiles();
+        _fileExplorerDialog.Show();
     }
 
     // Event handlers
@@ -1074,16 +1106,16 @@ var DataModel = function (bloService, cloFactory) {
             _currentFeatureModelCLO = loadedModelCLO;
             _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
         }
-        
-    }
-    this.GetAllModelFileNames = function () {
-        var fileList = [
-            { name: "Model1" },
-            { name: "Model2" },
-            { name: "Model3" }
-        ];
 
-        return fileList;
+    }
+    this.GetAllModelFiles = function () {
+        var modelFileBLOs = _bloService.GetAllModelFiles();
+        var modelFileCLOs = [];
+        for (var i = 0; i < modelFileBLOs.length; i++) {
+            modelFileCLOs.push(_cloFactory.FromBLO(modelFileBLOs[i], CLOTypes.ModelFile));
+        }
+
+        return modelFileCLOs;
     }
     this.SaveChanges = function () {
 
@@ -1094,7 +1126,6 @@ var DataModel = function (bloService, cloFactory) {
         // 
         _currentFeatureModelCLO.HasChanges(false);
     }
-    
 
     // Events
     this.ModelLoading = new Event();
@@ -1113,7 +1144,7 @@ DataModel.CLOFactory = function (bloService) {
             // Create it
             var newClientID = getNewClientID();
             var newCLO = new FeatureModelCLO(newClientID, blo);
-            
+
             // Child Features
             for (var i = 0; i < strippedOffBLOArrays.Features.length; i++) {
                 var featureCLO = FromBLO.Feature(strippedOffBLOArrays.Features[i]);
@@ -1182,7 +1213,7 @@ DataModel.CLOFactory = function (bloService) {
             // Create it
             var newClientID = getNewClientID();
             var newCLO = new FeatureCLO(newClientID, blo);
-            
+
             // Child Attributes
             for (var i = 0; i < strippedOffArrays.Attributes.length; i++) {
                 var attributeCLO = FromBLO.Attribute(strippedOffArrays.Attributes[i]);
@@ -1211,7 +1242,7 @@ DataModel.CLOFactory = function (bloService) {
             // Create the clo
             var newClientID = getNewClientID();
             var newCLO = new RelationCLO(newClientID, blo);
-            
+
             // Set parent/child feature CLOs if they are provided as parameters
             if (parentFeatureCLO !== undefined && childFeatureCLO !== undefined) {
                 newCLO.ParentFeature = parentFeatureCLO;
@@ -1241,9 +1272,9 @@ DataModel.CLOFactory = function (bloService) {
                     newCLO.ChildFeatures.Add(childFeatureCLOs[i]);
                     childFeatureCLOs[i].RelatedCLOS.Add(newCLO);
                 }
-                
+
             }
-           
+
             // Register and return it
             newCLO.Initialize();
             _factoryCLORegister[newCLO.GetClientID()] = newCLO;
@@ -1284,7 +1315,18 @@ DataModel.CLOFactory = function (bloService) {
             // Create the clo
             var newClientID = getNewClientID();
             var newCLO = new CustomFunctionCLO(newClientID, blo);
-            
+
+
+            // Register and return it
+            newCLO.Initialize();
+            _factoryCLORegister[newCLO.GetClientID()] = newCLO;
+            return newCLO;
+        },
+        ModelFile: function (blo) {
+
+            // Create the clo
+            var newClientID = getNewClientID();
+            var newCLO = new ModelFileCLO(newClientID, blo);
 
             // Register and return it
             newCLO.Initialize();
@@ -1403,6 +1445,14 @@ DataModel.CLOFactory = function (bloService) {
 
             //
             return blo;
+        },
+        ModelFile: function (clo) {
+
+            //
+            var blo = clo.GetBLOCopy();
+
+            //
+            return blo;
         }
     }
 
@@ -1513,18 +1563,32 @@ DataModel.BLOService = function () {
         return newDefaultBLO;
     }
     this.GetFeatureModel = function (featureModelName) {
-        var newDefaultBLO = null;
+        var blo = null;
         $.ajax({
             type: "Get",
             url: "api/GlobalAPI/GetFeatureModel",
             data: { featureModelName: featureModelName },
             async: false,
             success: function (response) {
-                newDefaultBLO = response;
+                blo = response;
             }
         });
 
-        return newDefaultBLO;
+        return blo;
+    }
+    this.GetAllModelFiles = function () {
+        var blos = null;
+        $.ajax({
+            type: "Get",
+            url: "api/GlobalAPI/GetAllModelFiles",
+            data: { },
+            async: false,
+            success: function (response) {
+                blos = response;
+            }
+        });
+
+        return blos;
     }
 }
 

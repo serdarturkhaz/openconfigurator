@@ -491,7 +491,8 @@ var CLOTypes = {
     GroupRelation: "GroupRelation",
     CompositionRule: "CompositionRule",
     CustomRule: "CustomRule",
-    CustomFunction: "CustomFunction"
+    CustomFunction: "CustomFunction",
+    ModelFile: "ModelFile"
 }
 var FeatureModelCLO = function (clientID, blo) {
 
@@ -788,6 +789,29 @@ var CustomFunctionCLO = function (clientID, blo) {
 
     }
 }
+var ModelFileCLO = function (clientID, blo) {
+
+    // Fields
+    var _clientID = clientID, _innerBLO = blo;
+    var _this = this;
+
+    // Properties
+    this.GetClientID = function () {
+        return _clientID;
+    };
+    this.GetType = function () {
+        return CLOTypes.ModelFile;
+    }
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
+    }
+    this.Name = new ObservableField(_innerBLO, "Name");
+
+    // Init
+    this.Initialize = function () {
+
+    }
+}
 
 // Main logical components
 var Controller = function () {
@@ -900,7 +924,7 @@ var Controller = function () {
         if (_fileExplorer === null && _fileExplorerDialog === null) {
 
             // Create fileExplorer instance
-            var fileExplorerContainer = $("<div></div>");
+            var fileExplorerContainer = $("<div class='contentWrapper'></div>");
             _fileExplorer = UIComponentProvider.CreateInstance("UIComponents.FileExplorer", [fileExplorerContainer, _dataModel]);
             _fileExplorer.Initialize();
 
@@ -908,7 +932,8 @@ var Controller = function () {
             _fileExplorerDialog = UIComponentProvider.CreateInstance("UIComponents.Shared.Dialog", ["Open existing model", fileExplorerContainer], { modal: true });
             _fileExplorerDialog.Initialize();
         }
-
+        
+        _fileExplorer.LoadModelFiles();
         _fileExplorerDialog.Show();
     }
 
@@ -1083,14 +1108,14 @@ var DataModel = function (bloService, cloFactory) {
         }
 
     }
-    this.GetAllModelFileNames = function () {
-        var fileList = [
-            { name: "Model1" },
-            { name: "Model2" },
-            { name: "Model3" }
-        ];
+    this.GetAllModelFiles = function () {
+        var modelFileBLOs = _bloService.GetAllModelFiles();
+        var modelFileCLOs = [];
+        for (var i = 0; i < modelFileBLOs.length; i++) {
+            modelFileCLOs.push(_cloFactory.FromBLO(modelFileBLOs[i], CLOTypes.ModelFile));
+        }
 
-        return fileList;
+        return modelFileCLOs;
     }
     this.SaveChanges = function () {
 
@@ -1101,7 +1126,6 @@ var DataModel = function (bloService, cloFactory) {
         // 
         _currentFeatureModelCLO.HasChanges(false);
     }
-
 
     // Events
     this.ModelLoading = new Event();
@@ -1297,6 +1321,17 @@ DataModel.CLOFactory = function (bloService) {
             newCLO.Initialize();
             _factoryCLORegister[newCLO.GetClientID()] = newCLO;
             return newCLO;
+        },
+        ModelFile: function (blo) {
+
+            // Create the clo
+            var newClientID = getNewClientID();
+            var newCLO = new ModelFileCLO(newClientID, blo);
+
+            // Register and return it
+            newCLO.Initialize();
+            _factoryCLORegister[newCLO.GetClientID()] = newCLO;
+            return newCLO;
         }
     }
     var ToBLO = {
@@ -1404,6 +1439,14 @@ DataModel.CLOFactory = function (bloService) {
             return blo;
         },
         CustomFunction: function (clo) {
+
+            //
+            var blo = clo.GetBLOCopy();
+
+            //
+            return blo;
+        },
+        ModelFile: function (clo) {
 
             //
             var blo = clo.GetBLOCopy();
@@ -1520,18 +1563,32 @@ DataModel.BLOService = function () {
         return newDefaultBLO;
     }
     this.GetFeatureModel = function (featureModelName) {
-        var newDefaultBLO = null;
+        var blo = null;
         $.ajax({
             type: "Get",
             url: "api/GlobalAPI/GetFeatureModel",
             data: { featureModelName: featureModelName },
             async: false,
             success: function (response) {
-                newDefaultBLO = response;
+                blo = response;
             }
         });
 
-        return newDefaultBLO;
+        return blo;
+    }
+    this.GetAllModelFiles = function () {
+        var blos = null;
+        $.ajax({
+            type: "Get",
+            url: "api/GlobalAPI/GetAllModelFiles",
+            data: { },
+            async: false,
+            success: function (response) {
+                blos = response;
+            }
+        });
+
+        return blos;
     }
 }
 

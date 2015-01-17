@@ -601,6 +601,28 @@ namespace BLL.BLOs
         }
 
     }
+    public class ModelFile : iBLO
+    {
+        // Properties
+        public string Type
+        {
+            get
+            {
+                return "ModelFile";
+            }
+        }
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        // Constructors
+        public ModelFile()
+        {
+        }
+
+    }
 
     //
     public interface iBLO
