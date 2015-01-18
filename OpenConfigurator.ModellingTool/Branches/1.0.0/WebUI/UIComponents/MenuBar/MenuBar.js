@@ -5,9 +5,6 @@
     var _innerHtmlElem;
     var _this = this;
 
-    // Private methods
-
-
     // Init
     this.Initialize = function () {
 
