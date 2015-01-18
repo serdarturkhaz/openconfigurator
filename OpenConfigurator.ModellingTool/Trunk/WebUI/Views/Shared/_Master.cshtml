@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>OpenConfigurator - Modelling Tool</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/frameworks")
+    @Scripts.Render("~/bundles/plugins")
+    @Scripts.Render("~/bundles/application")
+</head>
+<body>
+    @RenderBody()
+
+    
+    @RenderSection("bodyscripts", required: false)
+</body>
+    
+</html>
