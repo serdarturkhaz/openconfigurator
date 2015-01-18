@@ -1,0 +1,35 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section bodyscripts{
+    <script type="text/javascript">
+
+        // Load
+        $(document).ready(function () {
+
+            
+
+            // Initialize components and load data
+            $.timer(300, function () {
+                var controller = new Controller();
+                controller.Initialize();
+                controller.NewModel();
+            });
+
+           
+        });
+    </script>
+}
+
+<div id="sidePanel">
+    <div id="modelExplorerContainer">
+    </div>
+</div>
+<div id="mainPanel">
+    <div id="toolBarContainer">
+    </div>
+    <div id="visualViewContainer">
+    </div>
+    <div id="propertyEditorContainer">
+    </div>
+</div>
