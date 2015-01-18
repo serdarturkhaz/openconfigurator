@@ -1,4 +1,4 @@
-﻿UIComponents.Shared.Dialog = function (title, content, settings) {
+﻿UIComponents.Generic.Dialog = function (title, content, settings) {
 
     // Fields
     var _title = title, _content = content;
