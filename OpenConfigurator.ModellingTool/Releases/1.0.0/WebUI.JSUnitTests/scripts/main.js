@@ -818,7 +818,9 @@ var Controller = function () {
 
     // Fields
     var _dataModel = null;
-    var _visualView = null, _commandToolbar = null, _modelExplorer = null, _propertyEditor = null, _cloSelectionManager = null;
+    var _menuBar = null;
+    var _visualView = null, _commandToolbar = null, _modelExplorer = null;
+    var _propertyEditor = null, _cloSelectionManager = null;
     var _fileExplorer = null, _fileExplorerDialog = null;
     var _currentControlFocus = null; // variable to keep track of where the user executed the last action (clicking)
     var _this = this;
@@ -826,7 +828,7 @@ var Controller = function () {
     // Init
     this.Initialize = function () {
 
-        // Init children
+        // Init UIComponents
         _dataModel = new DataModel();
         _dataModel.Initialize();
         _cloSelectionManager = new CLOSelectionManager();
@@ -839,6 +841,8 @@ var Controller = function () {
         _commandToolbar.Initialize();
         _propertyEditor = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor", [$("#propertyEditorContainer"), _dataModel, _cloSelectionManager]);
         _propertyEditor.Initialize();
+        _menuBar = UIComponentProvider.CreateInstance("UIComponents.MenuBar", [$("#topMenuContainer"), _dataModel,  _this]);
+        _menuBar.Initialize();
 
         // Setup events and handlers
         _dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
