@@ -194,6 +194,7 @@
     <Content Include="Scripts\Plugins\toastr.js" />
     <Content Include="UIComponents\CommandToolbar\CommandToolbar.js" />
     <Content Include="UIComponents\FileExplorer\FileExplorer.js" />
+    <Content Include="UIComponents\MenuBar\MenuBar.js" />
     <Content Include="UIComponents\PropertyEditor\CompositionRuleInnerEditor\CompositionRuleInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\CustomFunctionInnerEditor\CustomFunctionInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\CustomRuleInnerEditor\CustomRuleInnerEditor.js" />
@@ -203,7 +204,7 @@
     <Content Include="UIComponents\PropertyEditor\FeatureInnerEditor\FeatureInnerEditor.js" />
     <Content Include="UIComponents\PropertyEditor\PropertyEditor.js" />
     <Content Include="UIComponents\ModelExplorer\ModelExplorer.js" />
-    <Content Include="UIComponents\Shared\Dialog\Dialog.js" />
+    <Content Include="UIComponents\Generic\Dialog\Dialog.js" />
     <Content Include="UIComponents\VisualView\ConnectionElem\ConnectionElem.js" />
     <Content Include="UIComponents\VisualView\RelationElem\RelationElem.js" />
     <Content Include="UIComponents\VisualView\ConnectorElem\ConnectorElem.js" />
@@ -265,7 +266,10 @@
     <Content Include="Content\Images\Layout\logo3.xcf" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="UIComponents\Shared\Dialog\Dialog.cshtml" />
+    <Content Include="UIComponents\Generic\Dialog\Dialog.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="UIComponents\MenuBar\MenuBar.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

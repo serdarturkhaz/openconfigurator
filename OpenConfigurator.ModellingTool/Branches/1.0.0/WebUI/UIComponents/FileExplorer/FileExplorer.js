@@ -12,7 +12,7 @@
         CurrentlySelectedModelFile: new ObservableField(null),
         SelectModelFile: function (modelFileCLO) {
             if (_vm.CurrentlySelectedModelFile() === modelFileCLO) {
-
+                _vm.OpenModelFile();
             } else {
                 _vm.CurrentlySelectedModelFile(modelFileCLO);
             }

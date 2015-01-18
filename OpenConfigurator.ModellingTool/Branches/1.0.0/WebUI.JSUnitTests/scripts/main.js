@@ -925,7 +925,7 @@ var Controller = function () {
             _fileExplorer.FileOpenTriggered.AddHandler(new EventHandler(onFileOpenTriggered));
 
             // Create dialog instance
-            _fileExplorerDialog = UIComponentProvider.CreateInstance("UIComponents.Shared.Dialog", ["Open existing model", fileExplorerContainer], { modal: true });
+            _fileExplorerDialog = UIComponentProvider.CreateInstance("UIComponents.Generic.Dialog", ["Open existing model", fileExplorerContainer], { modal: true });
             _fileExplorerDialog.Initialize();
         }
         
@@ -1781,4 +1781,4 @@ UIComponents.VisualView.CompositionRuleElem = {};
 UIComponents.VisualView.ConnectionElem = {};
 UIComponents.VisualView.ConnectorElem = {};
 UIComponents.VisualView.CardinalityLabel = {};
-UIComponents.Shared = {};
+UIComponents.Generic = {};
