@@ -5,35 +5,36 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 
-namespace BLL
+namespace OpenConfigurator.ModellingTool.BLL
 {
     public static class AutoMapperConfiguration
     {
         public static void Configure()
         {
             // Standard mappings (both ways)
-            Mapper.CreateMap<BLL.BLOs.FeatureModel, DAL.DataEntities.FeatureModel>().ReverseMap();
-            Mapper.CreateMap<BLL.BLOs.Feature, DAL.DataEntities.Feature>().ReverseMap();
-            Mapper.CreateMap<BLL.BLOs.Attribute, DAL.DataEntities.Attribute>().ReverseMap();
-            Mapper.CreateMap<BLL.BLOs.CustomRule, DAL.DataEntities.CustomRule>().ReverseMap();
-            Mapper.CreateMap<BLL.BLOs.CustomFunction, DAL.DataEntities.CustomFunction>().ReverseMap();
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.BLL.BLOs.FeatureModel, OpenConfigurator.ModellingTool.DAL.DataEntities.FeatureModel>().ReverseMap();
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.BLL.BLOs.Feature, OpenConfigurator.ModellingTool.DAL.DataEntities.Feature>().ReverseMap();
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.BLL.BLOs.Attribute, OpenConfigurator.ModellingTool.DAL.DataEntities.Attribute>().ReverseMap();
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.BLL.BLOs.CustomRule, OpenConfigurator.ModellingTool.DAL.DataEntities.CustomRule>().ReverseMap();
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.BLL.BLOs.CustomFunction, OpenConfigurator.ModellingTool.DAL.DataEntities.CustomFunction>().ReverseMap();
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.BLL.BLOs.ModelFile, OpenConfigurator.ModellingTool.DAL.DataEntities.ModelFile>().ReverseMap();
 
             // Mappings with Identifier references (BLO to DataEntity)
-            Mapper.CreateMap<BLL.BLOs.Relation, DAL.DataEntities.Relation>();
-            Mapper.CreateMap<BLL.BLOs.GroupRelation, DAL.DataEntities.GroupRelation>()
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.BLL.BLOs.Relation, OpenConfigurator.ModellingTool.DAL.DataEntities.Relation>();
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.BLL.BLOs.GroupRelation, OpenConfigurator.ModellingTool.DAL.DataEntities.GroupRelation>()
                 .ForMember(dest => dest.ChildFeatureIdentifiers, opt => opt.MapFrom(so => so.ChildFeatures.Select(f => f.Identifier).ToList()));
-            Mapper.CreateMap<BLL.BLOs.CompositionRule, DAL.DataEntities.CompositionRule>();
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.BLL.BLOs.CompositionRule, OpenConfigurator.ModellingTool.DAL.DataEntities.CompositionRule>();
 
             // Mappings with Identifier references (DataEntity to BLO)
-            Mapper.CreateMap<DAL.DataEntities.Relation, BLL.BLOs.Relation>()
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.DAL.DataEntities.Relation, OpenConfigurator.ModellingTool.BLL.BLOs.Relation>()
                 .ForMember(dest => dest.ParentFeature, opt => opt.ResolveUsing<FeatureReferenceIDConverter>().FromMember(src => src.ParentFeatureIdentifier))
                 .ForMember(dest => dest.ChildFeature, opt => opt.ResolveUsing<FeatureReferenceIDConverter>().FromMember(src => src.ChildFeatureIdentifier));
 
-            Mapper.CreateMap<DAL.DataEntities.GroupRelation, BLL.BLOs.GroupRelation>()
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.DAL.DataEntities.GroupRelation, OpenConfigurator.ModellingTool.BLL.BLOs.GroupRelation>()
                 .ForMember(dest => dest.ParentFeature, opt => opt.ResolveUsing<FeatureReferenceIDConverter>().FromMember(src => src.ParentFeatureIdentifier))
                 .ForMember(dest => dest.ChildFeatures, opt => opt.ResolveUsing<FeatureReferenceIDListConverter>().FromMember(src => src.ChildFeatureIdentifiers));
 
-            Mapper.CreateMap<DAL.DataEntities.CompositionRule, BLL.BLOs.CompositionRule>()
+            Mapper.CreateMap<OpenConfigurator.ModellingTool.DAL.DataEntities.CompositionRule, OpenConfigurator.ModellingTool.BLL.BLOs.CompositionRule>()
                 .ForMember(dest => dest.FirstFeature, opt => opt.ResolveUsing<FeatureReferenceIDConverter>().FromMember(src => src.FirstFeatureIdentifier))
                 .ForMember(dest => dest.SecondFeature, opt => opt.ResolveUsing<FeatureReferenceIDConverter>().FromMember(src => src.SecondFeatureIdentifier));
         }

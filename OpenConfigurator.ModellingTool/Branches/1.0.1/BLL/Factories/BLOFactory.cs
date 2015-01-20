@@ -4,10 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using BLL.BLOs;
-using DAL.DataEntities;
+using OpenConfigurator.ModellingTool.BLL.BLOs;
+using OpenConfigurator.ModellingTool.DAL.DataEntities;
 
-namespace BLL
+namespace OpenConfigurator.ModellingTool.BLL
 {
     public class GenericBLOFactory
     {
@@ -25,8 +25,8 @@ namespace BLL
         // Public methods
         public iBLO CreateBLOInstance(string bloName)
         {
-            Assembly assembly = Assembly.GetAssembly(typeof(BLL.BLOs.FeatureModel));
-            Type bloType = assembly.GetType("BLL.BLOs." + bloName);
+            Assembly assembly = Assembly.GetAssembly(typeof(OpenConfigurator.ModellingTool.BLL.BLOs.FeatureModel));
+            Type bloType = assembly.GetType("OpenConfigurator.ModellingTool.BLL.BLOs." + bloName);
             return CreateBLOInstance(bloType);
         }
         public iBLO CreateBLOInstance(Type bloType)

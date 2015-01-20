@@ -7,7 +7,7 @@
     <ProjectGuid>{70B8E852-D7DA-4856-B096-A4F66A3375CE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BLL</RootNamespace>
+    <RootNamespace>OpenConfigurator.ModellingTool.BLL</RootNamespace>
     <AssemblyName>BLL</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

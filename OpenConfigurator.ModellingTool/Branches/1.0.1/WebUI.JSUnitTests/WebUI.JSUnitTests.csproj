@@ -7,7 +7,7 @@
     <ProjectGuid>{41CEEBD5-A22F-467F-91A0-05EA91AA9091}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ModellingTool.Web.JSUnitTests</RootNamespace>
+    <RootNamespace>OpenConfigurator.ModellingTool.WebUI.Web.JSUnitTests</RootNamespace>
     <AssemblyName>JavaScript Unit Test Project - QUnit3</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
