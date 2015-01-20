@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace DAL.DataEntities
+namespace OpenConfigurator.ModellingTool.DAL.DataEntities
 {
     // DataObjects
     [DataContract]
@@ -318,6 +318,21 @@ namespace DAL.DataEntities
             get;
             set;
         }
+    }
+    public class ModelFile : iDataEntity
+    {
+        // Properties
+        public string Type
+        {
+            get;
+            set;
+        }
+        public string Name
+        {
+            get;
+            set;
+        }
+
     }
 
     // Interfaces

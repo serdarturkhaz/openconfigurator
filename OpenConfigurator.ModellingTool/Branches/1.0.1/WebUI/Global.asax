@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="ModellingTool.WebApiApplication" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="OpenConfigurator.ModellingTool.WebUI.WebApiApplication" Language="C#" %>

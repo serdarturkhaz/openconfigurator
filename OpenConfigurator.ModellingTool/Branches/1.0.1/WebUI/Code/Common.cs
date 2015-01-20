@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using System.Web.Mvc;
 using System.IO;
 
-namespace ModellingTool.Common
+namespace OpenConfigurator.ModellingTool.WebUI.Common
 {
 
     public class JsonNetResult : ActionResult

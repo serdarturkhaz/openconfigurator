@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace ModellingTool
+namespace OpenConfigurator.ModellingTool.WebUI
 {
     public class BundleConfig
     {

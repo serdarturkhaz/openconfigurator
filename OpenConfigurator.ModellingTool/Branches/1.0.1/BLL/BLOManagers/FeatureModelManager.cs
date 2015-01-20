@@ -9,9 +9,9 @@ using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
 using AutoMapper;
-using BLL.BLOs;
+using OpenConfigurator.ModellingTool.BLL.BLOs;
 
-namespace BLL.BLOManagers
+namespace OpenConfigurator.ModellingTool.BLL.BLOManagers
 {
     public class FeatureModelManager
     {
@@ -24,34 +24,23 @@ namespace BLL.BLOManagers
         public void SaveChanges(BLOs.FeatureModel model)
         {
             // Get the DataEntity
-            DAL.DataEntities.FeatureModel dataEntity = Mapper.Map<DAL.DataEntities.FeatureModel>(model);
+            OpenConfigurator.ModellingTool.DAL.DataEntities.FeatureModel dataEntity = Mapper.Map<OpenConfigurator.ModellingTool.DAL.DataEntities.FeatureModel>(model);
 
-            // Write the file
-            using (FileStream writer = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/" + model.Name + ".xml"), FileMode.Create, FileAccess.Write)) 
-            {
-                DataContractSerializer ser = new DataContractSerializer(typeof(DAL.DataEntities.FeatureModel));
-                ser.WriteObject(writer, dataEntity);
-            }
+            // Save it
+            new OpenConfigurator.ModellingTool.DAL.XMLDataEntityManager().SaveChanges(dataEntity);
         }
-        public BLL.BLOs.FeatureModel GetFeatureModel(string featureModelName)
+        public OpenConfigurator.ModellingTool.BLL.BLOs.FeatureModel GetFeatureModel(string featureModelName)
         {
-            // Read file
-            DAL.DataEntities.FeatureModel dataEntity;
-            using (FileStream reader = new FileStream(HttpContext.Current.Server.MapPath("~/FeatureModelFiles/" + featureModelName + ".xml"), FileMode.Open, FileAccess.Read))
-            {
-                DataContractSerializer ser = new DataContractSerializer(typeof(DAL.DataEntities.FeatureModel));
-                dataEntity = (DAL.DataEntities.FeatureModel)ser.ReadObject(reader);
-            }
-
-            // Convert to BLO
-            BLL.BLOs.FeatureModel featureModelBLO = Mapper.Map<BLL.BLOs.FeatureModel>(dataEntity);
+            // Get DataEntity and convert to BLO
+            OpenConfigurator.ModellingTool.DAL.DataEntities.FeatureModel dataEntity = new OpenConfigurator.ModellingTool.DAL.XMLDataEntityManager().GetFeatureModel(featureModelName);
+            OpenConfigurator.ModellingTool.BLL.BLOs.FeatureModel featureModelBLO = Mapper.Map<OpenConfigurator.ModellingTool.BLL.BLOs.FeatureModel>(dataEntity);
             return featureModelBLO;
         }
-        public List<BLL.BLOs.ModelFile> GetAllModelFiles()
+        public List<OpenConfigurator.ModellingTool.BLL.BLOs.ModelFile> GetAllModelFiles()
         {
             // Read files and create BLOs
-            List<BLL.BLOs.ModelFile> modelFiles = new List<ModelFile>(Directory.GetFiles(HttpContext.Current.Server.MapPath("~/FeatureModelFiles"), "*.xml")
-                                    .Select(path => new BLL.BLOs.ModelFile() { Name = Path.GetFileNameWithoutExtension(path) }));
+            List<OpenConfigurator.ModellingTool.BLL.BLOs.ModelFile> modelFiles = new OpenConfigurator.ModellingTool.DAL.XMLDataEntityManager().GetAllModelFiles()
+                                    .Select(dataEntity => new OpenConfigurator.ModellingTool.BLL.BLOs.ModelFile() { Name = dataEntity.Name }).ToList();
 
             // 
             return modelFiles;

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 
-namespace BLL.BLOs
+namespace OpenConfigurator.ModellingTool.BLL.BLOs
 {
     // Enums
     public enum RelationTypes

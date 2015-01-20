@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using ModellingTool.Common;
+using OpenConfigurator.ModellingTool.WebUI.Common;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
-using BLL;
+using OpenConfigurator.ModellingTool.BLL;
 using System.Reflection;
-using BLL.BLOs;
+using OpenConfigurator.ModellingTool.BLL.BLOs;
 using System.Net;
 
-namespace ModellingTool.Controllers
+namespace OpenConfigurator.ModellingTool.WebUI.Controllers
 {
     public class MainController : Controller
     {

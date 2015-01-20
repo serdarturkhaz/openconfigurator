@@ -30,7 +30,7 @@
                         showSubmenu(rootItem, index, options);
                         e.stopPropagation();
                     }
-                    //Close on click if submenu already open
+                        //Close on click if submenu already open
                     else {
                         hideAll(dropdownElem, options);
                         e.stopPropagation();
@@ -48,9 +48,11 @@
 
             // ChildMenuItems event handlers
             $(childMenuItems).bind("click", function (e) {
-                var childMenuItem = $(this);
-                options.onChildMenuItemMouseDown(childMenuItem, options);
-                
+                if ($(this).attr("disabled") !== "disabled") {
+                    var childMenuItem = $(this);
+                    options.onChildMenuElemClicked(childMenuItem, options);
+                }
+
             });
 
             // Page hideall click event
@@ -64,7 +66,7 @@
 
     // Default settings
     $.fn.simpleMenu.defaults = {
-        onChildMenuItemMouseDown: function (childMenuItem, opts) {
+        onChildMenuElemClicked: function (childMenuItem, opts) {
             alert($(childMenuItem).children("a").text());
         }
     };
