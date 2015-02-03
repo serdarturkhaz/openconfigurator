@@ -7,15 +7,20 @@ using System.Reflection;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Http;
-using OpenConfigurator.ModellingTool.BLL;
-using OpenConfigurator.ModellingTool.BLL.BLOManagers;
-using OpenConfigurator.ModellingTool.BLL.BLOs;
+using OpenConfigurator.Core.BLOFactories;
+using OpenConfigurator.Core.BLOManagers;
+using OpenConfigurator.Core.BLOs;
 using OpenConfigurator.ModellingTool.WebUI.Common;
 
 namespace OpenConfigurator.ModellingTool.WebUI.Controllers
 {
     public class GlobalAPIController : ApiController
     {
+        // Fields
+        private string modelFolderPath = HostingEnvironment.MapPath("~/FeatureModelFiles/");
+
+
+
         [HttpGet]
         public iBLO CreateDefaultBLO(string bloType)
         {
@@ -26,7 +31,7 @@ namespace OpenConfigurator.ModellingTool.WebUI.Controllers
         [HttpPost]
         public FeatureModel SaveChanges(FeatureModel featureModel)
         {
-            FeatureModelManager manager = new FeatureModelManager();
+            FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
             manager.SaveChanges(featureModel);
             return null;
         }
@@ -34,14 +39,14 @@ namespace OpenConfigurator.ModellingTool.WebUI.Controllers
         [HttpGet]
         public FeatureModel GetFeatureModel(string featureModelName)
         {
-            FeatureModelManager manager = new FeatureModelManager();
+            FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
             return manager.GetFeatureModel(featureModelName);
         }
 
         [HttpGet]
         public List<ModelFile> GetAllModelFiles()
         {
-            FeatureModelManager manager = new FeatureModelManager();
+            FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
             return manager.GetAllModelFiles();
         }
     }

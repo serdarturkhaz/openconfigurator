@@ -25,7 +25,7 @@ namespace OpenConfigurator.ModellingTool.WebUI
 
 
             //
-            OpenConfigurator.ModellingTool.BLL.AutoMapperConfiguration.Configure();
+            OpenConfigurator.Core.AutoMapperConfiguration.Configure();
         }
     }
 }

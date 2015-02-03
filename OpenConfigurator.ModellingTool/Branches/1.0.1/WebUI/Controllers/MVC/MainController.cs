@@ -7,9 +7,7 @@ using OpenConfigurator.ModellingTool.WebUI.Common;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
-using OpenConfigurator.ModellingTool.BLL;
 using System.Reflection;
-using OpenConfigurator.ModellingTool.BLL.BLOs;
 using System.Net;
 
 namespace OpenConfigurator.ModellingTool.WebUI.Controllers
@@ -42,38 +40,6 @@ namespace OpenConfigurator.ModellingTool.WebUI.Controllers
             return jsScript;
         }
 
-        //[HttpPost]
-        //public JsonNetResult LoadData(int modelID)
-        //{
-        //    //Default return variable
-        //    JsonNetResult result = new JsonNetResult() { Data = null };
-
-        //    //Retreive Models belonging to the current User
-        //    ModelService _modelService = new ModelService(1);
-        //    BLL.BusinessObjects.Model model = _modelService.GetByID(44);
-        //    result.Data = model;
-
-        //    //
-        //    return result;
-        //}
-
-        //public void SaveData()
-        //{
-        //    //Retreive Models belonging to the current User
-        //    ModelService _modelService = new ModelService(1);
-        //    BLL.BusinessObjects.Model model = _modelService.GetByID(44);
-
-        //    //Save to xml file
-        //    XmlSerializer serializer = new XmlSerializer(typeof(List<BLL.BusinessObjects.Feature>));
-        //    XmlWriter xmlWriter = XmlWriter.Create(Server.MapPath("~/Files/model.xml"));
-        //    serializer.Serialize(xmlWriter, model.Features);
-        //    xmlWriter.Close();
-
-        //    //Load from xml file
-        //    List<BLL.BusinessObjects.Feature> list = (List<BLL.BusinessObjects.Feature>)new XmlSerializer(typeof(List<BLL.BusinessObjects.Feature>)).Deserialize(XmlReader.Create(Server.MapPath("~/Files/model.xml")));
-        //}
-
-        //Methods for creating default objects
 
     }
 }
