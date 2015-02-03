@@ -26,17 +26,13 @@ namespace OpenConfigurator.Core.BLOFactories
         public iBLO CreateBLOInstance(string bloName)
         {
             Assembly assembly = Assembly.GetAssembly(typeof(OpenConfigurator.Core.BLOs.FeatureModel));
-            Type bloType = assembly.GetType("OpenConfigurator.ModellingTool.BLL.BLOs." + bloName);
+            Type bloType = assembly.GetType("OpenConfigurator.Core.BLOs." + bloName);
             return CreateBLOInstance(bloType);
         }
         public iBLO CreateBLOInstance(Type bloType)
         {
             iBLO instance = (iBLO)bloType.GetMethod("CreateDefault", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
             return instance;
-        }
-        public iBLO FromDataEntity(iDataEntity dto)
-        {
-            return null;
         }
     }
 }
