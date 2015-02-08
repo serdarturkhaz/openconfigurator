@@ -6,6 +6,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Web.Mvc;
 using System.IO;
+using System.Web.Optimization;
 
 namespace OpenConfigurator.ModellingTool.WebUI.Common
 {
@@ -41,6 +42,14 @@ namespace OpenConfigurator.ModellingTool.WebUI.Common
             }
         }
 
+    }
+
+    public class NonOrderingBundleOrderer : IBundleOrderer
+    {
+        public IEnumerable<FileInfo> OrderFiles(BundleContext context, IEnumerable<FileInfo> files)
+        {
+            return files;
+        }
     }
 
     public static class Helpers
