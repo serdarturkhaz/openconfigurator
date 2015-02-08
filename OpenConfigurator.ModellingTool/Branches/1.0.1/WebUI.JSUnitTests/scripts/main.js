@@ -1,4 +1,6 @@
-﻿// Settings and defaults
+﻿
+
+// Settings and defaults
 var Enums = {
     CLODataStates: {
         Unchanged: "Unchanged",
@@ -1743,7 +1745,6 @@ var UIComponentProvider = (function () { // "static" class
         return isFunction(eval(componentFullName));
     }
     function registerUIComponent(componentFullName) {
-
         $.ajax({
             type: "POST",
             url: "Main/GetUIComponent",

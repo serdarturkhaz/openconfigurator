@@ -7,12 +7,15 @@
     @Scripts.Render("~/bundles/frameworks")
     @Scripts.Render("~/bundles/plugins")
     @Scripts.Render("~/bundles/application")
+    @Scripts.Render("~/bundles/amd")
+
 </head>
 <body>
     @RenderBody()
 
     
     @RenderSection("bodyscripts", required: false)
+    
 </body>
     
 </html>

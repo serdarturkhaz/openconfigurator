@@ -135,5 +135,21 @@ function isFunction(functionToCheck) {
     var getType = {};
     return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
 }
+
+
+/**
+ * Creates a promise that resolves when all AMD modules mentioned in moduleIDs are resolved
+ * @param {Array * String} moduleIDs
+ * @returns {Promise}
+ */
+function requireAsync(moduleIDs) {
+    var dfd = $.Deferred();
+    require(moduleIDs, function () {
+        dfd.resolveWith(null, arguments);
+    }, function () {
+        dfd.reject();
+    });
+    return dfd.promise();
+}
 //****************************************************************************************************************
 

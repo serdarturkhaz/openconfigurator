@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Optimization;
+using OpenConfigurator.ModellingTool.WebUI.Common;
 
 namespace OpenConfigurator.ModellingTool.WebUI
 {
@@ -22,6 +23,13 @@ namespace OpenConfigurator.ModellingTool.WebUI
 
             // Css
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));
+
+            // AMD
+            var AMDBundle = new ScriptBundle("~/bundles/amd")
+                .Include("~/Scripts/AMD/require.js")
+                .Include("~/Scripts/AMD/text.js");
+            AMDBundle.Orderer = new NonOrderingBundleOrderer();
+            bundles.Add(AMDBundle);
         }
     }
 }

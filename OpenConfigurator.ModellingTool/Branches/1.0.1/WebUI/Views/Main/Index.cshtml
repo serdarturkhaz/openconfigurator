@@ -4,20 +4,17 @@
 @section bodyscripts{
     <script type="text/javascript">
 
-        // Load
-        $(document).ready(function () {
-
-            
-
-            // Initialize components and load data
-            $.timer(300, function () {
-                var controller = new Controller();
-                controller.Initialize();
-                controller.NewModel();
-            });
-
-           
+        requirejs.config({
+            baseUrl: "SPA/Main/",
+            urlArgs: "bust=" + (new Date()).getTime()
         });
+
+        require(["Controller"], function (Controller) {
+            var controller = new Controller();
+            controller.Initialize();
+            controller.NewModel();
+        });
+
     </script>
 }
 
