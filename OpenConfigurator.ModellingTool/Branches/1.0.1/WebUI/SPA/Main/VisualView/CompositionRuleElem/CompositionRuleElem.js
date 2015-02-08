@@ -1,7 +1,8 @@
-﻿define("VisualView/CompositionRuleElem/CompositionRuleElem",
+﻿define("Main/VisualView/CompositionRuleElem/CompositionRuleElem",
     [
+        "Main/VisualView/ConnectionElem/ConnectionElem"
     ],
-    function () {
+    function (ConnectionElem) {
         var CompositionRuleElem = function (compositionRuleCLO, firstFeatureElem, secondFeatureElem, parentCanvasInstance) {
 
             // Fields
@@ -56,8 +57,8 @@
 
                 // Create a new UIConnection
                 var compositionRuleType = getEnumEntryNameByID(Enums.CompositionRuleTypes, _compositionRuleCLO.CompositionRuleType());
-                _innerElements.connection = UIComponentProvider.CreateInstance("UIComponents.VisualView.ConnectionElem", [firstFeatureElem.GetBox(), secondFeatureElem.GetBox(),
-                    _compositionRuleCLO.GetType(), compositionRuleType, _canvasInstance, true]);
+                _innerElements.connection = new ConnectionElem(firstFeatureElem.GetBox(), secondFeatureElem.GetBox(),
+                    _compositionRuleCLO.GetType(), compositionRuleType, _canvasInstance, true);
                 _innerElements.connection.Initialize();
 
                 // Add handlers when parent/child feature elems are moving

@@ -1,7 +1,8 @@
-﻿define("VisualView/ConnectionElem/ConnectionElem",
+﻿define("Main/VisualView/ConnectionElem/ConnectionElem",
     [
+        "Main/VisualView/ConnectorElem/ConnectorElem"
     ],
-    function () {
+    function (ConnectorElem) {
         var ConnectionElem = function (parentBox, childBox, parentElemType, parentElemSubType, parentCanvasInstance, invertOrientation) {
 
             // Fields
@@ -187,13 +188,13 @@
                 // Create connectors
                 if (currentStyle.Connectors !== undefined) {
                     if (currentStyle.Connectors.StartConnector !== undefined) {
-                        _innerElements.connectors.startConnector = UIComponentProvider.CreateInstance("UIComponents.VisualView.ConnectorElem", [_this,
-                            currentStyle.Connectors.StartConnector, currentStyle.Connectors.StartConnector.attr, Enums.ConnectorPositionTypes.StartPoint, _canvasInstance]);
+                        _innerElements.connectors.startConnector = new ConnectorElem(_this,
+                            currentStyle.Connectors.StartConnector, currentStyle.Connectors.StartConnector.attr, Enums.ConnectorPositionTypes.StartPoint, _canvasInstance);
                         _innerElements.connectors.startConnector.Initialize();
                     }
                     if (currentStyle.Connectors.EndConnector !== undefined) {
-                        _innerElements.connectors.endConnector = UIComponentProvider.CreateInstance("UIComponents.VisualView.ConnectorElem", [_this, currentStyle.Connectors.EndConnector,
-                            currentStyle.Connectors.EndConnector.attr, Enums.ConnectorPositionTypes.EndPoint, _canvasInstance]);
+                        _innerElements.connectors.endConnector = new ConnectorElem(_this, currentStyle.Connectors.EndConnector,
+                            currentStyle.Connectors.EndConnector.attr, Enums.ConnectorPositionTypes.EndPoint, _canvasInstance);
                         _innerElements.connectors.endConnector.Initialize();
                     }
                 }

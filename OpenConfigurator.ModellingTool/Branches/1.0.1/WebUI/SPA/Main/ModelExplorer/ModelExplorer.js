@@ -1,4 +1,4 @@
-﻿define("ModelExplorer/ModelExplorer",
+﻿define("Main/ModelExplorer/ModelExplorer",
     [
         
     ],

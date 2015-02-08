@@ -1,4 +1,4 @@
-﻿define("VisualView/FeatureElem/FeatureElem",
+﻿define("Main/VisualView/FeatureElem/FeatureElem",
     [
     ], 
     function () {

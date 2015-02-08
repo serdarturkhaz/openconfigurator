@@ -1,11 +1,11 @@
-﻿define("Controller",
+﻿define("Main/Controller",
     [
-        "DataModel",
-        "VisualView/VisualView",
-        "ModelExplorer/ModelExplorer",
-        "CommandToolbar/CommandToolbar",
-        "PropertyEditor/PropertyEditor",
-        "MenuBar/MenuBar",
+        "Main/DataModel",
+        "Main/VisualView/VisualView",
+        "Main/ModelExplorer/ModelExplorer",
+        "Main/CommandToolbar/CommandToolbar",
+        "Main/PropertyEditor/PropertyEditor",
+        "Main/MenuBar/MenuBar",
         //"Dialog/Dialog"
 
     ],

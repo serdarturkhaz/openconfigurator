@@ -1,10 +1,13 @@
-﻿define("VisualView/VisualView",
+﻿define("Main/VisualView/VisualView",
     [
-        "text!VisualView/VisualView.html", // html markup
-        "VisualView/FeatureElem/FeatureElem"
+        "text!Main/VisualView/VisualView.html", // html markup
+        "Main/VisualView/FeatureElem/FeatureElem",
+        "Main/VisualView/RelationElem/RelationElem",
+        "Main/VisualView/GroupRelationElem/GroupRelationElem",
+        "Main/VisualView/CompositionRuleElem/CompositionRuleElem"
 
     ],
-    function (HTMLmarkup, FeatureElem) {
+    function (HTMLmarkup, FeatureElem, RelationElem, GroupRelationElem, CompositionRuleElem) {
 
         var VisualView = function (container, dataModel, cloSelectionManager) {
 
@@ -48,8 +51,7 @@
             function addRelationElem(relationCLO) {
 
                 // Create a new relation
-                var newRelationElem = UIComponentProvider.CreateInstance("UIComponents.VisualView.RelationElem", [relationCLO,
-                    _visualUIElems[relationCLO.ParentFeature.GetClientID()], _visualUIElems[relationCLO.ChildFeature.GetClientID()], _canvas]);
+                var newRelationElem = new RelationElem(relationCLO, _visualUIElems[relationCLO.ParentFeature.GetClientID()], _visualUIElems[relationCLO.ChildFeature.GetClientID()], _canvas);
                 newRelationElem.Initialize();
                 _visualUIElems[relationCLO.GetClientID()] = newRelationElem;
 
@@ -67,8 +69,7 @@
                 }
 
                 // Create a new group relation
-                var newGroupRelationElem = UIComponentProvider.CreateInstance("UIComponents.VisualView.GroupRelationElem", [groupRelationCLO,
-                    _visualUIElems[groupRelationCLO.ParentFeature.GetClientID()], childFeatureElems, _canvas]);
+                var newGroupRelationElem = new GroupRelationElem(groupRelationCLO, _visualUIElems[groupRelationCLO.ParentFeature.GetClientID()], childFeatureElems, _canvas);
                 newGroupRelationElem.Initialize();
                 _visualUIElems[groupRelationCLO.GetClientID()] = newGroupRelationElem;
 
@@ -80,8 +81,8 @@
             function addCompositionRuleElem(compositionRuleCLO) {
 
                 // Create a new composition rule
-                var newCompositionRuleElem = UIComponentProvider.CreateInstance("UIComponents.VisualView.CompositionRuleElem", [compositionRuleCLO, _visualUIElems[compositionRuleCLO.FirstFeature.GetClientID()],
-                    _visualUIElems[compositionRuleCLO.SecondFeature.GetClientID()], _canvas]);
+                var newCompositionRuleElem = new CompositionRuleElem(compositionRuleCLO, _visualUIElems[compositionRuleCLO.FirstFeature.GetClientID()],
+                    _visualUIElems[compositionRuleCLO.SecondFeature.GetClientID()], _canvas);
                 newCompositionRuleElem.Initialize();
                 _visualUIElems[compositionRuleCLO.GetClientID()] = newCompositionRuleElem;
 
