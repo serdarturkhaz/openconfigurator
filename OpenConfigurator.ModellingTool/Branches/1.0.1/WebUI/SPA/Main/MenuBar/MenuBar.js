@@ -1,6 +1,6 @@
-﻿define("MenuBar/MenuBar",
+﻿define("Main/MenuBar/MenuBar",
     [
-        "text!MenuBar/MenuBar.html" // html markup
+        "text!Main/MenuBar/MenuBar.html" // html markup
     ],
     function (HTMLmarkup) {
 

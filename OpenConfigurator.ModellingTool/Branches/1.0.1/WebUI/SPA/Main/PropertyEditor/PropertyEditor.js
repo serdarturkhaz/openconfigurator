@@ -1,6 +1,6 @@
-﻿define("PropertyEditor/PropertyEditor",
+﻿define("Main/PropertyEditor/PropertyEditor",
     [
-        "text!PropertyEditor/PropertyEditor.html" // html markup
+        "text!Main/PropertyEditor/PropertyEditor.html" // html markup
     ],
     function (HTMLmarkup) {
         var PropertyEditor = function (container, dataModel, cloSelectionManager) {

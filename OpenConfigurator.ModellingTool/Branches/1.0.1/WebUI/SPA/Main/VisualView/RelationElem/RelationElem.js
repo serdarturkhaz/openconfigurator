@@ -1,7 +1,10 @@
-﻿define("VisualView/RelationElem/RelationElem",
+﻿define("Main/VisualView/RelationElem/RelationElem",
     [
+        "Main/VisualView/CardinalityLabel/CardinalityLabel",
+        "Main/VisualView/ConnectionElem/ConnectionElem"
+
     ],
-    function () {
+    function (CardinalityLabel, ConnectionElem) {
 
         var RelationElem = function (relationCLO, parentFeatureElem, childFeatureElem, parentCanvasInstance) {
 
@@ -66,8 +69,7 @@
                     // Full
                     case "Full": // show for everything
                         if (_innerElements.cardinalityElement === null) {
-                            _innerElements.cardinalityElement = UIComponentProvider.CreateInstance("UIComponents.VisualView.CardinalityLabel", [_relationCLO.LowerBound(),
-                                _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance]);
+                            _innerElements.cardinalityElement = new CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                             _innerElements.cardinalityElement.Initialize();
                         }
                         _innerElements.cardinalityElement.Update(_relationCLO.LowerBound(), _relationCLO.UpperBound());
@@ -77,8 +79,7 @@
                     case "Partial": // only show for cloneable Relations
                         if (_relationCLO.RelationType() === Enums.RelationTypes.Cloneable) {
                             if (_innerElements.cardinalityElement == null) {
-                                _innerElements.cardinalityElement = UIComponentProvider.CreateInstance("UIComponents.VisualView.CardinalityLabel", [_relationCLO.LowerBound(),
-                                    _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance]);
+                                _innerElements.cardinalityElement = new CardinalityLabel(_relationCLO.LowerBound(), _relationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                                 _innerElements.cardinalityElement.Initialize();
                             }
                             _innerElements.cardinalityElement.Update(_relationCLO.LowerBound(), _relationCLO.UpperBound());
@@ -105,8 +106,7 @@
 
                 // Create a new UIConnection
                 var relationType = getEnumEntryNameByID(Enums.RelationTypes, _relationCLO.RelationType());
-                _innerElements.connection = UIComponentProvider.CreateInstance("UIComponents.VisualView.ConnectionElem", [parentFeatureElem.GetBox(),
-                    childFeatureElem.GetBox(), _relationCLO.GetType(), relationType, _canvasInstance]);
+                _innerElements.connection = new ConnectionElem(parentFeatureElem.GetBox(), childFeatureElem.GetBox(), _relationCLO.GetType(), relationType, _canvasInstance);
                 _innerElements.connection.Initialize();
 
                 // Add handlers when parent/child feature elems are moving

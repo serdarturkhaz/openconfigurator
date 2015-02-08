@@ -1,7 +1,9 @@
-﻿define("VisualView/GroupRelationElem/GroupRelationElem",
+﻿define("Main/VisualView/GroupRelationElem/GroupRelationElem",
     [
+        "Main/VisualView/CardinalityLabel/CardinalityLabel",
+        "Main/VisualView/ConnectionElem/ConnectionElem"
     ],
-    function () {
+    function (CardinalityLabel, ConnectionElem) {
         var GroupRelationElem = function (groupRelationCLO, parentFeatureElem, childFeatureElems, parentCanvasInstance) {
 
             // Fields
@@ -115,8 +117,8 @@
                     // Full
                     case "Full": // show for everything
                         if (_innerElements.cardinalityElement === null) {
-                            _innerElements.cardinalityElement = UIComponentProvider.CreateInstance("UIComponents.VisualView.CardinalityLabel", [_groupRelationCLO.LowerBound(),
-                                _groupRelationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance]);
+                            _innerElements.cardinalityElement = new CardinalityLabel(_groupRelationCLO.LowerBound(),
+                                _groupRelationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                             _innerElements.cardinalityElement.Initialize();
                         }
                         _innerElements.cardinalityElement.Update(_groupRelationCLO.LowerBound(), _groupRelationCLO.UpperBound());
@@ -126,8 +128,8 @@
                     case "Partial": // only show for cardinal groups
                         if (_groupRelationCLO.GroupRelationType() === Enums.GroupRelationTypes.Cardinal) {
                             if (_innerElements.cardinalityElement == null) {
-                                _innerElements.cardinalityElement = UIComponentProvider.CreateInstance("UIComponents.VisualView.CardinalityLabel", [_groupRelationCLO.LowerBound(),
-                                    _groupRelationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance]);
+                                _innerElements.cardinalityElement = new CardinalityLabel(_groupRelationCLO.LowerBound(),
+                                 _groupRelationCLO.UpperBound(), getCardinalityElemPosition, _canvasInstance);
                                 _innerElements.cardinalityElement.Initialize();
                             }
                             _innerElements.cardinalityElement.Update(_groupRelationCLO.LowerBound(), _groupRelationCLO.UpperBound());
@@ -155,8 +157,8 @@
                 // Create UIConnections for each child Feature
                 var groupRelationType = getEnumEntryNameByID(Enums.GroupRelationTypes, _groupRelationCLO.GroupRelationType());
                 for (var i = 0; i < childFeatureElems.length; i++) {
-                    var newConnection = UIComponentProvider.CreateInstance("UIComponents.VisualView.ConnectionElem", [parentFeatureElem.GetBox(), childFeatureElems[i].GetBox(),
-                        _groupRelationCLO.GetType(), groupRelationType, _canvasInstance]);
+                    var newConnection = new ConnectionElem( parentFeatureElem.GetBox(), childFeatureElems[i].GetBox(),
+                        _groupRelationCLO.GetType(), groupRelationType, _canvasInstance);
                     newConnection.Initialize();
                     _innerElements.connections.push(newConnection);
                 }

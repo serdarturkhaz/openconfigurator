@@ -1,4 +1,4 @@
-﻿define("VisualView/ConnectorElem/ConnectorElem",
+﻿define("Main/VisualView/ConnectorElem/ConnectorElem",
     [
     ],
     function () {

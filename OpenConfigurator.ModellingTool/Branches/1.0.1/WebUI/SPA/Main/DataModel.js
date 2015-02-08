@@ -1,4 +1,4 @@
-﻿define("DataModel",
+﻿define("Main/DataModel",
     [],
     function () {
         var DataModel = function () {

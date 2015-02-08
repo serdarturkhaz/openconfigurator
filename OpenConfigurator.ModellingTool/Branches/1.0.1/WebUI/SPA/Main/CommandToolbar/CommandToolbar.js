@@ -1,6 +1,6 @@
-﻿define("CommandToolbar/CommandToolbar",
+﻿define("Main/CommandToolbar/CommandToolbar",
     [
-        "text!CommandToolbar/CommandToolbar.html" // html markup
+        "text!Main/CommandToolbar/CommandToolbar.html" // html markup
     ],
     function (HTMLmarkup) {
 

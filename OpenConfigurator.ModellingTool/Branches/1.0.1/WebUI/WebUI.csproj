@@ -248,7 +248,7 @@
     <Content Include="SPA\Main\PropertyEditor\CustomRuleInnerEditor\CustomRuleInnerEditor.html" />
     <Content Include="SPA\Main\PropertyEditor\CustomFunctionInnerEditor\CustomFunctionInnerEditor.html" />
     <Content Include="SPA\Main\PropertyEditor\FeatureInnerEditor\AttributeInnerEditor\AttributeInnerEditor.html" />
-    <Content Include="SPA\Main\FileExplorer\FileExplorer.cshtml" />
+    <Content Include="SPA\Main\FileExplorer\FileExplorer.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
