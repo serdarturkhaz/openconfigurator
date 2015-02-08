@@ -6,10 +6,11 @@
         "Main/CommandToolbar/CommandToolbar",
         "Main/PropertyEditor/PropertyEditor",
         "Main/MenuBar/MenuBar",
-        //"Dialog/Dialog"
+        "Main/FileExplorer/FileExplorer",
+        "Shared/Dialog/Dialog"
 
     ],
-    function (DataModel, VisualView, ModelExplorer, CommandToolbar, PropertyEditor, MenuBar, Dialog) {
+    function (DataModel, VisualView, ModelExplorer, CommandToolbar, PropertyEditor, MenuBar, FileExplorer , Dialog) {
         var Controller = function () {
 
             // Fields
@@ -118,9 +119,9 @@
 
                     // Create fileExplorer instance
                     var fileExplorerContainer = $("<div class='contentWrapper'></div>");
-                    _fileExplorer = UIComponentProvider.CreateInstance("UIComponents.FileExplorer", [fileExplorerContainer, _dataModel]);
+                    _fileExplorer = new FileExplorer", [fileExplorerContainer, _dataModel]);
                     _fileExplorer.Initialize();
-                    _fileExplorer.FileOpenTriggered.AddHandler(new EventHandler(onFileOpenTriggered));
+                    _fileExplorer.FileOpenTriggered.AddHandler(new EventHandler(onFileSelectedForOpen));
 
                     // Create dialog instance
                     _fileExplorerDialog = UIComponentProvider.CreateInstance("UIComponents.Generic.Dialog", ["Open existing model", fileExplorerContainer], { modal: true });
@@ -169,7 +170,7 @@
                     }
                 }
             }
-            var onFileOpenTriggered = function (modelFileCLO) {
+            var onFileSelectedForOpen = function (modelFileCLO) {
                 _cloSelectionManager.DeselectAllCLOs();
                 _dataModel.LoadExistingModel(modelFileCLO.Name());
                 _fileExplorerDialog.Close();
