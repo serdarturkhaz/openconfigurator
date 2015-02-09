@@ -5,17 +5,19 @@
     <title>Modelling Tool - OpenConfigurator</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/frameworks")
+    
     @Scripts.Render("~/bundles/plugins")
     @Scripts.Render("~/bundles/application")
     @Scripts.Render("~/bundles/amd")
-
 </head>
 <body>
     @RenderBody()
 
     
+    <div id="dragtest"></div>
     @RenderSection("bodyscripts", required: false)
     
+
 </body>
     
 </html>

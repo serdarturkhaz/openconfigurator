@@ -170,12 +170,13 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\Application\common.js" />
     <Content Include="Scripts\AMD\text.js" />
+    <Content Include="Scripts\Frameworks\jquery-2.1.3.js" />
+    <Content Include="Scripts\Frameworks\jquery-ui.js" />
     <Content Include="Scripts\Frameworks\underscore-min.js" />
     <Content Include="SPA\Main\DataModel.js" />
     <Content Include="Scripts\Application\coreFramework.js" />
     <Content Include="SPA\Main\Controller.js" />
-    <Content Include="Scripts\Frameworks\jquery-2.1.3.js" />
-    <Content Include="Scripts\Frameworks\jquery-ui.js" />
+    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\Frameworks\knockout-3.2.0.js" />
     <Content Include="Scripts\Frameworks\raphael.2.1.2.js" />
     <Content Include="Scripts\CustomPlugins\jquery.simpleMenu.js" />
