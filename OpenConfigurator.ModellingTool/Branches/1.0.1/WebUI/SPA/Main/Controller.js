@@ -10,7 +10,7 @@
         "Shared/Dialog/Dialog"
 
     ],
-    function (DataModel, VisualView, ModelExplorer, CommandToolbar, PropertyEditor, MenuBar, FileExplorer , Dialog) {
+    function (DataModel, VisualView, ModelExplorer, CommandToolbar, PropertyEditor, MenuBar, FileExplorer, Dialog) {
         var Controller = function () {
 
             // Fields
@@ -113,18 +113,18 @@
                 _dataModel.SaveChanges();
             }
             this.OpenFile = function () {
-
+                
                 // Setup fileExplorer and dialog in which it is shown
                 if (_fileExplorer === null && _fileExplorerDialog === null) {
 
                     // Create fileExplorer instance
                     var fileExplorerContainer = $("<div class='contentWrapper'></div>");
-                    _fileExplorer = new FileExplorer", [fileExplorerContainer, _dataModel]);
+                    _fileExplorer = new FileExplorer(fileExplorerContainer, _dataModel);
                     _fileExplorer.Initialize();
                     _fileExplorer.FileOpenTriggered.AddHandler(new EventHandler(onFileSelectedForOpen));
 
                     // Create dialog instance
-                    _fileExplorerDialog = UIComponentProvider.CreateInstance("UIComponents.Generic.Dialog", ["Open existing model", fileExplorerContainer], { modal: true });
+                    _fileExplorerDialog = new Dialog("Open existing model", fileExplorerContainer, { modal: true });
                     _fileExplorerDialog.Initialize();
                 }
 

@@ -9,8 +9,14 @@ namespace OpenConfigurator.ModellingTool.WebUI
         public static void RegisterBundles(BundleCollection bundles)
         {
             // Frameworks
-            bundles.Add(new ScriptBundle("~/bundles/frameworks")
-                .Include("~/Scripts/Frameworks/*.js"));
+            var frameworkBundle = new ScriptBundle("~/bundles/frameworks")
+               .Include("~/Scripts/Frameworks/jquery-2.1.3.js")
+               .Include("~/Scripts/Frameworks/jquery-ui.js")
+               .Include("~/Scripts/Frameworks/knockout-3.2.0.js")
+               .Include("~/Scripts/Frameworks/raphael.2.1.2.js")
+               .Include("~/Scripts/Frameworks/underscore-min.js");
+            frameworkBundle.Orderer = new NonOrderingBundleOrderer();
+            bundles.Add(frameworkBundle);
 
             // Plugins (3rd party and custom)
             bundles.Add(new ScriptBundle("~/bundles/plugins")

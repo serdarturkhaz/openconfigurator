@@ -3,7 +3,7 @@
         "text!Shared/Dialog/Dialog.html" // html markup
     ],
     function (HTMLmarkup) {
-
+        
         var Dialog = function (title, content, settings) {
 
             // Fields
@@ -27,7 +27,7 @@
 
             // Init
             this.Initialize = function () {
-
+                
                 // Parse html markup
                 _innerHtmlElem = $($.parseHTML(HTMLmarkup));
                 _innerHtmlElem.appendTo("body");
@@ -48,7 +48,7 @@
                     containment: "window"
                 });
 
-                _innerElems.innerContainer.append(content);
+                _innerElems.innerContainer.append(_content);
                 _innerElems.headerLabel.text(_title);
             }
 

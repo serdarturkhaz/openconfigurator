@@ -1,8 +1,8 @@
 ﻿define("Main/FileExplorer/FileExplorer",
     [
-
+        "text!Main/FileExplorer/FileExplorer.html" // html markup
     ],
-    function () {
+    function (HTMLmarkup) {
 
         var FileExplorer = function (container, dataModel) {
 
@@ -32,8 +32,7 @@
             this.Initialize = function () {
 
                 // Parse html markup
-                var markup = "#HTMLCONTENT#";
-                _innerHtmlElem = $($.parseHTML(markup));
+                _innerHtmlElem = $($.parseHTML(HTMLmarkup));
                 _innerHtmlElem.appendTo(_container);
 
                 // Get references to html elems
