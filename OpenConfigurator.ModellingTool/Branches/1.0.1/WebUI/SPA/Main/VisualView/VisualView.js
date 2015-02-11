@@ -5,7 +5,6 @@
         "Main/VisualView/RelationElem/RelationElem",
         "Main/VisualView/GroupRelationElem/GroupRelationElem",
         "Main/VisualView/CompositionRuleElem/CompositionRuleElem"
-
     ],
     function (HTMLmarkup, FeatureElem, RelationElem, GroupRelationElem, CompositionRuleElem) {
 
