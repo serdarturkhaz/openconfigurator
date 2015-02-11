@@ -176,7 +176,6 @@
     <Content Include="SPA\Main\DataModel.js" />
     <Content Include="Scripts\Application\coreFramework.js" />
     <Content Include="SPA\Main\Controller.js" />
-    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\Frameworks\knockout-3.2.0.js" />
     <Content Include="Scripts\Frameworks\raphael.2.1.2.js" />
     <Content Include="Scripts\CustomPlugins\jquery.simpleMenu.js" />

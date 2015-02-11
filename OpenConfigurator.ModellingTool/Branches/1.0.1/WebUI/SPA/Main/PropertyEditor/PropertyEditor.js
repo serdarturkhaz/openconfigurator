@@ -1,8 +1,14 @@
 ﻿define("Main/PropertyEditor/PropertyEditor",
     [
-        "text!Main/PropertyEditor/PropertyEditor.html" // html markup
+        "text!Main/PropertyEditor/PropertyEditor.html", // html markup
+        "Main/PropertyEditor/FeatureInnerEditor/FeatureInnerEditor",
+        "Main/PropertyEditor/RelationInnerEditor/RelationInnerEditor",
+        "Main/PropertyEditor/GroupRelationInnerEditor/GroupRelationInnerEditor",
+        "Main/PropertyEditor/CompositionRuleInnerEditor/CompositionRuleInnerEditor",
+        "Main/PropertyEditor/CustomRuleInnerEditor/CustomRuleInnerEditor",
+        "Main/PropertyEditor/CustomFunctionInnerEditor/CustomFunctionInnerEditor"
     ],
-    function (HTMLmarkup) {
+    function (HTMLmarkup, FeatureInnerEditor, RelationInnerEditor, GroupRelationInnerEditor, CompositionRuleInnerEditor, CustomRuleInnerEditor, CustomFunctionInnerEditor) {
         var PropertyEditor = function (container, dataModel, cloSelectionManager) {
 
             // Fields
@@ -30,7 +36,8 @@
 
                 // 
                 _innerElems.headerLabel.text(clo.GetType() + " properties");
-                _currentInnerEditorInstance = UIComponentProvider.CreateInstance("UIComponents.PropertyEditor." + clo.GetType() + "InnerEditor", [_innerElems.innerContainer, clo, _specializedDataModel]);
+                var innerEditorType = eval(clo.GetType() + "InnerEditor");
+                _currentInnerEditorInstance = new innerEditorType(_innerElems.innerContainer, clo, _specializedDataModel);
                 _currentInnerEditorInstance.Initialize();
             }
 
