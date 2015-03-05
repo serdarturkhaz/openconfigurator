@@ -82,7 +82,7 @@ namespace OpenConfigurator.Core.BLOs
         }
     }
 
-    // Core BLOs
+    // Core FeatureModel BLOs
     public class FeatureModel : iBLO
     {
         // Fields
@@ -622,6 +622,409 @@ namespace OpenConfigurator.Core.BLOs
         {
         }
 
+    }
+
+    // Configuration BLOs
+    public class Configuration : iBLO
+    {
+        // Fields
+        private List<BLL.BusinessObjects.FeatureSelection> _featureSelections = new List<FeatureSelection>();
+
+        // Constructor
+        public Configuration()
+        {
+        }
+
+        // Properties
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
+            }
+        }
+        public int ModelID
+        {
+            get
+            {
+                return _innerEntity.ModelID;
+            }
+            set
+            {
+                _innerEntity.ModelID = value;
+            }
+        }
+        public int UITemplateID
+        {
+            get
+            {
+                return _innerEntity.UITemplateID;
+            }
+            set
+            {
+                _innerEntity.UITemplateID = value;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return _innerEntity.Name;
+            }
+            set
+            {
+                _innerEntity.Name = value;
+            }
+        }
+        public string ModelName
+        {
+            get
+            {
+                return _modelName;
+            }
+        }
+        public string UITemplateName
+        {
+            get
+            {
+                return _uiTemplateName;
+            }
+        }
+        [JsonIgnore]
+        public Nullable<System.DateTime> CreatedDate
+        {
+            get
+            {
+                return _innerEntity.CreatedDate;
+            }
+            set
+            {
+                _innerEntity.CreatedDate = value;
+            }
+        }
+        [JsonIgnore]
+        public Nullable<System.DateTime> LastModifiedDate
+        {
+            get
+            {
+                return _innerEntity.LastModifiedDate;
+            }
+            set
+            {
+                _innerEntity.LastModifiedDate = value;
+            }
+        }
+        public string CreatedDateFormatted
+        {
+            get
+            {
+                return CreatedDate.Value.ToShortDateString();
+            }
+        }
+        public string LastModifiedDateFormatted
+        {
+            get
+            {
+                return LastModifiedDate.Value.ToShortDateString();
+            }
+        }
+        public List<BLL.BusinessObjects.FeatureSelection> FeatureSelections
+        {
+            get
+            {
+                return _featureSelections;
+            }
+            set
+            {
+                _featureSelections = value;
+            }
+        }
+
+        //Methods
+        public BLL.BusinessObjects.FeatureSelection GetFeatureSelectionByFeatureID(int featureID)
+        {
+            BLL.BusinessObjects.FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(x => x.FeatureID == featureID);
+            return featureSelection;
+        }
+        public BLL.BusinessObjects.AttributeValue GetAttributeValueByAttributeID(int attributeID)
+        {
+            //Find FeatureSelection which the appropriate AttributeValue
+            BLL.BusinessObjects.FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(f => f.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID) != null);
+            BLL.BusinessObjects.AttributeValue attributeValue = featureSelection.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID);
+            return attributeValue;
+        }
+
+        //Special methods
+        public static BLL.BusinessObjects.Configuration CreateInstance(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.Configuration configuration = new BLL.BusinessObjects.Configuration((DAL.DataEntities.Configuration)innerEntity);
+
+            //Set fields
+            configuration._modelName = ((DAL.DataEntities.Configuration)innerEntity).Model.Name;
+            configuration._uiTemplateName = ((DAL.DataEntities.Configuration)innerEntity).UITemplate.Name;
+
+            return configuration;
+        }
+        public static BLL.BusinessObjects.Configuration CreateDefault(int modelID, int uiTemplateID)
+        {
+            //Create a new Model and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Configuration();
+            BLL.BusinessObjects.Configuration configuration = new Configuration((DAL.DataEntities.Configuration)innerEntity);
+
+            //Set default fields
+            ((DAL.DataEntities.Configuration)configuration.InnerEntity).ModelID = modelID;
+            ((DAL.DataEntities.Configuration)configuration.InnerEntity).UITemplateID = uiTemplateID;
+            configuration.CreatedDate = DateTime.Now;
+            configuration.LastModifiedDate = DateTime.Now;
+            configuration.Name = "Configuration00";
+
+            //Return the object instance
+            return configuration;
+        }
+    }
+    public class FeatureSelection : iBLO
+    {
+        //Fields
+        private DAL.DataEntities.FeatureSelection _innerEntity;
+        private List<BLL.BusinessObjects.AttributeValue> _attributeValues = new List<AttributeValue>();
+        private bool _toBeDeleted = false;
+
+        //Constructor
+        public FeatureSelection()
+        {
+            this._innerEntity = new DAL.DataEntities.FeatureSelection();
+        }
+        internal FeatureSelection(DAL.DataEntities.FeatureSelection innerEntity)
+        {
+            this._innerEntity = innerEntity;
+
+            //Create BLL collections
+            _innerEntity.AttributeValues.ToList().ForEach(DALentity => AttributeValues.Add(BLL.BusinessObjects.AttributeValue.CreateInstance(DALentity)));
+        }
+
+        //Properties
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
+            }
+        }
+        public int FeatureID
+        {
+            get
+            {
+                return _innerEntity.FeatureID;
+            }
+            set
+            {
+                _innerEntity.FeatureID = value;
+            }
+        }
+        public FeatureSelectionStates SelectionState
+        {
+            get
+            {
+                return (FeatureSelectionStates)Enum.Parse(typeof(FeatureSelectionStates), _innerEntity.SelectionStateID.ToString());
+            }
+            set
+            {
+                _innerEntity.SelectionStateID = (int)value;
+            }
+        }
+        public bool? Disabled
+        {
+            get
+            {
+                if (_innerEntity.Disabled != null)
+                    return _innerEntity.Disabled;
+                else
+                    return false;
+            }
+            set
+            {
+                _innerEntity.Disabled = value;
+            }
+        }
+        public bool? ToggledByUser
+        {
+            get
+            {
+                if (_innerEntity.ToggledByUser != null)
+                    return _innerEntity.ToggledByUser;
+                else
+                    return false;
+            }
+            set
+            {
+                _innerEntity.ToggledByUser = value;
+            }
+        }
+        public List<BLL.BusinessObjects.AttributeValue> AttributeValues
+        {
+            get
+            {
+                return _attributeValues;
+            }
+            set
+            {
+                _attributeValues = value;
+            }
+        }
+
+        //Special methods
+        public static BLL.BusinessObjects.FeatureSelection CreateInstance(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.FeatureSelection featureSelection = new BLL.BusinessObjects.FeatureSelection((DAL.DataEntities.FeatureSelection)innerEntity);
+            return featureSelection;
+        }
+        public static BLL.BusinessObjects.FeatureSelection CreateDefault()
+        {
+            //Create a new Feature and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.FeatureSelection();
+            BLL.BusinessObjects.FeatureSelection featureSelection = new FeatureSelection((DAL.DataEntities.FeatureSelection)innerEntity);
+
+            //
+            featureSelection.SelectionState = FeatureSelectionStates.Unselected;
+            featureSelection.Disabled = false;
+            featureSelection.ToggledByUser = false;
+
+            //Return the object instance
+            return featureSelection;
+        }
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.FeatureSelection)value;
+            }
+        }
+        public bool ToBeDeleted
+        {
+            get
+            {
+                return this._toBeDeleted;
+            }
+            set
+            {
+                this._toBeDeleted = value;
+            }
+        }
+
+        #endregion
+    }
+    public class AttributeValue : iBLO
+    {
+
+        // Constructors
+        public AttributeValue()
+        {
+        }
+
+        //Properties
+        public int ID
+        {
+            get
+            {
+                return _innerEntity.ID;
+            }
+            set
+            {
+                _innerEntity.ID = value;
+            }
+        }
+        public int FeatureSelectionID
+        {
+            get
+            {
+                return _innerEntity.FeatureSelectionID;
+            }
+            set
+            {
+                _innerEntity.FeatureSelectionID = value;
+            }
+        }
+        public int AttributeID
+        {
+            get
+            {
+                return _innerEntity.AttributeID;
+            }
+            set
+            {
+                _innerEntity.AttributeID = value;
+            }
+        }
+        public string Value
+        {
+            get
+            {
+                return _innerEntity.Value;
+            }
+            set
+            {
+                _innerEntity.Value = value;
+            }
+        }
+
+        //Special methods
+        public static BLL.BusinessObjects.AttributeValue CreateInstance(DAL.DataEntities.IDataEntity innerEntity)
+        {
+            BLL.BusinessObjects.AttributeValue attributeValue = new BLL.BusinessObjects.AttributeValue((DAL.DataEntities.AttributeValue)innerEntity);
+            return attributeValue;
+        }
+        public static BLL.BusinessObjects.AttributeValue CreateDefault()
+        {
+            //Create a new Feature and InnerEntity
+            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.AttributeValue();
+            BLL.BusinessObjects.AttributeValue attributeValue = new BLL.BusinessObjects.AttributeValue((DAL.DataEntities.AttributeValue)innerEntity);
+
+            //Return the object instance
+            return attributeValue;
+        }
+
+        //Interface members
+        #region IBusinessObject Members
+        [JsonIgnore]
+        public DAL.DataEntities.IDataEntity InnerEntity
+        {
+            get
+            {
+                return this._innerEntity;
+            }
+            set
+            {
+                this._innerEntity = (DAL.DataEntities.AttributeValue)value;
+            }
+        }
+        public bool ToBeDeleted
+        {
+            get
+            {
+                return this._toBeDeleted;
+            }
+            set
+            {
+                this._toBeDeleted = value;
+            }
+        }
+        #endregion
     }
 
     //
