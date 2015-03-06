@@ -251,12 +251,6 @@
     <Content Include="SPA\Main\FileExplorer\FileExplorer.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BLL\BLL.csproj">
-      <Project>{70b8e852-d7da-4856-b096-a4f66a3375ce}</Project>
-      <Name>BLL</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Content\Images\Layout\logo2.xcf" />
     <Content Include="Content\Images\Layout\logo3.xcf" />
   </ItemGroup>
