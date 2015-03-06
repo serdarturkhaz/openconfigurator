@@ -636,42 +636,6 @@ namespace OpenConfigurator.Core.BLOs
         }
 
         // Properties
-        public Nullable<System.DateTime> CreatedDate
-        {
-            get
-            {
-                return _innerEntity.CreatedDate;
-            }
-            set
-            {
-                _innerEntity.CreatedDate = value;
-            }
-        }
-        public Nullable<System.DateTime> LastModifiedDate
-        {
-            get
-            {
-                return _innerEntity.LastModifiedDate;
-            }
-            set
-            {
-                _innerEntity.LastModifiedDate = value;
-            }
-        }
-        public string CreatedDateFormatted
-        {
-            get
-            {
-                return CreatedDate.Value.ToShortDateString();
-            }
-        }
-        public string LastModifiedDateFormatted
-        {
-            get
-            {
-                return LastModifiedDate.Value.ToShortDateString();
-            }
-        }
         public List<FeatureSelection> FeatureSelections
         {
             get
@@ -680,67 +644,31 @@ namespace OpenConfigurator.Core.BLOs
             }
         }
 
-        //Methods
-        public BLL.BusinessObjects.FeatureSelection GetFeatureSelectionByFeatureID(int featureID)
+        // Methods
+        public FeatureSelection GetFeatureSelectionByFeatureIdentifier(int featureID)
         {
-            BLL.BusinessObjects.FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(x => x.FeatureID == featureID);
+            FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(x => x.FeatureID == featureID);
             return featureSelection;
         }
-        public BLL.BusinessObjects.AttributeValue GetAttributeValueByAttributeID(int attributeID)
+        public AttributeValue GetAttributeValueByAttributeIdentifier(int attributeID)
         {
             //Find FeatureSelection which the appropriate AttributeValue
-            BLL.BusinessObjects.FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(f => f.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID) != null);
-            BLL.BusinessObjects.AttributeValue attributeValue = featureSelection.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID);
+            FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(f => f.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID) != null);
+            AttributeValue attributeValue = featureSelection.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID);
             return attributeValue;
         }
 
-        //Special methods
-        public static BLL.BusinessObjects.Configuration CreateInstance(DAL.DataEntities.IDataEntity innerEntity)
-        {
-            BLL.BusinessObjects.Configuration configuration = new BLL.BusinessObjects.Configuration((DAL.DataEntities.Configuration)innerEntity);
-
-            //Set fields
-            configuration._modelName = ((DAL.DataEntities.Configuration)innerEntity).Model.Name;
-            configuration._uiTemplateName = ((DAL.DataEntities.Configuration)innerEntity).UITemplate.Name;
-
-            return configuration;
-        }
-        public static BLL.BusinessObjects.Configuration CreateDefault(int modelID, int uiTemplateID)
-        {
-            //Create a new Model and InnerEntity
-            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.Configuration();
-            BLL.BusinessObjects.Configuration configuration = new Configuration((DAL.DataEntities.Configuration)innerEntity);
-
-            //Set default fields
-            ((DAL.DataEntities.Configuration)configuration.InnerEntity).ModelID = modelID;
-            ((DAL.DataEntities.Configuration)configuration.InnerEntity).UITemplateID = uiTemplateID;
-            configuration.CreatedDate = DateTime.Now;
-            configuration.LastModifiedDate = DateTime.Now;
-            configuration.Name = "Configuration00";
-
-            //Return the object instance
-            return configuration;
-        }
     }
     public class FeatureSelection : iBLO
     {
-        //Fields
-        private DAL.DataEntities.FeatureSelection _innerEntity;
-        private List<BLL.BusinessObjects.AttributeValue> _attributeValues = new List<AttributeValue>();
-        private bool _toBeDeleted = false;
+        // Fields
+        protected List<AttributeValue> attributeValues = new List<AttributeValue>();
 
-        //Constructor
+        // Constructor
         public FeatureSelection()
         {
-            this._innerEntity = new DAL.DataEntities.FeatureSelection();
         }
-        internal FeatureSelection(DAL.DataEntities.FeatureSelection innerEntity)
-        {
-            this._innerEntity = innerEntity;
-
-            //Create BLL collections
-            _innerEntity.AttributeValues.ToList().ForEach(DALentity => AttributeValues.Add(BLL.BusinessObjects.AttributeValue.CreateInstance(DALentity)));
-        }
+        
 
         //Properties
         public int ID
