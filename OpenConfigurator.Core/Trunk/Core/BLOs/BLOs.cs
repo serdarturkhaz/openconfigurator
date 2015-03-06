@@ -625,76 +625,17 @@ namespace OpenConfigurator.Core.BLOs
     }
 
     // Configuration BLOs
-    public class Configuration : iBLO
+    public class ConfigurationInstance : iBLO
     {
         // Fields
-        private List<BLL.BusinessObjects.FeatureSelection> _featureSelections = new List<FeatureSelection>();
+        protected List<FeatureSelection> featureSelections = new List<FeatureSelection>();
 
         // Constructor
-        public Configuration()
+        public ConfigurationInstance()
         {
         }
 
         // Properties
-        public int ID
-        {
-            get
-            {
-                return _innerEntity.ID;
-            }
-            set
-            {
-                _innerEntity.ID = value;
-            }
-        }
-        public int ModelID
-        {
-            get
-            {
-                return _innerEntity.ModelID;
-            }
-            set
-            {
-                _innerEntity.ModelID = value;
-            }
-        }
-        public int UITemplateID
-        {
-            get
-            {
-                return _innerEntity.UITemplateID;
-            }
-            set
-            {
-                _innerEntity.UITemplateID = value;
-            }
-        }
-        public string Name
-        {
-            get
-            {
-                return _innerEntity.Name;
-            }
-            set
-            {
-                _innerEntity.Name = value;
-            }
-        }
-        public string ModelName
-        {
-            get
-            {
-                return _modelName;
-            }
-        }
-        public string UITemplateName
-        {
-            get
-            {
-                return _uiTemplateName;
-            }
-        }
-        [JsonIgnore]
         public Nullable<System.DateTime> CreatedDate
         {
             get
@@ -706,7 +647,6 @@ namespace OpenConfigurator.Core.BLOs
                 _innerEntity.CreatedDate = value;
             }
         }
-        [JsonIgnore]
         public Nullable<System.DateTime> LastModifiedDate
         {
             get
@@ -732,15 +672,11 @@ namespace OpenConfigurator.Core.BLOs
                 return LastModifiedDate.Value.ToShortDateString();
             }
         }
-        public List<BLL.BusinessObjects.FeatureSelection> FeatureSelections
+        public List<FeatureSelection> FeatureSelections
         {
             get
             {
-                return _featureSelections;
-            }
-            set
-            {
-                _featureSelections = value;
+                return featureSelections;
             }
         }
 
