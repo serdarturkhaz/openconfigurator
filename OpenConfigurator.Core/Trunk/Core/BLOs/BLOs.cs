@@ -43,6 +43,12 @@ namespace OpenConfigurator.Core.BLOs
         Vertical = 0,
         Horizontal = 1
     }
+    public enum FeatureSelectionStates
+    {
+        Selected = 1,
+        Deselected = 2,
+        Unselected = 3
+    }
 
     // Extra information for enums (was previously stored in the SQL db)
     public static class RelationTypes_Info
@@ -668,10 +674,9 @@ namespace OpenConfigurator.Core.BLOs
         public FeatureSelection()
         {
         }
-        
 
         //Properties
-        public int ID
+        public string FeatureIdentifier
         {
             get
             {
@@ -680,17 +685,6 @@ namespace OpenConfigurator.Core.BLOs
             set
             {
                 _innerEntity.ID = value;
-            }
-        }
-        public int FeatureID
-        {
-            get
-            {
-                return _innerEntity.FeatureID;
-            }
-            set
-            {
-                _innerEntity.FeatureID = value;
             }
         }
         public FeatureSelectionStates SelectionState
