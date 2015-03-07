@@ -651,16 +651,16 @@ namespace OpenConfigurator.Core.BLOs
         }
 
         // Methods
-        public FeatureSelection GetFeatureSelectionByFeatureIdentifier(int featureID)
+        public FeatureSelection GetFeatureSelectionByFeatureIdentifier(string featureID)
         {
-            FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(x => x.FeatureID == featureID);
+            FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(x => x.FeatureIdentifier == featureID);
             return featureSelection;
         }
-        public AttributeValue GetAttributeValueByAttributeIdentifier(int attributeID)
+        public AttributeValue GetAttributeValueByAttributeIdentifier(string attributeID)
         {
             //Find FeatureSelection which the appropriate AttributeValue
-            FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(f => f.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID) != null);
-            AttributeValue attributeValue = featureSelection.AttributeValues.FirstOrDefault(x => x.AttributeID == attributeID);
+            FeatureSelection featureSelection = FeatureSelections.FirstOrDefault(f => f.AttributeValues.FirstOrDefault(x => x.AttributeIdentifier == attributeID) != null);
+            AttributeValue attributeValue = featureSelection.AttributeValues.FirstOrDefault(x => x.AttributeIdentifier == attributeID);
             return attributeValue;
         }
 
@@ -675,214 +675,59 @@ namespace OpenConfigurator.Core.BLOs
         {
         }
 
-        //Properties
+        // Properties
         public string FeatureIdentifier
         {
-            get
-            {
-                return _innerEntity.ID;
-            }
-            set
-            {
-                _innerEntity.ID = value;
-            }
+            get;
+            set;
         }
         public FeatureSelectionStates SelectionState
         {
-            get
-            {
-                return (FeatureSelectionStates)Enum.Parse(typeof(FeatureSelectionStates), _innerEntity.SelectionStateID.ToString());
-            }
-            set
-            {
-                _innerEntity.SelectionStateID = (int)value;
-            }
+            get;
+            set;
         }
         public bool? Disabled
         {
-            get
-            {
-                if (_innerEntity.Disabled != null)
-                    return _innerEntity.Disabled;
-                else
-                    return false;
-            }
-            set
-            {
-                _innerEntity.Disabled = value;
-            }
+            get;
+            set;
         }
         public bool? ToggledByUser
         {
-            get
-            {
-                if (_innerEntity.ToggledByUser != null)
-                    return _innerEntity.ToggledByUser;
-                else
-                    return false;
-            }
-            set
-            {
-                _innerEntity.ToggledByUser = value;
-            }
+            get;
+            set;
         }
-        public List<BLL.BusinessObjects.AttributeValue> AttributeValues
+        public List<AttributeValue> AttributeValues
         {
             get
             {
-                return _attributeValues;
-            }
-            set
-            {
-                _attributeValues = value;
+                return attributeValues;
             }
         }
 
-        //Special methods
-        public static BLL.BusinessObjects.FeatureSelection CreateInstance(DAL.DataEntities.IDataEntity innerEntity)
-        {
-            BLL.BusinessObjects.FeatureSelection featureSelection = new BLL.BusinessObjects.FeatureSelection((DAL.DataEntities.FeatureSelection)innerEntity);
-            return featureSelection;
-        }
-        public static BLL.BusinessObjects.FeatureSelection CreateDefault()
-        {
-            //Create a new Feature and InnerEntity
-            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.FeatureSelection();
-            BLL.BusinessObjects.FeatureSelection featureSelection = new FeatureSelection((DAL.DataEntities.FeatureSelection)innerEntity);
-
-            //
-            featureSelection.SelectionState = FeatureSelectionStates.Unselected;
-            featureSelection.Disabled = false;
-            featureSelection.ToggledByUser = false;
-
-            //Return the object instance
-            return featureSelection;
-        }
-
-        //Interface members
-        #region IBusinessObject Members
-        [JsonIgnore]
-        public DAL.DataEntities.IDataEntity InnerEntity
-        {
-            get
-            {
-                return this._innerEntity;
-            }
-            set
-            {
-                this._innerEntity = (DAL.DataEntities.FeatureSelection)value;
-            }
-        }
-        public bool ToBeDeleted
-        {
-            get
-            {
-                return this._toBeDeleted;
-            }
-            set
-            {
-                this._toBeDeleted = value;
-            }
-        }
-
-        #endregion
     }
     public class AttributeValue : iBLO
     {
-
         // Constructors
         public AttributeValue()
         {
         }
 
-        //Properties
-        public int ID
+        // Properties
+        public string FeatureSelectionIdentifier
         {
-            get
-            {
-                return _innerEntity.ID;
-            }
-            set
-            {
-                _innerEntity.ID = value;
-            }
+            get;
+            set;
         }
-        public int FeatureSelectionID
+        public string AttributeIdentifier
         {
-            get
-            {
-                return _innerEntity.FeatureSelectionID;
-            }
-            set
-            {
-                _innerEntity.FeatureSelectionID = value;
-            }
-        }
-        public int AttributeID
-        {
-            get
-            {
-                return _innerEntity.AttributeID;
-            }
-            set
-            {
-                _innerEntity.AttributeID = value;
-            }
+            get;
+            set;
         }
         public string Value
         {
-            get
-            {
-                return _innerEntity.Value;
-            }
-            set
-            {
-                _innerEntity.Value = value;
-            }
+            get;
+            set;
         }
-
-        //Special methods
-        public static BLL.BusinessObjects.AttributeValue CreateInstance(DAL.DataEntities.IDataEntity innerEntity)
-        {
-            BLL.BusinessObjects.AttributeValue attributeValue = new BLL.BusinessObjects.AttributeValue((DAL.DataEntities.AttributeValue)innerEntity);
-            return attributeValue;
-        }
-        public static BLL.BusinessObjects.AttributeValue CreateDefault()
-        {
-            //Create a new Feature and InnerEntity
-            DAL.DataEntities.IDataEntity innerEntity = new DAL.DataEntities.AttributeValue();
-            BLL.BusinessObjects.AttributeValue attributeValue = new BLL.BusinessObjects.AttributeValue((DAL.DataEntities.AttributeValue)innerEntity);
-
-            //Return the object instance
-            return attributeValue;
-        }
-
-        //Interface members
-        #region IBusinessObject Members
-        [JsonIgnore]
-        public DAL.DataEntities.IDataEntity InnerEntity
-        {
-            get
-            {
-                return this._innerEntity;
-            }
-            set
-            {
-                this._innerEntity = (DAL.DataEntities.AttributeValue)value;
-            }
-        }
-        public bool ToBeDeleted
-        {
-            get
-            {
-                return this._toBeDeleted;
-            }
-            set
-            {
-                this._toBeDeleted = value;
-            }
-        }
-        #endregion
     }
 
     //
