@@ -1,6 +1,6 @@
 ﻿define("Main/Controller",
     [
-        //"Main/DataModel",
+        "Main/DataModel",
         //"Main/ConfigurationView/ConfigurationView",
         //"Main/MenuBar/MenuBar",
         //"Shared/Dialog/Dialog"
@@ -17,10 +17,12 @@
 
             // Init
             this.Initialize = function () {
+                alert("Hello!");
+                /// Init UIComponents
+                _dataModel = new DataModel();
+                _dataModel.Initialize();
 
-                //// Init UIComponents
-                //_dataModel = new DataModel();
-                //_dataModel.Initialize();
+                _dataModel.LoadConfigurationInstance("test");
                 //_cloSelectionManager = new Controller.CLOSelectionManager();
                 //_cloSelectionManager.Initialize();
                 //_visualView = new VisualView($("#visualViewContainer"), _dataModel, _cloSelectionManager);
@@ -49,7 +51,7 @@
 
             // Public methods
             this.OpenFile = function () {
-                
+
                 // Setup fileExplorer and dialog in which it is shown
                 if (_fileExplorer === null && _fileExplorerDialog === null) {
 
@@ -76,7 +78,7 @@
             }
         }
 
-        
+
         // Special global class (currently used by certain CLOs when adding new objects to them)
         window.IdentifierProvider = (function () { // "static" class
 

@@ -20,34 +20,11 @@ namespace OpenConfigurator.ConfigurationTool.WebUI.Controllers
         private string modelFolderPath = HostingEnvironment.MapPath("~/FeatureModelFiles/");
 
 
-
         [HttpGet]
-        public iBLO CreateDefaultBLO(string bloType)
+        public ConfigurationInstance GetFeatureModel(string featureModelName)
         {
-            // Create a new BLO
-            return GenericBLOFactory.GetInstance().CreateBLOInstance(bloType);
-        }
-
-        [HttpPost]
-        public FeatureModel SaveChanges(FeatureModel featureModel)
-        {
-            FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
-            manager.SaveChanges(featureModel);
+            //FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
             return null;
-        }
-
-        [HttpGet]
-        public FeatureModel GetFeatureModel(string featureModelName)
-        {
-            FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
-            return manager.GetFeatureModel(featureModelName);
-        }
-
-        [HttpGet]
-        public List<ModelFile> GetAllModelFiles()
-        {
-            FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
-            return manager.GetAllModelFiles();
         }
     }
 }
