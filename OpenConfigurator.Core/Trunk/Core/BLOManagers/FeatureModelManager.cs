@@ -34,7 +34,7 @@ namespace OpenConfigurator.Core.BLOManagers
             // Save it
             new XmlDAL.XMLDataEntityManager(this.modelFolderPath).SaveChanges(dataEntity);
         }
-        public OpenConfigurator.Core.BLOs.FeatureModel GetFeatureModel(string featureModelName)
+        public FeatureModel GetFeatureModel(string featureModelName)
         {
             // Get DataEntity and convert to BLO
             XmlDAL.DataEntities.FeatureModel dataEntity = new XmlDAL.XMLDataEntityManager(this.modelFolderPath).GetFeatureModel(featureModelName);

@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="AutoMapperConfiguration.cs" />
     <Compile Include="BLOFactories\BLOFactory.cs" />
+    <Compile Include="BLOManagers\ConfigurationInstanceManager.cs" />
     <Compile Include="BLOManagers\FeatureModelManager.cs" />
     <Compile Include="BLOs\BLOs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
