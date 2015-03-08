@@ -664,6 +664,16 @@ namespace OpenConfigurator.Core.BLOs
             return attributeValue;
         }
 
+        // Special static methods
+        internal static ConfigurationInstance CreateDefault()
+        {
+            ConfigurationInstance newBLO = new ConfigurationInstance()
+            {
+                
+            };
+            return newBLO;
+        }
+
     }
     public class FeatureSelection : iBLO
     {
