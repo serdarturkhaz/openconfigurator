@@ -24,13 +24,7 @@ namespace OpenConfigurator.Core.BLOManagers
         // Public methods
         public ConfigurationInstance CreateConfigurationInstance(FeatureModel featureModel)
         {
-            // Create the configuration instance
-            ConfigurationInstance configInstance = new ConfigurationInstance();
-
-            //XmlDAL.DataEntities.FeatureModel dataEntity = new XmlDAL.XMLDataEntityManager(this.modelFolderPath).GetFeatureModel(featureModelName);
-            //BLOs.FeatureModel featureModelBLO = Mapper.Map<BLOs.FeatureModel>(dataEntity);
-
-            return null;
+            return ConfigurationInstance.CreateFrom(featureModel);
         }
     }
 }

@@ -1,80 +1,31 @@
 ﻿define("Main/Controller",
     [
         "Main/DataModel",
-        //"Main/ConfigurationView/ConfigurationView",
-        //"Main/MenuBar/MenuBar",
-        //"Shared/Dialog/Dialog"
-
+        "Main/ConfigurationEditor/ConfigurationEditor",
+        "Main/CommandToolbar/CommandToolbar"
     ],
-    function (DataModel, ConfigurationView, MenuBar, Dialog) {
+    function (DataModel, ConfigurationEditor, CommandToolbar) {
         var Controller = function () {
 
             // Fields
             var _dataModel = null;
-            var _menuBar = null, _configurationView = null
-            var _currentControlFocus = null; // variable to keep track of where the user executed the last action (clicking)
+            var _menuBar = null, _configurationEditor = null, _commandToolbar = null;
             var _this = this;
 
             // Init
             this.Initialize = function () {
-                alert("Hello!");
-                /// Init UIComponents
+                
+                // Init UIComponents
                 _dataModel = new DataModel();
                 _dataModel.Initialize();
+                _configurationEditor = new ConfigurationEditor($("#configurationEditorContainer"));
+                _configurationEditor.Initialize();
+                _commandToolbar = new CommandToolbar($("#toolBarContainer"));
+                _commandToolbar.Initialize();
 
-                _dataModel.LoadConfigurationInstance("test");
-                //_cloSelectionManager = new Controller.CLOSelectionManager();
-                //_cloSelectionManager.Initialize();
-                //_visualView = new VisualView($("#visualViewContainer"), _dataModel, _cloSelectionManager);
-                //_visualView.Initialize();
-                //_modelExplorer = new ModelExplorer($("#modelExplorerContainer"), _dataModel, _cloSelectionManager);
-                //_modelExplorer.Initialize();
-                //_commandToolbar = new CommandToolbar($("#toolBarContainer"), _dataModel, _this);
-                //_commandToolbar.Initialize();
-                //_propertyEditor = new PropertyEditor($("#propertyEditorContainer"), _dataModel, _cloSelectionManager);
-                //_propertyEditor.Initialize();
-                //_menuBar = new MenuBar($("#topMenuContainer"), _dataModel, _this);
-                //_menuBar.Initialize();
 
-                //// Setup events and handlers
-                //_dataModel.ModelLoaded.AddHandler(new EventHandler(_visualView.OnModelLoaded));
-                //_dataModel.ModelLoaded.AddHandler(new EventHandler(_modelExplorer.OnModelLoaded));
-                //_dataModel.ModelLoaded.AddHandler(new EventHandler(_commandToolbar.OnModelLoaded));
-                //_dataModel.ModelUnloaded.AddHandler(new EventHandler(_visualView.OnModelUnloaded));
-                //_dataModel.ModelUnloaded.AddHandler(new EventHandler(_modelExplorer.OnModelUnloaded));
-                //_dataModel.ModelUnloaded.AddHandler(new EventHandler(_commandToolbar.OnModelUnloaded));
-                //_visualView.StateChanged.AddHandler(new EventHandler(_commandToolbar.OnVisualViewStateChanged));
-                //_dataModel.CLODeleted.AddHandler(new EventHandler(_cloSelectionManager.OnCLODeleted));
-                //_cloSelectionManager.CLOSelectionChanged.AddHandler(new EventHandler(onCLOSelectionChanged));
-
-            }
-
-            // Public methods
-            this.OpenFile = function () {
-
-                // Setup fileExplorer and dialog in which it is shown
-                if (_fileExplorer === null && _fileExplorerDialog === null) {
-
-                    // Create fileExplorer instance
-                    var fileExplorerContainer = $("<div class='contentWrapper'></div>");
-                    _fileExplorer = new FileExplorer(fileExplorerContainer, _dataModel);
-                    _fileExplorer.Initialize();
-                    _fileExplorer.FileOpenTriggered.AddHandler(new EventHandler(onFileSelectedForOpen));
-
-                    // Create dialog instance
-                    _fileExplorerDialog = new Dialog("Open existing model", fileExplorerContainer, { modal: true });
-                    _fileExplorerDialog.Initialize();
-                }
-
-                _fileExplorer.LoadModelFiles();
-                _fileExplorerDialog.Show();
-            }
-
-            // Event handlers
-            var onViewFocused = function (viewInFocus) {
-                if (_currentControlFocus !== viewInFocus) {
-                    _currentControlFocus = viewInFocus;
-                }
+                var configInstance = _dataModel.LoadConfigurationInstance("Hello");
+                
             }
         }
 

@@ -605,7 +605,6 @@ namespace OpenConfigurator.Core.BLOs
             };
             return newBLO;
         }
-
     }
     public class ModelFile : iBLO
     {
@@ -664,16 +663,18 @@ namespace OpenConfigurator.Core.BLOs
             return attributeValue;
         }
 
-        // Special static methods
-        internal static ConfigurationInstance CreateDefault()
+        // Special instance creator
+        internal static ConfigurationInstance CreateFrom(FeatureModel model)
         {
-            ConfigurationInstance newBLO = new ConfigurationInstance()
+            // Create new BLO
+            ConfigurationInstance newBLO = new ConfigurationInstance();
+            foreach (Feature feature in model.Features)
             {
-                
-            };
+                newBLO.FeatureSelections.Add(FeatureSelection.CreateFrom(feature));
+            }
+
             return newBLO;
         }
-
     }
     public class FeatureSelection : iBLO
     {
@@ -687,6 +688,11 @@ namespace OpenConfigurator.Core.BLOs
 
         // Properties
         public string FeatureIdentifier
+        {
+            get;
+            set;
+        }
+        public string FeatureName
         {
             get;
             set;
@@ -714,6 +720,22 @@ namespace OpenConfigurator.Core.BLOs
             }
         }
 
+        // Special instance creator
+        internal static FeatureSelection CreateFrom(Feature feature)
+        {
+            // Create new BLO
+            FeatureSelection newBLO = new FeatureSelection()
+            {
+                FeatureIdentifier = feature.Identifier,
+                FeatureName = feature.Name
+            };
+            foreach (Attribute attr in feature.Attributes)
+            {
+                newBLO.AttributeValues.Add(AttributeValue.CreateFrom(attr));
+            }
+            return newBLO;
+        }
+
     }
     public class AttributeValue : iBLO
     {
@@ -723,12 +745,12 @@ namespace OpenConfigurator.Core.BLOs
         }
 
         // Properties
-        public string FeatureSelectionIdentifier
+        public string AttributeIdentifier
         {
             get;
             set;
         }
-        public string AttributeIdentifier
+        public string AttributeName
         {
             get;
             set;
@@ -738,6 +760,19 @@ namespace OpenConfigurator.Core.BLOs
             get;
             set;
         }
+
+        // Special instance creator
+        internal static AttributeValue CreateFrom(Attribute attr)
+        {
+            // Create new BLO
+            AttributeValue newBLO = new AttributeValue()
+            {
+                AttributeIdentifier = attr.Identifier,
+                AttributeName = attr.Name
+            };
+            return newBLO;
+        }
+
     }
 
     //
