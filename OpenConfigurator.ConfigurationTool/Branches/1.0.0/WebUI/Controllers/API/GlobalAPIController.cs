@@ -19,11 +19,17 @@ namespace OpenConfigurator.ConfigurationTool.WebUI.Controllers
         // Fields
         private string modelFolderPath = HostingEnvironment.MapPath("~/FeatureModelFiles/");
 
-
         [HttpGet]
-        public ConfigurationInstance GetFeatureModel(string featureModelName)
+        public ConfigurationInstance GetConfigurationInstance(string featureModelName)
         {
-            //FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
+            // Get the FeatureModel
+            FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
+            FeatureModel targetModel = manager.GetFeatureModel("Hello");
+
+            // Create a ConfigurationInstance from it 
+            ConfigurationInstanceManager configManager = new ConfigurationInstanceManager();
+            ConfigurationInstance configInstance = configManager.CreateConfigurationInstance(targetModel);
+
             return null;
         }
     }

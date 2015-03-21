@@ -190,14 +190,7 @@
     <Content Include="SPA\Main\FileExplorer\FileExplorer.js" />
     <Content Include="SPA\Main\MenuBar\MenuBar.js" />
     <Content Include="SPA\Shared\Dialog\Dialog.js" />
-    <Content Include="SPA\Main\ConfigurationView\ConnectionElem\ConnectionElem.js" />
-    <Content Include="SPA\Main\ConfigurationView\RelationElem\RelationElem.js" />
-    <Content Include="SPA\Main\ConfigurationView\ConnectorElem\ConnectorElem.js" />
-    <Content Include="SPA\Main\ConfigurationView\CardinalityLabel\CardinalityLabel.js" />
-    <Content Include="SPA\Main\ConfigurationView\CompositionRuleElem\CompositionRuleElem.js" />
-    <Content Include="SPA\Main\ConfigurationView\GroupRelationElem\GroupRelationElem.js" />
-    <Content Include="SPA\Main\ConfigurationView\FeatureElem\FeatureElem.js" />
-    <Content Include="SPA\Main\ConfigurationView\VisualView.js" />
+    <Content Include="SPA\Main\ConfigurationEditor\ConfigurationEditor.js" />
     <Content Include="Scripts\Application\clos.js" />
     <Content Include="Scripts\Application\enums.js" />
     <Content Include="Web.config">
@@ -227,7 +220,7 @@
   <ItemGroup>
     <Content Include="Scripts\Plugins\jquery.withinBox.js" />
     <Content Include="SPA\Main\CommandToolbar\CommandToolbar.html" />
-    <Content Include="SPA\Main\ConfigurationView\VisualView.html" />
+    <Content Include="SPA\Main\ConfigurationEditor\ConfigurationEditor.html" />
     <Content Include="SPA\Main\FileExplorer\FileExplorer.html" />
   </ItemGroup>
   <ItemGroup>

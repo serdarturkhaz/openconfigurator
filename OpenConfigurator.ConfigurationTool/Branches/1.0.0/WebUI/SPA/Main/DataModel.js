@@ -32,9 +32,8 @@
                 return _cloFactory.GetByClientID(clientID);
             }
             this.LoadConfigurationInstance = function (featureModelName) {
-
-                
-
+                var configInstance = _bloService.GetConfigurationInstance(featureModelName);
+                return configInstance;
             }
 
             // Events
@@ -221,7 +220,6 @@
 
             // Public methods
             this.GetConfigurationInstance = function (featureModelName) {
-                debugger;
                 var blo = null;
                 $.ajax({
                     type: "Get",
