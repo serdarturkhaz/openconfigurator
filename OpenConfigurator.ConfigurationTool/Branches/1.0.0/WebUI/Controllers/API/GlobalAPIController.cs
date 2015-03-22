@@ -30,7 +30,7 @@ namespace OpenConfigurator.ConfigurationTool.WebUI.Controllers
             ConfigurationInstanceManager configManager = new ConfigurationInstanceManager();
             ConfigurationInstance configInstance = configManager.CreateConfigurationInstance(targetModel);
 
-            return null;
+            return configInstance;
         }
     }
 }

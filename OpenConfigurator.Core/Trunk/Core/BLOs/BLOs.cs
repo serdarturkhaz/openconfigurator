@@ -648,6 +648,11 @@ namespace OpenConfigurator.Core.BLOs
                 return featureSelections;
             }
         }
+        public string FeatureModelName
+        {
+            get;
+            set;
+        }
 
         // Methods
         public FeatureSelection GetFeatureSelectionByFeatureIdentifier(string featureID)
@@ -667,7 +672,10 @@ namespace OpenConfigurator.Core.BLOs
         internal static ConfigurationInstance CreateFrom(FeatureModel model)
         {
             // Create new BLO
-            ConfigurationInstance newBLO = new ConfigurationInstance();
+            ConfigurationInstance newBLO = new ConfigurationInstance()
+            {
+                FeatureModelName = model.Name
+            };
             foreach (Feature feature in model.Features)
             {
                 newBLO.FeatureSelections.Add(FeatureSelection.CreateFrom(feature));
