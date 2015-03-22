@@ -23,9 +23,13 @@
                 _commandToolbar = new CommandToolbar($("#toolBarContainer"));
                 _commandToolbar.Initialize();
 
+                // Setup events and handlers
+                _dataModel.ConfigurationInstanceLoaded.AddHandler(new EventHandler(_configurationEditor.OnConfigurationInstanceLoaded));
+            }
 
-                var configInstance = _dataModel.LoadConfigurationInstance("Hello");
-                
+            // Public methods
+            this.LoadConfigFromExistingModel = function () {
+                 _dataModel.LoadConfigurationInstance("Hello");
             }
         }
 

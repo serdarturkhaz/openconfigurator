@@ -123,12 +123,12 @@
 
                 // Get the existing feature model
                 var featureModelBLO = _bloService.GetFeatureModel(featureModelName);
-                var loadedModelCLO = _cloFactory.FromBLO(featureModelBLO, CLOTypes.FeatureModel);
+                var featureModelCLO = _cloFactory.FromBLO(featureModelBLO, CLOTypes.FeatureModel);
 
                 // Attempt to load the model
-                var eventRaiseDetails = _this.ModelLoading.RaiseEvent(_currentFeatureModelCLO);
+                var eventRaiseDetails = _this.ModelLoading.RaiseEvent(featureModelCLO);
                 if (eventRaiseDetails.CancelTriggered() === false) {
-                    _currentFeatureModelCLO = loadedModelCLO;
+                    _currentFeatureModelCLO = featureModelCLO;
                     _this.ModelLoaded.RaiseEvent(_currentFeatureModelCLO);
                 }
 
@@ -153,7 +153,7 @@
             }
 
             // Events
-            this.ModelLoading = new Event();
+            this.ModelLoading = new Event(); // not used currently
             this.ModelLoaded = new Event();
             this.ModelUnloaded = new Event();
             this.CLODeleted = new Event();
