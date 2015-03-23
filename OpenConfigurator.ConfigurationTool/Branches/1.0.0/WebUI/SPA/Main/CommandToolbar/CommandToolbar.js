@@ -12,22 +12,7 @@
             var _innerElems = {
                 modelNameTextbox: null,
                 fileCommandItems: {
-                    newModelItem: null,
-                    openModelItem: null,
-                    saveModelItem: null
-                },
-                modelManipulationItems: {
-                    newFeatureItem: null,
-                    newRelationItem: null,
-                    newGroupRelationItem: null,
-                    newCompositionRuleItem: null,
-                    newCustomRuleItem: null,
-                    newCustomFunctionItem: null
-                },
-                visualOptionsItems: {
-                    toggleOrientationItem: null,
-                    zoomInItem: null,
-                    zoomOutItem: null
+                    openModelItem: null
                 }
             };
             var _this = this;
@@ -42,14 +27,7 @@
             function addToggleEffect(item) {
                 $(item).addClass("iconButton-active");
             }
-            function bindToModelHasChanges(modelCLO) {
-                modelCLO.HasChanges.Changed.AddHandler(new EventHandler(onModelHasChangesChanged, "toolbarSaveItem"));
-                onModelHasChangesChanged(modelCLO.HasChanges()); // trigger change to load initial value
 
-            }
-            function unbindFromModelHasChanges(modelCLO) {
-                modelCLO.HasChanges.Changed.RemoveHandler("toolbarSaveItem");
-            }
 
             // Init
             this.Initialize = function () {
@@ -65,13 +43,26 @@
                 // Set event handlers
                 $(_innerElems.fileCommandItems.openModelItem).bind("click", toolbarItemHandlers.openModelItemTriggered);
                 
-
                 // Setup tooltips
                 $(_innerHtmlElem).find(".Textbox").tipTip();
                 $(_innerHtmlElem).find(".iconButton").tipTip();
             }
 
             // Event handlers
+            this.OnConfigurationInstanceLoaded = function (configInstanceCLO) {
+                alert(configInstanceCLO.FeatureModelName());
+                // Bind to it
+                var vm = {
+                    FeatureModelName: configInstanceCLO.FeatureModelName 
+                }
+                ko.applyBindings(vm, _innerElems.modelNameTextbox[0]);
+            }
+            this.OnConfigurationInstanceUnloaded = function (configInstanceCLO) {
+                // Clean up bindings and html
+                ko.cleanNode(_innerElems.modelNameTextbox[0]);
+                _innerElems.modelNameTextbox.val("");
+            }
+            
             var toolbarItemHandlers = {
                 openModelItemTriggered: function () {
                     _controller.OpenFile();

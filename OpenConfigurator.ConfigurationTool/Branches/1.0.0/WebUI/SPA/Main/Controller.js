@@ -25,6 +25,7 @@
 
                 // Setup events and handlers
                 _dataModel.ConfigurationInstanceLoaded.AddHandler(new EventHandler(_configurationEditor.OnConfigurationInstanceLoaded));
+                _dataModel.ConfigurationInstanceLoaded.AddHandler(new EventHandler(_commandToolbar.OnConfigurationInstanceLoaded));
             }
 
             // Public methods
