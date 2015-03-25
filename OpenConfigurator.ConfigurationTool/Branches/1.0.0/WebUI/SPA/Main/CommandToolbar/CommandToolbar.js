@@ -50,7 +50,6 @@
 
             // Event handlers
             this.OnConfigurationInstanceLoaded = function (configInstanceCLO) {
-                alert(configInstanceCLO.FeatureModelName());
                 // Bind to it
                 var vm = {
                     FeatureModelName: configInstanceCLO.FeatureModelName 
@@ -62,7 +61,6 @@
                 ko.cleanNode(_innerElems.modelNameTextbox[0]);
                 _innerElems.modelNameTextbox.val("");
             }
-            
             var toolbarItemHandlers = {
                 openModelItemTriggered: function () {
                     _controller.OpenFile();

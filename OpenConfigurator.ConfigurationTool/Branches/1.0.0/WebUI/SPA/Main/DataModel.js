@@ -70,42 +70,45 @@
                     var newCLO = new ConfigurationInstanceCLO(newClientID, blo);
 
                     // Child FeatureSelections
-                    //for (var i = 0; i < strippedOffBLOArrays.Features.length; i++) {
-                    //    var featureCLO = FromBLO.Feature(strippedOffBLOArrays.Features[i]);
-                    //    newCLO.Features.Add(featureCLO);
-                    //}
+                    for (var i = 0; i < strippedOffBLOArrays.FeatureSelections.length; i++) {
+                        var featureSelectionCLO = FromBLO.FeatureSelection(strippedOffBLOArrays.FeatureSelections[i]);
+                        newCLO.FeatureSelections.Add(featureSelectionCLO);
+                    }
+
+                    // Initialize and return
+                    newCLO.Initialize();
+                    return newCLO;
+                },
+                FeatureSelection: function (blo) {
+
+                    // Strip off all child collections from the blo
+                    var strippedOffBLOArrays = stripOffChildArrays(blo); // it is assumed all arrays on BLOs are part of BLO Lists
+
+                    // Create it
+                    var newClientID = getNewClientID();
+                    var newCLO = new FeatureSelectionCLO(newClientID, blo);
+
+                    // Child AttributeValues
+                    for (var i = 0; i < strippedOffBLOArrays.AttributeValues.length; i++) {
+                        var attrValueCLO = FromBLO.AttributeValue(strippedOffBLOArrays.AttributeValues[i]);
+                        newCLO.AttributeValues.Add(attrValueCLO);
+                    }
+
+                    // Initialize and return
+                    newCLO.Initialize();
+                    return newCLO;
+                },
+                AttributeValue: function (blo) {
+
+                    // Create it
+                    var newClientID = getNewClientID();
+                    var newCLO = new AttributeValueCLO(newClientID, blo);
 
                     // Initialize and return
                     newCLO.Initialize();
                     return newCLO;
                 }
             }
-            //var ToBLO = {
-            //    FeatureModel: function (clo) {
-            //        // Get its BLO
-            //        var blo = clo.GetBLOCopy();
-            //        // Child collections
-            //        var collectionNames = {
-            //            Features: "Features",
-            //            Relations: "Relations",
-            //            GroupRelations: "GroupRelations",
-            //            CompositionRules: "CompositionRules",
-            //            CustomRules: "CustomRules",
-            //            CustomFunctions: "CustomFunctions"
-            //        }
-            //        for (var key in collectionNames) {
-            //            for (var i = 0; i < clo[key].GetLength() ; i++) {
-            //                if (blo[key] === undefined)
-            //                    blo[key] = [];
-            //                var childCLO = clo[key].GetAt(i);
-            //                var childBLO = ToBLO[childCLO.GetType()](childCLO);
-            //                blo[key].push(childBLO);
-            //            }
-            //        }
-            //        //
-            //        return blo;
-            //    }
-            //}
 
             // Fields
             var _bloService = bloService;

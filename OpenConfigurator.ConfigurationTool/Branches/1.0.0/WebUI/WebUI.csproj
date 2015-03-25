@@ -216,6 +216,7 @@
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
+    <Folder Include="SPA\Main\ConfigurationEditor\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\Plugins\jquery.withinBox.js" />
