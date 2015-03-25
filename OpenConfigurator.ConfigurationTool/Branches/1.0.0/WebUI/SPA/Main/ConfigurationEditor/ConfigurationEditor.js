@@ -44,7 +44,7 @@
 
             // Event handlers
             this.OnConfigurationInstanceLoaded = function (configInstanceCLO) {
-                //alert(configInstanceCLO.FeatureModelName());
+                alert(configInstanceCLO.FeatureSelections.GetLength());
             }
 
             // Inner modes
