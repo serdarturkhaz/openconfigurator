@@ -162,7 +162,12 @@ body
     padding:0;
     border: solid 1px #F3F3F3 !important;
 }
+#configurationEditor .featureSelectionElem {
+    border:solid 1px gray;
+    padding:5px;
+    width:150px;
 
+}
 /*FileExplorer*/
 #fileExplorer
 {
