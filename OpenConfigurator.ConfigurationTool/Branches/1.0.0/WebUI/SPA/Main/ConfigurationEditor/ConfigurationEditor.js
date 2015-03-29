@@ -1,8 +1,9 @@
 ﻿define("Main/ConfigurationEditor/ConfigurationEditor",
     [
-        "text!Main/ConfigurationEditor/ConfigurationEditor.html" // html markup
+        "text!Main/ConfigurationEditor/ConfigurationEditor.html", // html markup
+        "Main/ConfigurationEditor/FeatureSelectionElem/FeatureSelectionElem"
     ],
-    function (HTMLmarkup) {
+    function (HTMLmarkup, FeatureSelectionElem) {
 
         var ConfigurationEditor = function (container, dataModel) {
 
@@ -10,14 +11,11 @@
             var _container = container, _dataModel = dataModel;
             var _innerHtmlElem;
             var _innerElems = {
-                headerLabel: null,
+                childElemContainer: null,
                 infoMsgOverlay: null
             };
             var _visualUIElems = {};
             var _this = this;
-
-            // Private methods
-            
 
             // Init
             this.Initialize = function () {
@@ -27,28 +25,19 @@
                 _innerHtmlElem.appendTo(_container);
 
                 // Get references to dom elements
-                //_canvasContainer = $(_innerHtmlElem).find("#SVGCanvasWrapper");
-                //_innerElems.headerLabel = $(_innerHtmlElem).find(".headerLabel");
-                //_innerElems.infoMsgOverlay = $(_innerHtmlElem).find(".infoMsgOverlay");
-                //_canvas = Raphael($(_canvasContainer).children("#SVGCanvas")[0], "100%", "100%");
-                //_innerStateManager = new InnerStateManager(VisualView.InnerStates, VisualView.InnerStates.Default.Name, _this.StateChanged);
-                //_innerStateManager.Initialize(); // setup mode manager and enter initial mode
-
-                
+                _innerElems.childElemContainer = $(_innerHtmlElem).find(".boxContent");
+                _innerElems.infoMsgOverlay = $(_innerHtmlElem).find(".infoMsgOverlay");
             };
-
-            // Public methods
-           
-
-            // Events
 
             // Event handlers
             this.OnConfigurationInstanceLoaded = function (configInstanceCLO) {
-                alert(configInstanceCLO.FeatureSelections.GetLength());
+
+                // Create elems for FeatureSelections
+                for (var i = 0; i < configInstanceCLO.FeatureSelections.GetLength() ; i++) {
+                    var featureSelectionElem = new FeatureSelectionElem(_innerElems.childElemContainer, configInstanceCLO.FeatureSelections.GetAt(i))
+                    featureSelectionElem.Initialize();
+                }
             }
-
-            // Inner modes
-
         }
         return ConfigurationEditor;
     });

@@ -14,7 +14,7 @@
 
             // Init
             this.Initialize = function () {
-                
+
                 // Init UIComponents
                 _dataModel = new DataModel();
                 _dataModel.Initialize();
@@ -28,12 +28,12 @@
                 _dataModel.ConfigurationInstanceLoaded.AddHandler(new EventHandler(_commandToolbar.OnConfigurationInstanceLoaded));
                 _dataModel.ConfigurationInstanceUnloaded.AddHandler(new EventHandler(_configurationEditor.OnConfigurationInstanceUnloaded));
 
-                
+
             }
 
             // Public methods
             this.LoadConfigFromExistingModel = function () {
-                 _dataModel.LoadConfigurationInstance("Hello");
+                _dataModel.LoadConfigurationInstance("Hello");
             }
         }
 

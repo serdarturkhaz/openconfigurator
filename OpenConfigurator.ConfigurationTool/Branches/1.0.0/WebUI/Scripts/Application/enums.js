@@ -29,5 +29,10 @@ var Enums = {
         Dependency: 0,
         MutualDependency: 1,
         MutualExclusion: 2
+    },
+    FeatureSelectionStates: {
+        Selected: 0,
+        Deselected: 1,
+        Unselected: 2
     }
 }

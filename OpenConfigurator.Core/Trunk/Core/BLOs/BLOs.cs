@@ -45,9 +45,9 @@ namespace OpenConfigurator.Core.BLOs
     }
     public enum FeatureSelectionStates
     {
-        Selected = 1,
-        Deselected = 2,
-        Unselected = 3
+        Selected = 0,
+        Deselected = 1,
+        Unselected = 2
     }
 
     // Extra information for enums (was previously stored in the SQL db)

@@ -170,6 +170,8 @@
     <Content Include="Scripts\Frameworks\jquery-2.1.3.js" />
     <Content Include="Scripts\Frameworks\jquery-ui.js" />
     <Content Include="Scripts\Frameworks\underscore-min.js" />
+    <Content Include="SPA\Main\ConfigurationEditor\FeatureSelectionElem\FeatureSelectionElem.html" />
+    <Content Include="SPA\Main\ConfigurationEditor\FeatureSelectionElem\FeatureSelectionElem.js" />
     <Content Include="SPA\Main\DataModel.js" />
     <Content Include="Scripts\Application\coreFramework.js" />
     <Content Include="SPA\Main\Controller.js" />
@@ -216,7 +218,6 @@
   <ItemGroup>
     <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
-    <Folder Include="SPA\Main\ConfigurationEditor\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\Plugins\jquery.withinBox.js" />
