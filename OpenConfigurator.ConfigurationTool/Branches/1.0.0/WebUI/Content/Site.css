@@ -109,7 +109,6 @@ body
 {
     float: right;
 }
-
 #toolBar #modelNameTextbox
 {
     border: none;
@@ -168,6 +167,7 @@ body
     width:150px;
 
 }
+
 /*FileExplorer*/
 #fileExplorer
 {
@@ -485,7 +485,7 @@ body
     letter-spacing: 1.2px;
 }
 
-/* ToastR Notifications*/
+/*ToastR Notifications*/
 .toast-title {
   font-weight: bold;
 }
