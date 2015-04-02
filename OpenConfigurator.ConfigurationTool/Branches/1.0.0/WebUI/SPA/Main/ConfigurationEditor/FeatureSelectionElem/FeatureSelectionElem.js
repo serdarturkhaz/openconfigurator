@@ -14,6 +14,10 @@
                 label: null
             };
             var _this = this;
+            var _vm = {
+                FeatureName: _featureSelectionCLO.FeatureName,
+                SelectionState: _featureSelectionCLO.SelectionState
+            };
 
             // Init
             this.Initialize = function () {
@@ -27,13 +31,20 @@
                 _innerElems.label = $(_innerHtmlElem).find("label");
 
                 // Load CLO
-                _innerElems.checkbox.prop("id", _featureSelectionCLO.FeatureIdentifier());
-                _innerElems.label.prop("for", _featureSelectionCLO.FeatureIdentifier());
-                _innerElems.label.text(_featureSelectionCLO.FeatureName());
+                //_innerElems.checkbox.prop("id", _featureSelectionCLO.FeatureIdentifier());
+                //_innerElems.label.prop("for", _featureSelectionCLO.FeatureIdentifier());
+                //_innerElems.label.text(_featureSelectionCLO.FeatureName());
+
+                // Apply bindings
+                ko.applyBindings(_vm, _innerHtmlElem[0]);
+
             }
 
             // Event handlers
+            function onClick() {
 
+
+            }
         }
         return FeatureSelectionElem;
     });
