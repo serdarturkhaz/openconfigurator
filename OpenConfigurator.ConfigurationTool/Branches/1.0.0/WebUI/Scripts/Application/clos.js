@@ -43,6 +43,7 @@ var FeatureSelectionCLO = function (clientID, blo) {
 
     this.FeatureIdentifier = new ObservableField(_innerBLO, "FeatureIdentifier");
     this.FeatureName = new ObservableField(_innerBLO, "FeatureName");
+    this.SelectionState = new ObservableField(_innerBLO, "SelectionState");
     this.Disabled = new ObservableField(_innerBLO, "Disabled");
     this.ToggledByUser = new ObservableField(_innerBLO, "ToggledByUser");
     this.AttributeValues = new ObservableCollection();

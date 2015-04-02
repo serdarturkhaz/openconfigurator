@@ -160,12 +160,26 @@ body
     overflow: scroll;
     padding:0;
     border: solid 1px #F3F3F3 !important;
+    padding:30px;
 }
 #configurationEditor .featureSelectionElem {
     border:solid 1px gray;
+    border-radius:3px;
     padding:5px;
     width:150px;
-
+    float:left;
+    clear:both;
+    margin-bottom:10px;
+    cursor:pointer;
+}
+#configurationEditor .featureSelectionElem .checkbox {
+    width:10px;
+    height:10px;
+    border:solid 1px gray;
+    display:inline-block;
+}
+#configurationEditor .featureSelectionElem label {
+    display:inline-block;
 }
 
 /*FileExplorer*/
