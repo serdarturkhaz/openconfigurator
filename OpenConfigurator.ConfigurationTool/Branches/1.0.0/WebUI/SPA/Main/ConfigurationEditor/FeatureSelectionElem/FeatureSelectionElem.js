@@ -18,7 +18,7 @@
             // VM
             var vm = function () {
                 this.FeatureName = _featureSelectionCLO.FeatureName;
-                this.SelectionState = ko.computed(function () {
+                this.SelectionStateName = ko.computed(function () {
                     var selectionStateID = featureSelectionCLO.SelectionState();
                     return getEnumEntryNameByID(Enums.FeatureSelectionStates, selectionStateID);
                 }, this);
@@ -50,6 +50,19 @@
             // Event handlers
             function onClicked() {
 
+                // Toggle state - TODO -> should be replaced with logic calling SolverService
+                var currentSelectionState = _featureSelectionCLO.SelectionState();
+                switch (currentSelectionState) {
+                    case Enums.FeatureSelectionStates.Unselected:
+                        _featureSelectionCLO.SelectionState(Enums.FeatureSelectionStates.Selected);
+                        break;
+                    case Enums.FeatureSelectionStates.Selected:
+                        _featureSelectionCLO.SelectionState(Enums.FeatureSelectionStates.Deselected);
+                        break;
+                    case Enums.FeatureSelectionStates.Deselected:
+                        _featureSelectionCLO.SelectionState(Enums.FeatureSelectionStates.Unselected);
+                        break;
+                }
 
             }
         }

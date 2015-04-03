@@ -1,7 +1,4 @@
-﻿<div class="featureSelectionElem" data-bind="click: OnFeatureSelectionElemClicked">
-    <div class="checkbox" data-bind="text: SelectionState"></div>
+﻿<div class="featureSelectionElem" data-bind="click: OnFeatureSelectionElemClicked, attr: { SelectionState: SelectionStateName }">
+    <div class="checkbox" ></div>
     <label data-bind="text: FeatureName"></label>
 </div>
-
-
-<!--data-bind="attr: { selectionState: SelectionState }-->
