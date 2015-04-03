@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="%40JSense.js" />
+    <Content Include="Content\Images\Controls\checked.png" />
     <Content Include="Content\Images\Controls\progress.gif" />
     <Content Include="Content\Images\Controls\simpleTree\elementx.png" />
     <Content Include="Content\Images\Controls\simpleTree\feature.png" />
@@ -216,7 +217,6 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\Images\Icons\Toolbox\" />
     <Folder Include="FeatureModelFiles\" />
   </ItemGroup>
   <ItemGroup>
@@ -224,10 +224,6 @@
     <Content Include="SPA\Main\CommandToolbar\CommandToolbar.html" />
     <Content Include="SPA\Main\ConfigurationEditor\ConfigurationEditor.html" />
     <Content Include="SPA\Main\FileExplorer\FileExplorer.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Content\Images\Layout\logo2.xcf" />
-    <Content Include="Content\Images\Layout\logo3.xcf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SPA\Shared\Dialog\Dialog.html" />

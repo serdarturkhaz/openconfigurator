@@ -164,8 +164,7 @@ body
 }
 #configurationEditor .featureSelectionElem
 {
-    background: #F9F9F9;
-    border: 1px solid #F2F2F2;
+    
 
     border-radius: 3px;
     padding: 5px;
@@ -177,27 +176,66 @@ body
     vertical-align: middle;
 }
 #configurationEditor .featureSelectionElem .checkbox {
-    width:10px;
-    height:10px;
-    border:solid 1px gray;
-    display:inline-block;
+    width:18px;
+    height:18px;
+    float:left;
+    
 }
 #configurationEditor .featureSelectionElem label {
     display:inline-block;
     font-family:Arial;
     font-size:12px;
     color:gray;
+    float:left;
+    margin-left:8px;
+    margin-top:3px;
 }
 
-#configurationEditor .featureSelectionElem:hover
+#configurationEditor .featureSelectionElem[SelectionState=Unselected]
+{
+    background: #F9F9F9;
+    border: 1px solid #F2F2F2;
+}
+#configurationEditor .featureSelectionElem[SelectionState=Unselected] .checkbox
+{
+    background:url(images/controls/unchecked.png) no-repeat right top;
+}
+#configurationEditor .featureSelectionElem[SelectionState=Unselected] label
+{
+}
+#configurationEditor .featureSelectionElem[SelectionState=Unselected]:hover
 {
     background: #E3F7B7;
     border: 1px solid #E2E2E2;
 }
-#configurationEditor .featureSelectionElem:hover label
+#configurationEditor .featureSelectionElem[SelectionState=Selected]
+{
+    background: #E3F7B7;
+    border: 1px solid #E2E2E2;
+}
+#configurationEditor .featureSelectionElem[SelectionState=Selected] .checkbox
+{
+    background:url(images/controls/checked.png) no-repeat right top;
+}
+#configurationEditor .featureSelectionElem[SelectionState=Selected] label
 {
     color:black;
+    font-weight:bold;
 }
+#configurationEditor .featureSelectionElem[SelectionState=Deselected]
+{
+    background: #FFF2F3;
+    border: 1px solid #FFDFE1;
+}
+#configurationEditor .featureSelectionElem[SelectionState=Deselected] .checkbox
+{
+    background:url(images/controls/deselected.png) no-repeat right top;
+}
+#configurationEditor .featureSelectionElem[SelectionState=Deselected] label
+{
+    color:gray;
+}
+
 /*FileExplorer*/
 #fileExplorer
 {
