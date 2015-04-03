@@ -162,15 +162,19 @@ body
     border: solid 1px #F3F3F3 !important;
     padding:30px;
 }
-#configurationEditor .featureSelectionElem {
-    border:solid 1px gray;
-    border-radius:3px;
-    padding:5px;
-    width:150px;
-    float:left;
-    clear:both;
-    margin-bottom:10px;
-    cursor:pointer;
+#configurationEditor .featureSelectionElem
+{
+    background: #F9F9F9;
+    border: 1px solid #F2F2F2;
+
+    border-radius: 3px;
+    padding: 5px;
+    width: 150px;
+    float: left;
+    clear: both;
+    margin-bottom: 10px;
+    cursor: pointer;
+    vertical-align: middle;
 }
 #configurationEditor .featureSelectionElem .checkbox {
     width:10px;
@@ -180,8 +184,20 @@ body
 }
 #configurationEditor .featureSelectionElem label {
     display:inline-block;
+    font-family:Arial;
+    font-size:12px;
+    color:gray;
 }
 
+#configurationEditor .featureSelectionElem:hover
+{
+    background: #E3F7B7;
+    border: 1px solid #E2E2E2;
+}
+#configurationEditor .featureSelectionElem:hover label
+{
+    color:black;
+}
 /*FileExplorer*/
 #fileExplorer
 {
