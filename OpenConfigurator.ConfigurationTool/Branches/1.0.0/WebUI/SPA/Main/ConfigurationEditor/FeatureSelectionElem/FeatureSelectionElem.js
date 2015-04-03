@@ -14,9 +14,16 @@
                 label: null
             };
             var _this = this;
-            var _vm = {
-                FeatureName: _featureSelectionCLO.FeatureName,
-                SelectionState: _featureSelectionCLO.SelectionState
+
+            // VM
+            var vm = function () {
+                this.FeatureName = _featureSelectionCLO.FeatureName;
+                this.SelectionState = ko.computed(function () {
+                    var selectionStateID = featureSelectionCLO.SelectionState();
+                    return getEnumEntryNameByID(Enums.FeatureSelectionStates, selectionStateID);
+                }, this);
+                this.FeatureSelectionStates = createKOObservableArrayFromEnum(Enums.GroupRelationTypes);
+                this.OnFeatureSelectionElemClicked = onClicked;
             };
 
             // Init
@@ -36,12 +43,12 @@
                 //_innerElems.label.text(_featureSelectionCLO.FeatureName());
 
                 // Apply bindings
-                ko.applyBindings(_vm, _innerHtmlElem[0]);
+                ko.applyBindings(new vm(), _innerHtmlElem[0]);
 
             }
 
             // Event handlers
-            function onClick() {
+            function onClicked() {
 
 
             }
