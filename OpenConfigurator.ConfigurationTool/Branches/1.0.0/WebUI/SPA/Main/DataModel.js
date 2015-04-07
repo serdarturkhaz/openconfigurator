@@ -51,6 +51,15 @@
                     _this.ConfigurationInstanceLoaded.RaiseEvent(_currentConfigurationInstanceCLO);
                 }
             }
+            this.GetAllModelFiles = function () {
+                var modelFileBLOs = _bloService.GetAllModelFiles();
+                var modelFileCLOs = [];
+                for (var i = 0; i < modelFileBLOs.length; i++) {
+                    modelFileCLOs.push(_cloFactory.FromBLO(modelFileBLOs[i], CLOTypes.ModelFile));
+                }
+
+                return modelFileCLOs;
+            }
 
             // Events
             this.ConfigurationInstanceLoading = new Event(); // not used currently
@@ -107,7 +116,21 @@
                     // Initialize and return
                     newCLO.Initialize();
                     return newCLO;
+                },
+                ModelFile: function (blo) {
+
+                    // Create the clo
+                    var newClientID = getNewClientID();
+                    var newCLO = new ModelFileCLO(newClientID, blo);
+
+                    // Register and return it
+                    newCLO.Initialize();
+                    _factoryCLORegister[newCLO.GetClientID()] = newCLO;
+                    return newCLO;
                 }
+            }
+            var ToBLO = {
+
             }
 
             // Fields
@@ -186,6 +209,21 @@
 
                 return blo;
             }
+            this.GetAllModelFiles = function () {
+                var blos = null;
+                $.ajax({
+                    type: "Get",
+                    url: "api/GlobalAPI/GetAllModelFiles",
+                    data: {},
+                    async: false,
+                    success: function (response) {
+                        blos = response;
+                    }
+                });
+
+                return blos;
+            }
+
         }
         return DataModel;
 

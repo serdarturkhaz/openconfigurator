@@ -79,3 +79,26 @@ var AttributeValueCLO = function (clientID, blo) {
     }
 
 }
+var ModelFileCLO = function (clientID, blo) {
+
+    // Fields
+    var _clientID = clientID, _innerBLO = blo;
+    var _this = this;
+
+    // Properties
+    this.GetClientID = function () {
+        return _clientID;
+    };
+    this.GetType = function () {
+        return CLOTypes.ModelFile;
+    }
+    this.GetBLOCopy = function () {
+        return jQuery.extend(true, {}, _innerBLO);
+    }
+    this.Name = new ObservableField(_innerBLO, "Name");
+
+    // Init
+    this.Initialize = function () {
+
+    }
+}
