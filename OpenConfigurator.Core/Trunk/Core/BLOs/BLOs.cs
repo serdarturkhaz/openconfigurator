@@ -735,7 +735,8 @@ namespace OpenConfigurator.Core.BLOs
             FeatureSelection newBLO = new FeatureSelection()
             {
                 FeatureIdentifier = feature.Identifier,
-                FeatureName = feature.Name
+                FeatureName = feature.Name,
+                SelectionState = FeatureSelectionStates.Unselected
             };
             foreach (Attribute attr in feature.Attributes)
             {

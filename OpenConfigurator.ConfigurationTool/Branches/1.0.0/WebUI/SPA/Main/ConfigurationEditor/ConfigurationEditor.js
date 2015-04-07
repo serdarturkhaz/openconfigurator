@@ -34,8 +34,17 @@
 
                 // Create elems for FeatureSelections
                 for (var i = 0; i < configInstanceCLO.FeatureSelections.GetLength() ; i++) {
-                    var featureSelectionElem = new FeatureSelectionElem(_innerElems.childElemContainer, configInstanceCLO.FeatureSelections.GetAt(i))
+                    var featureSelectionCLO = configInstanceCLO.FeatureSelections.GetAt(i);
+                    var featureSelectionElem = new FeatureSelectionElem(_innerElems.childElemContainer, featureSelectionCLO);
                     featureSelectionElem.Initialize();
+                    _visualUIElems[featureSelectionCLO.GetClientID()] = featureSelectionElem;
+                }
+            }
+            this.OnConfigurationInstanceUnloaded = function (configInstanceCLO) {
+                for (var clientID in _visualUIElems) {
+                    var UIElem = _visualUIElems[clientID];
+                    UIElem.RemoveSelf();
+                    delete _visualUIElems[clientID];
                 }
             }
         }

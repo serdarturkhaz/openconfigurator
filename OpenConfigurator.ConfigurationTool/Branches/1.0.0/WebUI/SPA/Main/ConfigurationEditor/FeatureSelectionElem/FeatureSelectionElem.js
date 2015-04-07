@@ -47,6 +47,11 @@
 
             }
 
+            // Public methods
+            this.RemoveSelf = function () {
+                $(_innerHtmlElem).remove();
+            }
+
             // Event handlers
             function onClicked() {
 

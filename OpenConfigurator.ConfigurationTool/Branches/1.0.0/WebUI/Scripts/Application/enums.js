@@ -2,7 +2,8 @@
 var CLOTypes = {
     ConfigurationInstance: "ConfigurationInstance",
     FeatureSelection: "FeatureSelection",
-    AttributeValue: "AttributeValue"
+    AttributeValue: "AttributeValue",
+    ModelFile: "ModelFile"
 }
 var Enums = {
     AttributeTypes: {

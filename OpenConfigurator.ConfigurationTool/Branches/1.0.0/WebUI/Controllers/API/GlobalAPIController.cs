@@ -24,13 +24,20 @@ namespace OpenConfigurator.ConfigurationTool.WebUI.Controllers
         {
             // Get the FeatureModel
             FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
-            FeatureModel targetModel = manager.GetFeatureModel("Hello");
+            FeatureModel targetModel = manager.GetFeatureModel(featureModelName);
 
             // Create a ConfigurationInstance from it 
             ConfigurationInstanceManager configManager = new ConfigurationInstanceManager();
             ConfigurationInstance configInstance = configManager.CreateConfigurationInstance(targetModel);
 
             return configInstance;
+        }
+
+        [HttpGet]
+        public List<ModelFile> GetAllModelFiles()
+        {
+            FeatureModelManager manager = new FeatureModelManager(modelFolderPath);
+            return manager.GetAllModelFiles();
         }
     }
 }

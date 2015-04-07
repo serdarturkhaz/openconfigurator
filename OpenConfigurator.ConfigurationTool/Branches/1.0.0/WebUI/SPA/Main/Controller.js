@@ -2,14 +2,17 @@
     [
         "Main/DataModel",
         "Main/ConfigurationEditor/ConfigurationEditor",
-        "Main/CommandToolbar/CommandToolbar"
+        "Main/CommandToolbar/CommandToolbar",
+        "Main/FileExplorer/FileExplorer",
+        "Shared/Dialog/Dialog"
     ],
-    function (DataModel, ConfigurationEditor, CommandToolbar) {
+    function (DataModel, ConfigurationEditor, CommandToolbar, FileExplorer, Dialog) {
         var Controller = function () {
 
             // Fields
             var _dataModel = null;
             var _menuBar = null, _configurationEditor = null, _commandToolbar = null;
+            var _fileExplorer = null, _fileExplorerDialog = null;
             var _this = this;
 
             // Init
@@ -20,20 +23,44 @@
                 _dataModel.Initialize();
                 _configurationEditor = new ConfigurationEditor($("#configurationEditorContainer"));
                 _configurationEditor.Initialize();
-                _commandToolbar = new CommandToolbar($("#toolBarContainer"));
+                _commandToolbar = new CommandToolbar($("#toolBarContainer"), _dataModel, _this);
                 _commandToolbar.Initialize();
 
                 // Setup events and handlers
                 _dataModel.ConfigurationInstanceLoaded.AddHandler(new EventHandler(_configurationEditor.OnConfigurationInstanceLoaded));
                 _dataModel.ConfigurationInstanceLoaded.AddHandler(new EventHandler(_commandToolbar.OnConfigurationInstanceLoaded));
                 _dataModel.ConfigurationInstanceUnloaded.AddHandler(new EventHandler(_configurationEditor.OnConfigurationInstanceUnloaded));
-
-
+                _dataModel.ConfigurationInstanceUnloaded.AddHandler(new EventHandler(_commandToolbar.OnConfigurationInstanceUnloaded));
             }
 
             // Public methods
             this.LoadConfigFromExistingModel = function () {
                 _dataModel.LoadConfigurationInstance("Hello");
+            }
+            this.OpenFile = function () {
+
+                // Setup fileExplorer and dialog in which it is shown
+                if (_fileExplorer === null && _fileExplorerDialog === null) {
+
+                    // Create fileExplorer instance
+                    var fileExplorerContainer = $("<div class='contentWrapper'></div>");
+                    _fileExplorer = new FileExplorer(fileExplorerContainer, _dataModel);
+                    _fileExplorer.Initialize();
+                    _fileExplorer.FileOpenTriggered.AddHandler(new EventHandler(onFileSelectedForOpen));
+
+                    // Create dialog instance
+                    _fileExplorerDialog = new Dialog("Open existing model", fileExplorerContainer, { modal: true });
+                    _fileExplorerDialog.Initialize();
+                }
+
+                _fileExplorer.LoadModelFiles();
+                _fileExplorerDialog.Show();
+            }
+
+            // Event handlers
+            var onFileSelectedForOpen = function (modelFileCLO) {
+                _dataModel.LoadConfigurationInstance(modelFileCLO.Name());
+                _fileExplorerDialog.Close();
             }
         }
 
