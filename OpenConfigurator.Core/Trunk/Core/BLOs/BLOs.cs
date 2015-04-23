@@ -50,7 +50,7 @@ namespace OpenConfigurator.Core.BLOs
         Unselected = 2
     }
 
-    // Extra information for enums (was previously stored in the SQL db)
+    // Extra information for enums (- was previously stored in the SQL db)
     public static class RelationTypes_Info
     {
         public static class Mandatory
@@ -176,7 +176,7 @@ namespace OpenConfigurator.Core.BLOs
             FeatureModel newBLO = new FeatureModel()
             {
                 Name = "Unnamed Model",
-                UIOrientation= UIOrientationTypes.Vertical,
+                UIOrientation = UIOrientationTypes.Vertical,
                 ScaleModifier = 1
             };
             return newBLO;
@@ -635,18 +635,45 @@ namespace OpenConfigurator.Core.BLOs
         // Fields
         protected List<FeatureSelection> featureSelections = new List<FeatureSelection>();
 
+        // Private methods
+        private FeatureSelection CreateFeatureSelection_Recursive(Feature feature)
+        {
+            // Variables
+            FeatureSelection featureSelection = new FeatureSelection() {
+                
+            };
+
+            return 
+        }
+
         // Constructor
         public ConfigurationInstance()
         {
         }
+        public ConfigurationInstance(FeatureModel model)
+        {
+            this.FeatureModelName = model.Name;
+
+            // Get the root feature
+            Feature rootFeature = model.Features.Where(f => !model.Relations.Exists(r => r.ChildFeature == f) &&
+                !model.GroupRelations.Exists(gr => gr.ChildFeatures.Contains(f))).SingleOrDefault();
+
+            // root feature = feature which is not the child in any relations or any grouprelations
+        }
 
         // Properties
-        public List<FeatureSelection> FeatureSelections
+        private List<FeatureSelection> FeatureSelections
         {
             get
             {
                 return featureSelections;
             }
+
+        }
+        public FeatureSelection RootFeatureSelection
+        {
+            get;
+            set;
         }
         public string FeatureModelName
         {
@@ -668,21 +695,6 @@ namespace OpenConfigurator.Core.BLOs
             return attributeValue;
         }
 
-        // Special instance creator
-        internal static ConfigurationInstance CreateFrom(FeatureModel model)
-        {
-            // Create new BLO
-            ConfigurationInstance newBLO = new ConfigurationInstance()
-            {
-                FeatureModelName = model.Name
-            };
-            foreach (Feature feature in model.Features)
-            {
-                newBLO.FeatureSelections.Add(FeatureSelection.CreateFrom(feature));
-            }
-
-            return newBLO;
-        }
     }
     public class FeatureSelection : iBLO
     {
@@ -728,21 +740,47 @@ namespace OpenConfigurator.Core.BLOs
             }
         }
 
-        // Special instance creator
-        internal static FeatureSelection CreateFrom(Feature feature)
+        //// Special instance creator
+        //internal static FeatureSelection CreateFrom(Feature feature)
+        //{
+        //    // Create new BLO
+        //    FeatureSelection newBLO = new FeatureSelection()
+        //    {
+        //        FeatureIdentifier = feature.Identifier,
+        //        FeatureName = feature.Name,
+        //        SelectionState = FeatureSelectionStates.Unselected
+        //    };
+        //    foreach (Attribute attr in feature.Attributes)
+        //    {
+        //        newBLO.AttributeValues.Add(AttributeValue.CreateFrom(attr));
+        //    }
+        //    return newBLO;
+        //}
+
+    }
+    public class Group : iBLO
+    {
+        // Fields
+        protected List<FeatureSelection> featureSelections = new List<FeatureSelection>();
+
+        // Constructors
+        public Group()
         {
-            // Create new BLO
-            FeatureSelection newBLO = new FeatureSelection()
+        }
+
+        // Properties
+        public GroupRelationTypes GroupRelationType
+        {
+            get;
+            set;
+        }
+        public List<FeatureSelection> FeatureSelections
+        {
+            get
             {
-                FeatureIdentifier = feature.Identifier,
-                FeatureName = feature.Name,
-                SelectionState = FeatureSelectionStates.Unselected
-            };
-            foreach (Attribute attr in feature.Attributes)
-            {
-                newBLO.AttributeValues.Add(AttributeValue.CreateFrom(attr));
+                return featureSelections;
             }
-            return newBLO;
+
         }
 
     }
@@ -770,17 +808,17 @@ namespace OpenConfigurator.Core.BLOs
             set;
         }
 
-        // Special instance creator
-        internal static AttributeValue CreateFrom(Attribute attr)
-        {
-            // Create new BLO
-            AttributeValue newBLO = new AttributeValue()
-            {
-                AttributeIdentifier = attr.Identifier,
-                AttributeName = attr.Name
-            };
-            return newBLO;
-        }
+        //// Special instance creator
+        //internal static AttributeValue CreateFrom(Attribute attr)
+        //{
+        //    // Create new BLO
+        //    AttributeValue newBLO = new AttributeValue()
+        //    {
+        //        AttributeIdentifier = attr.Identifier,
+        //        AttributeName = attr.Name
+        //    };
+        //    return newBLO;
+        //}
 
     }
 
