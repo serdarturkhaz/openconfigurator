@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Web.Mvc;
 using System.IO;
 using System.Web.Optimization;
+using System.Threading.Tasks;
 
 namespace OpenConfigurator.ModellingTool.WebUI.Common
 {
