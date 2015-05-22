@@ -24,6 +24,7 @@
 
             // Init
             this.Initialize = function () {
+                
                 // Init UIComponents
                 _dataModel = new DataModel();
                 _dataModel.Initialize();

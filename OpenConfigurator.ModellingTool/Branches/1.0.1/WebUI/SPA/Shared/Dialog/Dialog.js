@@ -3,7 +3,7 @@
         "text!Shared/Dialog/Dialog.html" // html markup
     ],
     function (HTMLmarkup) {
-        
+
         var Dialog = function (title, content, settings) {
 
             // Fields
@@ -30,6 +30,7 @@
                 
                 // Parse html markup
                 _innerHtmlElem = $($.parseHTML(HTMLmarkup));
+                _innerHtmlElem = $(_innerHtmlElem[0]);
                 _innerHtmlElem.appendTo("body");
 
                 // Get references to html elems
@@ -41,7 +42,8 @@
                 settings = (settings !== undefined) ? settings : {};
                 _options = $.extend({}, _options, settings);
                 _innerElems.closeIcon.bind("click", function () {
-                    _dialog.dialog("close");
+                    if (_dialog)
+                        _dialog.dialog("close");
                 });
                 $(_innerHtmlElem).draggable({
                     handle: ".boxHeader",

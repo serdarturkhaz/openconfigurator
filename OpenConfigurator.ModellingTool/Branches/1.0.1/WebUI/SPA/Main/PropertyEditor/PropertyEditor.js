@@ -53,7 +53,7 @@
                 _innerElems.innerContainer = $(_innerHtmlElem).find(".boxContent");
 
                 // Make draggable
-                $(_innerHtmlElem).draggable({
+                $(_innerHtmlElem[0]).draggable({
                     handle: ".boxHeader",
                     containment: "window"
                 });
